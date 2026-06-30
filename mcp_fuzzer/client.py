@@ -6,7 +6,7 @@ class MCPInspector:
         self.server_params = StdioServerParameters(command=command, args=args)
 
     async def fetch_all_tools(self) -> list:
-        """Récupère la liste complète des outils disponibles sur le serveur."""
+        """Fetches the complete list of available tools from the server."""
         async with stdio_client(self.server_params) as (read_stream, write_stream):
             async with ClientSession(read_stream, write_stream) as session:
                 await session.initialize()
@@ -14,7 +14,7 @@ class MCPInspector:
                 return [t.name for t in mcp_tools.tools]
 
     async def fetch_tool_metadata(self, tool_name: str) -> tuple:
-        """Se connecte brièvement au serveur pour extraire les métadonnées d'un outil."""
+        """Briefly connects to the server to extract tool metadata (name, description, schema)."""
         async with stdio_client(self.server_params) as (read_stream, write_stream):
             async with ClientSession(read_stream, write_stream) as session:
                 await session.initialize()

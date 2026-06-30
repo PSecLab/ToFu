@@ -47,7 +47,7 @@ Strict Instructions:
                 response = self.model.invoke(messages)
                 content = response.content.strip().strip("```json").strip("```").strip()
                 
-                # Validation du format JSON
+                # Validate JSON format
                 parsed_seeds = json.loads(content)
                 if not isinstance(parsed_seeds, list):
                     raise ValueError("The LLM returned a JSON object but a JSON ARRAY (list) of objects was expected.")
@@ -58,7 +58,7 @@ Strict Instructions:
                 logging.warning(f"Seed generation attempt {attempt} failed ({e}).")
                 
                 if attempt == max_attempts:
-                    logging.alert("Max refinement attempts reached for seeds. Using minimal fallback.")
+                    logging.warning("Max refinement attempts reached for seeds. Using minimal fallback.")
                     break
                 
                 # Append failed context
@@ -80,47 +80,7 @@ Please rewrite your response to ensure it is 100% valid, raw JSON array matching
                 fallback_seed[prop] = True
         return [fallback_seed, {}]
 
-    def generate_oracle(self, tool_name: str, tool_description: str, input_schema: dict, failed_input=None, error_details=None, current_code=None) -> str:
-        if not failed_input:
-            logging.info(f"Querying initial validation oracle model for '{tool_name}'...")
-            prompt = f"""
-You are a security and Python expert. Generate the body of a Python function named `llm_oracle_copy` that validates input arguments for the following MCP tool.
 
-Tool Name: {tool_name}
-Tool Description: {tool_description}
-Input JSON Schema: {input_schema}
-
-Strict Instructions:
-1. The function MUST accept the exact same arguments as defined in the schema. It can use `**kwargs` to prevent signature crashes.
-2. PERMISSIVE BEHAVIOR: If the function receives extra keyword arguments (**kwargs) not in the schema, it must SILENTLY IGNORE them.
-3. The function should raise TypeError or ValueError ONLY if a schema argument is of the wrong type or invalid based on description.
-4. Return ONLY the raw Python code. No text, NO markdown formatting (no triple backticks).
-"""
-            messages = [HumanMessage(content=prompt)]
-        else:
-            logging.alert(f"Discrepancy discovered! Entering Self-Refine correction loop...")
-            system_msg = SystemMessage(content=(
-                "You are a QA engineering expert. Rewrite the provided Python function so that it behaves EXACTLY like the reference tool.\n"
-                "Return ONLY clean Python code. Absolutely NO markdown block ticks (triple backticks)."
-            ))
-            input_data_json = json.dumps({"tested_arguments": failed_input}, ensure_ascii=False)
-            user_msg = HumanMessage(content=f"""
-Current failing oracle function:
-[START]
-{current_code}
-[END]
-
-Behavioral mismatch discovered:
-- Faulty Input: {input_data_json}
-- Mismatch Reason: {error_details}
-
-Fix `llm_oracle_copy` to perfectly match the original tool behavior for this case while preserving overall validation logic.
-""")
-            messages = [system_msg, user_msg]
-
-        response = self.model.invoke(messages)
-        clean_code = response.content.strip().strip("```python").strip("```").strip()
-        return clean_code
 
     def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> list:
         """Selects sanitizing functions based on docstrings."""
