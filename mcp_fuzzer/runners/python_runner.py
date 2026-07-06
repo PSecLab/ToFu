@@ -103,7 +103,9 @@ class PythonRunner(BaseRunner):
             else:
                 filtered_args = {k: v for k, v in arguments.items() if k in sig.parameters}
                 val = self.target_func(**filtered_args)
-        except Exception as e:
+        except KeyboardInterrupt:
+            raise
+        except BaseException as e:
             success = False
             error_msg = f"{type(e).__name__}: {str(e)}"
         finally:

@@ -8,15 +8,16 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    # Example if your MCP Python server is executable via a script
+    # Configure fuzzer to target the Python FastMCP server in fuzz_http_check.py
     fuzzer = MCPDifferentialFuzzer(
-        command=sys.executable,  # Uses the current Python interpreter
-        args=["fuzz_json_extractor.py"], # ["path/to/server.py"]
-        target_tool="extract_json", 
+        command=sys.executable,
+        args=[
+            os.path.join(os.path.dirname(__file__), "fuzz_http_check.py")
+        ],
+        target_tool="check_http_url", 
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z")
     )
     
-    # max_iterations is ignored because Atheris runs on the main process with its own time limit (time_per_iteration)
     fuzzer.run(time_per_iteration=30)
 
 if __name__ == "__main__":

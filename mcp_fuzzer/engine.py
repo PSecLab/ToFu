@@ -19,13 +19,14 @@ logger = logging.getLogger(__name__)
 _current_runner = None
 _current_schema = None
 _selected_sanitizer_names = []
+_selected_sanitizer_rules = {}
 _silent_bug_found = False
 _target_tool_name = ""
 
 
 def _test_one_input_factory():
     def test_one_input(data):
-        global _current_runner, _current_schema, _selected_sanitizer_names, _silent_bug_found, _target_tool_name
+        global _current_runner, _current_schema, _selected_sanitizer_names, _selected_sanitizer_rules, _silent_bug_found, _target_tool_name
         if _current_runner is None or _current_schema is None:
             return
 
@@ -106,6 +107,33 @@ def _test_one_input_factory():
                 for sanitizer_name in _selected_sanitizer_names:
                     sanitizer_fn = getattr(sanitizers, sanitizer_name, None)
                     if sanitizer_fn and sanitizer_fn(val):
+                        # Check rules for this sanitizer
+                        rule = _selected_sanitizer_rules.get(sanitizer_name, {})
+                        if rule.get("on_trigger") == "allow_success_always":
+                            if res.success:
+                                continue
+                        elif rule.get("on_trigger") == "allow_success_with_fallback":
+                            expected_fallbacks = rule.get("expected_fallback_values", [])
+                            
+                            def matches_fallback(res_val, fallbacks):
+                                actual_fallbacks = list(fallbacks) if fallbacks else [[]]
+                                if res_val in actual_fallbacks:
+                                    return True
+                                # stringified comparisons
+                                for fb in actual_fallbacks:
+                                    if str(res_val) == str(fb):
+                                        return True
+                                    try:
+                                        if isinstance(res_val, str) and json.loads(res_val) == fb:
+                                            return True
+                                    except Exception:
+                                        pass
+                                return False
+                            
+                            if res.success and matches_fallback(res.result, expected_fallbacks):
+                                # This is expected fallback behavior, not a silent bug!
+                                continue
+                        
                         sanitizer_triggered = True
                         if sanitizer_name not in triggered_by:
                             triggered_by.append(sanitizer_name)
@@ -121,12 +149,23 @@ def _test_one_input_factory():
             logger.warning(f"   -> Analysis     : {err_details}")
 
             try:
+                # Ensure input is always stored as a string to avoid display issues in MongoDB Compass
+                def default_serializer(o):
+                    if isinstance(o, bytes):
+                        return o.decode('utf-8', errors='replace')
+                    return repr(o)
+
+                try:
+                    input_str = json.dumps(generated_arguments, default=default_serializer)
+                except Exception:
+                    input_str = str(generated_arguments)
+
                 client = MongoClient("mongodb://localhost:27017/", serverSelectionTimeoutMS=2000)
                 db = client["toolfuzz_db"]
                 collection = db["vulnerabilities"]
                 document = {
                     "tool": _target_tool_name,
-                    "input": generated_arguments,
+                    "input": input_str,
                     "output": res.result,
                     "triggered_sanitizers": triggered_by,
                     "timestamp": time.time(),
@@ -153,7 +192,7 @@ class MCPDifferentialFuzzer:
         self.inspector = MCPInspector(command=command, args=args)
 
     def run(self, max_iterations: int = 5, time_per_iteration: int = 20):
-        global _current_runner, _current_schema, _selected_sanitizer_names, _silent_bug_found, _target_tool_name
+        global _current_runner, _current_schema, _selected_sanitizer_names, _selected_sanitizer_rules, _silent_bug_found, _target_tool_name
         
         loop = asyncio.new_event_loop()
         
@@ -178,7 +217,7 @@ class MCPDifferentialFuzzer:
                 continue
 
             _target_tool_name = tool
-            _selected_sanitizer_names = self.llm.select_sanitizers(t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS)
+            _selected_sanitizer_names, _selected_sanitizer_rules = self.llm.select_sanitizers(t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS)
             if not _selected_sanitizer_names:
                 raise ValueError(f"No sanitizers selected for tool '{tool}'. Fuzzing cannot proceed without active security sanitizers.")
             _current_schema = t_schema
@@ -216,12 +255,16 @@ class MCPDifferentialFuzzer:
                     for file in files:
                         if file.endswith(".py") and file != "__init__.py":
                             modules_to_instrument.append(os.path.splitext(file)[0])
-                
-                logger.info(f"[{tool}] Instrumenting local Python modules: {list(set(modules_to_instrument))}")
-                atheris.instrument_imports(include=list(set(modules_to_instrument)))
 
             try:
-                _current_runner.start()
+                if not is_js:
+                    logger.info(f"[{tool}] Instrumenting local Python modules: {list(set(modules_to_instrument))}")
+                    with atheris.instrument_imports(include=list(set(modules_to_instrument))):
+                        _current_runner.start()
+                else:
+                    logger.info(f"[{tool}] Instrumenting JS fake coverage helper module.")
+                    with atheris.instrument_imports(include=["mcp_fuzzer.runners.fake_coverage"]):
+                        _current_runner.start()
             except Exception as e:
                 logger.error(f"Failed to start runner: {e}")
                 continue

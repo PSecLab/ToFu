@@ -82,14 +82,14 @@ Please rewrite your response to ensure it is 100% valid, raw JSON array matching
 
 
 
-    def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> list:
-        """Selects sanitizing functions based on docstrings."""
+    def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> tuple:
+        """Selects sanitizing functions and their behavioral rules based on docstrings/schemas."""
         logging.info(f"Selecting relevant sanitizers for '{tool_name}'...")
         
         sanitizers_format = "\n".join([f"- {name}: {desc}" for name, desc in available_sanitizers.items()])
 
         prompt = f"""
-You are an expert security engineer. Analyze the following tool metadata and select which sanitizers from the provided list are relevant to monitor its inputs.
+You are an expert security engineer. Analyze the following tool metadata and select which sanitizers from the provided list are relevant to monitor its inputs. Also, analyze the tool description and docstring to determine what the tool's expected behavior is if a sanitizer triggers.
 
 Tool Name: {tool_name}
 Description: {tool_description}
@@ -99,8 +99,19 @@ Available Sanitizers:
 {sanitizers_format}
 
 Strict Instructions:
-1. Return ONLY a valid JSON array of strings containing the exact names of the selected sanitizers.
-2. If no sanitizers are relevant, return an empty array [].
+1. Return ONLY a valid JSON object with two keys:
+   - "selected_sanitizers": A JSON array of strings containing the exact names of the selected sanitizers.
+   - "rules": A JSON object mapping a selected sanitizer name to its expected behavior rule:
+     {{
+       "sanitizer_name": {{
+         "on_trigger": "allow_success_always" or "allow_success_with_fallback" or "raise_exception",
+         "expected_fallback_values": [<expected return values when sanitizer is triggered, e.g. [], "", null, etc.>]
+       }}
+     }}
+     Use "allow_success_always" if the tool is designed to process arbitrary text that might contain invalid elements (like a JSON extractor or lenient parser) and should always succeed normally with any output.
+     Use "allow_success_with_fallback" if the tool expects a specific valid structure but gracefully returns a fallback value when invalid.
+     Use "raise_exception" if the tool should strictly raise an exception/error on invalid input.
+2. If no sanitizers are relevant, return: {{"selected_sanitizers": [], "rules": {{}}}}
 3. No code blocks, no markdown formatting. Just raw JSON.
 """
         messages = [HumanMessage(content=prompt)]
@@ -109,13 +120,16 @@ Strict Instructions:
             response = self.model.invoke(messages)
             content = response.content.strip().strip("```json").strip("```").strip()
             logging.info(response.content)
-            selected = json.loads(content)
-            if isinstance(selected, list): # Avoid hallucinated functions
+            data = json.loads(content)
+            selected = data.get("selected_sanitizers", [])
+            rules = data.get("rules", {})
+            if isinstance(selected, list) and isinstance(rules, dict):
                 valid_selection = [s for s in selected if s in available_sanitizers]
+                valid_rules = {s: r for s, r in rules.items() if s in valid_selection}
                 logging.info(f"Sanitizers selected: {valid_selection}")
-                return valid_selection
+                logging.info(f"Sanitizer rules: {valid_rules}")
+                return valid_selection, valid_rules
         except Exception as e:
-            logging.warning(response.content)
-            logging.warning(f"Failed to parse LLM sanitizer selection: {e}. Defaulting to empty list.")
+            logging.warning(f"Failed to parse LLM sanitizer selection: {e}. Defaulting to empty list and rules.")
         
-        return []
+        return [], {}
