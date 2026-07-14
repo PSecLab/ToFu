@@ -8,13 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    # Configure fuzzer to target the Python FastMCP server in fuzz_http_check.py
+    # Configure fuzzer to target the Python FastMCP server in fuzz_json_extractor.py
     fuzzer = MCPDifferentialFuzzer(
         command=sys.executable,
         args=[
-            os.path.join(os.path.dirname(__file__), "fuzz_http_check.py")
+            os.path.join(os.path.dirname(__file__), "fuzz_json_extractor.py")
         ],
-        target_tool="check_http_url", 
+        target_tool="extract_json", 
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z")
     )
     

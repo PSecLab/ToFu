@@ -1,7 +1,8 @@
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from .interfaces import BaseMetadataProvider
 
-class MCPInspector:
+class MCPInspector(BaseMetadataProvider):
     def __init__(self, command: str, args: list):
         self.server_params = StdioServerParameters(command=command, args=args)
 

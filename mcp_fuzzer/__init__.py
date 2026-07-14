@@ -1,3 +1,3 @@
-from .engine import MCPDifferentialFuzzer
+from .fuzzer import MCPDifferentialFuzzer
 
 __all__ = ["MCPDifferentialFuzzer"]
