@@ -35,13 +35,44 @@ def dummy_tool(a: int, b: str):
     assert "ValueError" in res_fail.error
 
 
-def test_js_runner():
-    # Test JSRunner mock interface
-    runner = JSRunner(command="node", args=["index.js"], target_tool="some_tool")
+def test_js_runner(tmp_path):
+    # Create a temporary index.js that acts as a mock MCP tool and outputs coverage
+    js_code = """
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false
+});
+
+rl.on('line', (line) => {
+    try {
+        const msg = JSON.parse(line);
+        if (msg.method === 'tools/call') {
+            const resp = {
+                jsonrpc: "2.0",
+                result: {
+                    content: [{ type: "text", text: "success" }]
+                },
+                id: msg.id
+            };
+            process.stdout.write(JSON.stringify(resp) + "\\n");
+            process.stdout.write("COV: [\\"server.js:42\\"]\\n");
+        }
+    } catch (e) {
+        // ignore
+    }
+});
+"""
+    js_file = tmp_path / "index.js"
+    js_file.write_text(js_code)
+
+    # Instantiate JSRunner targeting our temporary index.js file
+    runner = JSRunner(command="node", args=[str(js_file)], target_tool="some_tool")
     runner.start()
     res = runner.execute({"arg": "val"})
     assert res.success is True
-    assert "server.js:42" in res.coverage
+    assert any("index.js" in cov for cov in res.coverage)
     runner.stop()
 
 

@@ -5,7 +5,7 @@ import struct
 from mcp.server.fastmcp import FastMCP
 
 # Add tools-main/python to path
-sys.path.append(os.path.join(os.path.dirname(__file__), "tools-main", "python"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "tools-main", "python"))
 from gguf_inspect import extract_metadata
 
 mcp = FastMCP("GGUF Inspector MCP Server")

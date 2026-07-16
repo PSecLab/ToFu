@@ -26,6 +26,7 @@ class JSRunner(BaseRunner):
         self.request_id = 1
         self.cov_map = {}
         self.next_cov_idx = 0
+        self.already_covered = set()
 
     def start(self):
         # Import fake_coverage under the active instrument_imports context manager
@@ -140,10 +141,12 @@ class JSRunner(BaseRunner):
 
         if fake_coverage:
             for cov_item in coverage_set:
-                if cov_item not in self.cov_map:
-                    self.cov_map[cov_item] = self.next_cov_idx
-                    self.next_cov_idx = (self.next_cov_idx + 1) % 2000
-                fake_coverage.trigger(self.cov_map[cov_item])
+                if cov_item not in self.already_covered:
+                    self.already_covered.add(cov_item)
+                    if cov_item not in self.cov_map:
+                        self.cov_map[cov_item] = self.next_cov_idx
+                        self.next_cov_idx = (self.next_cov_idx + 1) % 2000
+                    fake_coverage.trigger(self.cov_map[cov_item])
 
         end_time = time.perf_counter()
         execution_time_ms = (end_time - start_time) * 1000.0

@@ -3,7 +3,7 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 # Add tools-main/python to import path
-sys.path.append(os.path.join(os.path.dirname(__file__), "tools-main", "python"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "tools-main", "python"))
 from json_extractor import extract_json_objects
 
 mcp = FastMCP("JSON Extractor MCP Server")

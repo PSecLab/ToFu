@@ -3,7 +3,7 @@ import os
 from mcp.server.fastmcp import FastMCP
 
 # Add tools-main/python to path
-sys.path.append(os.path.join(os.path.dirname(__file__), "tools-main", "python"))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "tools-main", "python"))
 from extract_issues import extract_issue_numbers
 
 mcp = FastMCP("Extract Issues MCP Server")

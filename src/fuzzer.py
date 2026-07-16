@@ -25,7 +25,8 @@ class MCPDifferentialFuzzer:
     def __init__(self, command: str, args: list, target_tool: str, api_key: str, 
                  corpus_dir: str = "./fuzz_corpus", override_rules: dict = None, 
                  file_backed_params: dict = None, config: FuzzerConfig = None, 
-                 reporter = None, metadata_provider = None, runner_factory = None):
+                 reporter = None, metadata_provider = None, runner_factory = None,
+                 predefined_seeds: list = None):
         self.command = command
         self.args = args
         self.target_tool = target_tool
@@ -34,6 +35,8 @@ class MCPDifferentialFuzzer:
         self.override_rules = override_rules or {}
         self.file_backed_params = file_backed_params or {}
         self.config = config or FuzzerConfig()
+        self.predefined_seeds = predefined_seeds or []
+        self.target_tool_desc = ""
         
         # Inject metadata provider
         if metadata_provider is None:
@@ -68,7 +71,10 @@ class MCPDifferentialFuzzer:
         self.input_parser = None
 
     def _default_runner_factory(self, tool: str) -> BaseRunner:
-        is_js = any(arg.endswith(".js") for arg in self.args) or "node" in self.command
+        is_js = (
+            any(arg.endswith(".js") for arg in self.args) or 
+            any(js_cmd in self.command for js_cmd in ("node", "npx", "npm", "yarn", "pnpm"))
+        )
         if is_js:
             from .runners import JSRunner
             return JSRunner(self.command, self.args, tool)
@@ -202,6 +208,9 @@ class MCPDifferentialFuzzer:
 
     def _check_string_sanitizers(self, generated_arguments: dict, res: any) -> tuple[bool, list[str], str]:
         """Checks string inputs against selected security vulnerability checkers."""
+        if not res.success:
+            return False, [], ""
+
         triggered_by = []
         err_details = ""
         
@@ -222,21 +231,21 @@ class MCPDifferentialFuzzer:
                 sanitizer_fn = getattr(sanitizers, sanitizer_name, None)
                 if sanitizer_fn and sanitizer_fn(val):
                     rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
-                    if rule.get("on_trigger") == "allow_success_always" and res.success:
+                    if rule.get("on_trigger") == "allow_success_always":
                         continue
                     elif rule.get("on_trigger") == "allow_success_with_fallback":
                         expected_fallbacks = rule.get("expected_fallback_values", [])
-                        if res.success and self._matches_fallback_value(res.result, expected_fallbacks):
+                        if self._matches_fallback_value(res.result, expected_fallbacks):
                             continue
                     
                     if sanitizer_name not in triggered_by:
                         triggered_by.append(sanitizer_name)
 
-        if triggered_by and res.success:
+        if triggered_by:
             err_details = f"Silent Bug Alert: Sanitizers {triggered_by} flagged this input as malicious, but the target tool executed successfully without raising any exception. "
             return True, triggered_by, err_details
             
-        return bool(triggered_by), triggered_by, err_details
+        return False, [], ""
 
     def _matches_fallback_value(self, result_val: any, expected_fallbacks: list) -> bool:
         """Determines if the success output matches configured fallback options."""
@@ -300,6 +309,7 @@ class MCPDifferentialFuzzer:
             return False
 
         self.target_tool_name = tool
+        self.target_tool_desc = t_desc
         self.selected_sanitizer_names, self.selected_sanitizer_rules = self.llm.select_sanitizers(
             t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS
         )
@@ -321,8 +331,11 @@ class MCPDifferentialFuzzer:
         return True
 
     def _setup_corpus_seeds(self) -> None:
-        """Generates the initial fuzzing corpus via LLM."""
-        seeds = self.llm.generate_seeds(self.target_tool_name, "", self.current_schema)
+        """Generates the initial fuzzing corpus via LLM or uses predefined seeds."""
+        if self.predefined_seeds:
+            seeds = self.predefined_seeds
+        else:
+            seeds = self.llm.generate_seeds(self.target_tool_name, self.target_tool_desc, self.current_schema)
         if os.path.exists(self.corpus_dir):
             shutil.rmtree(self.corpus_dir)
         os.makedirs(self.corpus_dir)
@@ -350,7 +363,7 @@ class MCPDifferentialFuzzer:
         
         # Also instrument top-level Python packages in the workspace directory
         for item in os.listdir("."):
-            if os.path.isdir(item) and not item.startswith(".") and item not in ("node_modules", ".venv", "fuzz_corpus", "mcp_fuzzer", "tests"):
+            if os.path.isdir(item) and not item.startswith(".") and item not in ("node_modules", ".venv", "fuzz_corpus", "src", "tests"):
                 try:
                     if any(f.endswith(".py") for r, d, fs in os.walk(item) for f in fs):
                         modules_to_instrument.append(item)
@@ -386,7 +399,7 @@ class MCPDifferentialFuzzer:
             else:
                 logger.info(f"[{tool}] Instrumenting JS fake coverage helper module.")
                 import atheris
-                with atheris.instrument_imports(include=["mcp_fuzzer.runners.fake_coverage"]):
+                with atheris.instrument_imports(include=["src.runners.fake_coverage"]):
                     self.current_runner.start()
             return True
         except Exception as e:
@@ -415,3 +428,55 @@ class MCPDifferentialFuzzer:
 
         if os.path.exists(self.corpus_dir):
             shutil.rmtree(self.corpus_dir)
+
+    def run_single(self, input_data: dict) -> None:
+        """Executes a single test run on the tool and displays results."""
+        tools_to_fuzz = self._discover_tools()
+        if not tools_to_fuzz:
+            logger.error("No tools discovered.")
+            return
+            
+        # Target tool name resolution
+        target = self.target_tool or (tools_to_fuzz[0] if tools_to_fuzz else None)
+        if not target:
+            logger.error("No target tool specified.")
+            return
+            
+        if target not in tools_to_fuzz:
+            logger.error(f"Tool '{target}' not found in discovered tools: {tools_to_fuzz}")
+            return
+            
+        initialized = self._initialize_tool_fuzzing(target)
+        if not initialized:
+            logger.error("Failed to initialize tool execution.")
+            return
+            
+        modules = self._resolve_instrumented_modules()
+        started = self._start_runner(target, modules)
+        if not started:
+            logger.error("Failed to start tool execution runner.")
+            return
+            
+        try:
+            logger.info(f"[*] Executing '{target}' with arguments: {input_data}")
+            result = self.current_runner.execute(input_data)
+            
+            print("\n" + "="*20 + " RESULTS " + "="*20)
+            print(f"Status   : {'SUCCESS' if result.success else 'FAILED'}")
+            if result.success:
+                print(f"Output   : {result.result}")
+            else:
+                print(f"Error    : {result.error}")
+            print(f"Coverage : {len(result.coverage)} block(s) hit")
+            if result.coverage:
+                print("Block Hits:")
+                for cov in list(result.coverage)[:10]:
+                    print(f" - {cov}")
+                if len(result.coverage) > 10:
+                    print(f" ... and {len(result.coverage) - 10} more blocks")
+            print("="*49)
+        except Exception as e:
+            logger.error(f"Error during execution: {e}")
+        finally:
+            if self.current_runner:
+                self.current_runner.stop()

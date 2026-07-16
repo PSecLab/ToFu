@@ -19,8 +19,9 @@ process.argv = [process.argv[0], targetScript, ...targetArgs];
 const session = new inspector.Session();
 session.connect();
 
-// Enable Profiler
+// Enable Profiler and start precise coverage once at startup
 session.post('Profiler.enable');
+session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
 
 // Intercept stdin and stdout
 const realStdin = process.stdin;
@@ -62,8 +63,6 @@ function handleFuzzerInput(line) {
     const msg = JSON.parse(line);
     if (msg.method === 'tools/call') {
       isFuzzingCall = true;
-      // Start precise coverage before forwarding to the target tool
-      session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
     }
   } catch (e) {
     // Not a valid JSON or not a tool call
@@ -77,10 +76,8 @@ function handleTargetStdout(chunk) {
   if (isFuzzingCall) {
     isFuzzingCall = false;
     
-    // Stop coverage and collect data
+    // Take precise coverage without stopping it
     session.post('Profiler.takePreciseCoverage', (err, covRes) => {
-      session.post('Profiler.stopPreciseCoverage');
-      
       // Output the response to real stdout first
       realStdout.write(chunk);
       

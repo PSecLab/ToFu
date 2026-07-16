@@ -7,7 +7,7 @@ from docx import Document
 from openpyxl import Workbook
 from pptx import Presentation
 
-SEED_DIR = "mcp_fuzzer/predefined_seeds"
+SEED_DIR = "src/predefined_seeds"
 
 def create_pdf(content: str, filename: str) -> str:
     """
