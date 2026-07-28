@@ -67,3 +67,51 @@ def check_temp_file_leak(value: str) -> bool:
 
 def check_resource_exhaustion(value: str) -> bool:
     return False
+
+def check_blocked_command_bypass(value: str, blocked_commands: list = None) -> bool:
+    if not isinstance(value, str):
+        return False
+    if not blocked_commands:
+        blocked_commands = ["format", "mount", "umount", "mkfs", "fdisk", "dd", "sudo", "su", "passwd", "adduser", "useradd", "usermod", "groupadd"]
+    
+    # Normalize input: strip backslashes, quotes, double quotes and whitespaces
+    normalized = re.sub(r'[\'\\"\\ ]', '', value).lower()
+    
+    for cmd in blocked_commands:
+        if cmd == "su":
+            # Match su as a standalone word or in typical su commands
+            if re.search(r'\bsu\b', value) or re.search(r'\bsu\b', normalized):
+                return True
+        else:
+            if cmd in normalized:
+                return True
+    return False
+
+def check_directory_jailbreak_write(value: str, allowed_dirs: list = None) -> bool:
+    if not isinstance(value, str):
+        return False
+    if not allowed_dirs:
+        return False
+        
+    import os
+    try:
+        # Expand home directory and resolve to absolute canonical path
+        expanded = os.path.expanduser(value)
+        abs_path = os.path.abspath(expanded)
+        
+        # Check if the path escapes all allowed directories
+        allowed = False
+        for allowed_dir in allowed_dirs:
+            abs_allowed = os.path.abspath(os.path.expanduser(allowed_dir))
+            # If allowed_dir is empty or '/', everything is allowed
+            if abs_allowed == "/" or not allowed_dir:
+                allowed = True
+                break
+            # Check if abs_path is within abs_allowed
+            if abs_path.startswith(abs_allowed):
+                allowed = True
+                break
+        return not allowed
+    except Exception:
+        return False
+

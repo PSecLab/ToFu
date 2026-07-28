@@ -6,7 +6,9 @@ from .base import (
     check_unsafe_s3_bucket,
     check_log_injection,
     check_temp_file_leak,
-    check_resource_exhaustion
+    check_resource_exhaustion,
+    check_blocked_command_bypass,
+    check_directory_jailbreak_write
 )
 from .db import (
     check_sql_injection,
@@ -39,8 +41,15 @@ from .formats import (
     check_xml_bomb,
     check_template_injection
 )
+from .mcp_oracles import (
+    check_unhandled_promise_rejection,
+    check_process_and_fd_leaks
+)
 
 AVAILABLE_SANITIZERS = {
+    "check_unhandled_promise_rejection": "Detects unhandled promise rejections or unhandled exceptions in MCP server tool responses.",
+    "check_process_and_fd_leaks": "Detects leaked background subprocesses or orphaned child processes after tool execution.",
+
     "check_sql_injection": "Used for tools that interact with databases using user-provided values. DO NOT use this sanitizer for tools that accept arbitrary raw SQL queries as their primary input (e.g. SQL client execution tools).",
     "check_path_traversal": "Used for tools that manipulate, read, or write files on the file system.",
     "check_command_injection": "Used for tools that invoke system commands or underlying shells.",
@@ -56,6 +65,9 @@ AVAILABLE_SANITIZERS = {
     "check_log_injection": "Used for tools that perform logging of user inputs to detect CRLF/log forging injections.",
     "check_temp_file_leak": "Used to monitor if temporary files are leaked in /tmp or temp directory after tool execution.",
     "check_resource_exhaustion": "Used to detect excessive execution time (ReDoS/infinite loops) or CPU hangs during tool execution.",
+    "check_blocked_command_bypass": "Used for command execution tools to detect bypasses of the blocked command lists (e.g. executing sudo/dd via quotes/escaping).",
+    "check_directory_jailbreak_write": "Used for file write tools to ensure paths do not escape allowed directory roots.",
+    "check_terminal_dos_and_leak": "Used to monitor if background processes (bash, sh, node) are leaked or left running after tool execution.",
     "check_sqlite_extension_loading": "Detects calls to load_extension to load arbitrary shared libraries/DLLs in SQLite.",
     "check_sqlite_fileio_abuse": "Detects SQLite functions or table-valued functions that read, write, or query files from the host system (readfile, writefile, fsdir, zipfile).",
     "check_sqlite_attach_abuse": "Detects ATTACH or DETACH database statements in SQLite.",

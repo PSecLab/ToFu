@@ -87,23 +87,32 @@ class MCPDifferentialFuzzer:
         if self.current_runner is None or self.current_schema is None:
             return
 
-        # 1. Parse Input using delegated parser helper
-        generated_arguments, parsed_successfully = self.input_parser.parse(data)
+        # 1. Check if sequence mode is enabled (e.g. data length > 128 or config sequence_steps > 1)
+        sequence_steps = getattr(self.config, "sequence_steps", 2) if hasattr(self, "config") else 1
+        
+        # Split data if sequence mode is active
+        data_chunks = [data[i:i+len(data)//sequence_steps] for i in range(0, len(data), max(1, len(data)//sequence_steps))] if sequence_steps > 1 else [data]
 
-        # 2. Prepare File-Backed Parameters using delegated file manager helper
-        generated_arguments, created_temp_files = self.file_manager.prepare_file_params(generated_arguments)
+        for step_idx, chunk in enumerate(data_chunks):
+            # 1. Parse Input using delegated parser helper
+            generated_arguments, parsed_successfully = self.input_parser.parse(chunk)
 
-        # 3. Execute and Measure
-        res, elapsed, leaked_files = self._execute_and_time(generated_arguments, created_temp_files)
+            # 2. Prepare File-Backed Parameters using delegated file manager helper
+            generated_arguments, created_temp_files = self.file_manager.prepare_file_params(generated_arguments)
 
-        # 4. Run Sanitizers
-        sanitizer_triggered, triggered_by, err_details = self._run_sanitizers(
-            generated_arguments, res, elapsed, leaked_files
-        )
+            # 3. Execute and Measure
+            res, elapsed, leaked_files, leaked_pids = self._execute_and_time(generated_arguments, created_temp_files)
 
-        # 5. Handle Violations
-        if sanitizer_triggered:
-            self._handle_violation(generated_arguments, res.result, triggered_by, err_details)
+            # 4. Run Sanitizers
+            sanitizer_triggered, triggered_by, err_details = self._run_sanitizers(
+                generated_arguments, res, elapsed, leaked_files, leaked_pids
+            )
+
+            # 5. Handle Violations
+            if sanitizer_triggered:
+                self._handle_violation(generated_arguments, res.result if hasattr(res, 'result') else res, triggered_by, f"[Sequence Step {step_idx+1}/{len(data_chunks)}] {err_details}")
+                break
+
 
     def _handle_violation(self, inputs: dict, result: any, triggered_by: list[str], err_details: str) -> None:
         """Logs the triggered security exception and terminates process."""
@@ -117,7 +126,7 @@ class MCPDifferentialFuzzer:
         self.silent_bug_found = True
         sys.exit(1)
 
-    def _execute_and_time(self, generated_arguments: dict, created_temp_files: list[str]) -> tuple[any, float, set[str]]:
+    def _execute_and_time(self, generated_arguments: dict, created_temp_files: list[str]) -> tuple[any, float, set[str], set[int]]:
         """Executes the runner, measures duration, and detects leaked temporary files."""
         import tempfile as tf_mod
         temp_dir = tf_mod.gettempdir()
@@ -125,6 +134,13 @@ class MCPDifferentialFuzzer:
             before_files = set(glob.glob(os.path.join(temp_dir, "*")))
         except Exception:
             before_files = set()
+
+        before_pids = set()
+        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
+            try:
+                before_pids = {int(x) for x in os.listdir("/proc") if x.isdigit()}
+            except Exception:
+                pass
 
         start_time = time.time()
         try:
@@ -140,9 +156,39 @@ class MCPDifferentialFuzzer:
         
         leaked_files = {f for f in (after_files - before_files) if not f.endswith((".cpuprofile", ".cpuprofile.json")) and "systemd-private-" not in f}
 
-        return res, elapsed, leaked_files
+        after_pids = set()
+        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
+            try:
+                after_pids = {int(x) for x in os.listdir("/proc") if x.isdigit()}
+            except Exception:
+                pass
 
-    def _run_sanitizers(self, generated_arguments: dict, res: any, elapsed: float, leaked_files: set[str]) -> tuple[bool, list[str], str]:
+        leaked_pids = after_pids - before_pids
+        if leaked_pids and self.current_runner and self.current_runner.process:
+            ancestor_pid = self.current_runner.process.pid
+            filtered_leaked_pids = set()
+            for pid in leaked_pids:
+                curr = pid
+                is_child = False
+                for _ in range(100):
+                    if curr == ancestor_pid:
+                        is_child = True
+                        break
+                    if curr <= 1:
+                        break
+                    try:
+                        with open(f"/proc/{curr}/stat", "r") as f:
+                            stat = f.read().split()
+                        curr = int(stat[3])
+                    except Exception:
+                        break
+                if is_child:
+                    filtered_leaked_pids.add(pid)
+            leaked_pids = filtered_leaked_pids
+
+        return res, elapsed, leaked_files, leaked_pids
+
+    def _run_sanitizers(self, generated_arguments: dict, res: any, elapsed: float, leaked_files: set[str], leaked_pids: set[int]) -> tuple[bool, list[str], str]:
         """Runs the fuzzer's active security sanitizers on input/execution details."""
         triggered_by = []
         err_details = ""
@@ -153,19 +199,33 @@ class MCPDifferentialFuzzer:
             triggered_by.append("check_temp_file_leak")
             err_details += leak_err
 
-        # 2. Check resource exhaustion / timeout (e.g. ReDoS)
+        # 2. Check process leaks / terminal DoS
+        proc_leak_triggered, proc_leak_err = self._check_process_leak(leaked_pids)
+        if proc_leak_triggered:
+            triggered_by.append("check_terminal_dos_and_leak")
+            err_details += proc_leak_err
+
+        # 3. Check resource exhaustion / timeout (e.g. ReDoS)
         timeout_triggered, timeout_err = self._check_resource_exhaustion(elapsed)
         if timeout_triggered:
             triggered_by.append("check_resource_exhaustion")
             err_details += timeout_err
 
-        # 3. Check unexpected library/runtime crashes
+        # 4. Check unexpected library/runtime crashes
         crash_triggered, crash_err = self._check_unexpected_crash(res)
         if crash_triggered:
             triggered_by.append("check_unexpected_crash")
             err_details += crash_err
 
-        # 4. Check standard string-based sanitizers
+        # 4.b Check unhandled promise rejections / JS runtime exceptions
+        from .sanitizers import check_unhandled_promise_rejection
+        unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
+        if unhandled_triggered:
+            triggered_by.append("check_unhandled_promise_rejection")
+            err_details += unhandled_err
+
+
+        # 5. Check standard string-based sanitizers
         string_triggered, string_triggered_by, string_err = self._check_string_sanitizers(generated_arguments, res)
         if string_triggered:
             for s_name in string_triggered_by:
@@ -188,6 +248,21 @@ class MCPDifferentialFuzzer:
                         os.remove(f)
                 except Exception:
                     pass
+            return True, err
+        return False, ""
+
+    def _check_process_leak(self, leaked_pids: set[int]) -> tuple[bool, str]:
+        """Returns True and diagnostic message if background processes were leaked."""
+        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names and leaked_pids:
+            details = []
+            for pid in leaked_pids:
+                try:
+                    with open(f"/proc/{pid}/comm", "r") as f:
+                        comm = f.read().strip()
+                    details.append(f"PID {pid} ({comm})")
+                except Exception:
+                    details.append(f"PID {pid}")
+            err = f"Process leak/leftover detected: {', '.join(details)}. "
             return True, err
         return False, ""
 
@@ -219,27 +294,37 @@ class MCPDifferentialFuzzer:
                 continue
                 
             for sanitizer_name in self.selected_sanitizer_names:
-                if sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion"):
+                if sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion", "check_terminal_dos_and_leak"):
                     continue
                 
                 # Context checks
-                if sanitizer_name in ("check_unsafe_url_ssrf", "check_local_file_uri"):
+                if sanitizer_name in ("check_unsafe_url_ssrf", "check_local_file_uri", "check_directory_jailbreak_write"):
                     prop_lower = prop_name.lower()
                     if not ("url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "path" in prop_lower):
                         continue
 
                 sanitizer_fn = getattr(sanitizers, sanitizer_name, None)
-                if sanitizer_fn and sanitizer_fn(val):
+                if sanitizer_fn:
                     rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
-                    if rule.get("on_trigger") == "allow_success_always":
-                        continue
-                    elif rule.get("on_trigger") == "allow_success_with_fallback":
-                        expected_fallbacks = rule.get("expected_fallback_values", [])
-                        if self._matches_fallback_value(res.result, expected_fallbacks):
+                    triggered = False
+                    if sanitizer_name == "check_blocked_command_bypass":
+                        triggered = sanitizer_fn(val, blocked_commands=rule.get("blocked_commands"))
+                    elif sanitizer_name == "check_directory_jailbreak_write":
+                        triggered = sanitizer_fn(val, allowed_dirs=rule.get("allowed_directories"))
+                    else:
+                        triggered = sanitizer_fn(val)
+
+                    if triggered:
+                        rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
+                        if rule.get("on_trigger") == "allow_success_always":
                             continue
-                    
-                    if sanitizer_name not in triggered_by:
-                        triggered_by.append(sanitizer_name)
+                        elif rule.get("on_trigger") == "allow_success_with_fallback":
+                            expected_fallbacks = rule.get("expected_fallback_values", [])
+                            if self._matches_fallback_value(res.result, expected_fallbacks):
+                                continue
+                        
+                        if sanitizer_name not in triggered_by:
+                            triggered_by.append(sanitizer_name)
 
         if triggered_by:
             err_details = f"Silent Bug Alert: Sanitizers {triggered_by} flagged this input as malicious, but the target tool executed successfully without raising any exception. "
@@ -274,12 +359,13 @@ class MCPDifferentialFuzzer:
             if not initialized:
                 continue
 
-            self._setup_corpus_seeds()
             modules_to_instrument = self._resolve_instrumented_modules()
-
             started = self._start_runner(tool, modules_to_instrument)
             if not started:
                 continue
+                continue
+
+            self._setup_corpus_seeds()
 
             self._execute_fuzzing(time_per_iteration)
             self._cleanup_runner()
@@ -305,8 +391,15 @@ class MCPDifferentialFuzzer:
         try:
             t_name, t_desc, t_schema = loop.run_until_complete(self.inspector.fetch_tool_metadata(tool))
         except Exception as e:
-            logger.error(f"Failed to inspect tool '{tool}': {e}. Skipping.")
-            return False
+            if hasattr(self.current_runner, "get_tool_metadata"):
+                try:
+                    t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
+                except Exception as ex:
+                    logger.error(f"Failed to inspect tool '{tool}' via runner: {ex}. Skipping.")
+                    return False
+            else:
+                logger.error(f"Failed to inspect tool '{tool}': {e}. Skipping.")
+                return False
 
         self.target_tool_name = tool
         self.target_tool_desc = t_desc
@@ -315,10 +408,10 @@ class MCPDifferentialFuzzer:
         )
         
         if self.override_rules:
-            for k, v in self.override_rules.items():
-                if k not in self.selected_sanitizer_names:
-                    self.selected_sanitizer_names.append(k)
-                self.selected_sanitizer_rules[k] = v
+            self.selected_sanitizer_names = list(self.override_rules.keys())
+            self.selected_sanitizer_rules = dict(self.override_rules)
+        elif "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
+            self.selected_sanitizer_names.remove("check_unhandled_promise_rejection")
                 
         if not self.selected_sanitizer_names:
             raise ValueError(f"No sanitizers selected for tool '{tool}'. Fuzzing cannot proceed without active security sanitizers.")
@@ -370,23 +463,28 @@ class MCPDifferentialFuzzer:
                 except Exception:
                     pass
 
-        # Instrument configured dependencies
-        for dep in self.config.dependencies_to_instrument:
-            try:
-                __import__(dep)
-                modules_to_instrument.append(dep)
-            except ImportError:
-                pass
-                
-        return list(set(modules_to_instrument))
+        # Exclude external third_party, test, and benchmark modules from Atheris instrumentation
+        filtered_modules = []
+        for mod in modules_to_instrument:
+            if not any(prefix in mod for prefix in ("third_party", "tests", "bench", "test_", "fuzz_")):
+                filtered_modules.append(mod)
+        
+        # Ensure mcp_fuzzer framework is instrumented
+        filtered_modules.append("mcp_fuzzer")
+
+        return list(set(filtered_modules))
 
     def _start_runner(self, tool: str, modules_to_instrument: list[str]) -> bool:
         """Initializes and launches the execution runner."""
         self.current_runner = self.runner_factory(tool)
         logger.info(f"[{tool}] Using runner: {self.current_runner.__class__.__name__}")
 
-        # Re-initialize the parser with the runner in place
-        self.input_parser.current_runner = self.current_runner
+        # Re-initialize the parser with the runner in place if already initialized
+        if self.input_parser:
+            self.input_parser.current_runner = self.current_runner
+
+        if hasattr(self.current_runner, "enable_trace"):
+            self.current_runner.enable_trace = False
 
         try:
             # Check if JSRunner is being used (or if it's explicitly node/JS)

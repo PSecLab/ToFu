@@ -1,9 +1,17 @@
 import json
 import logging
 import os
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
-from langchain_core.tools import tool
+try:
+    from langchain_openai import ChatOpenAI
+    from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+    from langchain_core.tools import tool
+except ImportError:
+    ChatOpenAI = None
+    HumanMessage = SystemMessage = ToolMessage = None
+    def tool(func):
+        return func
+
+
 from . import seed_generators
 
 logger = logging.getLogger(__name__)

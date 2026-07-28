@@ -2,10 +2,26 @@ import os
 import zipfile
 import json
 import xml.etree.ElementTree as ET
-from reportlab.pdfgen import canvas
-from docx import Document
-from openpyxl import Workbook
-from pptx import Presentation
+try:
+    from reportlab.pdfgen import canvas
+except ImportError:
+    canvas = None
+
+try:
+    from docx import Document
+except ImportError:
+    Document = None
+
+try:
+    from openpyxl import Workbook
+except ImportError:
+    Workbook = None
+
+try:
+    from pptx import Presentation
+except ImportError:
+    Presentation = None
+
 
 SEED_DIR = "src/predefined_seeds"
 

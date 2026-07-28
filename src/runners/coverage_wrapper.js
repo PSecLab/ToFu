@@ -23,6 +23,26 @@ session.connect();
 session.post('Profiler.enable');
 session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
 
+// Track and profile Node.js Worker threads dynamically
+const workerSessions = new Map();
+session.on('NodeWorker.attachedToWorker', (event) => {
+  const info = event.params || event;
+  const workerSession = new inspector.Session();
+  try {
+    workerSession.connect(info.sessionId);
+    workerSession.post('Profiler.enable');
+    workerSession.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
+    workerSessions.set(info.sessionId, workerSession);
+  } catch (e) {}
+});
+
+session.on('NodeWorker.detachedFromWorker', (event) => {
+  const info = event.params || event;
+  workerSessions.delete(info.sessionId);
+});
+
+session.post('NodeWorker.enable', { waitForDebuggerOnStart: false });
+
 // Intercept stdin and stdout
 const realStdin = process.stdin;
 const realStdout = process.stdout;
@@ -42,55 +62,73 @@ const customStdout = new Writable({
 Object.defineProperty(process, 'stdin', { value: customStdin, writable: true, configurable: true });
 Object.defineProperty(process, 'stdout', { value: customStdout, writable: true, configurable: true });
 
-// Read from the real stdin (fuzzer inputs)
-let inputBuffer = '';
-realStdin.on('data', (chunk) => {
-  inputBuffer += chunk.toString();
-  let lineEnd;
-  while ((lineEnd = inputBuffer.indexOf('\n')) !== -1) {
-    const line = inputBuffer.slice(0, lineEnd).trim();
-    inputBuffer = inputBuffer.slice(lineEnd + 1);
-    if (line) {
-      handleFuzzerInput(line);
+import net from 'node:net';
+
+const socketPath = process.env.FUZZER_SOCKET_PATH || '/tmp/mcp_fuzzer.sock';
+
+const socketServer = net.createServer((socket) => {
+  let socketBuffer = '';
+
+  socket.on('data', (chunk) => {
+    socketBuffer += chunk.toString();
+    let lineEnd;
+    while ((lineEnd = socketBuffer.indexOf('\n')) !== -1) {
+      const line = socketBuffer.slice(0, lineEnd).trim();
+      socketBuffer = socketBuffer.slice(lineEnd + 1);
+      if (line) {
+        handleSocketMessage(socket, line);
+      }
     }
-  }
+  });
 });
 
-let isFuzzingCall = false;
+try {
+  if (fs.existsSync(socketPath)) {
+    fs.unlinkSync(socketPath);
+  }
+} catch (e) {}
 
-function handleFuzzerInput(line) {
+socketServer.listen(socketPath, () => {
+  realStdout.write(`SOCKET_READY:${socketPath}\n`);
+});
+
+function handleSocketMessage(socket, line) {
   try {
     const msg = JSON.parse(line);
     if (msg.method === 'tools/call') {
+      activeSocket = socket;
       isFuzzingCall = true;
     }
-  } catch (e) {
-    // Not a valid JSON or not a tool call
-  }
+  } catch (e) {}
   // Forward to target script stdin
   customStdin.push(line + '\n');
 }
 
+let activeSocket = null;
+let isFuzzingCall = false;
+
 function handleTargetStdout(chunk) {
   const dataStr = chunk.toString();
-  if (isFuzzingCall) {
+  if (isFuzzingCall && activeSocket) {
+    const targetSocket = activeSocket;
     isFuzzingCall = false;
     
     // Take precise coverage without stopping it
     session.post('Profiler.takePreciseCoverage', (err, covRes) => {
-      // Output the response to real stdout first
-      realStdout.write(chunk);
-      
-      // Process and output coverage metadata line
+      const combinedResults = [];
       if (!err && covRes && covRes.result) {
-        const coverageReport = processCoverage(covRes.result);
-        realStdout.write('COV: ' + JSON.stringify(coverageReport) + '\n');
-      } else {
-        realStdout.write('COV: []\n');
+        combinedResults.push(...covRes.result);
       }
+
+      const coverageReport = processCoverage(combinedResults);
+      const payload = JSON.stringify({
+        response: dataStr.trim(),
+        coverage: coverageReport
+      }) + '\n';
+
+      targetSocket.write(payload);
     });
   } else {
-    // Just forward it (e.g. initialization logs, standard MCP messages)
     realStdout.write(chunk);
   }
 }
@@ -134,12 +172,24 @@ function offsetToLine(offsets, offset) {
   return 1;
 }
 
-const targetDir = path.dirname(targetScript);
+// Find package root (directory containing package.json or the parent of build/src)
+let targetDir = path.dirname(targetScript);
+while (targetDir !== path.parse(targetDir).root) {
+  if (fs.existsSync(path.join(targetDir, 'package.json'))) {
+    break;
+  }
+  targetDir = path.dirname(targetDir);
+}
+
+const localFileCache = new Map();
 
 function isLocalFile(fileUrl) {
   if (!fileUrl.startsWith('file://')) return false;
+  if (localFileCache.has(fileUrl)) return localFileCache.get(fileUrl);
   const filePath = fileURLToPath(fileUrl);
-  return filePath.startsWith(targetDir) && !filePath.includes('node_modules');
+  const matched = filePath.startsWith(targetDir) && !filePath.includes('node_modules') && !filePath.includes('.venv');
+  localFileCache.set(fileUrl, matched);
+  return matched;
 }
 
 function processCoverage(result) {
