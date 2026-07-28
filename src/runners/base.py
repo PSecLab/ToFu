@@ -8,6 +8,7 @@ class RunnerResult:
     result: Any = None
     error: Optional[str] = None
     execution_time_ms: float = 0.0
+    accessed_files: list = field(default_factory=list)
 
 class BaseRunner:
     def __init__(self, command: str, args: list, target_tool: str):

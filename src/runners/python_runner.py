@@ -170,105 +170,109 @@ class PythonRunner(BaseRunner):
         start_time = time.perf_counter()
 
         val = None
+        from ..sanitizers.introspection import FileAccessTracer
+        tracer = FileAccessTracer()
+        
         # Save previous trace function
         old_trace = sys.gettrace()
         if self.enable_trace:
             sys.settrace(trace_lines)
         try:
-            if self.mcp_server:
-                # Use JSON-RPC stdio emulator in-process to run the full server pipeline
-                import anyio
-                import mcp.types as types
-                from mcp.shared.message import SessionMessage
+            with tracer:
+                if self.mcp_server:
+                    # Use JSON-RPC stdio emulator in-process to run the full server pipeline
+                    import anyio
+                    import mcp.types as types
+                    from mcp.shared.message import SessionMessage
 
-                async def run_test():
-                    read_stream_writer, read_stream = anyio.create_memory_object_stream(10)
-                    write_stream, write_stream_reader = anyio.create_memory_object_stream(10)
+                    async def run_test():
+                        read_stream_writer, read_stream = anyio.create_memory_object_stream(10)
+                        write_stream, write_stream_reader = anyio.create_memory_object_stream(10)
 
-                    async with anyio.create_task_group() as tg:
-                        tg.start_soon(
-                            self.mcp_server.run,
-                            read_stream,
-                            write_stream,
-                            self.mcp_server.create_initialization_options()
-                        )
+                        async with anyio.create_task_group() as tg:
+                            tg.start_soon(
+                                self.mcp_server.run,
+                                read_stream,
+                                write_stream,
+                                self.mcp_server.create_initialization_options()
+                            )
 
-                        # 1. Initialize Handshake
-                        init_req = types.JSONRPCMessage.model_validate({
-                            "jsonrpc": "2.0",
-                            "id": 1,
-                            "method": "initialize",
-                            "params": {
-                                "protocolVersion": "2024-11-05",
-                                "capabilities": {},
-                                "clientInfo": {"name": "fuzzer", "version": "1.0"}
-                            }
-                        })
-                        await read_stream_writer.send(SessionMessage(init_req))
-                        await write_stream_reader.receive()
+                            # 1. Initialize Handshake
+                            init_req = types.JSONRPCMessage.model_validate({
+                                "jsonrpc": "2.0",
+                                "id": 1,
+                                "method": "initialize",
+                                "params": {
+                                    "protocolVersion": "2024-11-05",
+                                    "capabilities": {},
+                                    "clientInfo": {"name": "fuzzer", "version": "1.0"}
+                                }
+                            })
+                            await read_stream_writer.send(SessionMessage(init_req))
+                            await write_stream_reader.receive()
 
-                        # 2. Initialized Notification
-                        initialized_notif = types.JSONRPCMessage.model_validate({
-                            "jsonrpc": "2.0",
-                            "method": "notifications/initialized"
-                        })
-                        await read_stream_writer.send(SessionMessage(initialized_notif))
+                            # 2. Initialized Notification
+                            initialized_notif = types.JSONRPCMessage.model_validate({
+                                "jsonrpc": "2.0",
+                                "method": "notifications/initialized"
+                            })
+                            await read_stream_writer.send(SessionMessage(initialized_notif))
 
-                        # 3. Call Tool Request
-                        call_req = types.JSONRPCMessage.model_validate({
-                            "jsonrpc": "2.0",
-                            "id": 2,
-                            "method": "tools/call",
-                            "params": {
-                                "name": self.target_tool,
-                                "arguments": arguments
-                            }
-                        })
-                        await read_stream_writer.send(SessionMessage(call_req))
-                        call_resp = await write_stream_reader.receive()
+                            # 3. Call Tool Request
+                            call_req = types.JSONRPCMessage.model_validate({
+                                "jsonrpc": "2.0",
+                                "id": 2,
+                                "method": "tools/call",
+                                "params": {
+                                    "name": self.target_tool,
+                                    "arguments": arguments
+                                }
+                            })
+                            await read_stream_writer.send(SessionMessage(call_req))
+                            call_resp = await write_stream_reader.receive()
 
-                        # Clean up server by closing the streams
-                        await read_stream_writer.aclose()
-                        await write_stream.aclose()
+                            # Clean up server by closing the streams
+                            await read_stream_writer.aclose()
+                            await write_stream.aclose()
 
-                        return call_resp
+                            return call_resp
 
-                rpc_resp = anyio.run(run_test)
-                if hasattr(rpc_resp, 'message'):
-                    msg = rpc_resp.message
-                    if hasattr(msg, "root"):
-                        msg = msg.root
-                    if isinstance(msg, types.JSONRPCError):
-                        success = False
-                        error_msg = msg.error.message
-                        print(f"[PythonRunner] MCP Server JSON-RPC Error: {error_msg}", file=sys.stderr)
-                    elif isinstance(msg, types.JSONRPCResponse):
-                        res_data = msg.result
-                        if isinstance(res_data, dict) and res_data.get("isError"):
+                    rpc_resp = anyio.run(run_test)
+                    if hasattr(rpc_resp, 'message'):
+                        msg = rpc_resp.message
+                        if hasattr(msg, "root"):
+                            msg = msg.root
+                        if isinstance(msg, types.JSONRPCError):
                             success = False
-                            error_msg = str(res_data.get("content", "Tool reported error"))
-                        else:
-                            success = True
-                            content = res_data.get("content", []) if isinstance(res_data, dict) else []
-                            if isinstance(content, list):
-                                text_contents = []
-                                for block in content:
-                                    if isinstance(block, dict) and block.get("type") == "text":
-                                        text_contents.append(block.get("text", ""))
-                                    elif hasattr(block, "text"):
-                                        text_contents.append(block.text)
-                                val = "\n".join(text_contents)
+                            error_msg = msg.error.message
+                            print(f"[PythonRunner] MCP Server JSON-RPC Error: {error_msg}", file=sys.stderr)
+                        elif isinstance(msg, types.JSONRPCResponse):
+                            res_data = msg.result
+                            if isinstance(res_data, dict) and res_data.get("isError"):
+                                success = False
+                                error_msg = str(res_data.get("content", "Tool reported error"))
                             else:
-                                val = str(res_data)
-            else:
-                # Direct invocation fallback (if not an MCP server)
-                sig = inspect.signature(self.target_func)
-                has_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
-                if has_kwargs:
-                    val = self.target_func(**arguments)
+                                success = True
+                                content = res_data.get("content", []) if isinstance(res_data, dict) else []
+                                if isinstance(content, list):
+                                    text_contents = []
+                                    for block in content:
+                                        if isinstance(block, dict) and block.get("type") == "text":
+                                            text_contents.append(block.get("text", ""))
+                                        elif hasattr(block, "text"):
+                                            text_contents.append(block.text)
+                                    val = "\n".join(text_contents)
+                                else:
+                                    val = str(res_data)
                 else:
-                    filtered_args = {k: v for k, v in arguments.items() if k in sig.parameters}
-                    val = self.target_func(**filtered_args)
+                    # Direct invocation fallback (if not an MCP server)
+                    sig = inspect.signature(self.target_func)
+                    has_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
+                    if has_kwargs:
+                        val = self.target_func(**arguments)
+                    else:
+                        filtered_args = {k: v for k, v in arguments.items() if k in sig.parameters}
+                        val = self.target_func(**filtered_args)
         except KeyboardInterrupt:
             raise
         except BaseException as e:
@@ -288,7 +292,8 @@ class PythonRunner(BaseRunner):
             coverage=covered_lines,
             result=val,
             error=error_msg,
-            execution_time_ms=execution_time_ms
+            execution_time_ms=execution_time_ms,
+            accessed_files=tracer.accessed_files
         )
 
     def get_tool_metadata(self, tool_name: str) -> tuple:

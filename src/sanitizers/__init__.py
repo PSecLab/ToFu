@@ -45,8 +45,13 @@ from .mcp_oracles import (
     check_unhandled_promise_rejection,
     check_process_and_fd_leaks
 )
+from .introspection import (
+    check_file_access,
+    FileAccessTracer
+)
 
 AVAILABLE_SANITIZERS = {
+    "check_file_access": "Introspection sanitizer: Monitors file system access during tool execution to detect reads/writes to sensitive files like /etc/passwd.",
     "check_unhandled_promise_rejection": "Detects unhandled promise rejections or unhandled exceptions in MCP server tool responses.",
     "check_process_and_fd_leaks": "Detects leaked background subprocesses or orphaned child processes after tool execution.",
 

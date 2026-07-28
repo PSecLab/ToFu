@@ -218,12 +218,19 @@ class MCPDifferentialFuzzer:
             err_details += crash_err
 
         # 4.b Check unhandled promise rejections / JS runtime exceptions
-        from .sanitizers import check_unhandled_promise_rejection
+        from .sanitizers import check_unhandled_promise_rejection, check_file_access
         unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
         if unhandled_triggered:
             triggered_by.append("check_unhandled_promise_rejection")
             err_details += unhandled_err
 
+        # 4.c Run Introspection Sanitizer: check file system accesses during execution
+        accessed_files = getattr(res, "accessed_files", [])
+        if "check_file_access" in self.selected_sanitizer_names or True: # always active or if selected
+            file_access_triggered, file_access_err = check_file_access(accessed_files)
+            if file_access_triggered:
+                triggered_by.append("check_file_access")
+                err_details += file_access_err
 
         # 5. Check standard string-based sanitizers
         string_triggered, string_triggered_by, string_err = self._check_string_sanitizers(generated_arguments, res)
