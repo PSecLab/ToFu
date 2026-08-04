@@ -1,23 +1,118 @@
-import sys
 import os
-from mcp.server.fastmcp import FastMCP
+import sys
+import logging
 
-# Add tools-main/python to path
-sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "tools-main", "python"))
-from http_check import check_url_features
+# Add workspace root to sys.path so src imports work properly
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-mcp = FastMCP("HTTP Check MCP Server")
+from src.fuzzer import MCPDifferentialFuzzer
+from src.config import FuzzerConfig
 
-@mcp.tool()
-def check_http_url(url: str) -> str:
-    """
-    Checks features of a URL (Gzip, ETag, Last-Modified) using standard urllib.
-    """
-    try:
-        check_url_features(url)
-        return "Check completed successfully"
-    except Exception as e:
-        raise e
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def main():
+    python_path = sys.executable
+    server_script = os.path.abspath(
+        os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "third_party",
+            "tools-main",
+            "python",
+            "http_check.py"
+        )
+    )
+
+    sandbox_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "tools-main")
+    )
+
+    config = FuzzerConfig(
+        timeout_limit=10.0,
+        allowed_workspace_dir=sandbox_dir,
+        unexpected_crashes=(
+            "TypeError",
+            "ValueError",
+            "KeyError",
+            "IndexError",
+            "AttributeError",
+            "UnboundLocalError",
+            "AssertionError",
+            "URLError",
+            "HTTPError"
+        )
+    )
+
+    # Predefined seeds targeting http_check functionality
+    predefined_seeds = [
+        {"url": "https://example.com"},
+        {"url": "http://127.0.0.1"},
+        {"url": "http://localhost:8000"},
+        {"url": "file:///etc/passwd"},
+        {"url": "https://httpbin.org/get"}
+    ]
+
+    logger.info("Initializing fuzzer for tools-main (http_check.py) with 30+ sanitizers enabled...")
+
+    fuzzer = MCPDifferentialFuzzer(
+        command=python_path,
+        args=[server_script],
+        target_tool="check_url_features",
+        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
+        config=config,
+        override_rules={
+            "check_file_access": {},
+            "check_introspection_path_traversal": {},
+            "check_untrusted_deserialization": {},
+            "check_introspection_command_injection": {},
+            "check_introspection_sql_injection": {},
+            "check_unrestricted_file_upload": {},
+            "check_introspection_code_injection": {},
+            "check_introspection_ssrf": {},
+            "check_introspection_temp_file_leak": {},
+            "check_introspection_log_injection": {},
+            "check_introspection_sensitive_data_logging": {},
+            "check_introspection_ssl_verification": {},
+            "check_introspection_sensitive_file_access": {},
+            "check_introspection_unrestricted_ip_binding": {},
+            "check_introspection_redos": {},
+            "check_introspection_blocking_event_loop_call": {},
+            "check_introspection_hardcoded_credentials": {},
+            "check_introspection_weak_hash": {},
+            "check_introspection_weak_prng": {},
+            "check_introspection_nonce_reuse": {},
+            "check_introspection_unverified_code_download": {},
+            "check_introspection_xxe": {},
+            "check_introspection_data_amplification": {},
+            "check_introspection_argument_injection": {},
+            "check_introspection_csv_formula_injection": {},
+            "check_introspection_symlink_following": {},
+            "check_introspection_insecure_temp_permissions": {},
+            "check_introspection_sensitive_error_leak": {},
+            "check_introspection_reachable_assertion": {},
+            "check_introspection_cleartext_sensitive_storage": {},
+            "check_introspection_cleartext_sensitive_transmission": {},
+            "check_introspection_failed_init_non_exit": {},
+            "check_introspection_incomplete_cleanup": {},
+            "check_introspection_unchecked_loop_condition": {},
+            "check_introspection_memory_access_violation": {},
+            "check_introspection_divide_by_zero": {},
+            "check_introspection_insecure_file_permissions": {},
+            "check_introspection_deadlock": {},
+            "check_introspection_file_descriptor_leak": {},
+            "check_introspection_prototype_pollution": {},
+            "check_introspection_external_config_control": {},
+            "check_introspection_format_string": {},
+            "check_introspection_type_confusion": {},
+            "check_introspection_cross_session_data_leak": {},
+            "check_unexpected_crash": {},
+            "check_resource_exhaustion": {}
+        },
+        predefined_seeds=predefined_seeds
+    )
+
+    # Run for 5 minutes (300 seconds) as requested
+    fuzzer.run(time_per_iteration=300)
 
 if __name__ == "__main__":
-    mcp.run()
+    main()

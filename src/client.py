@@ -1,13 +1,11 @@
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-from .interfaces import BaseMetadataProvider
 
 import json
 import subprocess
 import os
-from .interfaces import BaseMetadataProvider
 
-class MCPInspector(BaseMetadataProvider):
+class MCPInspector:
     def __init__(self, command: str, args: list, env: dict = None):
         self.command = command
         self.args = args
@@ -57,10 +55,19 @@ class MCPInspector(BaseMetadataProvider):
             }) + "\n")
             proc.stdin.flush()
 
-            resp_line = proc.stdout.readline()
-            data = json.loads(resp_line)
-            tools = data.get("result", {}).get("tools", [])
-            return tools
+            # Read lines until matching response id=2 is received
+            while True:
+                resp_line = proc.stdout.readline()
+                if not resp_line:
+                    break
+                try:
+                    data = json.loads(resp_line)
+                    if data.get("id") == 2 and "result" in data:
+                        tools = data.get("result", {}).get("tools", [])
+                        return tools
+                except Exception:
+                    continue
+            return []
         finally:
             try:
                 proc.terminate()

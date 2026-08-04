@@ -22,8 +22,14 @@ def main():
         )
     )
 
+    # Define a restricted dedicated workspace directory for DesktopCommanderMCP
+    sandbox_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "third_party", "DesktopCommanderMCP")
+    )
+
     config = FuzzerConfig(
         timeout_limit=10.0,
+        allowed_workspace_dir=sandbox_dir,
         unexpected_crashes=(
             "TypeError",
             "RangeError",
@@ -36,7 +42,7 @@ def main():
         )
     )
 
-    # Configure the fuzzer to target read_file of DesktopCommanderMCP
+    # Configure the fuzzer to target read_file of DesktopCommanderMCP with Introspection Path Traversal
     fuzzer = MCPDifferentialFuzzer(
         command="node",
         args=[server_path],
@@ -45,11 +51,10 @@ def main():
         file_backed_params={}, 
         config=config,
         override_rules={
+            "check_introspection_path_traversal": {},
+            "check_file_access": {},
             "check_unexpected_crash": {},
-            "check_resource_exhaustion": {},
-            "check_path_traversal": {},
-            "check_local_file_uri": {},
-            "check_unsafe_url_ssrf": {}
+            "check_resource_exhaustion": {}
         },
         predefined_seeds=[
             {
@@ -59,8 +64,8 @@ def main():
                 "length": 10
             },
             {
-                "path": "http://127.0.0.1:8080/nonexistent",
-                "isUrl": True,
+                "path": "../../../etc/passwd",
+                "isUrl": False,
                 "offset": 0,
                 "length": 10
             }

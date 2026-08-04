@@ -149,6 +149,7 @@ class JSRunner(BaseRunner):
             response_line = self.sock_file.readline()
         except Exception as e:
             print(f"[JSRunner] Socket Communication Error: {e}", file=sys.stderr)
+            self.stop()
             return RunnerResult(success=False, coverage=set(), error=f"Socket error: {e}")
 
         response_obj = None

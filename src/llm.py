@@ -12,7 +12,6 @@ except ImportError:
         return func
 
 
-from . import seed_generators
 
 logger = logging.getLogger(__name__)
 

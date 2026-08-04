@@ -5,6 +5,28 @@ import inspect
 import time
 from typing import Callable, Dict, Any
 from .base import BaseRunner, RunnerResult
+from ..sanitizers.introspection import (
+    FileAccessTracer,
+    DeserializationTracer,
+    CommandExecutionTracer,
+    SQLExecutionTracer,
+    FileWriteTracer,
+    CodeExecutionTracer,
+    NetworkExecutionTracer,
+    TempFileLeakTracer,
+    LogInjectionTracer,
+    SensitiveDataLoggingTracer,
+    SSLCertificateValidationTracer,
+    UnrestrictedIPBindingTracer,
+    ReDoSTracer,
+    BlockingEventLoopCallTracer,
+    WeakHashTracer,
+    WeakPRNGTracer,
+    NonceReuseTracer,
+    UnverifiedCodeDownloadTracer,
+    XXETracer,
+    DataAmplificationTracer
+)
 
 class PythonRunner(BaseRunner):
     def __init__(self, command: str, args: list, target_tool: str):
@@ -143,11 +165,11 @@ class PythonRunner(BaseRunner):
                 except Exception as e:
                     pass
 
-        if not self.target_func:
+        if not self.target_func and not self.mcp_server:
             raise AttributeError(f"Could not find callable tool/function '{self.target_tool}' in module '{self.module_name}'")
 
     def execute(self, arguments: dict) -> RunnerResult:
-        if not self.target_func:
+        if not self.target_func and not self.mcp_server:
             return RunnerResult(success=False, coverage=set(), error="Runner not started or function not found")
 
         covered_lines = set()
@@ -170,15 +192,59 @@ class PythonRunner(BaseRunner):
         start_time = time.perf_counter()
 
         val = None
-        from ..sanitizers.introspection import FileAccessTracer
+        from ..sanitizers.introspection import (
+            FileAccessTracer, DeserializationTracer, CommandExecutionTracer, 
+            SQLExecutionTracer, FileWriteTracer, CodeExecutionTracer, NetworkExecutionTracer, TempFileLeakTracer,
+            LogInjectionTracer, SSLCertificateValidationTracer
+        )
         tracer = FileAccessTracer()
+        deser_tracer = DeserializationTracer()
+        cmd_tracer = CommandExecutionTracer()
+        sql_tracer = SQLExecutionTracer()
+        file_write_tracer = FileWriteTracer()
+        code_tracer = CodeExecutionTracer()
+        net_tracer = NetworkExecutionTracer()
+        temp_leak_tracer = TempFileLeakTracer()
+        log_tracer = LogInjectionTracer()
+        ssl_tracer = SSLCertificateValidationTracer()
+        bind_tracer = UnrestrictedIPBindingTracer()
+        redos_tracer = ReDoSTracer()
+        blocking_tracer = BlockingEventLoopCallTracer()
+        hash_tracer = WeakHashTracer()
+        prng_tracer = WeakPRNGTracer()
+        nonce_tracer = NonceReuseTracer()
+        download_tracer = UnverifiedCodeDownloadTracer()
+        xxe_tracer = XXETracer()
+        amplification_tracer = DataAmplificationTracer()
+        
+        from contextlib import ExitStack
         
         # Save previous trace function
         old_trace = sys.gettrace()
         if self.enable_trace:
             sys.settrace(trace_lines)
         try:
-            with tracer:
+            with ExitStack() as stack:
+                stack.enter_context(tracer)
+                stack.enter_context(deser_tracer)
+                stack.enter_context(cmd_tracer)
+                stack.enter_context(sql_tracer)
+                stack.enter_context(file_write_tracer)
+                stack.enter_context(code_tracer)
+                stack.enter_context(net_tracer)
+                stack.enter_context(temp_leak_tracer)
+                stack.enter_context(log_tracer)
+                stack.enter_context(ssl_tracer)
+                stack.enter_context(bind_tracer)
+                stack.enter_context(redos_tracer)
+                stack.enter_context(blocking_tracer)
+                stack.enter_context(hash_tracer)
+                stack.enter_context(prng_tracer)
+                stack.enter_context(nonce_tracer)
+                stack.enter_context(download_tracer)
+                stack.enter_context(xxe_tracer)
+                stack.enter_context(amplification_tracer)
+
                 if self.mcp_server:
                     # Use JSON-RPC stdio emulator in-process to run the full server pipeline
                     import anyio
@@ -287,7 +353,7 @@ class PythonRunner(BaseRunner):
         end_time = time.perf_counter()
         execution_time_ms = (end_time - start_time) * 1000.0
 
-        return RunnerResult(
+        res_obj = RunnerResult(
             success=success,
             coverage=covered_lines,
             result=val,
@@ -295,6 +361,25 @@ class PythonRunner(BaseRunner):
             execution_time_ms=execution_time_ms,
             accessed_files=tracer.accessed_files
         )
+        res_obj.deserialization_calls = deser_tracer.deserialization_calls
+        res_obj.executed_commands = cmd_tracer.executed_commands
+        res_obj.sql_queries = sql_tracer.sql_queries
+        res_obj.written_files = file_write_tracer.written_files
+        res_obj.evaluated_code_calls = code_tracer.evaluated_code_calls
+        res_obj.network_connections = net_tracer.network_connections
+        res_obj.leaked_temp_files = temp_leak_tracer.leaked_temp_files
+        res_obj.logged_messages = getattr(log_tracer, "logged_messages", [])
+        res_obj.unverified_ssl_calls = getattr(ssl_tracer, "unverified_ssl_calls", [])
+        res_obj.bound_addresses = getattr(bind_tracer, "bound_addresses", [])
+        res_obj.slow_regex_calls = getattr(redos_tracer, "slow_regex_calls", [])
+        res_obj.blocking_calls = getattr(blocking_tracer, "blocking_calls", [])
+        res_obj.weak_hash_calls = getattr(hash_tracer, "weak_hash_calls", [])
+        res_obj.weak_prng_calls = getattr(prng_tracer, "weak_prng_calls", [])
+        res_obj.reused_nonces = getattr(nonce_tracer, "reused_nonces", [])
+        res_obj.unverified_downloads = getattr(download_tracer, "unverified_downloads", [])
+        res_obj.xxe_calls = getattr(xxe_tracer, "xxe_calls", [])
+        res_obj.amplification_calls = getattr(amplification_tracer, "amplification_calls", [])
+        return res_obj
 
     def get_tool_metadata(self, tool_name: str) -> tuple:
         if not self.target_func:

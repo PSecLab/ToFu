@@ -21,3 +21,4 @@ class FuzzerConfig:
         "bs4",
         "jinja2"
     ])
+    allowed_workspace_dir: str = None

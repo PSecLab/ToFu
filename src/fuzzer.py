@@ -217,20 +217,350 @@ class MCPDifferentialFuzzer:
             triggered_by.append("check_unexpected_crash")
             err_details += crash_err
 
-        # 4.b Check unhandled promise rejections / JS runtime exceptions
-        from .sanitizers import check_unhandled_promise_rejection, check_file_access
+        # 4.c Run Introspection Sanitizers: check file system accesses, deserialization, command execution, SQL queries, file uploads, code injection, SSRF, and temp leaks
+        from .sanitizers import (
+            check_unhandled_promise_rejection, check_file_access, check_introspection_path_traversal, 
+            check_untrusted_deserialization, check_introspection_command_injection, check_introspection_sql_injection,
+            check_unrestricted_file_upload, check_introspection_code_injection, check_introspection_ssrf,
+            check_introspection_temp_file_leak, check_introspection_log_injection, check_introspection_sensitive_data_logging,
+            check_introspection_ssl_verification, check_introspection_sensitive_file_access,
+            check_introspection_unrestricted_ip_binding, check_introspection_redos,
+            check_introspection_blocking_event_loop_call, check_introspection_hardcoded_credentials,
+            check_introspection_weak_hash, check_introspection_weak_prng, check_introspection_nonce_reuse,
+            check_introspection_unverified_code_download, check_introspection_xxe, check_introspection_data_amplification,
+            check_introspection_argument_injection, check_introspection_csv_formula_injection,
+            check_introspection_symlink_following, check_introspection_insecure_temp_permissions,
+            check_introspection_sensitive_error_leak, check_introspection_reachable_assertion,
+            check_introspection_cleartext_sensitive_storage, check_introspection_cleartext_sensitive_transmission,
+            check_introspection_failed_init_non_exit, check_introspection_incomplete_cleanup,
+            check_introspection_unchecked_loop_condition, check_introspection_memory_access_violation,
+            check_introspection_divide_by_zero, check_introspection_insecure_file_permissions,
+            check_introspection_deadlock, check_introspection_file_descriptor_leak,
+            check_introspection_prototype_pollution, check_introspection_external_config_control,
+            check_introspection_format_string, check_introspection_type_confusion,
+            check_introspection_cross_session_data_leak
+        )
         unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
         if unhandled_triggered:
             triggered_by.append("check_unhandled_promise_rejection")
             err_details += unhandled_err
 
-        # 4.c Run Introspection Sanitizer: check file system accesses during execution
+        prev_session_data = getattr(res, "prev_session_data", "")
+        current_out = str(getattr(res, "result", ""))
+        if "check_introspection_cross_session_data_leak" in self.selected_sanitizer_names or (prev_session_data and current_out):
+            cs_triggered, cs_err = check_introspection_cross_session_data_leak(prev_session_data, current_out)
+            if cs_triggered:
+                triggered_by.append("check_introspection_cross_session_data_leak")
+                err_details += cs_err
+
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_type_confusion" in self.selected_sanitizer_names or error_string:
+            tc_triggered, tc_err = check_introspection_type_confusion(error_string)
+            if tc_triggered:
+                triggered_by.append("check_introspection_type_confusion")
+                err_details += tc_err
+
+        error_string = str(getattr(res, "error", ""))
+        logs_list = getattr(res, "logs", [])
+        if "check_introspection_format_string" in self.selected_sanitizer_names or error_string or logs_list:
+            fmt_triggered, fmt_err = check_introspection_format_string(error_string, logs_list)
+            if fmt_triggered:
+                triggered_by.append("check_introspection_format_string")
+                err_details += fmt_err
+
+        mod_env = getattr(res, "modified_env_vars", [])
+        if "check_introspection_external_config_control" in self.selected_sanitizer_names or mod_env:
+            env_triggered, env_err = check_introspection_external_config_control(mod_env)
+            if env_triggered:
+                triggered_by.append("check_introspection_external_config_control")
+                err_details += env_err
+
+        # Check prototype pollution in test input / payload
+        input_args = getattr(res, "input_args", None)
+        if "check_introspection_prototype_pollution" in self.selected_sanitizer_names or input_args:
+            proto_triggered, proto_err = check_introspection_prototype_pollution(input_args)
+            if proto_triggered:
+                triggered_by.append("check_introspection_prototype_pollution")
+                err_details += proto_err
+
+        leaked_fds = getattr(res, "leaked_fds", [])
+        if "check_introspection_file_descriptor_leak" in self.selected_sanitizer_names or leaked_fds:
+            fd_triggered, fd_err = check_introspection_file_descriptor_leak(len(leaked_fds), leaked_fds)
+            if fd_triggered:
+                triggered_by.append("check_introspection_file_descriptor_leak")
+                err_details += fd_err
+
+        is_timeout = getattr(res, "timed_out", False)
+        active_locks = getattr(res, "active_locks_count", 0)
+        if "check_introspection_deadlock" in self.selected_sanitizer_names or is_timeout:
+            dead_triggered, dead_err = check_introspection_deadlock(is_timeout, active_locks)
+            if dead_triggered:
+                triggered_by.append("check_introspection_deadlock")
+                err_details += dead_err
+
+        exit_code = getattr(res, "exit_code", 0)
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_divide_by_zero" in self.selected_sanitizer_names or error_string:
+            div_triggered, div_err = check_introspection_divide_by_zero(error_string)
+            if div_triggered:
+                triggered_by.append("check_introspection_divide_by_zero")
+                err_details += div_err
+
+        if "check_introspection_memory_access_violation" in self.selected_sanitizer_names or exit_code or error_string:
+            mem_triggered, mem_err = check_introspection_memory_access_violation(exit_code, error_string)
+            if mem_triggered:
+                triggered_by.append("check_introspection_memory_access_violation")
+                err_details += mem_err
+
+        loop_count = getattr(res, "loop_iterations", 0)
+        if "check_introspection_unchecked_loop_condition" in self.selected_sanitizer_names or loop_count:
+            loop_triggered, loop_err = check_introspection_unchecked_loop_condition(loop_count)
+            if loop_triggered:
+                triggered_by.append("check_introspection_unchecked_loop_condition")
+                err_details += loop_err
+
+        logged_msgs = getattr(res, "logged_messages", [])
+        is_success = getattr(res, "success", True)
+        if "check_introspection_failed_init_non_exit" in self.selected_sanitizer_names or logged_msgs:
+            init_triggered, init_err = check_introspection_failed_init_non_exit(is_success, logged_msgs)
+            if init_triggered:
+                triggered_by.append("check_introspection_failed_init_non_exit")
+                err_details += init_err
+
+        leaked_temps = getattr(res, "leaked_temp_files", [])
+        if "check_introspection_incomplete_cleanup" in self.selected_sanitizer_names or leaked_temps:
+            clean_triggered, clean_err = check_introspection_incomplete_cleanup(leaked_temps)
+            if clean_triggered:
+                triggered_by.append("check_introspection_incomplete_cleanup")
+                err_details += clean_err
+
+        net_conns = getattr(res, "network_connections", [])
+        if "check_introspection_cleartext_sensitive_transmission" in self.selected_sanitizer_names or net_conns:
+            trans_triggered, trans_err = check_introspection_cleartext_sensitive_transmission(net_conns)
+            if trans_triggered:
+                triggered_by.append("check_introspection_cleartext_sensitive_transmission")
+                err_details += trans_err
+
+        # Check errors / stack traces for sensitive disclosures (CWE-209) and reachable assertion DoS (CWE-617)
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_sensitive_error_leak" in self.selected_sanitizer_names or error_string:
+            leak_triggered, leak_err = check_introspection_sensitive_error_leak(error_string)
+            if leak_triggered:
+                triggered_by.append("check_introspection_sensitive_error_leak")
+                err_details += leak_err
+
+        if "check_introspection_reachable_assertion" in self.selected_sanitizer_names or error_string:
+            assert_triggered, assert_err = check_introspection_reachable_assertion(error_string)
+            if assert_triggered:
+                triggered_by.append("check_introspection_reachable_assertion")
+                err_details += assert_err
+
+        accessed_files = getattr(res, "accessed_files", [])
+        if "check_introspection_symlink_following" in self.selected_sanitizer_names or accessed_files:
+            sym_triggered, sym_err = check_introspection_symlink_following(accessed_files)
+            if sym_triggered:
+                triggered_by.append("check_introspection_symlink_following")
+                err_details += sym_err
+
+        written_files = getattr(res, "written_files", [])
+        if "check_introspection_insecure_file_permissions" in self.selected_sanitizer_names or written_files:
+            file_perm_triggered, file_perm_err = check_introspection_insecure_file_permissions(written_files)
+            if file_perm_triggered:
+                triggered_by.append("check_introspection_insecure_file_permissions")
+                err_details += file_perm_err
+
+        if "check_introspection_cleartext_sensitive_storage" in self.selected_sanitizer_names or written_files:
+            store_triggered, store_err = check_introspection_cleartext_sensitive_storage(written_files)
+            if store_triggered:
+                triggered_by.append("check_introspection_cleartext_sensitive_storage")
+                err_details += store_err
+
+        if "check_introspection_insecure_temp_permissions" in self.selected_sanitizer_names or written_files:
+            perm_triggered, perm_err = check_introspection_insecure_temp_permissions(written_files)
+            if perm_triggered:
+                triggered_by.append("check_introspection_insecure_temp_permissions")
+                err_details += perm_err
+
+        if "check_introspection_csv_formula_injection" in self.selected_sanitizer_names or written_files:
+            csv_triggered, csv_err = check_introspection_csv_formula_injection(written_files)
+            if csv_triggered:
+                triggered_by.append("check_introspection_csv_formula_injection")
+                err_details += csv_err
+
+        executed_cmds = getattr(res, "executed_commands", [])
+        if "check_introspection_unnecessary_root_privileges" in self.selected_sanitizer_names or executed_cmds:
+            root_triggered, root_err = check_introspection_unnecessary_root_privileges(executed_cmds)
+            if root_triggered:
+                triggered_by.append("check_introspection_unnecessary_root_privileges")
+                err_details += root_err
+
+        if "check_introspection_argument_injection" in self.selected_sanitizer_names or executed_cmds:
+            arg_triggered, arg_err = check_introspection_argument_injection(executed_cmds)
+            if arg_triggered:
+                triggered_by.append("check_introspection_argument_injection")
+                err_details += arg_err
+
+        xxe_ops = getattr(res, "xxe_calls", [])
+        if "check_introspection_xxe" in self.selected_sanitizer_names or xxe_ops:
+            xxe_triggered, xxe_err = check_introspection_xxe(xxe_ops)
+            if xxe_triggered:
+                triggered_by.append("check_introspection_xxe")
+                err_details += xxe_err
+
+        amp_ops = getattr(res, "amplification_calls", [])
+        if "check_introspection_data_amplification" in self.selected_sanitizer_names or amp_ops:
+            amp_triggered, amp_err = check_introspection_data_amplification(amp_ops)
+            if amp_triggered:
+                triggered_by.append("check_introspection_data_amplification")
+                err_details += amp_err
+
+        unverified_dl = getattr(res, "unverified_downloads", [])
+        if "check_introspection_unverified_code_download" in self.selected_sanitizer_names or unverified_dl:
+            dl_triggered, dl_err = check_introspection_unverified_code_download(unverified_dl)
+            if dl_triggered:
+                triggered_by.append("check_introspection_unverified_code_download")
+                err_details += dl_err
+
+        reused_nonces = getattr(res, "reused_nonces", [])
+        if "check_introspection_nonce_reuse" in self.selected_sanitizer_names or reused_nonces:
+            nonce_triggered, nonce_err = check_introspection_nonce_reuse(reused_nonces)
+            if nonce_triggered:
+                triggered_by.append("check_introspection_nonce_reuse")
+                err_details += nonce_err
+
+        weak_hashes = getattr(res, "weak_hash_calls", [])
+        if "check_introspection_weak_hash" in self.selected_sanitizer_names or weak_hashes:
+            hash_triggered, hash_err = check_introspection_weak_hash(weak_hashes)
+            if hash_triggered:
+                triggered_by.append("check_introspection_weak_hash")
+                err_details += hash_err
+
+        weak_prngs = getattr(res, "weak_prng_calls", [])
+        if "check_introspection_weak_prng" in self.selected_sanitizer_names or weak_prngs:
+            prng_triggered, prng_err = check_introspection_weak_prng(weak_prngs)
+            if prng_triggered:
+                triggered_by.append("check_introspection_weak_prng")
+                err_details += prng_err
+
+        # Check logged messages and result string for hardcoded credentials (CWE-798)
+        logged_msgs = getattr(res, "logged_messages", [])
+        runtime_strings = [str(res.result)] + [m.get("message", "") for m in logged_msgs if isinstance(m, dict)]
+        if "check_introspection_hardcoded_credentials" in self.selected_sanitizer_names or runtime_strings:
+            cred_triggered, cred_err = check_introspection_hardcoded_credentials(runtime_strings)
+            if cred_triggered:
+                triggered_by.append("check_introspection_hardcoded_credentials")
+                err_details += cred_err
+
+        blocking_ops = getattr(res, "blocking_calls", [])
+        if "check_introspection_blocking_event_loop_call" in self.selected_sanitizer_names or blocking_ops:
+            block_triggered, block_err = check_introspection_blocking_event_loop_call(blocking_ops)
+            if block_triggered:
+                triggered_by.append("check_introspection_blocking_event_loop_call")
+                err_details += block_err
+
+        slow_regex = getattr(res, "slow_regex_calls", [])
+        if "check_introspection_redos" in self.selected_sanitizer_names or slow_regex:
+            redos_triggered, redos_err = check_introspection_redos(slow_regex)
+            if redos_triggered:
+                triggered_by.append("check_introspection_redos")
+                err_details += redos_err
+
+        bound_addrs = getattr(res, "bound_addresses", [])
+        if "check_introspection_unrestricted_ip_binding" in self.selected_sanitizer_names or bound_addrs:
+            bind_triggered, bind_err = check_introspection_unrestricted_ip_binding(bound_addrs)
+            if bind_triggered:
+                triggered_by.append("check_introspection_unrestricted_ip_binding")
+                err_details += bind_err
+
+        acc_files = getattr(res, "accessed_files", [])
+        if "check_introspection_sensitive_file_access" in self.selected_sanitizer_names or acc_files:
+            sens_file_triggered, sens_file_err = check_introspection_sensitive_file_access(acc_files)
+            if sens_file_triggered:
+                triggered_by.append("check_introspection_sensitive_file_access")
+                err_details += sens_file_err
+
+        unverified_ssl = getattr(res, "unverified_ssl_calls", [])
+        if "check_introspection_ssl_verification" in self.selected_sanitizer_names or unverified_ssl:
+            ssl_triggered, ssl_err = check_introspection_ssl_verification(unverified_ssl)
+            if ssl_triggered:
+                triggered_by.append("check_introspection_ssl_verification")
+                err_details += ssl_err
+
+        logged_msgs = getattr(res, "logged_messages", [])
+        if "check_introspection_log_injection" in self.selected_sanitizer_names or logged_msgs:
+            log_inj_triggered, log_inj_err = check_introspection_log_injection(logged_msgs)
+            if log_inj_triggered:
+                triggered_by.append("check_introspection_log_injection")
+                err_details += log_inj_err
+
+        if "check_introspection_sensitive_data_logging" in self.selected_sanitizer_names or logged_msgs:
+            sens_triggered, sens_err = check_introspection_sensitive_data_logging(logged_msgs)
+            if sens_triggered:
+                triggered_by.append("check_introspection_sensitive_data_logging")
+                err_details += sens_err
+
+        leaked_tmp = getattr(res, "leaked_temp_files", [])
+        if "check_introspection_temp_file_leak" in self.selected_sanitizer_names or leaked_tmp:
+            temp_triggered, temp_err = check_introspection_temp_file_leak(leaked_tmp)
+            if temp_triggered:
+                triggered_by.append("check_introspection_temp_file_leak")
+                err_details += temp_err
+
+        net_calls = getattr(res, "network_connections", [])
+        if "check_introspection_ssrf" in self.selected_sanitizer_names or net_calls:
+            ssrf_triggered, ssrf_err = check_introspection_ssrf(net_calls)
+            if ssrf_triggered:
+                triggered_by.append("check_introspection_ssrf")
+                err_details += ssrf_err
+
+        code_calls = getattr(res, "evaluated_code_calls", [])
+        if "check_introspection_code_injection" in self.selected_sanitizer_names or code_calls:
+            code_triggered, code_err = check_introspection_code_injection(code_calls)
+            if code_triggered:
+                triggered_by.append("check_introspection_code_injection")
+                err_details += code_err
+
+        written_calls = getattr(res, "written_files", [])
+        if "check_unrestricted_file_upload" in self.selected_sanitizer_names or written_calls:
+            upload_triggered, upload_err = check_unrestricted_file_upload(written_calls)
+            if upload_triggered:
+                triggered_by.append("check_unrestricted_file_upload")
+                err_details += upload_err
+
+        sql_calls = getattr(res, "sql_queries", [])
+        if "check_introspection_sql_injection" in self.selected_sanitizer_names or sql_calls:
+            sql_triggered, sql_err = check_introspection_sql_injection(sql_calls)
+            if sql_triggered:
+                triggered_by.append("check_introspection_sql_injection")
+                err_details += sql_err
+
+        cmd_calls = getattr(res, "executed_commands", [])
+        if "check_introspection_command_injection" in self.selected_sanitizer_names or cmd_calls:
+            cmd_triggered, cmd_err = check_introspection_command_injection(cmd_calls)
+            if cmd_triggered:
+                triggered_by.append("check_introspection_command_injection")
+                err_details += cmd_err
+
+        deser_calls = getattr(res, "deserialization_calls", [])
+        if "check_untrusted_deserialization" in self.selected_sanitizer_names or deser_calls:
+            deser_triggered, deser_err = check_untrusted_deserialization(deser_calls)
+            if deser_triggered:
+                triggered_by.append("check_untrusted_deserialization")
+                err_details += deser_err
+
         accessed_files = getattr(res, "accessed_files", [])
         if "check_file_access" in self.selected_sanitizer_names or True: # always active or if selected
             file_access_triggered, file_access_err = check_file_access(accessed_files)
             if file_access_triggered:
                 triggered_by.append("check_file_access")
                 err_details += file_access_err
+
+        if "check_introspection_path_traversal" in self.selected_sanitizer_names:
+            allowed_dir = getattr(self.config, "allowed_workspace_dir", None) or os.getcwd()
+            pt_triggered, pt_err = check_introspection_path_traversal(accessed_files, allowed_base_dir=allowed_dir)
+            if pt_triggered:
+                triggered_by.append("check_introspection_path_traversal")
+                err_details += pt_err
 
         # 5. Check standard string-based sanitizers
         string_triggered, string_triggered_by, string_err = self._check_string_sanitizers(generated_arguments, res)
@@ -402,11 +732,11 @@ class MCPDifferentialFuzzer:
                 try:
                     t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
                 except Exception as ex:
-                    logger.error(f"Failed to inspect tool '{tool}' via runner: {ex}. Skipping.")
-                    return False
+                    logger.warning(f"MCP metadata inspection for '{tool}' failed: {ex}. Using default tool schema.")
+                    t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {"url": {"type": "string"}}}
             else:
-                logger.error(f"Failed to inspect tool '{tool}': {e}. Skipping.")
-                return False
+                logger.warning(f"MCP metadata inspection for '{tool}' failed: {e}. Using default tool schema.")
+                t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {"url": {"type": "string"}}}
 
         self.target_tool_name = tool
         self.target_tool_desc = t_desc
