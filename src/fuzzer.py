@@ -26,7 +26,7 @@ class MCPDifferentialFuzzer:
                  corpus_dir: str = "./fuzz_corpus", override_rules: dict = None, 
                  file_backed_params: dict = None, config: FuzzerConfig = None, 
                  reporter = None, metadata_provider = None, runner_factory = None,
-                 predefined_seeds: list = None):
+                 predefined_seeds: list = None, dict_file: str = None):
         self.command = command
         self.args = args
         self.target_tool = target_tool
@@ -36,6 +36,7 @@ class MCPDifferentialFuzzer:
         self.file_backed_params = file_backed_params or {}
         self.config = config or FuzzerConfig()
         self.predefined_seeds = predefined_seeds or []
+        self.dict_file = dict_file
         self.target_tool_desc = ""
         
         # Inject metadata provider
@@ -65,6 +66,8 @@ class MCPDifferentialFuzzer:
         self.selected_sanitizer_rules = {}
         self.silent_bug_found = False
         self.target_tool_name = ""
+        self.exec_count = 0
+        self.start_fuzz_time = None
 
         # Instantiated helpers
         self.file_manager = FuzzFileManager(self.file_backed_params)
@@ -86,6 +89,10 @@ class MCPDifferentialFuzzer:
         """The callback executed by Atheris for each input permutation."""
         if self.current_runner is None or self.current_schema is None:
             return
+
+        self.exec_count += 1
+        if self.start_fuzz_time is None:
+            self.start_fuzz_time = time.time()
 
         # 1. Check if sequence mode is enabled (e.g. data length > 128 or config sequence_steps > 1)
         sequence_steps = getattr(self.config, "sequence_steps", 2) if hasattr(self, "config") else 1
@@ -238,7 +245,7 @@ class MCPDifferentialFuzzer:
             check_introspection_deadlock, check_introspection_file_descriptor_leak,
             check_introspection_prototype_pollution, check_introspection_external_config_control,
             check_introspection_format_string, check_introspection_type_confusion,
-            check_introspection_cross_session_data_leak
+            check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges
         )
         unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
         if unhandled_triggered:
@@ -514,35 +521,35 @@ class MCPDifferentialFuzzer:
                 err_details += ssrf_err
 
         code_calls = getattr(res, "evaluated_code_calls", [])
-        if "check_introspection_code_injection" in self.selected_sanitizer_names or code_calls:
+        if "check_introspection_code_injection" in self.selected_sanitizer_names and code_calls:
             code_triggered, code_err = check_introspection_code_injection(code_calls)
             if code_triggered:
                 triggered_by.append("check_introspection_code_injection")
                 err_details += code_err
 
         written_calls = getattr(res, "written_files", [])
-        if "check_unrestricted_file_upload" in self.selected_sanitizer_names or written_calls:
+        if "check_unrestricted_file_upload" in self.selected_sanitizer_names and written_calls:
             upload_triggered, upload_err = check_unrestricted_file_upload(written_calls)
             if upload_triggered:
                 triggered_by.append("check_unrestricted_file_upload")
                 err_details += upload_err
 
         sql_calls = getattr(res, "sql_queries", [])
-        if "check_introspection_sql_injection" in self.selected_sanitizer_names or sql_calls:
+        if "check_introspection_sql_injection" in self.selected_sanitizer_names and sql_calls:
             sql_triggered, sql_err = check_introspection_sql_injection(sql_calls)
             if sql_triggered:
                 triggered_by.append("check_introspection_sql_injection")
                 err_details += sql_err
 
         cmd_calls = getattr(res, "executed_commands", [])
-        if "check_introspection_command_injection" in self.selected_sanitizer_names or cmd_calls:
+        if "check_introspection_command_injection" in self.selected_sanitizer_names and cmd_calls:
             cmd_triggered, cmd_err = check_introspection_command_injection(cmd_calls)
             if cmd_triggered:
                 triggered_by.append("check_introspection_command_injection")
                 err_details += cmd_err
 
         deser_calls = getattr(res, "deserialization_calls", [])
-        if "check_untrusted_deserialization" in self.selected_sanitizer_names or deser_calls:
+        if "check_untrusted_deserialization" in self.selected_sanitizer_names and deser_calls:
             deser_triggered, deser_err = check_untrusted_deserialization(deser_calls)
             if deser_triggered:
                 triggered_by.append("check_untrusted_deserialization")
@@ -561,6 +568,26 @@ class MCPDifferentialFuzzer:
             if pt_triggered:
                 triggered_by.append("check_introspection_path_traversal")
                 err_details += pt_err
+
+        if "check_strict_url_security_contract" in self.selected_sanitizer_names:
+            url_sec_triggered, url_sec_err = sanitizers.check_strict_url_security_contract(generated_arguments, res)
+            if url_sec_triggered:
+                triggered_by.append("check_strict_url_security_contract")
+                err_details += url_sec_err
+
+        if "check_strict_har_security_contract" in self.selected_sanitizer_names:
+            har_sec_triggered, har_sec_err = sanitizers.check_strict_har_security_contract(generated_arguments, res)
+            if har_sec_triggered:
+                triggered_by.append("check_strict_har_security_contract")
+                err_details += har_sec_err
+
+        if "check_strict_markitdown_security_contract" in self.selected_sanitizer_names:
+            md_sec_triggered, md_sec_err = sanitizers.check_strict_markitdown_security_contract(generated_arguments, res)
+            if md_sec_triggered:
+                triggered_by.append("check_strict_markitdown_security_contract")
+                err_details += md_sec_err
+
+
 
         # 5. Check standard string-based sanitizers
         string_triggered, string_triggered_by, string_err = self._check_string_sanitizers(generated_arguments, res)
@@ -692,15 +719,16 @@ class MCPDifferentialFuzzer:
         for tool in tools_to_fuzz:
             logger.info(f"\n{'='*20} STARTING COVERAGE-GUIDED FUZZING FOR TOOL: {tool} {'='*20}")
             
-            initialized = self._initialize_tool_fuzzing(tool)
-            if not initialized:
-                continue
-
             modules_to_instrument = self._resolve_instrumented_modules()
             started = self._start_runner(tool, modules_to_instrument)
             if not started:
                 continue
+
+            initialized = self._initialize_tool_fuzzing(tool)
+            if not initialized:
+                self._cleanup_runner()
                 continue
+
 
             self._setup_corpus_seeds()
 
@@ -724,34 +752,53 @@ class MCPDifferentialFuzzer:
 
     def _initialize_tool_fuzzing(self, tool: str) -> bool:
         """Performs LLM sanitizer selection and initial setups for a target tool."""
-        loop = asyncio.new_event_loop()
-        try:
-            t_name, t_desc, t_schema = loop.run_until_complete(self.inspector.fetch_tool_metadata(tool))
-        except Exception as e:
-            if hasattr(self.current_runner, "get_tool_metadata"):
-                try:
-                    t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
-                except Exception as ex:
-                    logger.warning(f"MCP metadata inspection for '{tool}' failed: {ex}. Using default tool schema.")
-                    t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {"url": {"type": "string"}}}
-            else:
-                logger.warning(f"MCP metadata inspection for '{tool}' failed: {e}. Using default tool schema.")
-                t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {"url": {"type": "string"}}}
+        if self.override_rules and self.current_runner and hasattr(self.current_runner, "get_tool_metadata"):
+            try:
+                t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
+            except Exception:
+                t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+        else:
+            loop = asyncio.new_event_loop()
+            try:
+                t_name, t_desc, t_schema = loop.run_until_complete(self.inspector.fetch_tool_metadata(tool))
+            except Exception as e:
+                if self.current_runner and hasattr(self.current_runner, "get_tool_metadata"):
+                    try:
+                        t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
+                    except Exception as ex:
+                        logger.warning(f"MCP metadata inspection for '{tool}' failed: {ex}. Using runner inspected schema.")
+                        t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+                else:
+                    logger.warning(f"MCP metadata inspection for '{tool}' failed: {e}. Using default tool schema.")
+                    t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+
 
         self.target_tool_name = tool
         self.target_tool_desc = t_desc
-        self.selected_sanitizer_names, self.selected_sanitizer_rules = self.llm.select_sanitizers(
-            t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS
-        )
-        
         if self.override_rules:
             self.selected_sanitizer_names = list(self.override_rules.keys())
             self.selected_sanitizer_rules = dict(self.override_rules)
-        elif "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
-            self.selected_sanitizer_names.remove("check_unhandled_promise_rejection")
-                
+        else:
+            try:
+                self.selected_sanitizer_names, self.selected_sanitizer_rules = self.llm.select_sanitizers(
+                    t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS
+                )
+            except Exception as e:
+                logger.warning(f"LLM API selection failed ({e}). Falling back to default sanitizers.")
+                self.selected_sanitizer_names = list(sanitizers.AVAILABLE_SANITIZERS.keys())
+                self.selected_sanitizer_rules = {}
+            if "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
+                self.selected_sanitizer_names.remove("check_unhandled_promise_rejection")
+
+        # Hybrid Architecture: Merge Layer 1 mandatory base sanitizers with Layer 2 LLM/override sanitizers
+        base_mandatory = getattr(sanitizers, "BASE_MANDATORY_SANITIZERS", [])
+        for base_s in base_mandatory:
+            if base_s not in self.selected_sanitizer_names:
+                self.selected_sanitizer_names.append(base_s)
+
         if not self.selected_sanitizer_names:
             raise ValueError(f"No sanitizers selected for tool '{tool}'. Fuzzing cannot proceed without active security sanitizers.")
+
         
         self.current_schema = t_schema
         self.silent_bug_found = False
@@ -843,7 +890,7 @@ class MCPDifferentialFuzzer:
 
     def _execute_fuzzing(self, time_per_iteration: int) -> None:
         """Runs the fuzzer loop via the engine driver."""
-        engine = AtherisFuzzingEngine(self.corpus_dir, time_per_iteration)
+        engine = AtherisFuzzingEngine(self.corpus_dir, time_per_iteration, dict_file=getattr(self, 'dict_file', None))
         engine.fuzz(self.test_one_input)
 
     def _cleanup_runner(self) -> None:
@@ -857,6 +904,10 @@ class MCPDifferentialFuzzer:
                     os.remove(file)
                 except Exception:
                     pass
+
+        elapsed_total = (time.time() - self.start_fuzz_time) if self.start_fuzz_time else 0.0
+        exec_speed = (self.exec_count / elapsed_total) if elapsed_total > 0 else 0.0
+        logger.info(f"[FUZZING METRICS] Total Executions: {self.exec_count} | Duration: {elapsed_total:.2f}s | Speed: {exec_speed:.2f} exec/s")
 
         if not self.silent_bug_found:
             logger.info(f"Fuzzing session completed. No silent bugs detected with current coverage.")

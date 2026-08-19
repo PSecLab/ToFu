@@ -93,7 +93,7 @@ def create_json(json_content: str, filename: str) -> str:
 
 class LLMHandler:
     def __init__(self, api_key: str, model_name: str = "minimax-m3:cloud", base_url: str = "https://ollama.com/v1"):
-        self.model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, timeout=15, max_retries=0)
+        self.model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, timeout=60, max_retries=1)
 
     def _load_seed_bank(self) -> dict:
         """Loads all JSON files from src/seed_bank/ into a dictionary."""
@@ -413,6 +413,6 @@ Strict Instructions:
                 logging.info(f"Sanitizer rules: {valid_rules}")
                 return valid_selection, valid_rules
         except Exception as e:
-            logging.warning(f"Failed to parse LLM sanitizer selection: {e}. Defaulting to empty list and rules.")
-        
-        return [], {}
+            logger.error(f"LLM API selection failed for '{tool_name}': {e}")
+            raise RuntimeError(f"LLM API Call Failed during sanitizer selection for '{tool_name}': {e}") from e
+

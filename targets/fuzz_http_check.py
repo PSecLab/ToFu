@@ -32,16 +32,14 @@ def main():
         allowed_workspace_dir=sandbox_dir,
         unexpected_crashes=(
             "TypeError",
-            "ValueError",
             "KeyError",
             "IndexError",
             "AttributeError",
             "UnboundLocalError",
-            "AssertionError",
-            "URLError",
-            "HTTPError"
+            "AssertionError"
         )
     )
+
 
     # Predefined seeds targeting http_check functionality
     predefined_seeds = [
@@ -61,6 +59,7 @@ def main():
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
         config=config,
         override_rules={
+            "check_strict_url_security_contract": {},
             "check_file_access": {},
             "check_introspection_path_traversal": {},
             "check_untrusted_deserialization": {},
@@ -111,8 +110,8 @@ def main():
         predefined_seeds=predefined_seeds
     )
 
-    # Run for 5 minutes (300 seconds) as requested
-    fuzzer.run(time_per_iteration=300)
+    # Run for 10 minutes (600 seconds) as requested
+    fuzzer.run(time_per_iteration=600)
 
 if __name__ == "__main__":
     main()

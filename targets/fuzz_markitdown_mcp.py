@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 def main():
     python_path = sys.executable
 
-    # Add markitdown-mcp to python path environment so python -m markitdown_mcp can be resolved
     mcp_pkg_dir = os.path.abspath(
         os.path.join(
             os.path.dirname(os.path.dirname(__file__)),
@@ -26,9 +25,32 @@ def main():
         )
     )
 
+    markitdown_core_dir = os.path.abspath(
+        os.path.join(
+            os.path.dirname(os.path.dirname(__file__)),
+            "third_party",
+            "markitdown",
+            "packages",
+            "markitdown",
+            "src"
+        )
+    )
+
+    server_script = os.path.abspath(
+        os.path.join(
+            mcp_pkg_dir,
+            "markitdown_mcp",
+            "__main__.py"
+        )
+    )
+
     env = os.environ.copy()
     existing_pythonpath = env.get("PYTHONPATH", "")
-    env["PYTHONPATH"] = f"{mcp_pkg_dir}:{existing_pythonpath}" if existing_pythonpath else mcp_pkg_dir
+    new_paths = f"{mcp_pkg_dir}:{markitdown_core_dir}"
+    env["PYTHONPATH"] = f"{new_paths}:{existing_pythonpath}" if existing_pythonpath else new_paths
+
+    sys.path.insert(0, mcp_pkg_dir)
+    sys.path.insert(0, markitdown_core_dir)
 
     sample_pdf_path = os.path.abspath(
         os.path.join(os.path.dirname(os.path.dirname(__file__)), "test_samples", "sample.pdf")
@@ -53,20 +75,26 @@ def main():
         {"uri": "file:///etc/passwd"}
     ]
 
-    logger.info("Initializing MarkItDown MCP Fuzzer targeting 'convert_to_markdown' via MCP server for 5 minutes...")
+    logger.info("Initializing MarkItDown MCP Fuzzer targeting 'convert_to_markdown' via MCP server for 20 minutes...")
 
     fuzzer = MCPDifferentialFuzzer(
         command=python_path,
-        args=["-m", "markitdown_mcp"],
+        args=[server_script],
         target_tool="convert_to_markdown",
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
         file_backed_params={"uri": sample_pdf_path},
         config=config,
         override_rules={
+            "check_strict_markitdown_security_contract": {},
+            "check_markitdown_uri_validation": {},
+            "check_markitdown_file_uri_jailbreak": {},
+            "check_markitdown_data_uri_security": {},
+            "check_markitdown_markdown_output_security": {},
             "check_file_access": {},
             "check_introspection_path_traversal": {},
             "check_introspection_command_injection": {},
             "check_introspection_ssrf": {},
+            "check_introspection_data_amplification": {},
             "check_untrusted_deserialization": {},
             "check_unexpected_crash": {},
             "check_resource_exhaustion": {},
@@ -78,8 +106,8 @@ def main():
     # Set PYTHONPATH in the inspector process
     fuzzer.inspector.env = env
 
-    # Run for 15 minutes (900 seconds)
-    fuzzer.run(time_per_iteration=900)
+    # Run for 20 minutes (1200 seconds)
+    fuzzer.run(time_per_iteration=1200)
 
 if __name__ == "__main__":
     main()

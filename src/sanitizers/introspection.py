@@ -202,9 +202,14 @@ def check_introspection_command_injection(executed_commands: List[dict]) -> Tupl
     shell_injection_chars = [";", "&&", "||", "|", "`", "$(", ">", "<"]
 
     for cmd_info in executed_commands:
-        cmd_str = cmd_info.get("command", "")
-        func_name = cmd_info.get("function", "")
-        shell = cmd_info.get("shell", False)
+        if isinstance(cmd_info, dict):
+            cmd_str = cmd_info.get("command", "")
+            func_name = cmd_info.get("function", "")
+            shell = cmd_info.get("shell", False)
+        else:
+            cmd_str = str(cmd_info)
+            func_name = "unknown"
+            shell = False
         
         has_injection_metachar = any(char in cmd_str for char in shell_injection_chars)
         cwe_code = "CWE-77/CWE-78" if has_injection_metachar else "CWE-78"
@@ -334,6 +339,21 @@ class SQLExecutionTracer:
                 def __init__(self, real_conn):
                     self._conn = real_conn
 
+                def __enter__(self):
+                    self._conn.__enter__()
+                    return self
+
+                def __exit__(self, exc_type, exc_val, exc_tb):
+                    return self._conn.__exit__(exc_type, exc_val, exc_tb)
+
+                def execute(self, sql, parameters=(), *args, **kwargs):
+                    tracer_self.sql_queries.append({
+                        "driver": "sqlite3",
+                        "query": str(sql),
+                        "params": parameters
+                    })
+                    return self._conn.execute(sql, parameters, *args, **kwargs)
+
                 def cursor(self, *args, **kwargs):
                     real_cursor = self._conn.cursor(*args, **kwargs)
                     
@@ -401,8 +421,12 @@ def check_unrestricted_file_upload(written_files: List[dict], dangerous_extensio
         ]
 
     for record in written_files:
-        file_path = record.get("path", "")
-        mode = record.get("mode", "")
+        if isinstance(record, dict):
+            file_path = record.get("path", "")
+            mode = record.get("mode", "")
+        else:
+            file_path = str(record)
+            mode = ""
         
         _, ext = os.path.splitext(file_path)
         ext_lower = ext.lower()
@@ -545,8 +569,12 @@ def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str
     ]
 
     for conn in network_connections:
-        host = str(conn.get("host", ""))
-        port = conn.get("port", None)
+        if isinstance(conn, dict):
+            host = str(conn.get("host", ""))
+            port = conn.get("port", None)
+        else:
+            host = str(conn)
+            port = None
         
         for pattern in internal_host_patterns:
             if host == pattern or host.startswith(pattern):
@@ -642,14 +670,20 @@ class TempFileLeakTracer:
             after_files = set()
         
         diff = after_files - self.before_files
-        # Filter out systemd / profiler temporary files
+        # Filter out systemd, GNOME desktop thumbnailers, snap, and profiler temporary files/directories
+        system_ignore_patterns = [
+            ".cpuprofile", ".cpuprofile.json",
+            "systemd-private-", "gnome-desktop-thumbnailer-",
+            "snap.", "tmp.mcp_", "/tmp/mcp_",
+            "tracker-extract-files-", "gdbus-nonce-file-", ".org.chromium.Chromium",
+            "bigfix", "BigFix", "ca-certificates", "apt-dpkg-install"
+        ]
         filtered_diff = [
             f for f in diff 
-            if not f.endswith((".cpuprofile", ".cpuprofile.json")) 
-            and "systemd-private-" not in f 
-            and not f.startswith("/tmp/mcp_")
+            if not any(pattern in f for pattern in system_ignore_patterns)
         ]
         self.leaked_temp_files = filtered_diff
+
 
 
 # ---------------------------------------------------------------------------
@@ -668,8 +702,12 @@ def check_introspection_log_injection(logged_messages: List[dict]) -> Tuple[bool
         return False, ""
 
     for record in logged_messages:
-        msg = record.get("message", "")
-        source = record.get("source", "logger")
+        if isinstance(record, dict):
+            msg = record.get("message", "")
+            source = record.get("source", "logger")
+        else:
+            msg = str(record)
+            source = "logger"
         
         # Check for unescaped CRLF injections that forge log entries
         if "\n" in msg or "\r" in msg:
@@ -751,8 +789,12 @@ def check_introspection_sensitive_data_logging(logged_messages: List[dict]) -> T
     ]
 
     for record in logged_messages:
-        msg = record.get("message", "").lower()
-        source = record.get("source", "logger")
+        if isinstance(record, dict):
+            msg = record.get("message", "").lower()
+            source = record.get("source", "logger")
+        else:
+            msg = str(record).lower()
+            source = "logger"
         
         for pattern in sensitive_patterns:
             if pattern in msg:

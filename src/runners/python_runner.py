@@ -145,8 +145,11 @@ class PythonRunner(BaseRunner):
         if not self.target_func:
             if hasattr(module, self.target_tool):
                 candidate = getattr(module, self.target_tool)
-                if callable(candidate):
+                if hasattr(candidate, "callback") and callable(candidate.callback):
+                    self.target_func = candidate.callback
+                elif callable(candidate):
                     self.target_func = candidate
+
             if hasattr(module, "register_all") and callable(getattr(module, "register_all")):
                 try:
                     import asyncio

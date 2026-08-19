@@ -81,7 +81,53 @@ from .introspection import (
     LoopConditionTracer
 )
 
+from .url_sanitizers import (
+    check_strict_url_security_contract,
+    check_url_raw_input_validation,
+    check_url_structure_and_parsing,
+    check_url_hostname_canonicalization,
+    check_url_alternative_ip_representations,
+    check_url_ssrf_ip_ranges,
+    is_input_rejected
+)
+
+from .har_sanitizers import (
+    check_strict_har_security_contract,
+    check_harzip_integrity,
+    check_har_path_traversal,
+    check_har_url_path_security,
+    check_har_mimetype_security
+)
+
+from .markitdown_sanitizers import (
+    check_strict_markitdown_security_contract,
+    check_markitdown_uri_validation,
+    check_markitdown_file_uri_jailbreak,
+    check_markitdown_data_uri_security,
+    check_markitdown_markdown_output_security
+)
+
 AVAILABLE_SANITIZERS = {
+    "check_strict_markitdown_security_contract": "Master specification sanitizer for MarkItDown & document converters: Validates 50-point checklist (URI scheme whitelist, SSRF, file:// LFI, data: URI, markdown output injection) and verifies rejection.",
+    "check_markitdown_uri_validation": "Sanitizer: Enforces strict scheme whitelist (http, https, file, data) and rejects dangerous schemes (gopher, ftp, smb, nfs, ssh).",
+    "check_markitdown_file_uri_jailbreak": "Sanitizer: Guards file:// URIs against Local File Inclusion (LFI) of sensitive system files (/etc/passwd, .env, .ssh) and jailbreaks.",
+    "check_markitdown_data_uri_security": "Sanitizer: Guards data: URIs against excessive size (>2MB) and Base64 payload expansion amplification.",
+    "check_markitdown_markdown_output_security": "Sanitizer: Inspects generated Markdown output for HTML script tags, file:// path leaks, or indirect prompt injection patterns.",
+
+    "check_strict_har_security_contract": "Master specification sanitizer for HAR/ZIP archive tools: Validates 10-section security checklist (harzip integrity, path traversal, Zip Slip, URL paths, MIME types) and verifies rejection.",
+    "check_harzip_integrity": "Sanitizer: Validates harzip file path, null bytes, length limit, and regular file integrity.",
+    "check_har_path_traversal": "Sanitizer: Guards output directory and ZIP extraction against path traversal, UNC, and Windows drive escapes.",
+    "check_har_url_path_security": "Sanitizer: Guards URL path conversion (--paths flag) against traversal sequences and null byte injection.",
+    "check_har_mimetype_security": "Sanitizer: Validates mimetypes argument against control characters, null bytes, ReDoS patterns, and dangerous extensions.",
+
+    "check_strict_url_security_contract": "Master specification sanitizer for HTTP/URL tools: Enforces strict input validation, parsing, canonicalization, alternative IP detection, SSRF protection, and verifies rejection of invalid inputs.",
+
+    "check_url_raw_input_validation": "Sanitizer: Validates URL type, length, control characters, spaces, and ambiguous Unicode lookalikes.",
+    "check_url_structure_and_parsing": "Sanitizer: Enforces absolute URL structure, scheme whitelist (http/https), userinfo rejection, port validation, and fragment removal.",
+    "check_url_hostname_canonicalization": "Sanitizer: Enforces trailing dot stripping, IDNA Punycode conversion, label checks, and homoglyph / mixed-script detection.",
+    "check_url_alternative_ip_representations": "Sanitizer: Detects non-canonical IPv4 (octal, hex, int, short form), IPv6 scope IDs (%eth0), and IPv4-mapped IPv6.",
+    "check_url_ssrf_ip_ranges": "Sanitizer: Blocks loopback, RFC 1918 private, link-local, CGNAT, cloud metadata, and internal hostnames.",
+
     "check_introspection_cross_session_data_leak": "Introspection sanitizer: Detects exposure of private session data to subsequent independent sessions (CWE-488).",
     "check_introspection_type_confusion": "Introspection sanitizer: Detects unhandled TypeError and incompatible type access crashes (CWE-843).",
     "check_introspection_format_string": "Introspection sanitizer: Detects externally-controlled format string specifiers and crashes (CWE-134).",
@@ -162,5 +208,15 @@ SECURITY_PROFILES = {
         "check_unexpected_crash": {}
     }
 }
+
+# Base mandatory sanitizers that are ALWAYS enforced for every tool (Layer 1)
+BASE_MANDATORY_SANITIZERS = [
+    "check_unexpected_crash",
+    "check_resource_exhaustion",
+    "check_file_access",
+    "check_introspection_log_injection",
+    "check_introspection_sensitive_data_logging"
+]
+
 
 
