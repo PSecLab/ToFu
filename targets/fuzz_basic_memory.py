@@ -60,7 +60,8 @@ def run_single_tool(tool_name: str, duration_seconds: int):
 
     config = FuzzerConfig(
         timeout_limit=10.0,
-        allowed_workspace_dir=sandbox_dir
+        allowed_workspace_dir=sandbox_dir,
+        dependencies_to_instrument=["basic_memory", "basic_memory.mcp", "basic_memory.repository"]
     )
 
     file_backed_params = {

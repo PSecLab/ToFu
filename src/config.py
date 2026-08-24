@@ -22,3 +22,9 @@ class FuzzerConfig:
         "jinja2"
     ])
     allowed_workspace_dir: str = None
+    enable_metrics: bool = True
+    metrics_dir: str = "metrics"
+    metrics_pulse_interval: int = 2
+    metrics_sample_interval_sec: float = 60.0
+    export_csv: bool = True
+    export_mongo: bool = False

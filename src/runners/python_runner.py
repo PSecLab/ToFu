@@ -68,17 +68,33 @@ class PythonRunner(BaseRunner):
             py_dir = os.path.dirname(py_file)
             if py_dir not in sys.path:
                 sys.path.insert(0, py_dir)
-            self.module_name = "mcp_target_module" if base_name == "__main__" else base_name
-            spec = importlib.util.spec_from_file_location(self.module_name, py_file)
-            if spec is None or spec.loader is None:
-                raise ImportError(f"Could not load spec for {py_file}")
-            module = importlib.util.module_from_spec(spec)
-            module.__name__ = self.module_name
-            sys.modules[self.module_name] = module
-            try:
-                spec.loader.exec_module(module)
-            except Exception as e:
-                raise ImportError(f"Error executing module {py_file}: {e}")
+            if base_name == "__main__":
+                self.module_name = "mcp_target_module"
+                spec = importlib.util.spec_from_file_location(self.module_name, py_file)
+                if spec is None or spec.loader is None:
+                    raise ImportError(f"Could not load spec for {py_file}")
+                module = importlib.util.module_from_spec(spec)
+                module.__name__ = self.module_name
+                sys.modules[self.module_name] = module
+                try:
+                    spec.loader.exec_module(module)
+                except Exception as e:
+                    raise ImportError(f"Error executing module {py_file}: {e}")
+            else:
+                self.module_name = base_name
+                try:
+                    module = importlib.import_module(self.module_name)
+                except Exception:
+                    spec = importlib.util.spec_from_file_location(self.module_name, py_file)
+                    if spec is None or spec.loader is None:
+                        raise ImportError(f"Could not load spec for {py_file}")
+                    module = importlib.util.module_from_spec(spec)
+                    module.__name__ = self.module_name
+                    sys.modules[self.module_name] = module
+                    try:
+                        spec.loader.exec_module(module)
+                    except Exception as e:
+                        raise ImportError(f"Error executing module {py_file}: {e}")
 
         # Find the target tool function and server instances
         self.target_func = None
@@ -248,7 +264,29 @@ class PythonRunner(BaseRunner):
                 stack.enter_context(xxe_tracer)
                 stack.enter_context(amplification_tracer)
 
-                if self.mcp_server:
+                if self.target_func:
+                    sig = inspect.signature(self.target_func)
+                    has_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
+                    if has_kwargs:
+                        call_args = arguments
+                    else:
+                        call_args = {k: v for k, v in arguments.items() if k in sig.parameters}
+
+                    if inspect.iscoroutinefunction(self.target_func):
+                        import asyncio
+                        try:
+                            loop = asyncio.get_event_loop()
+                            if loop.is_running():
+                                import nest_asyncio
+                                nest_asyncio.apply()
+                                val = loop.run_until_complete(self.target_func(**call_args))
+                            else:
+                                val = loop.run_until_complete(self.target_func(**call_args))
+                        except RuntimeError:
+                            val = asyncio.run(self.target_func(**call_args))
+                    else:
+                        val = self.target_func(**call_args)
+                elif self.mcp_server:
                     # Use JSON-RPC stdio emulator in-process to run the full server pipeline
                     import anyio
                     import mcp.types as types
@@ -333,15 +371,6 @@ class PythonRunner(BaseRunner):
                                     val = "\n".join(text_contents)
                                 else:
                                     val = str(res_data)
-                else:
-                    # Direct invocation fallback (if not an MCP server)
-                    sig = inspect.signature(self.target_func)
-                    has_kwargs = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values())
-                    if has_kwargs:
-                        val = self.target_func(**arguments)
-                    else:
-                        filtered_args = {k: v for k, v in arguments.items() if k in sig.parameters}
-                        val = self.target_func(**filtered_args)
         except KeyboardInterrupt:
             raise
         except BaseException as e:

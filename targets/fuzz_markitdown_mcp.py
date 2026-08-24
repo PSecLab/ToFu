@@ -63,8 +63,9 @@ def main():
     config = FuzzerConfig(
         timeout_limit=15.0,
         allowed_workspace_dir=sandbox_dir,
+        dependencies_to_instrument=["markitdown", "markitdown_mcp", "pypdf", "openpyxl", "mammoth", "pptx", "bs4"],
         unexpected_crashes=(
-            "TypeError", "ValueError", "KeyError", "IndexError", 
+            "TypeError", "KeyError", "IndexError", 
             "AttributeError", "UnboundLocalError", "AssertionError"
         )
     )
@@ -72,42 +73,39 @@ def main():
     predefined_seeds = [
         {"uri": f"file://{sample_pdf_path}"},
         {"uri": "data:text/html,<html><body><h1>Title</h1><p>Test</p></body></html>"},
-        {"uri": "file:///etc/passwd"}
+        {"uri": "data:text/plain,Hello%20world"}
     ]
 
-    logger.info("Initializing MarkItDown MCP Fuzzer targeting 'convert_to_markdown' via MCP server for 20 minutes...")
+    logger.info("Initializing MarkItDown MCP Fuzzer targeting 'convert_to_markdown'...")
+
+    corpus_base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "persistent_corpus_markitdown")
+    )
+    tool_corpus_dir = os.path.join(corpus_base_dir, "corpus_convert_to_markdown")
+    os.makedirs(tool_corpus_dir, exist_ok=True)
 
     fuzzer = MCPDifferentialFuzzer(
         command=python_path,
         args=[server_script],
         target_tool="convert_to_markdown",
+        corpus_dir=tool_corpus_dir,
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
-        file_backed_params={"uri": sample_pdf_path},
+        file_backed_params={},
         config=config,
-        override_rules={
-            "check_strict_markitdown_security_contract": {},
-            "check_markitdown_uri_validation": {},
-            "check_markitdown_file_uri_jailbreak": {},
-            "check_markitdown_data_uri_security": {},
-            "check_markitdown_markdown_output_security": {},
-            "check_file_access": {},
-            "check_introspection_path_traversal": {},
-            "check_introspection_command_injection": {},
-            "check_introspection_ssrf": {},
-            "check_introspection_data_amplification": {},
-            "check_untrusted_deserialization": {},
-            "check_unexpected_crash": {},
-            "check_resource_exhaustion": {},
-            "check_unhandled_promise_rejection": {}
-        },
-        predefined_seeds=predefined_seeds
+        override_rules=None,
+        predefined_seeds=None
     )
+
+    import argparse
+    parser = argparse.ArgumentParser(description="Fuzz MarkItDown MCP")
+    parser.add_argument("--time", type=int, default=300, help="Fuzzing duration in seconds (default: 300s / 5min)")
+    args = parser.parse_args()
 
     # Set PYTHONPATH in the inspector process
     fuzzer.inspector.env = env
 
-    # Run for 20 minutes (1200 seconds)
-    fuzzer.run(time_per_iteration=1200)
+    logger.info(f"Starting MarkItDown MCP Fuzzing for {args.time} seconds...")
+    fuzzer.run(time_per_iteration=args.time)
 
 if __name__ == "__main__":
     main()

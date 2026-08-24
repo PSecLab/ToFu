@@ -209,13 +209,18 @@ SECURITY_PROFILES = {
     }
 }
 
-# Base mandatory sanitizers that are ALWAYS enforced for every tool (Layer 1)
+# Base mandatory sanitizers that are ALWAYS enforced for every tool (Layer 1 - Universal Core)
 BASE_MANDATORY_SANITIZERS = [
     "check_unexpected_crash",
+    "check_introspection_memory_access_violation",
     "check_resource_exhaustion",
-    "check_file_access",
-    "check_introspection_log_injection",
-    "check_introspection_sensitive_data_logging"
+    "check_introspection_deadlock",
+    "check_unhandled_promise_rejection",
+    "check_process_and_fd_leaks",
+    "check_introspection_incomplete_cleanup",
+    "check_introspection_sensitive_error_leak",
+    "check_introspection_sensitive_data_logging",
+    "check_file_access"
 ]
 
 

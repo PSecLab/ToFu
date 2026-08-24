@@ -30,6 +30,7 @@ def main():
     config = FuzzerConfig(
         timeout_limit=10.0,
         allowed_workspace_dir=sandbox_dir,
+        dependencies_to_instrument=["http_check", "urllib", "requests", "ipaddress"],
         unexpected_crashes=(
             "TypeError",
             "KeyError",
@@ -50,12 +51,17 @@ def main():
         {"url": "https://httpbin.org/get"}
     ]
 
-    logger.info("Initializing fuzzer for tools-main (http_check.py) with 30+ sanitizers enabled...")
+    corpus_base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "persistent_corpus_http_check")
+    )
+    tool_corpus_dir = os.path.join(corpus_base_dir, "corpus_http_check")
+    os.makedirs(tool_corpus_dir, exist_ok=True)
 
     fuzzer = MCPDifferentialFuzzer(
         command=python_path,
         args=[server_script],
         target_tool="check_url_features",
+        corpus_dir=tool_corpus_dir,
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
         config=config,
         override_rules={
@@ -110,8 +116,12 @@ def main():
         predefined_seeds=predefined_seeds
     )
 
-    # Run for 10 minutes (600 seconds) as requested
-    fuzzer.run(time_per_iteration=600)
+    import argparse
+    parser = argparse.ArgumentParser(description="Fuzz http_check")
+    parser.add_argument("--time", type=int, default=300, help="Duration in seconds (default: 300)")
+    args = parser.parse_args()
+
+    fuzzer.run(time_per_iteration=args.time)
 
 if __name__ == "__main__":
     main()

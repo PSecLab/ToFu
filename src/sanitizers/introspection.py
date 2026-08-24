@@ -837,8 +837,12 @@ def check_introspection_ssl_verification(unverified_ssl_calls: List[dict]) -> Tu
         return False, ""
 
     for record in unverified_ssl_calls:
-        func = record.get("function", "")
-        reason = record.get("reason", "")
+        if isinstance(record, dict):
+            func = record.get("function", "")
+            reason = record.get("reason", "")
+        else:
+            func = str(record)
+            reason = "unverified SSL call detected"
         return True, (
             f"Introspection Improper Certificate Validation Alert (CWE-295): Outgoing SSL/TLS connection initiated with disabled certificate verification! "
             f"Invoked via '{func}': {reason}."

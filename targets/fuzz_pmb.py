@@ -50,7 +50,8 @@ def run_single_tool(tool_name: str, duration_seconds: int):
 
     config = FuzzerConfig(
         timeout_limit=10.0,
-        allowed_workspace_dir=sandbox_dir
+        allowed_workspace_dir=sandbox_dir,
+        dependencies_to_instrument=["pmb", "pmb.mcp", "pmb.engine", "sqlite3"]
     )
 
     file_backed_params = {

@@ -30,6 +30,7 @@ def main():
     config = FuzzerConfig(
         timeout_limit=10.0,
         allowed_workspace_dir=sandbox_dir,
+        dependencies_to_instrument=["extract_har", "zipfile", "json", "urllib"],
         unexpected_crashes=(
             "TypeError",
             "KeyError",
@@ -49,14 +50,24 @@ def main():
         {"harzip": "sample.zip", "mimetypes": ["text/css"], "paths": True, "pretty_json": True, "output": sandbox_dir}
     ]
 
-    logger.info("Initializing fuzzer for tools-main (extract_har.py) for 10 minutes...")
+    corpus_base_dir = os.path.abspath(
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "persistent_corpus_extract_har")
+    )
+    tool_corpus_dir = os.path.join(corpus_base_dir, "corpus_extract_har")
+    os.makedirs(tool_corpus_dir, exist_ok=True)
 
     fuzzer = MCPDifferentialFuzzer(
         command=python_path,
         args=[server_script],
         target_tool="extract_har",
+        corpus_dir=tool_corpus_dir,
         api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
-        file_backed_params={"harzip": "sample.zip"},
+        file_backed_params={
+            "harzip": {
+                "extension": ".zip",
+                "prefix": "fuzz_har_input_"
+            }
+        },
         config=config,
         override_rules={
             "check_strict_har_security_contract": {},
@@ -80,8 +91,12 @@ def main():
         predefined_seeds=predefined_seeds
     )
 
-    # Run for 15 minutes (900 seconds) as requested
-    fuzzer.run(time_per_iteration=900)
+    import argparse
+    parser = argparse.ArgumentParser(description="Fuzz extract_har")
+    parser.add_argument("--time", type=int, default=300, help="Duration in seconds (default: 300)")
+    args = parser.parse_args()
+
+    fuzzer.run(time_per_iteration=args.time)
 
 if __name__ == "__main__":
     main()

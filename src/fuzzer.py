@@ -16,6 +16,7 @@ from .reporters import CompositeVulnerabilityReporter, MongoVulnerabilityReporte
 from .input_parser import FuzzInputParser
 from .file_manager import FuzzFileManager
 from .engine import AtherisFuzzingEngine
+from .metrics import CoverageTimelineCollector
 
 from .runners.base import BaseRunner
 
@@ -73,6 +74,17 @@ class MCPDifferentialFuzzer:
         self.file_manager = FuzzFileManager(self.file_backed_params)
         self.input_parser = None
 
+        # Metrics collection
+        if getattr(self.config, "enable_metrics", True):
+            self.metrics_collector = CoverageTimelineCollector(
+                output_dir=getattr(self.config, "metrics_dir", "metrics"),
+                export_csv=getattr(self.config, "export_csv", True),
+                export_mongo=getattr(self.config, "export_mongo", False),
+                sample_interval_sec=getattr(self.config, "metrics_sample_interval_sec", 60.0)
+            )
+        else:
+            self.metrics_collector = None
+
     def _default_runner_factory(self, tool: str) -> BaseRunner:
         is_js = (
             any(arg.endswith(".js") for arg in self.args) or 
@@ -93,6 +105,8 @@ class MCPDifferentialFuzzer:
         self.exec_count += 1
         if self.start_fuzz_time is None:
             self.start_fuzz_time = time.time()
+        if self.metrics_collector:
+            self.metrics_collector.record_execution_progress(self.exec_count)
 
         # 1. Check if sequence mode is enabled (e.g. data length > 128 or config sequence_steps > 1)
         sequence_steps = getattr(self.config, "sequence_steps", 2) if hasattr(self, "config") else 1
@@ -122,7 +136,7 @@ class MCPDifferentialFuzzer:
 
 
     def _handle_violation(self, inputs: dict, result: any, triggered_by: list[str], err_details: str) -> None:
-        """Logs the triggered security exception and terminates process."""
+        """Logs the triggered security exception and marks bug found without stopping the session."""
         self.reporter.report(
             self.target_tool_name,
             inputs,
@@ -131,7 +145,6 @@ class MCPDifferentialFuzzer:
             err_details
         )
         self.silent_bug_found = True
-        sys.exit(1)
 
     def _execute_and_time(self, generated_arguments: dict, created_temp_files: list[str]) -> tuple[any, float, set[str], set[int]]:
         """Executes the runner, measures duration, and detects leaked temporary files."""
@@ -207,10 +220,11 @@ class MCPDifferentialFuzzer:
             err_details += leak_err
 
         # 2. Check process leaks / terminal DoS
-        proc_leak_triggered, proc_leak_err = self._check_process_leak(leaked_pids)
-        if proc_leak_triggered:
-            triggered_by.append("check_terminal_dos_and_leak")
-            err_details += proc_leak_err
+        if "check_process_and_fd_leaks" in self.selected_sanitizer_names or "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
+            proc_leak_triggered, proc_leak_err = self._check_process_leak(leaked_pids)
+            if proc_leak_triggered:
+                triggered_by.append("check_process_and_fd_leaks")
+                err_details += proc_leak_err
 
         # 3. Check resource exhaustion / timeout (e.g. ReDoS)
         timeout_triggered, timeout_err = self._check_resource_exhaustion(elapsed)
@@ -247,10 +261,11 @@ class MCPDifferentialFuzzer:
             check_introspection_format_string, check_introspection_type_confusion,
             check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges
         )
-        unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
-        if unhandled_triggered:
-            triggered_by.append("check_unhandled_promise_rejection")
-            err_details += unhandled_err
+        if "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
+            unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
+            if unhandled_triggered:
+                triggered_by.append("check_unhandled_promise_rejection")
+                err_details += unhandled_err
 
         prev_session_data = getattr(res, "prev_session_data", "")
         current_out = str(getattr(res, "result", ""))
@@ -617,7 +632,7 @@ class MCPDifferentialFuzzer:
 
     def _check_process_leak(self, leaked_pids: set[int]) -> tuple[bool, str]:
         """Returns True and diagnostic message if background processes were leaked."""
-        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names and leaked_pids:
+        if ("check_process_and_fd_leaks" in self.selected_sanitizer_names or "check_terminal_dos_and_leak" in self.selected_sanitizer_names) and leaked_pids:
             details = []
             for pid in leaked_pids:
                 try:
@@ -658,7 +673,7 @@ class MCPDifferentialFuzzer:
                 continue
                 
             for sanitizer_name in self.selected_sanitizer_names:
-                if sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion", "check_terminal_dos_and_leak"):
+                if sanitizer_name.startswith("check_introspection_") or sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion", "check_terminal_dos_and_leak"):
                     continue
                 
                 # Context checks
@@ -716,24 +731,27 @@ class MCPDifferentialFuzzer:
         if not tools_to_fuzz:
             return
         
-        for tool in tools_to_fuzz:
-            logger.info(f"\n{'='*20} STARTING COVERAGE-GUIDED FUZZING FOR TOOL: {tool} {'='*20}")
-            
-            modules_to_instrument = self._resolve_instrumented_modules()
-            started = self._start_runner(tool, modules_to_instrument)
-            if not started:
-                continue
+        try:
+            for tool in tools_to_fuzz:
+                logger.info(f"\n{'='*20} STARTING COVERAGE-GUIDED FUZZING FOR TOOL: {tool} {'='*20}")
+                
+                modules_to_instrument = self._resolve_instrumented_modules()
+                started = self._start_runner(tool, modules_to_instrument)
+                if not started:
+                    continue
 
-            initialized = self._initialize_tool_fuzzing(tool)
-            if not initialized:
+                initialized = self._initialize_tool_fuzzing(tool)
+                if not initialized:
+                    self._cleanup_runner()
+                    continue
+
+                self._setup_corpus_seeds()
+
+                self._execute_fuzzing(time_per_iteration)
                 self._cleanup_runner()
-                continue
-
-
-            self._setup_corpus_seeds()
-
-            self._execute_fuzzing(time_per_iteration)
-            self._cleanup_runner()
+        finally:
+            if self.metrics_collector:
+                self.metrics_collector.close()
 
     def _discover_tools(self) -> list[str]:
         """Discovers the list of target tools from the MCP server."""
@@ -787,8 +805,6 @@ class MCPDifferentialFuzzer:
                 logger.warning(f"LLM API selection failed ({e}). Falling back to default sanitizers.")
                 self.selected_sanitizer_names = list(sanitizers.AVAILABLE_SANITIZERS.keys())
                 self.selected_sanitizer_rules = {}
-            if "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
-                self.selected_sanitizer_names.remove("check_unhandled_promise_rejection")
 
         # Hybrid Architecture: Merge Layer 1 mandatory base sanitizers with Layer 2 LLM/override sanitizers
         base_mandatory = getattr(sanitizers, "BASE_MANDATORY_SANITIZERS", [])
@@ -803,6 +819,9 @@ class MCPDifferentialFuzzer:
         self.current_schema = t_schema
         self.silent_bug_found = False
 
+        if self.metrics_collector:
+            self.metrics_collector.set_tool(tool, start_time=time.time())
+
         # Initialize the parser adapter with the current tool schema
         self.input_parser = FuzzInputParser(self.current_schema, self.file_backed_params, self.current_runner)
         return True
@@ -814,8 +833,8 @@ class MCPDifferentialFuzzer:
         else:
             seeds = self.llm.generate_seeds(self.target_tool_name, self.target_tool_desc, self.current_schema)
         if os.path.exists(self.corpus_dir):
-            shutil.rmtree(self.corpus_dir)
-        os.makedirs(self.corpus_dir)
+            shutil.rmtree(self.corpus_dir, ignore_errors=True)
+        os.makedirs(self.corpus_dir, exist_ok=True)
 
         for idx, seed in enumerate(seeds):
             with open(os.path.join(self.corpus_dir, f"seed_{idx}.json"), "w") as f:
@@ -852,6 +871,11 @@ class MCPDifferentialFuzzer:
         for mod in modules_to_instrument:
             if not any(prefix in mod for prefix in ("third_party", "tests", "bench", "test_", "fuzz_")):
                 filtered_modules.append(mod)
+
+        # Explicitly include configured target dependencies (e.g., markitdown, pypdf, etc.)
+        if hasattr(self.config, "dependencies_to_instrument") and self.config.dependencies_to_instrument:
+            for dep in self.config.dependencies_to_instrument:
+                filtered_modules.append(dep)
         
         # Ensure mcp_fuzzer framework is instrumented
         filtered_modules.append("mcp_fuzzer")
@@ -874,6 +898,12 @@ class MCPDifferentialFuzzer:
             # Check if JSRunner is being used (or if it's explicitly node/JS)
             is_js = "JSRunner" in self.current_runner.__class__.__name__ or getattr(self.current_runner, "is_js", False)
             if not is_js:
+                # Include target module name from runner if available
+                runner_mod = getattr(self.current_runner, "module_name", None)
+                if runner_mod and runner_mod not in modules_to_instrument:
+                    modules_to_instrument.append(runner_mod)
+                # Also include "mcp_target_module"
+                modules_to_instrument.append("mcp_target_module")
                 logger.info(f"[{tool}] Instrumenting local Python modules: {modules_to_instrument}")
                 import atheris
                 with atheris.instrument_imports(include=modules_to_instrument):
@@ -890,7 +920,13 @@ class MCPDifferentialFuzzer:
 
     def _execute_fuzzing(self, time_per_iteration: int) -> None:
         """Runs the fuzzer loop via the engine driver."""
-        engine = AtherisFuzzingEngine(self.corpus_dir, time_per_iteration, dict_file=getattr(self, 'dict_file', None))
+        engine = AtherisFuzzingEngine(
+            self.corpus_dir,
+            time_per_iteration,
+            dict_file=getattr(self, 'dict_file', None),
+            metrics_collector=self.metrics_collector,
+            pulse_interval=getattr(self.config, 'metrics_pulse_interval', 2)
+        )
         engine.fuzz(self.test_one_input)
 
     def _cleanup_runner(self) -> None:
@@ -909,11 +945,14 @@ class MCPDifferentialFuzzer:
         exec_speed = (self.exec_count / elapsed_total) if elapsed_total > 0 else 0.0
         logger.info(f"[FUZZING METRICS] Total Executions: {self.exec_count} | Duration: {elapsed_total:.2f}s | Speed: {exec_speed:.2f} exec/s")
 
+        if self.metrics_collector:
+            self.metrics_collector.emit_final_snapshot(self.exec_count)
+
         if not self.silent_bug_found:
             logger.info(f"Fuzzing session completed. No silent bugs detected with current coverage.")
 
         if os.path.exists(self.corpus_dir):
-            shutil.rmtree(self.corpus_dir)
+            shutil.rmtree(self.corpus_dir, ignore_errors=True)
 
     def run_single(self, input_data: dict) -> None:
         """Executes a single test run on the tool and displays results."""
