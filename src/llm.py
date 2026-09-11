@@ -1,19 +1,138 @@
 import json
 import logging
 import os
+import re
+
+# seed_generators was deleted in commit 87d8602 together with src/seed_bank/
+# and src/predefined_seeds/, but the eight @tool functions below were left
+# calling it. Every LLM seed-generation tool call therefore died with
+# "name 'seed_generators' is not defined" -- visible in the campaign logs as
+# "Error running tool create_json" -- and seeding fell back to the
+# deterministic mapper on every tool. Restored from b1b657e.
+from . import seed_generators
 try:
     from langchain_openai import ChatOpenAI
     from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
     from langchain_core.tools import tool
-except ImportError:
+except ImportError as _e:
+    _LANGCHAIN_IMPORT_ERROR = _e
     ChatOpenAI = None
     HumanMessage = SystemMessage = ToolMessage = None
     def tool(func):
         return func
+else:
+    _LANGCHAIN_IMPORT_ERROR = None
 
 
 
 logger = logging.getLogger(__name__)
+
+
+_FENCE_RE = re.compile(r"```(?:[A-Za-z0-9_+-]*)\s*\n?(.*?)```", re.DOTALL)
+
+
+def _coerce_text(content) -> str:
+    """Flatten a LangChain message payload to plain text.
+
+    Most backends hand back a str, but some return a list of content
+    blocks; treating that list as a string is what produced the
+    ``'list' object has no attribute 'strip'`` class of failure.
+    """
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for b in content:
+            if isinstance(b, dict):
+                parts.append(b.get("text") or b.get("content") or "")
+            elif isinstance(b, str):
+                parts.append(b)
+        return "".join(parts)
+    return str(content)
+
+
+def _balanced_span(text: str, open_ch: str, close_ch: str):
+    """First balanced ``open_ch``..``close_ch`` span, ignoring delimiters
+    that occur inside JSON string literals. Returns None if unbalanced."""
+    depth = 0
+    start = -1
+    in_str = False
+    esc = False
+    for i, ch in enumerate(text):
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+            continue
+        if ch == open_ch:
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == close_ch and depth:
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
+
+
+def _extract_json(content, expect=None):
+    """Recover a JSON value from an LLM reply that may wrap it in prose
+    and/or a markdown fence.
+
+    Small local models (llama3.1:8b, qwen2.5, mistral, ...) routinely
+    ignore a "raw JSON only" instruction and answer with an explanation,
+    a fenced block, and a trailing summary. The code this replaces did
+    ``s.strip().strip("```json").strip("```")``, which is wrong twice
+    over: ``str.strip(chars)`` removes a *character set* rather than a
+    substring, and nothing there survives prose outside the fence. Every
+    reply from such a model therefore died with "Expecting value: line 1
+    column 1 (char 0)" and the caller silently fell back to the
+    deterministic default sanitizers -- i.e. the LLM stage of the
+    pipeline never ran, while the logs looked healthy.
+
+    ``expect`` may be ``dict``, ``list``, or ``None`` for either.
+    Raises ValueError if nothing parsable is present.
+    """
+    text = _coerce_text(content).strip()
+    if not text:
+        raise ValueError("empty LLM response")
+
+    candidates = [text]
+    candidates.extend(m.strip() for m in _FENCE_RE.findall(text))
+
+    pairs = [("{", "}", dict), ("[", "]", list)]
+    for open_ch, close_ch, typ in pairs:
+        if expect is not None and typ is not expect:
+            continue
+        for base in list(candidates):
+            span = _balanced_span(base, open_ch, close_ch)
+            if span and span not in candidates:
+                candidates.append(span)
+
+    last_err = None
+    for cand in candidates:
+        if not cand:
+            continue
+        try:
+            data = json.loads(cand)
+        except Exception as e:
+            last_err = e
+            continue
+        if expect is not None and not isinstance(data, expect):
+            last_err = ValueError(
+                "parsed a %s, expected %s" % (type(data).__name__, expect.__name__)
+            )
+            continue
+        return data
+    raise ValueError("no parsable JSON in LLM response (%s)" % (last_err,))
 
 
 @tool
@@ -91,9 +210,226 @@ def create_json(json_content: str, filename: str) -> str:
 
 
 
+def _validate_seeds(parsed_seeds, properties, tool_name=""):
+    """Drop seed objects that cannot possibly be arguments for this tool.
+
+    BUG 5 (found 2026-09-10, appium generate-double-tap-code). The model
+    answered the final turn with an array of its OWN tool-call envelopes
+    rather than an array of tool arguments:
+
+        {"name": "create_json",
+         "parameters": {"filename": "test_case.json",
+                        "json_content": "{\"language\": \"java\", ...}"}}
+
+    Those top-level keys are "name" and "parameters", which match ZERO
+    properties of the tool schema. input_parser._try_parse_json requires
+    matched > 0, so parse() correctly falls through to FuzzedDataProvider
+    and the envelope's own bytes come back through
+    ConsumeUnicodeNoSurrogates as UTF-16 mojibake -- the exact artefact the
+    parse-order fix was meant to eliminate. libFuzzer then collapsed all 12
+    near-identical envelopes to corp: 1.
+
+    The stage still logged LLM_SEEDGEN_OK n_seeds=12, i.e. a healthy marker
+    over a dead stage: the same failure family as the four before it.
+
+    A seed is kept iff it is a dict sharing at least one key with the
+    schema's declared properties -- deliberately the SAME predicate
+    input_parser uses, so "accepted here" means "honoured there". With no
+    declared properties there is nothing to check against, so everything is
+    kept and the caller is told validation was skipped.
+
+    Returns (kept, rejected, checked).
+    """
+    if not isinstance(parsed_seeds, list):
+        return [], [], False
+    if not properties:
+        return [s for s in parsed_seeds if isinstance(s, dict)], [], False
+    keys = set(properties)
+    kept, rejected = [], []
+    for s in parsed_seeds:
+        if isinstance(s, dict) and keys & set(s):
+            kept.append(s)
+        else:
+            rejected.append(s)
+    return kept, rejected, True
+
+
+# SANITIZER -> ADVERSARIAL INPUT CLASS (the paper's G, sec4_design.tex:158-163)
+#
+# The design says: "Values for the selected arguments are generated using the
+# corresponding sanitizer's adversarial input classes", and the thesis sentence
+# at sec4_design.tex:10 says the property EXERCISED must be the property JUDGED.
+#
+# That link did not exist. generate_seeds() never received the selected
+# sanitizers, and _local_fallback_mapping picked a seed-bank category by keyword
+# match on the ARGUMENT NAME alone -- so the property exercised was chosen by one
+# heuristic and the property judged by a separate LLM call, and they could
+# disagree silently. Measured 2026-09-10 on excel-reader::get_cell: the LLM
+# selected check_path_traversal, the seeds were generic, and check_path_traversal
+# never fired. RQ4 asks exactly whether mutation reaches the code paths the
+# SELECTED sanitizers are meant to exercise; nothing connected the two.
+#
+# Substring-matched, longest first, so check_introspection_sql_injection maps to
+# sql_injection rather than falling through. Sanitizers with no category are
+# COUNTED AND REPORTED rather than silently ignored: how many selected sanitizers
+# actually get adversarial inputs is itself an RQ1/RQ4 number, and with 6 seed
+# categories against 71 registered sanitizers it is not going to be all of them.
+SANITIZER_SEED_CATEGORIES = [
+    ("sql",                 "sql_injection"),
+    ("xxe",                 "xml_bomb"),
+    ("xml",                 "xml_bomb"),
+    ("amplification",       "xml_bomb"),
+    ("ssrf",                "ssrf_url"),
+    ("url",                 "ssrf_url"),
+    ("uri",                 "ssrf_url"),
+    ("network",             "ssrf_url"),
+    ("path_traversal",      "path_traversal"),
+    ("jailbreak",           "path_traversal"),
+    ("file_access",         "path_traversal"),
+    ("sensitive_file",      "path_traversal"),
+    ("directory",           "path_traversal"),
+    ("symlink",             "path_traversal"),
+    ("xss",                 "xss_markdown"),
+    ("markdown",            "xss_markdown"),
+    ("html",                "xss_markdown"),
+    ("redos",               "wildcards"),
+    ("regex",               "wildcards"),
+    ("wildcard",            "wildcards"),
+    ("glob",                "wildcards"),
+]
+
+
+def categories_for_sanitizers(selected, seed_bank):
+    """Adversarial input classes for the sanitizers the LLM actually selected.
+
+    Returns (categories, mapped, unmapped) so the caller can report how much of
+    the selection got adversarial inputs -- never silently drop the remainder.
+    """
+    cats, mapped, unmapped = [], [], []
+    for name in (selected or []):
+        low = name.lower()
+        hit = next((c for frag, c in SANITIZER_SEED_CATEGORIES if frag in low), None)
+        if hit and hit in (seed_bank or {}):
+            mapped.append(name)
+            if hit not in cats:
+                cats.append(hit)
+        else:
+            unmapped.append(name)
+    return cats, mapped, unmapped
+
+
 class LLMHandler:
-    def __init__(self, api_key: str, model_name: str = "minimax-m3:cloud", base_url: str = "https://ollama.com/v1"):
-        self.model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name, timeout=60, max_retries=1)
+    """LLM backend for sanitizer selection and seed generation.
+
+    Backend is configurable via environment so the same code runs against
+    Ollama Cloud or a LOCAL Ollama daemon. Local Ollama serves an
+    OpenAI-compatible API at http://localhost:11434/v1 and ignores the key.
+
+        export TOFU_LLM_BASE_URL=http://localhost:11434/v1
+        export TOFU_LLM_MODEL=llama3.1:8b
+        export OLLAMA_CLOUD_API_KEY=ollama     # any non-empty string locally
+
+    Record whichever model you used in the paper's setup subsection: sanitizer
+    selection quality is model-dependent, and VIPER-MCP's own RQ4 showed
+    triggered-server counts swinging from 0 to 88 purely by changing backend.
+    """
+    def __init__(self, api_key: str = None, model_name: str = None, base_url: str = None):
+        base_url = base_url or os.environ.get("TOFU_LLM_BASE_URL", "https://ollama.com/v1")
+        model_name = model_name or os.environ.get("TOFU_LLM_MODEL", "minimax-m3:cloud")
+        # OPENAI_API_KEY first when the endpoint is OpenAI's, so the hosted arm
+        # needs no other change. Local Ollama ignores the value entirely.
+        api_key = (api_key
+                   or (os.environ.get("OPENAI_API_KEY")
+                       if "openai.com" in (base_url or "") else None)
+                   or os.environ.get("OLLAMA_CLOUD_API_KEY")
+                   or os.environ.get("OPENAI_API_KEY")
+                   or "ollama")
+        timeout = int(os.environ.get("TOFU_LLM_TIMEOUT", "120"))
+        self.model_name = model_name
+        self.base_url = base_url
+        # How many times to re-ask when a reply will not parse as JSON, and
+        # whether to request the backend's JSON mode. Both are worth
+        # recording in the paper's setup: they change how often the LLM
+        # stage runs at all on a small local model.
+        self.max_json_attempts = int(os.environ.get("TOFU_LLM_JSON_ATTEMPTS", "3"))
+        self.json_mode = os.environ.get("TOFU_LLM_JSON_MODE", "1").lower() not in ("0", "false", "no")
+        if ChatOpenAI is None:
+            raise RuntimeError(
+                "langchain_openai is not importable, so no LLM backend can be "
+                "constructed (%s). Install the pinned requirements into the "
+                "active interpreter before running the campaign." % (_LANGCHAIN_IMPORT_ERROR,)
+            )
+        # DETERMINISM. This used to be ChatOpenAI(...) with no temperature, which
+        # means LangChain's default of 0.7 -- so every sanitizer selection was a
+        # SAMPLE. Two identical runs of the same tool could select different
+        # sanitizers, no run was reproducible, and any comparison between LLM
+        # backends was confounded by sampling noise rather than measuring the
+        # backend. Model choice is an experimental variable in this paper, so the
+        # sampling has to be pinned before any of those numbers mean anything.
+        self.temperature = float(os.environ.get("TOFU_LLM_TEMPERATURE", "0"))
+        self.seed = int(os.environ.get("TOFU_LLM_SEED", "20260910"))
+        logger.info(f"LLM backend: model={model_name} base_url={base_url} "
+                    f"json_mode={self.json_mode} json_attempts={self.max_json_attempts} "
+                    f"temperature={self.temperature} seed={self.seed}")
+
+        # REASONING. gemma4:12b is a thinking model (`ollama show` lists the
+        # "thinking" capability) and with no cap it will reason until it decides
+        # to stop. Measured on the M2 Pro at 17.5 generated tok/s, so ~12k
+        # reasoning tokens is ~11 minutes for ONE call -- the 2026-09-10 smoke
+        # run hung past the harness's 720s ceiling without completing a single
+        # HTTP request.
+        #
+        # This was MASKED before: Ollama defaulted gemma4 to a 4096-token
+        # context on 16 GB, which truncated the thinking at ~2045 tokens and
+        # produced "length limit was reached" instead of a hang. Raising the
+        # context to 32768 to fix the truncation is what let the thinking run
+        # free. The two settings have to move together.
+        #
+        # Measured against the live daemon, same prompt:
+        #   default (no cap)        hangs > 720s
+        #   max_tokens=800           4s, 78 completion tokens, correct JSON
+        #   reasoning_effort="none"  1s, 19 completion tokens, correct JSON
+        #
+        # TOFU_LLM_REASONING is an EXPERIMENTAL VARIABLE, not a tuning knob:
+        # it changes how the model selects sanitizers, which is exactly what
+        # RQ2/RQ3 measure. Record it with every run and state it in the setup
+        # subsection alongside model, temperature and seed. "none" is the
+        # campaign default; re-run a subset with it unset for the thinking arm.
+        self.reasoning = os.environ.get("TOFU_LLM_REASONING", "none")
+        # Belt and braces: even with reasoning off, never let one call run away
+        # again. 4096 is ~4 minutes of generation at the measured rate.
+        self.max_tokens = int(os.environ.get("TOFU_LLM_MAX_TOKENS", "4096"))
+        logger.info(f"LLM backend: reasoning_effort={self.reasoning} "
+                    f"max_tokens={self.max_tokens}")
+
+        kwargs = dict(api_key=api_key, base_url=base_url, model=model_name,
+                      timeout=timeout, max_retries=2, temperature=self.temperature,
+                      max_tokens=self.max_tokens)
+        extra = {"seed": self.seed}
+        if self.reasoning and self.reasoning.lower() not in ("", "default", "auto"):
+            extra["reasoning_effort"] = self.reasoning
+        # Some backends reject reasoning_effort outright -- OpenAI's non-reasoning
+        # models answer 400 "Unrecognized request argument supplied:
+        # reasoning_effort" -- and that 400 arrives at INVOKE time, not at
+        # construction, so it would kill every call of a campaign rather than
+        # failing fast. Probe once here and drop the argument if unsupported.
+        self._reasoning_sent = "reasoning_effort" in extra
+        self._ctor = dict(api_key=api_key, base_url=base_url, model=model_name,
+                          timeout=timeout)
+        try:
+            # langchain-openai exposes these directly on recent versions.
+            self.model = ChatOpenAI(**extra, **kwargs)
+        except TypeError:
+            # Older versions: pass them through to the backend request body.
+            # Ollama's OpenAI-compatible endpoint honours both.
+            self.model = ChatOpenAI(model_kwargs=extra, **kwargs)
+            logger.info("LLM backend: seed/reasoning passed via model_kwargs "
+                        "(older langchain-openai)")
+
+        # temperature=0 is necessary but NOT sufficient for bit-identical output:
+        # llama.cpp/Ollama batching and GPU non-determinism can still perturb
+        # logits. Record the seed with every run and re-run a tool twice to
+        # confirm stability before claiming reproducibility in the paper.
 
     def _load_seed_bank(self) -> dict:
         """Loads all JSON files from src/seed_bank/ into a dictionary."""
@@ -117,16 +453,42 @@ class LLMHandler:
                     logging.warning(f"Failed to load seed bank file {file}: {e}")
         return seed_bank
 
-    def _local_fallback_mapping(self, input_schema: dict, seed_bank: dict) -> list:
+    def _local_fallback_mapping(self, input_schema: dict, seed_bank: dict,
+                                selected_sanitizers: list = None) -> list:
         """Generates fuzzing seeds locally without LLM API supporting type fuzzing and type confusion."""
+        logging.warning("LLM_SEEDGEN_FALLBACK deterministic local mapping in use (no LLM seeds)")
+        # Adversarial classes come from the SELECTED sanitizers (the paper's G),
+        # not from a keyword match on the argument name. The name still decides
+        # WHICH argument carries the payload; the sanitizer decides WHAT payload.
+        wanted_cats, _m, _u = categories_for_sanitizers(selected_sanitizers, seed_bank)
         logging.info("[Seed Gen] Using local fallback mapping mechanism with multi-type fuzzing...")
         properties = input_schema.get("properties", {})
         
-        # 1. Map properties to default values based on type
+        # 1. Map properties to default values based on type.
+        #
+        # ENUMS. This mapper ignored "enum" entirely and filled every string
+        # with "test". Measured 2026-09-10 on
+        # AppiumTestDistribution/mcp-appium-gestures::generate-double-tap-code,
+        # whose `language` is enum ['javascript','java']: 34 of the 37 seeds
+        # carried language="test" and the server rejected EVERY ONE with
+        #   MCP error -32602: Invalid ... parameters [{"received":"test", ...}]
+        # So the tool never executed, no sanitizer could fire, and the run
+        # reported a healthy 0 findings. Any tool with an enum-constrained
+        # required field was 100% unfuzzable through the deterministic path.
+        # (input_parser._generate_value_for_schema already honoured enums, so
+        # the FDP path and the seed path disagreed with each other.)
+        #
+        # The default must be a VALID enum member, otherwise the payloads in
+        # every OTHER field never reach the tool body. One deliberate
+        # enum-violation seed is still emitted below -- rejecting an invalid
+        # enum is legitimate behaviour worth exercising, just not 34 times.
         defaults = {}
         for prop, attrs in properties.items():
             p_type = attrs.get("type", "string")
-            if p_type in ("integer", "number"):
+            enum_vals = attrs.get("enum") or []
+            if enum_vals:
+                defaults[prop] = enum_vals[0]
+            elif p_type in ("integer", "number"):
                 defaults[prop] = 1
             elif p_type == "boolean":
                 defaults[prop] = True
@@ -142,7 +504,17 @@ class LLMHandler:
         # 2. Generate type-specific boundary values
         for prop, attrs in properties.items():
             p_type = attrs.get("type", "string")
-            
+
+            enum_vals = attrs.get("enum") or []
+            if enum_vals:
+                # Every declared member, so the tool body is reached through
+                # each enum branch, plus exactly ONE out-of-enum probe.
+                for val in list(enum_vals) + ["__not_in_enum__"]:
+                    seed = defaults.copy()
+                    seed[prop] = val
+                    seeds.append(seed)
+                continue
+
             if p_type in ("integer", "number"):
                 # JSON-compliant boundary numbers
                 boundaries = [0, -1, 2147483647, -2147483648, 1e308, -1e308, None]
@@ -197,6 +569,13 @@ class LLMHandler:
                 elif "html" in prop_lower or "xml" in prop_lower or "xml" in desc_lower or "html" in desc_lower or "markdown" in desc_lower:
                     category_to_use = "xss_markdown"
                     
+                # Sanitizer-derived classes win. If the selection asked for a
+                # class the name-heuristic did not pick, still exercise it --
+                # otherwise the selected sanitizer has no inputs to fire on.
+                if wanted_cats:
+                    category_to_use = (category_to_use if category_to_use in wanted_cats
+                                       else wanted_cats[0])
+
                 if category_to_use and category_to_use in seed_bank:
                     category_data = seed_bank[category_to_use]
                     for payload in category_data["payloads"][:5]:
@@ -245,14 +624,15 @@ class LLMHandler:
                 
         return unique_seeds
 
-    def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict) -> list:
+    def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict,
+                       selected_sanitizers: list = None) -> list:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
         logging.info(f"[LLM] Generation of smart seed corpus for '{tool_name}' using Seed Bank...")
         
         seed_bank = self._load_seed_bank()
         if not seed_bank:
             logging.warning("Seed bank is empty or not found. Falling back to local mapping.")
-            return self._local_fallback_mapping(input_schema, {})
+            return self._local_fallback_mapping(input_schema, {}, selected_sanitizers)
             
         example_structure = {}
         properties = input_schema.get("properties", {})
@@ -260,10 +640,36 @@ class LLMHandler:
             p_type = attrs.get("type", "string")
             example_structure[prop] = f"<{p_type}>"
             
-        # Format the seed bank categories for the prompt
+        # Format the seed bank categories for the prompt. Restrict them to the
+        # classes the SELECTED sanitizers actually need (the paper's G), so the
+        # property exercised is the property judged. Offering the whole bank
+        # regardless of selection is what decoupled the two.
+        wanted_cats, mapped, unmapped = categories_for_sanitizers(selected_sanitizers, seed_bank)
+        if wanted_cats:
+            logging.info(
+                f"SEEDGEN_CLASSES tool={tool_name} categories={wanted_cats} "
+                f"n_sanitizers_mapped={len(mapped)} n_unmapped={len(unmapped)}")
+            if unmapped:
+                # Honest accounting: with 6 seed-bank categories against 71
+                # registered sanitizers, some selections get no adversarial
+                # inputs at all. That number belongs in RQ1/RQ4, not in a
+                # silent drop.
+                logging.warning(
+                    f"SEEDGEN_UNMAPPED tool={tool_name} n={len(unmapped)} "
+                    f"sanitizers={unmapped} -- no adversarial input class exists "
+                    f"for these; their oracle can only fire incidentally")
+        bank_for_prompt = {c: seed_bank[c] for c in wanted_cats} if wanted_cats else seed_bank
+
         seed_bank_desc = ""
-        for cat, data in seed_bank.items():
+        for cat, data in bank_for_prompt.items():
             seed_bank_desc += f"- Category: '{cat}'\n  Description: {data['description']}\n  Sample Payloads: {json.dumps(data['payloads'][:3])}\n\n"
+
+        selected_desc = ""
+        if selected_sanitizers:
+            selected_desc = (
+                "\nThe following security sanitizers have been selected for this tool. "
+                "Your test cases MUST exercise the properties they check:\n"
+                + "\n".join(f"- {n}" for n in selected_sanitizers) + "\n")
             
         prompt = f"""
 You are a security and QA engineering expert. You will generate a JSON array of test cases (inputs) to fuzz the following tool.
@@ -271,7 +677,7 @@ You are a security and QA engineering expert. You will generate a JSON array of 
 Tool Name: {tool_name}
 Description: {tool_description}
 Schema Contract: {input_schema}
-
+{selected_desc}
 We have a structured Seed Bank containing pre-curated payloads categorized by attack vectors:
 {seed_bank_desc}
 
@@ -341,17 +747,35 @@ Strict Instructions:
                         messages.append(ToolMessage(content=result, tool_call_id=t_id))
                     continue
                 
-                content = response.content.strip().strip("```json").strip("```").strip()
+                content = _coerce_text(response.content).strip()
                 if not content:
                     messages.append(HumanMessage(content="Please provide the final raw JSON array of test cases now."))
                     attempt += 1
                     continue
                 
-                parsed_seeds = json.loads(content)
-                if not isinstance(parsed_seeds, list):
-                    raise ValueError("The LLM returned a JSON object but a JSON ARRAY (list) of objects was expected.")
-                
-                return parsed_seeds
+                parsed_seeds = _extract_json(content, expect=list)
+
+                # Validate BEFORE declaring success. See _validate_seeds.
+                kept, rejected, checked = _validate_seeds(
+                    parsed_seeds, properties, tool_name)
+                if checked and rejected:
+                    logging.warning(
+                        f"LLM_SEEDGEN_REJECTED tool={tool_name} attempt={attempt} "
+                        f"n_rejected={len(rejected)} n_kept={len(kept)} "
+                        f"schema_keys={sorted(properties)} "
+                        f"first_rejected_keys={sorted(rejected[0]) if isinstance(rejected[0], dict) else type(rejected[0]).__name__}")
+                if not kept:
+                    raise ValueError(
+                        "none of the %d returned objects shares a key with the "
+                        "tool schema %s -- you returned tool-call envelopes or "
+                        "unrelated objects, not tool arguments"
+                        % (len(parsed_seeds), sorted(properties)))
+
+                logging.info(
+                    f"LLM_SEEDGEN_OK tool={tool_name} attempt={attempt} "
+                    f"n_seeds={len(kept)} n_rejected={len(rejected)} "
+                    f"validated={int(checked)}")
+                return kept
                 
             except Exception as e:
                 logging.warning(f"Seed generation attempt {attempt} failed ({e}).")
@@ -361,7 +785,7 @@ Strict Instructions:
                 attempt += 1
                 
         # Trigger local fallback mapping if LLM failed
-        return self._local_fallback_mapping(input_schema, seed_bank)
+        return self._local_fallback_mapping(input_schema, seed_bank, selected_sanitizers)
 
 
 
@@ -399,20 +823,90 @@ Strict Instructions:
 """
         messages = [HumanMessage(content=prompt)]
         
-        try:
-            response = self.model.invoke(messages)
-            content = response.content.strip().strip("```json").strip("```").strip()
-            logging.info(response.content)
-            data = json.loads(content)
-            selected = data.get("selected_sanitizers", [])
-            rules = data.get("rules", {})
-            if isinstance(selected, list) and isinstance(rules, dict):
-                valid_selection = [s for s in selected if s in available_sanitizers]
-                valid_rules = {s: r for s, r in rules.items() if s in valid_selection}
+        # A small local model will happily wrap the object in prose and a
+        # markdown fence no matter how the instruction is phrased, so ask
+        # for the backend's JSON mode where available, parse tolerantly,
+        # and re-ask with a sharper instruction before giving up. The
+        # outcome is logged on one greppable line per tool: the fraction
+        # of tools where the LLM stage actually ran is a number the
+        # evaluation has to report, not assume.
+        model = self.model
+        json_mode = self.json_mode
+        if json_mode:
+            try:
+                model = self.model.bind(response_format={"type": "json_object"})
+            except Exception as e:
+                json_mode = False
+                logger.debug(f"backend rejected json_object mode ({e}); continuing without it")
+
+        last_err = None
+        for attempt in range(1, self.max_json_attempts + 1):
+            p = prompt
+            if attempt > 1:
+                p = prompt + (
+                    f"\n\nYour previous reply could not be parsed ({last_err}). "
+                    "Reply with the JSON object and nothing else: no explanation, "
+                    "no markdown fence, no text before or after it. The first "
+                    "character of your reply must be '{' and the last must be '}'."
+                )
+            try:
+                response = model.invoke([HumanMessage(content=p)])
+                logging.info(_coerce_text(response.content))
+                data = _extract_json(response.content, expect=dict)
+                selected = data.get("selected_sanitizers", [])
+                rules = data.get("rules", {})
+                if not isinstance(selected, list) or not isinstance(rules, dict):
+                    raise ValueError(
+                        "expected 'selected_sanitizers' to be a list and 'rules' a "
+                        f"object, got {type(selected).__name__}/{type(rules).__name__}"
+                    )
+                valid_selection = [x for x in selected if x in available_sanitizers]
+                dropped = [x for x in selected if x not in available_sanitizers]
+                valid_rules = {x: r for x, r in rules.items() if x in valid_selection}
+                if dropped:
+                    logger.warning(
+                        f"[{tool_name}] LLM named {len(dropped)} sanitizer(s) that are "
+                        f"not in the registry; dropped: {dropped}"
+                    )
+                logger.info(
+                    f"LLM_SELECTION_OK tool={tool_name} attempt={attempt} "
+                    f"n_selected={len(valid_selection)} n_dropped={len(dropped)}"
+                )
                 logging.info(f"Sanitizers selected: {valid_selection}")
                 logging.info(f"Sanitizer rules: {valid_rules}")
                 return valid_selection, valid_rules
-        except Exception as e:
-            logger.error(f"LLM API selection failed for '{tool_name}': {e}")
-            raise RuntimeError(f"LLM API Call Failed during sanitizer selection for '{tool_name}': {e}") from e
+            except Exception as e:
+                last_err = e
+                logger.warning(
+                    f"[{tool_name}] sanitizer-selection attempt "
+                    f"{attempt}/{self.max_json_attempts} failed: {e}"
+                )
+                if self._reasoning_sent and "reasoning_effort" in str(e):
+                    # Backend has no reasoning knob. Rebuild without it rather
+                    # than burning every remaining attempt on the same 400.
+                    self._reasoning_sent = False
+                    kw = dict(**self._ctor, max_retries=2,
+                              temperature=self.temperature, max_tokens=self.max_tokens)
+                    try:
+                        self.model = ChatOpenAI(seed=self.seed, **kw)
+                    except TypeError:
+                        self.model = ChatOpenAI(model_kwargs={"seed": self.seed}, **kw)
+                    model = self.model
+                    logger.warning(f"[{tool_name}] backend rejected reasoning_effort; "
+                                   f"rebuilt the client without it")
+                if json_mode:
+                    # A backend that rejects response_format only says so at
+                    # invoke time, which would otherwise burn every attempt
+                    # on the same error. Drop the constraint and retry plain.
+                    json_mode = False
+                    model = self.model
+                    logger.warning(
+                        f"[{tool_name}] retrying without json_object mode"
+                    )
+
+        logger.error(f"LLM_SELECTION_FAILED tool={tool_name} after "
+                     f"{self.max_json_attempts} attempts: {last_err}")
+        raise RuntimeError(
+            f"LLM API Call Failed during sanitizer selection for '{tool_name}': {last_err}"
+        ) from last_err
 

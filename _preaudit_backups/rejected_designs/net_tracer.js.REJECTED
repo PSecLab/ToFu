@@ -1,0 +1,484 @@
+// ToFu Node-side network tracer -- family: OUTBOUND NETWORK.
+//
+// Produces two RunnerResult attributes with EXACTLY the element shapes that
+// src/sanitizers/introspection.py's Python tracers emit, so the existing
+// oracles consume them unchanged:
+//
+//   network_connections  <- NetworkExecutionTracer  : [{host: str, port: int|null, ...}]
+//   unverified_ssl_calls <- SSLCertificateValidationTracer : [{function: str, reason: str}]
+//
+// WHY THIS EXISTS. check_introspection_ssrf (introspection.py:555) can only
+// answer "did the tool CONNECT to an internal address" if something records the
+// connection ATTEMPT. Without it a crawler fed http://10.0.0.1/internal_api
+// returns "connection refused" and the verdict is unadjudicable: refused-to-
+// fetch (safe) and fetched-and-failed (SSRF) are indistinguishable. Every
+// hook below records at ATTEMPT time, before any error can occur, which is the
+// whole point.
+//
+// ---------------------------------------------------------------------------
+// LOAD ORDER -- MEASURED, NOT ASSUMED (Node v22.19.0, 2026-09-10)
+// ---------------------------------------------------------------------------
+// ESM links the whole static graph (creating each builtin's named-export ESM
+// facade) BEFORE any module body evaluates. A builtin that appears in
+// coverage_wrapper.js's static imports therefore has its facade snapshotted
+// before this file can patch anything, and a module-level function patch on it
+// is invisible to a target doing `import { x } from 'node:mod'`.
+//
+//   MEASURED A/B: wrapper with `import net from 'node:net'` -> a patch of
+//   net.connect was NOT hit by a target's `import { connect } from 'node:net'`.
+//   The identical wrapper obtaining net via createRequire -> the patch WAS hit.
+//   Same experiment for node:http, which the wrapper does NOT static-import:
+//   the http.request patch WAS hit through a named ESM import.
+//
+// Two consequences, both load-bearing:
+//
+//  1. net.Socket.prototype.connect is patched instead of net.connect. A
+//     PROTOTYPE patch is immune to the facade snapshot, because the snapshot
+//     copies the *reference* to the Socket constructor and we mutate its
+//     prototype in place. MEASURED: fires for net.connect, new Socket().connect,
+//     http.request, https.request, and global fetch (undici), through named ESM
+//     imports, default imports, require(), and dynamic import alike. This is the
+//     ground truth that cannot be missed.
+//
+//  2. DO NOT ADD `import ... from 'node:http' | 'node:https' | 'node:tls' |
+//     'node:dns'` TO coverage_wrapper.js. Those are patched at module level for
+//     URL/TLS detail, and such an import would move their facade creation to
+//     link time and SILENTLY disable URL capture. installNetworkTracer() checks
+//     for this at runtime and reports it in the meta block rather than failing
+//     quietly -- see facade_ok below.
+//
+// ---------------------------------------------------------------------------
+// SAFETY RULES OBSERVED HERE
+// ---------------------------------------------------------------------------
+//  * Never write to stdout. coverage_wrapper.js:62-63 replaces process.stdout
+//    with the socket-multiplexing stream; anything printed during a fuzzing call
+//    is consumed AS the response, fails the startswith("{") gate at
+//    js_runner.py:238, and reports a false crash. Diagnostics go to a file, and
+//    only when TOFU_JS_TRACE_DEBUG is set.
+//  * Every hook is `record inside try/catch, then unconditionally
+//    return original.apply(this, arguments)`. A throw here would be invisible:
+//    js_runner.py:150 sets stderr=DEVNULL and the "Stderr:" diagnostic branch at
+//    :287 is unreachable.
+//  * Buckets are capped. An unbounded list would inflate the single-line socket
+//    payload that js_runner.py:222 reads with one readline().
+
+import { createRequire } from 'node:module';
+
+const require_ = createRequire(import.meta.url);
+
+// Per-call buckets. Reset on every tools/call, drained when the reply is built.
+let netEvents = [];
+let sslEvents = [];
+let dnsEvents = [];
+let dedupe = new Map();   // per-call, collapses identical events
+
+// Instrument self-report. Never read by any oracle; exists so a zero can be
+// distinguished from a broken hook (CLAUDE.md: suspect the instrument first).
+const meta = {
+  hooks: {},            // name -> true | "error: ..."
+  facade_ok: {},        // module -> whether our patch survived into the ESM facade
+  dropped_over_cap: 0,  // events discarded because a bucket was full
+  preload_events: 0,    // connections made before the first tools/call (import time)
+  late_events: 0,       // events that arrived after a reply was drained
+  env_tls_reject_unauthorized_at_startup: null,
+};
+
+const MAX_PER_BUCKET = Number(process.env.TOFU_JS_TRACE_CAP || 256);
+const FUZZER_SOCKET_PATH = process.env.FUZZER_SOCKET_PATH || '/tmp/mcp_fuzzer.sock';
+
+// NODE_TLS_REJECT_UNAUTHORIZED=0 is process-wide and is inherited from the
+// fuzzer's own environment. If it is already 0 at startup that is a property of
+// the CAMPAIGN, not of the target, and recording it per connection would make
+// check_introspection_ssl_verification -- which fires on the first record and is
+// `or`-gated at fuzzer.py:734 -- alert on 100% of executions of every JS target.
+// So: snapshot it here, and only record it later if the TARGET changed it.
+const ENV_TLS_AT_STARTUP = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+meta.env_tls_reject_unauthorized_at_startup = ENV_TLS_AT_STARTUP ?? null;
+
+let armed = false;     // true between a tools/call and the reply that drains it
+let callsSeen = 0;     // how many tools/call resets have happened
+
+function debug(msg) {
+  if (!process.env.TOFU_JS_TRACE_DEBUG) return;
+  try {
+    require_('node:fs').appendFileSync(process.env.TOFU_JS_TRACE_DEBUG, msg + '\n');
+  } catch (e) { /* diagnostics must never break the run */ }
+}
+
+function push(kind, rec) {
+  try {
+    if (!armed) {
+      // Activity outside a call window. NEVER attributed to an input: charging
+      // it to whichever call happens to be next is how an instrument invents a
+      // finding. Counted instead, so the loss is visible in tofu_net_meta.
+      if (callsSeen === 0) meta.preload_events++;   // module import / server boot
+      else meta.late_events++;                      // async completion after the reply
+      return;
+    }
+    const bucket = kind === 'net' ? netEvents : kind === 'ssl' ? sslEvents : dnsEvents;
+    // Collapse identical events within a call and carry a count instead. No
+    // oracle counts records -- check_introspection_ssrf returns on the first
+    // match -- and some Node paths legitimately re-enter (dgram.send re-invokes
+    // itself once the socket is implicitly bound). `count` is an additive key;
+    // dict consumers use .get(), so it is inert for the sanitizers.
+    const key = kind + '\u0000' + JSON.stringify(rec);
+    const seen = dedupe.get(key);
+    if (seen !== undefined) { seen.count = (seen.count || 1) + 1; return; }
+    if (bucket.length >= MAX_PER_BUCKET) { meta.dropped_over_cap++; return; }
+    bucket.push(rec);
+    dedupe.set(key, rec);
+  } catch (e) { /* never throw out of a hook */ }
+}
+
+// --------------------------------------------------------------------------
+// host/port extraction from net.Socket.prototype.connect arguments.
+//
+// MEASURED: net.connect()/createConnection() call normalizeArgs() and then
+// socket.connect(normalizedArray), so args[0] is the ARRAY [options, cb] -- not
+// an options object. A naive `typeof args[0] === 'object'` check reads host as
+// undefined on every http/https/fetch connection. Verified against all nine
+// call forms below.
+// --------------------------------------------------------------------------
+function extractAddress(args) {
+  let a0 = args[0];
+  if (Array.isArray(a0)) a0 = a0[0];               // normalized [options, cb]
+  if (a0 && typeof a0 === 'object') {
+    if (a0.path !== undefined && a0.port === undefined) {
+      return { host: String(a0.path), port: null, unix: true };
+    }
+    const h = a0.host ?? a0.hostname ?? a0.servername ?? 'localhost';
+    const p = (a0.port === undefined || a0.port === null) ? null : Number(a0.port);
+    return { host: String(h), port: Number.isNaN(p) ? null : p, unix: false };
+  }
+  if (typeof a0 === 'number' || (typeof a0 === 'string' && /^\d+$/.test(a0))) {
+    const h = typeof args[1] === 'string' ? args[1] : 'localhost';
+    return { host: String(h), port: Number(a0), unix: false };
+  }
+  if (typeof a0 === 'string') return { host: a0, port: null, unix: true };
+  return { host: '', port: null, unix: false };
+}
+
+// Shape check: {host: str, port: int|null} is the Python NetworkExecutionTracer
+// element verbatim (introspection.py:611-614). `url` and `source` are ADDITIVE:
+// every consumer reads this dict with .get(), so extra keys are inert for the
+// oracles, while `url` revives check_introspection_cleartext_sensitive_transmission
+// (introspection.py:1779) and `source` is what a human needs to adjudicate.
+function recordConnection(host, port, extra) {
+  const rec = { host: String(host), port: (port === null || port === undefined) ? null : Number(port) };
+  if (extra && extra.url) rec.url = String(extra.url);
+  if (extra && extra.source) rec.source = String(extra.source);
+  push('net', rec);
+  debug(`conn ${rec.source || '?'} ${rec.host}:${rec.port} ${rec.url || ''}`);
+}
+
+// {function: str, reason: str} -- SSLCertificateValidationTracer verbatim
+// (introspection.py:872-875). Both values MUST be strings; the consumer at
+// introspection.py:840 interpolates them directly.
+function recordUnverifiedSSL(fn, reason) {
+  push('ssl', { function: String(fn), reason: String(reason) });
+  debug(`ssl ${fn} ${reason}`);
+}
+
+function urlFromHttpArgs(args, isHttps) {
+  try {
+    const a0 = args[0];
+    if (typeof a0 === 'string') return a0;
+    if (a0 instanceof URL) return a0.href;
+    const o = (a0 && typeof a0 === 'object') ? a0 : {};
+    const host = o.host ?? o.hostname;
+    if (!host) return null;
+    const proto = o.protocol || (isHttps ? 'https:' : 'http:');
+    const port = o.port ? `:${o.port}` : '';
+    const p = o.path ?? o.pathname ?? '/';
+    return `${proto}//${host}${port}${p}`;
+  } catch (e) { return null; }
+}
+
+function hostPortFromHttpArgs(args, isHttps) {
+  try {
+    const a0 = args[0];
+    if (typeof a0 === 'string' || a0 instanceof URL) {
+      const u = new URL(String(a0 instanceof URL ? a0.href : a0));
+      return { host: u.hostname, port: u.port ? Number(u.port) : (u.protocol === 'https:' ? 443 : 80) };
+    }
+    const o = (a0 && typeof a0 === 'object') ? a0 : {};
+    const host = o.hostname ?? o.host;
+    if (!host) return null;
+    return { host: String(host).replace(/:\d+$/, ''), port: o.port ? Number(o.port) : (isHttps ? 443 : 80) };
+  } catch (e) { return null; }
+}
+
+function inspectTLSOptions(opts, fnName) {
+  if (!opts || typeof opts !== 'object') return;
+  // Node disables verification only on a STRICT false (options.rejectUnauthorized
+  // !== false). MEASURED: a normal https.request leaves it `undefined`, so this
+  // cannot fire on default traffic. An https.Agent({rejectUnauthorized:false})
+  // propagates the false down into tls.connect, so the Agent form is covered too.
+  if (opts.rejectUnauthorized === false) {
+    recordUnverifiedSSL(
+      fnName,
+      `Certificate verification disabled (rejectUnauthorized: false) for ` +
+      `'${opts.host ?? opts.servername ?? 'unknown'}:${opts.port ?? '?'}'.`
+    );
+  }
+  if (typeof opts.checkServerIdentity === 'function') {
+    recordUnverifiedSSL(
+      fnName,
+      `Custom checkServerIdentity supplied, overriding hostname verification for ` +
+      `'${opts.host ?? opts.servername ?? 'unknown'}'.`
+    );
+  }
+}
+
+let envTlsReportedForCall = false;
+function checkRuntimeEnvTLS() {
+  // Only a change made BY THE TARGET counts; see ENV_TLS_AT_STARTUP above.
+  if (envTlsReportedForCall) return;
+  const now = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+  if (now === '0' && ENV_TLS_AT_STARTUP !== '0') {
+    envTlsReportedForCall = true;
+    recordUnverifiedSSL(
+      'process.env.NODE_TLS_REJECT_UNAUTHORIZED',
+      'Target set NODE_TLS_REJECT_UNAUTHORIZED=0 at runtime, disabling CA verification process-wide.'
+    );
+  }
+}
+
+function safeWrap(name, install) {
+  try { install(); meta.hooks[name] = true; }
+  catch (e) { meta.hooks[name] = 'error: ' + (e && e.message ? e.message : String(e)); }
+}
+
+let installed = false;
+
+export function installNetworkTracer() {
+  if (installed) return meta;
+  installed = true;
+
+  // ---- GROUND TRUTH: every outbound TCP/unix connection attempt -----------
+  safeWrap('net.Socket.prototype.connect', () => {
+    const net = require_('node:net');
+    const orig = net.Socket.prototype.connect;
+    if (orig.__tofu_hooked) return;
+    function tofuConnect(...args) {
+      try {
+        const { host, port, unix } = extractAddress(args);
+        // Skip the fuzzer's own control channel. It is the instrument's traffic,
+        // not the target's, and it would otherwise appear as a connection to a
+        // path on every call.
+        if (!(unix && host === FUZZER_SOCKET_PATH)) {
+          recordConnection(host, port, { source: 'net.Socket.connect' });
+          checkRuntimeEnvTLS();
+          // DNS rebinding: connect() receives the HOSTNAME; the address it is
+          // actually resolved to arrives on the socket's 'lookup' event. Record
+          // that separately so check_introspection_ssrf sees the real IP when a
+          // public name resolves to an internal one.
+          if (!unix && host && !/^[\d.]+$/.test(host) && host.indexOf(':') === -1) {
+            try {
+              this.once('lookup', (err, address) => {
+                if (!err && address) {
+                  recordConnection(address, port, { source: 'socket.lookup:' + host });
+                }
+              });
+            } catch (e) { /* ignore */ }
+          }
+        }
+      } catch (e) { /* never throw out of a hook */ }
+      return orig.apply(this, args);
+    }
+    tofuConnect.__tofu_hooked = true;
+    net.Socket.prototype.connect = tofuConnect;
+  });
+
+  // ---- URL DETAIL: http/https request + get ------------------------------
+  // Also the ONLY hook that sees a request served from a keep-alive pooled
+  // socket, where no new connect() happens at all.
+  for (const modName of ['http', 'https']) {
+    safeWrap(`${modName}.request/get`, () => {
+      const m = require_('node:' + modName);
+      const isHttps = modName === 'https';
+      for (const fn of ['request', 'get']) {
+        const orig = m[fn];
+        if (typeof orig !== 'function' || orig.__tofu_hooked) continue;
+        const wrapped = function (...args) {
+          try {
+            const hp = hostPortFromHttpArgs(args, isHttps);
+            const url = urlFromHttpArgs(args, isHttps);
+            if (hp) recordConnection(hp.host, hp.port, { url, source: `${modName}.${fn}` });
+            for (const a of args) {
+              if (a && typeof a === 'object') {
+                inspectTLSOptions(a, `${modName}.${fn}`);
+                if (a.agent && a.agent.options) inspectTLSOptions(a.agent.options, `${modName}.Agent`);
+              }
+            }
+          } catch (e) { /* ignore */ }
+          return orig.apply(this, args);
+        };
+        wrapped.__tofu_hooked = true;
+        m[fn] = wrapped;
+      }
+    });
+  }
+
+  // ---- URL DETAIL: global fetch (undici) ---------------------------------
+  safeWrap('globalThis.fetch', () => {
+    const orig = globalThis.fetch;
+    if (typeof orig !== 'function' || orig.__tofu_hooked) return;
+    const wrapped = function (...args) {
+      try {
+        const input = args[0];
+        const href = (input && typeof input === 'object' && input.url) ? String(input.url) : String(input);
+        const u = new URL(href);
+        const port = u.port ? Number(u.port) : (u.protocol === 'https:' ? 443 : 80);
+        recordConnection(u.hostname, port, { url: href, source: 'fetch' });
+      } catch (e) { /* a non-URL argument is the target's problem, not ours */ }
+      return orig.apply(this, args);
+    };
+    wrapped.__tofu_hooked = true;
+    globalThis.fetch = wrapped;
+  });
+
+  // ---- TLS: the chokepoint every https/fetch handshake passes through ----
+  safeWrap('tls.connect', () => {
+    const tls = require_('node:tls');
+    const orig = tls.connect;
+    if (orig.__tofu_hooked) return;
+    const wrapped = function (...args) {
+      try {
+        for (const a of args) if (a && typeof a === 'object') inspectTLSOptions(a, 'tls.connect');
+        checkRuntimeEnvTLS();
+      } catch (e) { /* ignore */ }
+      return orig.apply(this, args);
+    };
+    wrapped.__tofu_hooked = true;
+    tls.connect = wrapped;
+  });
+
+  // ---- UDP: dgram.Socket.prototype.send ----------------------------------
+  // MEASURED: UDP is invisible to every hook above -- dgram never touches
+  // net.Socket. A prototype patch here is immune to the facade snapshot for the
+  // same reason net.Socket.prototype.connect is. dns.lookup does NOT route
+  // through dgram (it uses getaddrinfo on the threadpool), so this fires only on
+  // target-initiated UDP.
+  safeWrap('dgram.Socket.prototype.send', () => {
+    const dgram = require_('node:dgram');
+    const orig = dgram.Socket.prototype.send;
+    if (orig.__tofu_hooked) return;
+    function tofuSend(...args) {
+      try {
+        // send(msg, [offset, length,] port, [address,] [cb])
+        let port = null, addr = null;
+        for (let i = 1; i < args.length; i++) {
+          if (typeof args[i] === 'number' && port === null && i >= 1) { port = args[i]; }
+          else if (typeof args[i] === 'string') { addr = args[i]; break; }
+        }
+        // With the (msg, offset, length, port, address) form the first two
+        // numbers are offset/length, so the LAST number before the address wins.
+        const nums = args.slice(1).filter((x) => typeof x === 'number');
+        if (nums.length >= 3) port = nums[2];
+        else if (nums.length) port = nums[nums.length - 1];
+        recordConnection(addr || 'localhost', port, { source: 'dgram.send' });
+      } catch (e) { /* never throw out of a hook */ }
+      return orig.apply(this, args);
+    }
+    tofuSend.__tofu_hooked = true;
+    dgram.Socket.prototype.send = tofuSend;
+  });
+
+  // ---- DNS: resolution attempts, deliberately NOT connections ------------
+  // These go to their own bucket. Putting a lookup into network_connections
+  // would make check_introspection_ssrf fire on a target that resolves a
+  // hostname in order to VALIDATE and then REFUSE it -- manufacturing exactly
+  // the false positive this whole tracer exists to eliminate.
+  safeWrap('dns.lookup', () => {
+    const dns = require_('node:dns');
+    const orig = dns.lookup;
+    if (orig.__tofu_hooked) return;
+    const wrapped = function (hostname, ...rest) {
+      try { push('dns', { host: String(hostname), source: 'dns.lookup' }); } catch (e) {}
+      return orig.call(this, hostname, ...rest);
+    };
+    wrapped.__tofu_hooked = true;
+    dns.lookup = wrapped;
+    for (const fn of ['resolve', 'resolve4', 'resolve6', 'resolveCname']) {
+      const o = dns[fn];
+      if (typeof o !== 'function' || o.__tofu_hooked) continue;
+      const w = function (hostname, ...rest) {
+        try { push('dns', { host: String(hostname), source: 'dns.' + fn }); } catch (e) {}
+        return o.call(this, hostname, ...rest);
+      };
+      w.__tofu_hooked = true;
+      dns[fn] = w;
+    }
+  });
+
+  safeWrap('dns/promises.lookup', () => {
+    const dnsp = require_('node:dns/promises');
+    const orig = dnsp.lookup;
+    if (typeof orig !== 'function' || orig.__tofu_hooked) return;
+    const wrapped = function (hostname, ...rest) {
+      try { push('dns', { host: String(hostname), source: 'dns/promises.lookup' }); } catch (e) {}
+      return orig.call(this, hostname, ...rest);
+    };
+    wrapped.__tofu_hooked = true;
+    dnsp.lookup = wrapped;
+  });
+
+  return meta;
+}
+
+// Confirms our module-level patches actually made it into the ESM named-export
+// facade -- i.e. that nobody added a static `import ... from 'node:http'` to
+// coverage_wrapper.js. Instantiating the facades HERE, after patching, also
+// pins the ordering so a later static import cannot beat us.
+// Awaited by the wrapper; result lands in meta.facade_ok.
+export async function verifyFacades() {
+  for (const [mod, prop] of [['node:http', 'request'], ['node:https', 'request'],
+                             ['node:tls', 'connect'], ['node:dns', 'lookup']]) {
+    try {
+      const ns = await import(mod);
+      meta.facade_ok[mod] = !!(ns[prop] && ns[prop].__tofu_hooked);
+    } catch (e) {
+      meta.facade_ok[mod] = 'error: ' + (e && e.message ? e.message : String(e));
+    }
+  }
+  return meta;
+}
+
+// Called when a tools/call arrives. Mirrors how coverage is taken per call.
+export function resetNetworkEvents() {
+  netEvents = [];
+  sslEvents = [];
+  dnsEvents = [];
+  dedupe = new Map();
+  envTlsReportedForCall = false;
+  callsSeen++;
+  armed = true;
+}
+
+// Called when the reply payload is built. Returns the three lists plus the
+// instrument's self-report.
+export function drainNetworkEvents() {
+  const out = {
+    network_connections: netEvents,
+    unverified_ssl_calls: sslEvents,
+    dns_lookups: dnsEvents,
+    tofu_net_meta: {
+      hooks: meta.hooks,
+      facade_ok: meta.facade_ok,
+      dropped_over_cap: meta.dropped_over_cap,
+      preload_events: meta.preload_events,
+      late_events: meta.late_events,
+      env_tls_reject_unauthorized_at_startup: meta.env_tls_reject_unauthorized_at_startup,
+      armed_at_drain: armed,
+    },
+  };
+  netEvents = [];
+  sslEvents = [];
+  dnsEvents = [];
+  dedupe = new Map();
+  // Anything recorded from here until the next tools/call is a late async
+  // completion. Counted, never attributed to the next input.
+  armed = false;
+  return out;
+}

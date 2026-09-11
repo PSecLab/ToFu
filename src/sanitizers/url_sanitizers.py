@@ -402,6 +402,40 @@ def check_url_ssrf_ip_ranges(url: str) -> Tuple[bool, str]:
 # Master Sanitizer: Specification Contract Verification
 # ---------------------------------------------------------------------------
 
+def _URLISH(name: str) -> bool:
+    n = name.lower()
+    return ("url" in n or "uri" in n or "link" in n or "endpoint" in n
+            or "href" in n or "address" in n)
+
+
+def _find_url_argument(generated_arguments: Dict[str, Any]):
+    """The URL-valued argument, whatever it is called, or None.
+
+    Handles the three shapes seen in real MCP schemas: a plain string
+    (`url`, `targetUrl`, `endpoint`), a list of strings (`urls`), and a
+    mapping whose VALUES are URLs (`urlMap` in bing-cn-mcp-server). Returns the
+    first string that actually looks like a URL so the checks below have
+    something real to evaluate; returns None when the tool has no URL argument
+    at all, which is the signal to stay silent.
+    """
+    if not isinstance(generated_arguments, dict):
+        return None
+    candidates = []
+    for k, v in generated_arguments.items():
+        if not _URLISH(k):
+            continue
+        if isinstance(v, str):
+            candidates.append(v)
+        elif isinstance(v, dict):
+            candidates.extend(x for x in v.values() if isinstance(x, str))
+        elif isinstance(v, (list, tuple)):
+            candidates.extend(x for x in v if isinstance(x, str))
+    if not candidates:
+        return None
+    # Prefer something with a scheme separator; otherwise the first string.
+    return next((c for c in candidates if "://" in c or ":" in c), candidates[0])
+
+
 def check_strict_url_security_contract(generated_arguments: Dict[str, Any], res: Any) -> Tuple[bool, str]:
     """
     Master Specification Sanitizer for http_check.py:
@@ -409,7 +443,24 @@ def check_strict_url_security_contract(generated_arguments: Dict[str, Any], res:
     Uses `is_input_rejected(res)` to verify that invalid or malicious inputs
     were properly rejected by the target tool without initiating network calls.
     """
-    url_input = generated_arguments.get("url")
+    # FIND the URL argument instead of assuming it is literally named "url".
+    #
+    # This was `generated_arguments.get("url")`, written for
+    # targets/fuzz_http_check.py whose argument IS called url. The LLM selects
+    # it for any URL-ish tool, and on a tool with a differently named argument
+    # url_input was None -- whereupon every sub-check below fires on None
+    # ("Expected str type, got NoneType", "Missing scheme", "Hostname is
+    # empty") and the contract reports a Validation Bypass on every single
+    # input. Measured 2026-09-10 on yan5236/bing-cn-mcp-server::crawl_webpage,
+    # whose argument is `urlMap`: 19 alerts, all of them this, all reporting
+    # "Input: 'None'".
+    #
+    # A sanitizer that cannot find the argument it is about must return False,
+    # not fire. Silence is the correct answer to "not applicable"; firing is a
+    # false positive that costs a reviewer's trust.
+    url_input = _find_url_argument(generated_arguments)
+    if url_input is None:
+        return False, ""
 
     # 1. Evaluate input against all security checklist categories
     checkers = [

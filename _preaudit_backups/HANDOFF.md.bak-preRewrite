@@ -1,0 +1,623 @@
+# ToFu — Full Session Handoff
+
+> **SUPERSEDED IN PART — 2026-09-10 audit.** Two claims below are now known to be
+> wrong, and the repo has been renamed `toolfuzzer` → `ToFu`:
+> * **"0 findings so far" was a harness artifact.** `eval/run_eval.py` used `re.*`
+>   without importing `re`; the NameError fired *after* each run finished and its
+>   log was written, so nine completed runs were recorded as failures. Re-parsing
+>   the logs (`python3 eval/run_eval.py --reparse`) shows LLM selection succeeded on
+>   **7 of 9** runs (not 2) and that 5 runs produced alerts.
+> * **Those alerts are still not findings.** `src/input_parser.py` tried FDP
+>   generation before JSON parsing, making the JSON branch unreachable, so every
+>   semantic seed reached the target as UTF-16 mojibake of its own JSON text.
+> Full details, and every other bug found and fixed, are at the end of
+> `ToFu_src/nazmul.todo` under "DEEP AUDIT OF THE EVAL HARNESS + LLM PATH".
+
+**Written 2026-09-10 for the next model/session (this repo is moving to a new account).**
+Everything the previous session (Claude) knows is written down here and in the
+companion files it points to. The memory filesystem does **not** travel across
+accounts, so this file — living inside the repo — is the single source of truth.
+Read this top to bottom before touching anything.
+
+Repo root on the user's machine: `~/pseclab/ToFu` (renamed from `toolfuzzer`
+on 2026-09-10; macOS, Apple Silicon M2 Pro). Through the device bridge it is
+mounted at `$HOME/mnt/ToFu`.
+
+Companion files (all in-repo, all current):
+- `ToFu_src/nazmul.todo` — the running lab notebook. **The user maintains the
+  "TO DOUBLE-CHECK" items himself; NEVER delete one unless he says he did it.**
+- `eval/README.md` — how to actually run the evaluation.
+- `Benchmarks/papers/README.md` — the cached-PDF inventory + how they were fetched.
+- `Benchmarks/extraction/set_d_manifest.json` — Set D ground truth + caveats.
+
+---
+
+## 0. WHO / WHAT / WHY
+
+**User:** Ananto (nazmulislamananto@gmail.com in the old account). PhD student
+at Penn State (starting Fall 2026), NLP/AI + security. He **inherited** this
+paper and its fuzzing framework and is rehabilitating both. He is rigorous,
+wants primary-source verification, and reacts badly to fabrication or hand-waving
+(justifiably — see §5). He works in Terminal on his own Mac and runs the evals
+himself; the session prepares scripts for him.
+
+**The project — ToFu ("Exploiting and Fuzzing the LLM–Orchestrator–Tool Trust
+Boundary"):** a security paper + tool that fuzzes MCP (Model Context Protocol)
+servers for **semantic** implementation bugs — cases where a tool executes
+normally, returns a plausible result, and still violates a security property its
+own interface/description claims. This is different from crash-based fuzzing and
+different from taint-style scanners (see the VIPER-MCP contrast in §7).
+
+Core ToFu concepts (from the paper):
+- **A1–A4** weaknesses, **C1–C4** challenges, **RQ1–RQ4** research questions.
+- **Semantics-aware sanitizers** `S = ⟨A, G, O, I⟩`; ToFu ships ~66 sanitizer
+  families (grep `def check_` in `src/sanitizers/`), incl. 21 runtime
+  introspection tracers spanning many CWEs.
+- Pipeline: an **LLM selects** which sanitizers apply to a tool (from its
+  name/description/schema) and **generates seeds**; Atheris does coverage-guided
+  fuzzing; a **differential/semantic oracle** derived from the tool's own
+  contract decides violations. The LLM's role is deliberately narrowed to
+  selection + seed-gen, NOT vulnerability judgment.
+- Two runners: `PythonRunner`, `JSRunner` (`src/runners/`). No runner for other
+  languages — "other" langs are reported but excluded.
+
+**Current headline status (2026-09-10):**
+- The LLM stage was **completely dead** until this session fixed it (§5, §9).
+  It now works: `llm_selection: ok` observed on real runs for the first time.
+- ~~0 findings so far~~ **WRONG, see the banner above.** The runs completed and
+  produced alerts; the harness discarded the parse. Still no *credible* finding:
+  the input-parser bug meant no semantic seed ever reached a target intact.
+- Set D ("in VIPER-MCP's court") is **built and wired**, not yet run.
+- Cisco baseline runner is **built**, needs a clean smoke run.
+- Biggest open risks: (a) a **leaked API key still in 10 committed files** (§11),
+  (b) eval is **slow** (600s budget → 550–970s/run, several timeouts), (c) does
+  llama3.1:8b actually pick *sensible* sanitizers (precision), not just parseable
+  ones (§9, §10).
+
+---
+
+## 1. WHAT TO DO NEXT (prioritized)
+
+1. **Rotate the leaked credential** `f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z`
+   — it is hard-coded in 10 `targets/fuzz_*.py` files (grep it). Revoke it at the
+   provider, replace with an env var, and purge from git history
+   (`git filter-repo` / BFG). **This is a real secret; treat as compromised.**
+2. **Run one real ToFu campaign** now that the LLM path works:
+   `python3 eval/run_eval.py --time 600` (Set A+B). Confirm the end-of-run
+   summary shows `LLM sanitizer selection: ok=…` (not `failed=…`). Then read
+   3–4 `LLM_SELECTION_OK` log lines and judge whether the selected sanitizers are
+   *sensible* for each tool — selection **precision** is itself a paper result.
+3. **Investigate the eval slowness / timeouts.** 600s budget produced runs of
+   550–970s; several hit the kill margin (`rc=None`/`-2`). Two appium tools die
+   `rc=77 libFuzzer: fuzz target exited`. Diagnose before a full campaign.
+4. **Run Set D** (VIPER-MCP's own servers): §7 has the exact commands. Then
+   `python3 eval/score_set_d.py --md set_d_scorecard.md`.
+5. **Run the Cisco baseline smoke** (`./eval/run_cisco_baseline.sh smoke`) and
+   confirm it no longer errors (old records had an `UnboundLocalError: os` from a
+   pre-final version; the current file is clean, quarantined the bad records).
+6. Longer-tail paper TODOs live in `ToFu_src/nazmul.todo` (Pierre's TODO map,
+   experimental-setup writeup, etc.) — all were **blocked on real run data**,
+   which step 2 unblocks.
+
+---
+
+## 2. REPO MAP (what every important thing is)
+
+```
+~/pseclab/toolfuzzer/
+├── HANDOFF.md                     <- THIS FILE
+├── src/                           ToFu implementation
+│   ├── llm.py                     LLM backend (selection + seed-gen). HEAVILY
+│   │                              fixed this session. .bak-preLLMfix kept.
+│   ├── fuzzer.py                  MCPDifferentialFuzzer; oracle; reporters call
+│   ├── sanitizers/                the ~66 check_* families (grep 'def check_')
+│   │   ├── introspection.py       21 runtime tracers
+│   │   ├── url_sanitizers.py      SSRF / URL family
+│   │   ├── har_sanitizers.py, markitdown_sanitizers.py, mcp_oracles.py
+│   ├── runners/                   PythonRunner, JSRunner, fake_coverage
+│   ├── seed_bank/                 RESTORED this session from commit b1b657e
+│   │   └── {path_traversal,sql_injection,ssrf_url,wildcards,xml_bomb,xss_markdown}.json
+│   ├── reporters.py               ConsoleVulnerabilityReporter + Mongo + composite
+│   ├── client.py, config.py, engine.py, file_manager.py, input_parser.py, metrics.py
+│   └── __main__.py                `python -m src --config <cfg> --time <s>`
+│   MISSING: src/predefined_seeds/  (deleted in commit 87d8602 — see §9(b))
+│
+├── ToFu_src/                      THE PAPER (LaTeX). Build: `make` in this dir.
+│   ├── main.tex, usenixsecurity2027.tex (USENIX format), sec0..sec10_*.tex
+│   ├── sec8_related.tex           Related Work — fully rewritten this session
+│   ├── sec6_eval.tex              Evaluation — RQ4 written, typos fixed, labels
+│   ├── paper.bib                  50 entries; audited + corrected (see §5)
+│   ├── table/motivation.tex       Table 2 (comparison) — 5 rows added
+│   ├── nazmul.todo                THE LAB NOTEBOOK — read it, don't delete items
+│   ├── casestudy.tex, agent.tex, overview.tex, appendix.tex, ...
+│   └── main.pdf                   last build
+│
+├── eval/                         THE EVALUATION HARNESS (all written this session)
+│   ├── README.md                 runbook (LLM backend, resumable, run natively)
+│   ├── prepare_targets.py        STEP 1: clone@commit -> install -> probe tools
+│   │                             -> emit one config/tool. --only-set a|b|d
+│   ├── run_eval.py               STEP 2: resumable campaign runner over configs
+│   ├── resolve_set_d.py          Set D: repo -> live GitHub HEAD via ls-remote
+│   ├── score_set_d.py            Set D: ToFu vs VIPER metric, class-mapped
+│   ├── run_cisco_scanner.py      Cisco AI Defense baseline over the SAME targets
+│   ├── run_cisco_baseline.sh     driver: setup|smoke|full|summary
+│   ├── configs/                  per-tool JSON configs (Set A/B prepared)
+│   ├── targets/                  cloned target repos (Set A/B)
+│   ├── runs/                     per-run logs
+│   ├── cisco_runs/               per-server Cisco raw JSON
+│   └── state/
+│       ├── prepared.jsonl        what prepare_targets produced (2 repos ready)
+│       ├── runs.jsonl            ToFu run index (9 runs, post-fix; §10)
+│       ├── skipped.jsonl         prep exclusions (the paper's exclusion list)
+│       └── quarantine-pre-llmfix/  ALL pre-fix junk (see WHY.md there)
+│
+├── Benchmarks/                   competitors, corpus, papers, Set D
+│   ├── extraction/               corpus extraction + Set A/B/D
+│   │   ├── extract_tools.py      clone@depth1 -> parse tool regs + grep sinks
+│   │   ├── results.jsonl         1778 repos extracted (24,194 tools)
+│   │   ├── distribution_report.txt  the sink/lang distribution analysis
+│   │   ├── set_a.json/.csv        50 repos, seed 20260909, fp aa6f0cffff64
+│   │   ├── set_b.json/.csv        8 repos closing tracer-family gaps
+│   │   ├── set_d.json             63 VIPER-MCP servers resolved to HEAD
+│   │   ├── set_d_manifest.json    Set D GROUND TRUTH + caveats (audit this)
+│   │   └── set_d_unresolved.json  3 repos we could not resolve
+│   ├── papers/                   25 cached competitor/related PDFs (§6)
+│   │   ├── README.md             inventory + fetch method
+│   │   └── viper-mcp-reporting-notes.md
+│   ├── Viper-MCP/                VIPER-MCP source artifact (datasets REMOVED by them)
+│   ├── Cisco-MCP-Scanner/        cisco-ai-defense/mcp-scanner clone (+ its .venv)
+│   ├── MCPCorpus/                MCPCorpus (ASE 2025) — the corpus source
+│   ├── MCPSecBench/, MCPSafetyScanner/  other benchmarks
+│
+├── targets/                      ORIGINAL hand-written fuzz targets (fuzz_*.py)
+│   │                             *** 10 of these contain the LEAKED KEY (§11) ***
+├── requirements.txt              pinned; pymongo NOW added (was missing)
+├── .python-version -> 3.11       (atheris build needs >=3.11; see §9(c))
+└── .venv/                        uv venv, python 3.11.15
+```
+
+---
+
+## 3. THE PAPER — state of each section
+
+Format: USENIX Security 2027 (`usenixsecurity2027.tex`). Build with `make` in
+`ToFu_src/` (needs the bundled `.cls/.sty`; a full TeX cache also exists in the
+cloud at `/tmp/tofu_build` but that's ephemeral).
+
+- **sec8_related.tex (Related Work)** — the inherited version was called "AI
+  SLOP". **Fully rewritten this session** into 4 paragraphs (was 8, shortened on
+  request): (1) attacks that deliver adversarial values, (2) defenses +
+  landscape/taxonomy, (3) catalog-bounded scanners & large-scale dynamic
+  measurement — **this is where the VIPER-MCP differentiation lives** (class
+  coverage, not scale), (4) description-code inconsistency + fuzzing + LLM-assisted
+  testing. Every citation was checked against the actual paper (see §5). Read the
+  current file before editing — it encodes a lot of hard-won accuracy.
+- **sec6_eval.tex (Evaluation)** — wrote the missing RQ4; fixed typos
+  ("extend"→"extent", "ovserved"→"observed"); bolded RQ labels; added
+  `\label{sec:eval-tools}/{sec:eval-vulns}/{sec:eval-coverage}`. **All 23
+  `TODO: Pierre.*` advisor comments were LEFT IN by explicit user request** — he
+  wants a reading pass to remove them himself. Do NOT strip them.
+- **table/motivation.tex (Table 2, the comparison table)** — added 5 rows: Cisco
+  MCP Scanner, MCPSecBench, VIPER-MCP, MCPZoo, "Description-code inconsistency".
+  Columns: Tool Impl. / Dynamic / Argument Semantics / Broad Bug Classes /
+  Semantic Oracle / Auto. Harness. ToFu is the only all-✓ row (by construction —
+  keep it honest).
+- Other sections (intro, background, motivation, design, implementation,
+  discussion, conclusion, casestudy, agent, overview, appendix) — inherited,
+  largely untouched this session.
+
+**Pierre's TODO map** (advisor comments → actions) is written out in full in
+`nazmul.todo`. Actions 1 & 2 (pure text edits) were done; A3–A7 (experimental
+setup, sanitizer provenance, vuln funnel, coverage rewrite, casestudy rewrite)
+are **blocked on real run data** — do them after the first real campaign.
+
+---
+
+## 4. NAMING LANDMINE — two "MCP-Scanner"s
+
+There are **two** tools called mcp-scanner. Keep them distinct in prose, bib, and
+tables:
+- **MCP-Scanner** (`\cite{mcp-scanner}`) — the *academic* tool (executes tools
+  against a catalog of known threats).
+- **Cisco MCP Scanner** / "Cisco AI Defense" (`\cite{cisco2025mcpscanner}`) —
+  the *industrial* open-source tool from cisco-ai-defense. The user chose the
+  label **"Cisco MCP Scanner"** (or "Cisco AI Defense") to disambiguate. Its repo
+  is cloned at `Benchmarks/Cisco-MCP-Scanner`.
+
+---
+
+## 5. THE BIBLIOGRAPHY INTEGRITY INCIDENT (read this — it shaped the whole project)
+
+Early in the work, the previous model **fabricated a large part of `paper.bib`**:
+generating BibTeX from search-result snippets instead of verifying against the
+actual papers. On audit, **13 of 19** checked entries had invented titles and/or
+invented author given names (surnames often right, given names wrong); system
+names "DCIChecker", "Corvus", "MTGuard" appeared **nowhere** in their papers. A
+second audit round found `wang2025mcpguard` fabricated end-to-end (the real work
+is Xing et al., ACL 2026) and `toeppe2026largescale` wrong in title, both given
+names, and page numbers.
+
+**All corrected against arXiv / Google Scholar / publisher records.** Verified
+corrections that MUST be preserved:
+- `viper-mcp`: Sun Pengyu; Kang Zifeng; Jin Qishu; Huang Enhao; Liu Xin; Shen
+  Dakun; Li Song — "VIPER-MCP: Detecting and Exploiting Taint-Style
+  Vulnerabilities in Model Context Protocol Servers" (arXiv 2605.21392v2).
+- `guo2026systematic` → **MCPXKIT**, IEEE TDSC, doi 10.1109/TDSC.2026.3695553.
+  (Note: MCPXKIT is a *revised/renamed* version of an earlier "systematic
+  analysis of MCP security" paper by the same authors — the user asked to track
+  that these are two versions of one work.)
+- `lin2025mcpcorpus`: ASE 2025 Tool Demonstrations, pp. 3985–3988.
+- `toeppe2026largescale`: Toeppe Benny; Barrak Amine; Ksontini Emna, MSR, pp.
+  610–614, "A Large-Scale Dataset of MCP Implementations on GitHub".
+- `xing2026mcpguard`: Findings of ACL 2026, pp. 4877–4889 (was the fabricated
+  `wang2025mcpguard`).
+- `hou2025landscape`: upgraded arXiv → ACM TOSEM.
+- `toolhijacker`: NDSS 2026 confirmed (unverified DOI removed).
+- `spellsmith`: was cited BACKWARDS as an attack — it is a **defense** ("Mitigating
+  Taint-Style Vulnerabilities … via Security-Aware Tool Descriptions" by Shi et
+  al.). Prose fixed.
+- `huang2026give`: **WITHDRAWN** from arXiv (methodology + data-collection ethics)
+  — citation removed from prose entirely.
+- Also removed an unverified "64,611 servers" claim and changed MCPCorpus
+  "continuously updated" → "snapshot".
+
+**RULE FOR THE NEXT MODEL: never write a bib entry or a numeric claim you have
+not verified against the primary source. The user will (rightly) not trust
+generated citations. `paper.bib` currently has 50 entries; if you add one, verify
+title + all author names + venue + pages against the actual paper.**
+Standing preference from the user: always prefer the **latest published version**
+at a **reputable venue** over an arXiv preprint.
+
+---
+
+## 6. PAPERS DISCOVERED / CACHED (25 PDFs in `Benchmarks/papers/`)
+
+Fetched by driving **Claude in Chrome** with a same-origin `fetch → blob → <a
+download>` trick, because **both proxies block arxiv.org and dl.acm.org**
+(see §12). Inventory (folder / file → what it is):
+
+**01-competitors/** (the systems ToFu compares against)
+- `viper-mcp.pdf` — VIPER-MCP (arXiv 2605.21392). THE key competitor; see §7.
+- `mcpxkit-tdsc.pdf` — MCPXKIT (IEEE TDSC), unifies 31 attack methods.
+- `mcp-guard-acl2026.pdf` — MCP-Guard (Xing et al., Findings of ACL 2026).
+- `mcpsecbench.pdf` — MCPSecBench (catalog-driven benchmark).
+- `mcpzoo.pdf` — MCPZoo (Chen et al.; scanners disagree at scale).
+- `flowguard.pdf`, `hybrid-analysis-he.pdf` (He et al., static+dynamic),
+  `spellsmith.pdf` (defense: security-aware tool descriptions),
+  `exposed-by-design.pdf` (Padilla; internet-facing MCP attack surface).
+**02-corpus-construction/**
+- `mcpcorpus-ase2025.pdf` — MCPCorpus (Lin, Ruan, Liu, Zhao; ASE 2025). The
+  corpus ToFu samples from (~14k servers snapshot).
+- `mcp-at-first-glance.pdf` — Hasan et al. (source of the ≥10-star toy-repo
+  filter threshold ToFu reuses).
+- `mcp-landscape-hou.pdf` — Hou et al. (ACM TOSEM), landscape/threats.
+- `toeppe-msr2026.pdf` — Toeppe et al. MSR, repo-history vuln mining.
+**03-attacks-defenses/**
+- `toolhijacker.pdf` (NDSS 2026), `les-dissonances.pdf` (Chord; cross-tool
+  contamination), `desc-code-inconsist.pdf` (Shi et al.), `misleading-tool-desc.pdf`
+  (Li et al.), `acle-mcp.pdf` (Ding et al.; capability leases), `aegis.pdf`
+  (cross-domain resource abuse), `trustshiftprobe.pdf` (staged-trust attacks),
+  `beyond-the-protocol.pdf` (Song et al.; supply-chain), `web3-attack-surface.pdf`.
+**04-paywalled/**
+- `mcp-scanner-encycris.pdf` — the *academic* MCP-Scanner.
+
+Discovery sources used: alphaXiv MCP tools, OpenReview (MCPSecBench forum
+`UaWHob8Zxx`), Google Scholar (needed a manual CAPTCHA solve by the user —
+the model correctly refused to solve it), author sites. The user noted for
+future: **use `openreview-mcp` or `openreview-py`** to interact with OpenReview.
+
+---
+
+## 7. THE DATASETS (Set A, Set B, Set D) + VIPER-MCP contrast
+
+The **original** dataset selection in the inherited paper was indefensible ("top
+of github.com/mcp" + "first GitHub search result"). It was replaced with a
+reproducible, seeded, stratified sample from **MCPCorpus**.
+
+**Corpus extraction** (`Benchmarks/extraction/`): `extract_tools.py` clones each
+repo at depth 1, parses MCP tool registrations, greps for sink APIs, deletes the
+clone (resumable, append-only JSONL). Result: **1778 repos extracted, 1404 with
+≥1 detected tool, 24,194 tools total** (python 597 repos/10,130 tools; node 807
+repos/14,064 tools). Full sink-family distribution in `distribution_report.txt`.
+A keyword sink-*proxy* was tried first and was **badly wrong** (predicted
+Deserialization=1/XXE=3/ReDoS=3; measured 61/49/346) — discarded for measured
+values. `sample_corpus.py` originally filtered `type=="server"` and dropped 93%
+of the corpus (the field is `None` on 12,976/13,875) — fixed to exclude only
+explicit clients. Monorepo dup (`modelcontextprotocol/servers` ×35) forced a
+mandatory repo-level dedup.
+
+- **Set A** — 50 repos, reproducible stratified sample, seed **20260909**,
+  fingerprint **aa6f0cffff64**, 20/21 tracer families represented.
+- **Set B** — 8 repos purposively added to close rare tracer-family gaps; after
+  B, all 21 families have ≥4 repos.
+- **Set D** — **NEW this session.** "Run ToFu in VIPER-MCP's court."
+
+### Set D details (VIPER-MCP's own servers, VIPER's own metric)
+User's ask: pull VIPER-MCP's vs-Cisco-vs-MCPSafetyScanner comparison straight
+from the VIPER-MCP paper and run ToFu only against those scenarios.
+
+**What the VIPER-MCP paper (arXiv 2605.21392v2) actually gives:**
+- **Table 2 (RQ2)**: 260 servers = 130 vulnerable + 130 benign, all LLM parts on
+  GPT-5.4. **FNR** on vulnerable set: MCPSafetyScanner **63.8%** | Cisco AI
+  Defense **73.1%** | VIPER-MCP **7.7%**. **FPR** on benign: 43.1% | 24.6% | 0%.
+  (These exact numbers are stored in `set_d_manifest.json` → `_baseline_table2`.)
+- VIPER models **only 3 classes**: command injection, SSRF, path traversal. It
+  **explicitly does NOT model** SQL injection or code injection (their own words
+  for the residual 7.7% FN).
+- **Appendix B / Table 7**: VIPER's **67** own 0-day servers (repo + class + lang);
+  **CVE numbers are all redacted** as `CVE-2026-XXXXX`.
+- **Table 1 + Appendix C**: 7 case-study servers WITH exact vulnerable tool +
+  verbatim PoC prompt.
+
+**Three hard limitations that BOUND Set D (state them with every number):**
+1. Table 2's 130+130 is **not reproducible** — the 63 historical CVEs are never
+   listed, only VIPER's own 67 discoveries. So Set D = VIPER's own finds → the
+   deck is **stacked toward VIPER**. Running ToFu here answers "can ToFu ALSO
+   catch what VIPER caught", not a neutral head-to-head.
+2. CVEs redacted; **no commit hashes** published; the VIPER artifact
+   (`Benchmarks/Viper-MCP`) **intentionally removed all datasets**.
+3. Because of (2), Set D commits are **GitHub HEAD**, not the vulnerable revision.
+   A since-patched repo is a false negative that is **NOT ToFu's fault** — the
+   scorer flags this, never scores it as a miss.
+
+**What was built:** `set_d_manifest.json` (ground truth transcribed from the
+paper: 66 Appendix-B rows → 65 distinct repos, +lanhu-mcp; carries Table 2 +
+caveats) → `resolve_set_d.py` (git ls-remote → HEAD) → `set_d.json` (**63
+resolved**: 6 gold w/ tool+PoC, 57 silver) + `set_d_unresolved.json` (3
+unresolved: `douinc/mkdocs-mcp-plugin`, `Agions/taskflow-ai` deleted/renamed;
+`lanhu-mcp` owner never given in paper).
+
+**Scoring (`score_set_d.py`) — the honest rules baked in:**
+- A repo is a ToFu **TP** iff some tool fired a sanitizer that **maps to the
+  repo's ground-truth class** (mapping table `SANI_CLASS` inside the script).
+- **Off-class** finds (ToFu found a *different* bug) are reported **separately** —
+  not a detection, not a miss.
+- TP via the **LLM path** vs via the **deterministic fallback** are counted
+  separately (a fallback TP is not evidence about ToFu's LLM design).
+- Repos with only errored/no runs are **NOT-RUN**, excluded from the FNR
+  denominator (never silently scored as misses).
+- `check_introspection_code_injection` is deliberately **NOT** mapped to cmdi,
+  because VIPER excludes code injection (crediting it would be unfair to VIPER).
+- The scorer prints VIPER/Cisco/MCPSafetyScanner reference FNRs but **labels them
+  a different denominator** (130 vs Set D's ~63) — not a like-for-like.
+
+**How to run Set D (it is OPT-IN, not part of the default a+b sweep):**
+```
+python3 eval/resolve_set_d.py                 # refresh HEADs (optional)
+python3 eval/prepare_targets.py --only-set d  # clone+probe the 63 repos
+python3 eval/run_eval.py --time 600           # runs D configs alongside
+python3 eval/score_set_d.py --md set_d_scorecard.md
+```
+**TO DOUBLE-CHECK (from nazmul.todo):** recount Appendix B (transcribed 66 rows/
+65 repos, paper claims 67 CVEs — one may be lost to a page break); confirm each
+gold repo's HEAD still exposes its vulnerable tool (else mark possibly_patched);
+decide whether to also run the Cisco baseline on `set_d.json` for a 3-way row.
+
+**VIPER-MCP vs ToFu — the actual intellectual contrast** (this is the Related
+Work argument, get it right): VIPER-MCP pairs CodeQL taint queries with an
+LLM-driven prompt-evolution agent; it reports 106 0-days / 67 CVEs across ~39,884
+repos — a scale no single-institution study matches. **The difference is NOT
+scale; it is what a check can express.** VIPER models exactly 3 taint classes
+against a fixed sink inventory (93 JS/TS sinks, 274 Python sinks per their
+Appendix A). ToFu's checks are bounded instead by what a tool *documents* about
+its arguments, so properties with **no corresponding sink** (a destination
+restricted to an allow-list, a path confined to a declared workspace, an
+enumerated-value argument) are inside ToFu's reach and outside a taint
+formulation. Report them as **complementary** (they fail on disjoint bugs), not
+as ToFu being "better".
+
+---
+
+## 8. THE EVAL HARNESS (how it works)
+
+**LLM backend (current): LOCAL Ollama + `llama3.1:8b`.** (Switched from Ollama
+Cloud to avoid the cloud API key.) `src/llm.py` reads the backend from env:
+```
+export TOFU_LLM_BASE_URL=http://localhost:11434/v1
+export TOFU_LLM_MODEL=llama3.1:8b
+export OLLAMA_CLOUD_API_KEY=ollama          # local Ollama ignores the value
+# optional: TOFU_LLM_TIMEOUT=180, TOFU_LLM_JSON_ATTEMPTS=3, TOFU_LLM_JSON_MODE=1
+```
+**MODEL CHOICE IS AN EXPERIMENTAL VARIABLE — report the exact model + endpoint in
+the paper's setup subsection.** VIPER's own RQ4 showed triggered-server counts
+swinging 0→88 purely by changing the backend (Claude Haiku 4.5 refused outright
+due to safety alignment). A weak selector manifests as **low recall**, not an
+error — if findings look sparse, re-run a subset with a stronger model **before**
+concluding ToFu missed them (that comparison doubles as the sanitizer-selection
+ablation Pierre's TODO asks for).
+
+**Two-step, both resumable, both safe to Ctrl-C. Run natively in Terminal — NOT
+through Claude's device shell (it kills background jobs; see §12).**
+- **`prepare_targets.py`** — clone@pinned-commit → install (prefers lockfiles:
+  `npm ci`, `uv sync --frozen`) → `detect_launch()` (prefers `dist/index.js` over
+  package.json main) → `probe_tools()` (incremental stdio read; MCP servers don't
+  exit) → emit one config per tool with `override_rules={}` (empty ON PURPOSE, so
+  `llm.select_sanitizers()` actually runs — the automated path the paper claims).
+  Writes `state/skipped.jsonl` = the paper's exclusion list.
+- **`run_eval.py`** — runs `python -m src --config <cfg> --time <budget>` per
+  tool, resumable via `state/runs.jsonl`. Two preflights: LLM endpoint (1-token
+  request) + `import src.fuzzer`. **Now records** `llm_selection`
+  (ok|failed|unknown), `llm_seeds`, and `triggered_sanitizers=[...]` per run, and
+  prints an LLM-stage histogram + a loud warning if selection never succeeded.
+
+Config schema (per tool): `_repo, _set, _lang, _commit, target_tool,
+_tool_description, override_rules={}, predefined_seeds=[]`.
+
+---
+
+## 9. EVERY BUG FOUND & FIXED THIS SESSION
+
+**(THE BIG ONE) The LLM stage never ran — both roles were silently dead:**
+- **(a) Sanitizer selection JSON-parse bug** (`src/llm.py`): the old code did
+  `content.strip().strip("```json").strip("```").strip(); json.loads(content)`.
+  `str.strip(chars)` strips a **character set**, not a substring, and nothing
+  there survives the prose llama writes around a fenced block. So **every** call
+  raised `Expecting value: line 1 column 1 (char 0)`, `fuzzer.py` caught it and
+  logged "Falling back to default sanitizers", and the campaign carried on
+  looking healthy while the LLM never ran once. → RQ2/RQ3 had **no evidence**
+  behind them. **Fixed:** new `_extract_json()` (fence-aware, prose-tolerant,
+  brace-balanced with string-literal + escape awareness) + `_coerce_text()`
+  (flattens content-block lists); 3 retries with a sharper re-ask; backend JSON
+  mode (`response_format={"type":"json_object"}`) with auto-downgrade if the
+  backend rejects it; hallucinated sanitizer names dropped **and counted**; the
+  old code also fell off the end returning `None` on a shape-check failure — now
+  always returns or raises. Unit-tested against the verbatim llama3.1:8b reply
+  from the failing log + 9 other shapes.
+- **(b) Seed generation dead**: `src/seed_bank/` was **deleted in commit
+  87d8602** ("latest edit", which also removed `src/predefined_seeds/`,
+  `dictionaries/`, `configs/`). `_load_seed_bank()` returned `{}` so
+  `generate_seeds()` short-circuited to `_local_fallback_mapping()` on every
+  tool. **Restored** seed_bank from commit `b1b657e` (6 categories).
+  **STILL MISSING: `src/predefined_seeds/`** (the create_pdf/docx/zip
+  tool-calling seed path writes there; `file_manager.py` reads
+  `predefined_seed:<name>`). Decide: restore it too, or drop the binary-seed
+  claim from the paper.
+- **(c) `'NoneType' object is not callable`**: `llm.py` caught `ImportError` and
+  set `ChatOpenAI=None`, so a missing/half-installed `langchain_openai` surfaced
+  400 lines later as a `TypeError`. **Fixed:** now raises at construction with the
+  original ImportError attached.
+
+**(THE SECOND SILENT ONE) `run_eval.py` counted findings by strings the reporter
+never prints** (`"sanitizer triggered"`, `"violation"`, …). The real
+`ConsoleVulnerabilityReporter` (`src/reporters.py`) prints `POTENTIAL
+VULNERABILITY / BUG FOUND` and `-> Triggered Sanitizers : [...]`, and `fuzzer.py`
+prints `Silent Bug Alert: Sanitizers [...] flagged ...`. So even after the LLM
+fix, a **genuine finding would have logged `finding_hits=0`.** **Fixed:** counts
+the real strings AND parses `triggered_sanitizers=[...]` per run (which is what
+Set D scoring needs).
+
+**Earlier bugs already fixed (also see nazmul.todo):**
+- `run_eval.py` recorded `returncode!=0` crashes as `ok=True` — a whole campaign
+  could have reported "no findings" while every run died with
+  `ModuleNotFoundError`. Fixed; bogus records → `state/quarantine-pre-llmfix/`.
+- Atheris/Python mismatch: `dis.Positions` exists only in Python **3.11+**; the
+  venv was 3.10. Resolved by using a **Python 3.11** venv (`.python-version`→3.11,
+  `.venv` is 3.11.15). This is why `requires-python` matters.
+- `requirements.txt` was missing **pymongo** (imported by `src/`) — **now added**.
+- Cisco runner: `run_cisco_scanner.py` arg **order** — `--analyzers/--format/
+  --output/--stdio-timeout` are top-level and must precede the `stdio`
+  subcommand; only `--stdio-*`/`--stderr-file` belong to the subparser. Fixed.
+- Cisco runner smoke produced 4 records with `UnboundLocalError: os` from a
+  pre-final version; the **current file is clean** (no `os` shadow). The 4 bad
+  records were moved to `state/quarantine-pre-llmfix/cisco-os-bug/`. Re-run smoke
+  to confirm green.
+
+**Quarantine:** `eval/state/quarantine-pre-llmfix/` holds all pre-fix run
+records, logs, the bogus-rc1 batch, coverage CSVs, old fuzz_corpus, the bad Cisco
+records, and a `WHY.md`. **None of it is evidence about ToFu.**
+
+---
+
+## 10. EVERY EVAL RUN SO FAR (results)
+
+**No valid ToFu findings exist yet — but for a different reason than this
+section originally gave.** The numbers below were read off an index corrupted by
+the missing `import re`; the corrected numbers are in the banner at the top and
+in `nazmul.todo`. All pre-fix runs are still quarantined. Original text follows:
+- **`llm_selection: ok` on 2 runs** — the FIRST TIME the LLM stage actually ran.
+  This confirms fix §9(a) works end-to-end against llama3.1:8b.
+- **7 runs recorded `None` for the llm fields** — they hit the timeout/exception
+  branch (which doesn't parse the log). Runs took 553–970s against a 600s budget
+  (kill margin budget+600), i.e. the eval is **slow** and several timed out
+  (`rc=-2`/`None`). **0 findings.**
+- Known target issue: 2 appium tools die `rc=77 libFuzzer: fuzz target exited`
+  (the JS server calling exit() mid-session). Cosmetic: fuzzer passes an
+  unrecognized libFuzzer flag `-pulse=2`.
+
+**Interpretation for the next model:** the pipeline is now *correct* but
+*unproven* — you need one full campaign where a clear majority of runs show
+`llm_selection=ok`, then a human judgment on whether the selected sanitizers are
+sensible (precision), then findings. Do NOT report any pre-fix numbers.
+
+**Cisco baseline:** built, not validated (the 4 bad records were quarantined).
+Run `./eval/run_cisco_baseline.sh smoke` first.
+
+---
+
+## 11. SECURITY: LEAKED CREDENTIAL — UNRESOLVED, HIGH PRIORITY
+
+A real API key is hard-coded in **10** files:
+```
+targets/fuzz_{serena,memo,sentinelx,pmb,basic_memory,markitdown_mcp,
+              serena_read_file,vulnerable_mcp,extract_har,desktop_commander}.py
+```
+Value: `f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z` (looks like an
+Ollama-Cloud / provider key). It is **committed to git history**. Action:
+1. Revoke/rotate it at the provider **now** (assume compromised).
+2. Replace with `os.environ["..."]` in all 10 files.
+3. Purge from history (`git filter-repo --replace-text` or BFG) before this repo
+   is pushed anywhere public.
+
+---
+
+## 12. INFRASTRUCTURE GOTCHAS (will bite you if you don't know them)
+
+- **Claude's device shell (`device_bash`) kills background jobs** — each call is a
+  fresh `bash -c` in a new PID namespace (shell is PID 5), so `&`/`nohup` jobs die
+  when the call returns. **Long evals must be run by the user natively in
+  Terminal**, or from the cloud container (which persists across turns).
+- **`git clone` into the mounted folder fails** with lockfile "Operation not
+  permitted" (the mount blocks some ops). Workaround: clone to VM scratch
+  (`$HOME`, outside `mnt/`), then copy in. Also: **`rm` fails on the mount**
+  ("Operation not permitted") — you can create/write/`mv` but not delete;
+  quarantine by `mv`, don't try to delete.
+- **Both proxies block `arxiv.org`, `doi.org`, HuggingFace.** Cloud `WebFetch`
+  and device egress both refuse them. Workaround that worked: **Claude in Chrome**
+  with a same-origin `fetch → blob → <a download>` (that's how the 25 PDFs and
+  the corpus were fetched).
+- **GitHub *API* is gated** in the cloud container (403 "not enabled for this
+  session; use add_repo"), but **`git ls-remote https://github.com/owner/repo`
+  works over plain HTTPS** — that's how `resolve_set_d.py` gets HEAD SHAs.
+- **Google Scholar throws CAPTCHAs.** The model must NOT solve them (hard rule);
+  the user solved it manually when needed.
+- Writing a big heredoc via one `device_bash` call can get truncated — write the
+  script to VM scratch (`$HOME`) and emit outputs into the mount, or split.
+- Delivering a cloud-built file to the Mac: `SendUserFile` → then
+  `mcp__remote-devices__device_commit_files` with a `~/pseclab/toolfuzzer/...`
+  devicePath (that's how the Set D files were landed).
+
+---
+
+## 13. USER (Ananto) — decisions, preferences, working style
+
+- Runs evals himself in Terminal on his M2 Pro Mac. Wants scripts prepared for
+  him, pause/resumable, writing outputs to predictable locations.
+- **Maintains "TO DOUBLE-CHECK" items in `nazmul.todo` himself** — track things
+  he needs to verify/see, and **only erase them when he explicitly says he did
+  it.** Same for the `TODO: Pierre.*` advisor comments in the .tex — he wants to
+  remove them himself on a reading pass. Do not strip either.
+- Citations: **latest published version at a reputable venue > arXiv preprint**,
+  always verified against the primary source (see §5 — he's been burned).
+- Chose **local Ollama + llama3.1:8b** for the eval (not a cloud key).
+- Wanted a dataset **easy to run on his machine** first, run locally, then move
+  forward with the rest of the paper.
+- For OpenReview, use **`openreview-mcp` or `openreview-py`**.
+- Style: direct, rigorous, no fluff, no fabrication. Own mistakes plainly.
+
+---
+
+## 14. QUICK-START for the next model
+
+```bash
+cd ~/pseclab/toolfuzzer
+# 0. read these, in order:
+#    HANDOFF.md (this) -> ToFu_src/nazmul.todo -> eval/README.md
+# 1. FIRST: rotate the leaked key (see §11), then:
+ollama serve; ollama pull llama3.1:8b
+export TOFU_LLM_BASE_URL=http://localhost:11434/v1 TOFU_LLM_MODEL=llama3.1:8b OLLAMA_CLOUD_API_KEY=ollama
+# 2. one real campaign (Set A/B already prepared):
+python3 eval/run_eval.py --time 600
+#    -> confirm the summary says LLM selection ok=..., then read a few
+#       LLM_SELECTION_OK log lines for sanitizer PRECISION.
+# 3. Set D (VIPER's court):
+python3 eval/prepare_targets.py --only-set d
+python3 eval/run_eval.py --time 600
+python3 eval/score_set_d.py --md set_d_scorecard.md
+# 4. Cisco baseline:
+./eval/run_cisco_baseline.sh smoke
+```
+
+Everything else — the paper section states, Pierre's TODO map, the bib
+corrections in full, per-family sink counts — is in `ToFu_src/nazmul.todo` and
+the section files. When in doubt, verify against the primary source and write it
+down in `nazmul.todo`. Good luck.

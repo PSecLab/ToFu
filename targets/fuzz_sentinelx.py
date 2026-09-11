@@ -111,7 +111,7 @@ def run_single_tool(tool_name: str, duration_seconds: int):
         command=python_path,
         args=[server_script],
         target_tool=tool_name,
-        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
+        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "ollama"),
         corpus_dir=tool_corpus_dir,
         config=config,
         file_backed_params=file_backed_params,

@@ -192,29 +192,85 @@ function isLocalFile(fileUrl) {
   return matched;
 }
 
+// PER-CALL coverage. V8 ALREADY gives us this -- do not delta it again.
+//
+// MEASURED 2026-09-10 with a standalone inspector.Session: running the same
+// 1000-iteration loop before three consecutive takePreciseCoverage calls gives
+//     take #1: nonzero=8 maxCount=1000
+//     take #2: nonzero=8 maxCount=1000
+//     take #3: nonzero=8 maxCount=1000
+// Counts do NOT accumulate -- takePreciseCoverage RESETS the execution
+// counters. range.count is therefore already "executed by THIS call".
+//
+// An earlier fix assumed the opposite (nazmul.todo item 10 flagged that
+// assumption as unverified, and it was wrong). It kept a prevCounts map and
+// reported a range only when count > prevCount, which after the first call
+// suppressed nearly everything: cov: 1388 stayed identical from execution #13
+// to #8192 while corp: held at 1/32b, on twelve semantically distinct seeds.
+// Reverted to reporting every executed range.
+//
+// WHAT V8 BLOCK COVERAGE ACTUALLY REPORTS, AND WHY count>0 THREW IT AWAY.
+//
+// MEASURED 2026-09-10 on one function with three branches, detailed:true:
+//   [routes  ] isBlockCoverage=true ranges= 157-265:1  207-263:0
+//   [services] isBlockCoverage=true ranges= 157-265:1  194-207:0  244-263:0
+//   [zzz     ] isBlockCoverage=true ranges= 157-265:1  194-207:0  231-244:0
+//
+// V8 emits ONE range covering the whole function with its execution count, then
+// carves out the branches that did NOT run as nested count:0 sub-ranges. So the
+// set of count>0 ranges is IDENTICAL for all three inputs (just 157-265) and
+// every bit of branch information lives in the count:0 ranges the old filter
+// discarded. Three inputs taking three different branches produced one
+// identical coverage set, which is why libFuzzer's cov: never moved:
+//   before: cov: 1388 ft: 1388 corp: 1/32b, unchanged #13 -> #8192
+//
+// Correct semantics: a region executed iff it is inside a count>0 range and NOT
+// inside a nested count:0 range. executedIntervals() does that subtraction and
+// returns disjoint executed intervals, keyed by byte offset.
+//
+// Byte offsets, not line numbers. The previous code expanded every range to
+// whole lines and unioned them, which re-merges branches that share a line --
+// and most Set A targets ship a minified/transpiled dist/index.js where an
+// entire handler is one line.
+function executedIntervals(ranges) {
+  // V8 ranges within a function are properly nested; outermost first.
+  const sorted = [...ranges].sort(
+    (a, b) => a.startOffset - b.startOffset || b.endOffset - a.endOffset);
+  const out = [];
+  for (let i = 0; i < sorted.length; i++) {
+    const r = sorted[i];
+    if (r.count <= 0) continue;            // not executed; its own children are moot
+    // Subtract this range's IMMEDIATE children. A child with count>0 emits its
+    // own intervals when it is reached as `r`, so subtracting it here is right
+    // either way; what matters is that a count:0 child leaves a hole.
+    let cursor = r.startOffset;
+    for (let j = i + 1; j < sorted.length; j++) {
+      const c = sorted[j];
+      if (c.startOffset >= r.endOffset) break;   // past the end of r
+      if (c.endOffset > r.endOffset) continue;   // overlaps out of r, not nested
+      if (c.startOffset < cursor) continue;      // nested inside an earlier child
+      if (c.startOffset > cursor) out.push([cursor, c.startOffset]);
+      cursor = c.endOffset;
+    }
+    if (cursor < r.endOffset) out.push([cursor, r.endOffset]);
+  }
+  return out;
+}
+
 function processCoverage(result) {
-  const coveredLines = [];
-  
+  const covered = [];
+
   for (const script of result) {
     if (!isLocalFile(script.url)) continue;
-    const filePath = fileURLToPath(script.url);
-    const fileName = path.basename(filePath);
-    const lineOffsets = getLineOffsets(filePath);
-    if (!lineOffsets) continue;
-    
+    const fileName = path.basename(fileURLToPath(script.url));
+
     for (const func of script.functions) {
-      for (const range of func.ranges) {
-        if (range.count > 0) {
-          const startLine = offsetToLine(lineOffsets, range.startOffset);
-          const endLine = offsetToLine(lineOffsets, range.endOffset);
-          for (let line = startLine; line <= endLine; line++) {
-            coveredLines.push(`${fileName}:${line}`);
-          }
-        }
+      for (const [a, b] of executedIntervals(func.ranges)) {
+        covered.push(`${fileName}|${a}|${b}`);
       }
     }
   }
-  return [...new Set(coveredLines)];
+  return [...new Set(covered)];
 }
 
 // Dynamically import the target script (supports both ESM and CommonJS via dynamic import)

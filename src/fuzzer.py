@@ -1,5 +1,7 @@
 import sys
+import inspect
 import os
+import subprocess
 import shutil
 import json
 import asyncio
@@ -21,6 +23,133 @@ from .metrics import CoverageTimelineCollector
 from .runners.base import BaseRunner
 
 logger = logging.getLogger(__name__)
+
+_STR_CONTRACT_CACHE = {}
+
+
+def _takes_a_string(fn) -> bool:
+    """Is this sanitizer's contract (str, ...) -> ...?
+
+    _check_string_sanitizers used to call EVERY selected sanitizer with a plain
+    string, whatever its declared parameter type. Measured 2026-09-10:
+
+        check_process_and_fd_leaks(leaked_pids: set[int]) -> tuple[bool, str]
+        called with '/var/folders/.../tmp32djxuif.xlsx' returns
+        (True, 'Leaked background subprocess PIDs detected ... <that path>')
+
+    -- a non-empty string is a truthy "set of leaked pids". Combined with the
+    tuple-truthiness bug above, this fired check_file_access,
+    check_unhandled_promise_rejection and check_process_and_fd_leaks on EVERY
+    string argument of EVERY input: 295 identical alerts in one 90s run, all
+    three names from BASE_MANDATORY_SANITIZERS, on the benign input
+    {'filePath': '<temp>.xlsx', 'sheetName': 'Sheet1', 'cell': 'A1'} that ToFu
+    itself constructed. Not one LLM-selected sanitizer fired.
+
+    Unannotated parameters are ALLOWED through: most of the genuine string
+    sanitizers predate the annotations, and excluding them would silently
+    disable the real checks -- the precise failure this codebase keeps having.
+    Only a parameter annotated as something other than `str` is skipped.
+    """
+    cached = _STR_CONTRACT_CACHE.get(fn)
+    if cached is None:
+        try:
+            params = list(inspect.signature(fn).parameters.values())
+            if not params:
+                cached = False
+            else:
+                ann = params[0].annotation
+                cached = ann is inspect.Parameter.empty or ann is str or ann == "str"
+        except (TypeError, ValueError):
+            cached = True
+        _STR_CONTRACT_CACHE[fn] = cached
+    return cached
+
+
+def _descendants(root_pid, ps_map: dict) -> set:
+    """PIDs descended from root_pid, per a _ps_snapshot() map.
+
+    Replaces a GLOBAL "which pids are new" diff. That diff saw every process the
+    whole machine started during the execution window, including the OTHER
+    worker's MCP server: with --workers 2 the campaign reported
+    "Process leak/leftover detected: PID 38747 (node)" on four separate tools
+    that spawn nothing (nazmul.todo item 40).
+
+    The old code DID filter by ancestry, and that filter is correct in
+    isolation -- but it was guarded by
+        if leaked_pids and self.current_runner and self.current_runner.process:
+    so whenever the runner had no live `process` the filter was SKIPPED and the
+    unfiltered global diff was returned. It FAILED OPEN. Computing descendants
+    directly cannot fail that way: with no root there are no descendants, so
+    the answer is empty rather than everything.
+    """
+    if not root_pid:
+        return set()
+    children = {}
+    for pid, entry in ps_map.items():
+        children.setdefault(entry[0], []).append(pid)
+    out, stack = set(), list(children.get(root_pid, ()))
+    while stack:
+        pid = stack.pop()
+        if pid in out:
+            continue
+        out.add(pid)
+        stack.extend(children.get(pid, ()))
+    return out
+
+
+def _runner_pid(runner):
+    """PID of the runner's server process, or None."""
+    return getattr(getattr(runner, "process", None), "pid", None)
+
+
+_PROC_SANITIZERS = {"check_process_and_fd_leaks", "check_terminal_dos_and_leak"}
+
+
+def _ps_snapshot() -> dict:
+    """pid -> (ppid, comm) for every process, portable across Linux and macOS.
+
+    The code this replaces read os.listdir("/proc") directly. THERE IS NO /proc
+    ON macOS -- the eval machine. Every read raised FileNotFoundError into a
+    bare `except Exception: pass`, so before_pids and after_pids were always
+    empty, leaked_pids was always empty, and check_process_and_fd_leaks /
+    check_terminal_dos_and_leak could NEVER fire on the platform the campaign
+    actually runs on. Silently: no error, no warning, just a sanitizer family
+    that reports nothing forever. Verified 2026-09-10:
+        os.listdir('/proc') -> FileNotFoundError [Errno 2] on Darwin-arm64
+    """
+    if os.path.isdir("/proc"):
+        out = {}
+        for x in os.listdir("/proc"):
+            if not x.isdigit():
+                continue
+            try:
+                with open(f"/proc/{x}/stat") as f:
+                    stat = f.read()
+                # comm sits in parens and may itself contain spaces or parens,
+                # so split on the LAST ')'.
+                r = stat.rindex(")")
+                out[int(x)] = (int(stat[r + 2:].split()[1]), stat[stat.index("(") + 1:r])
+            except Exception:
+                continue
+        return out
+    # macOS / BSD
+    try:
+        res = subprocess.run(["ps", "-Ao", "pid=,ppid=,comm="],
+                             capture_output=True, timeout=10)
+        out = {}
+        for line in res.stdout.decode(errors="ignore").splitlines():
+            parts = line.split(None, 2)
+            if len(parts) < 2:
+                continue
+            try:
+                out[int(parts[0])] = (int(parts[1]),
+                                      (parts[2].strip() if len(parts) > 2 else ""))
+            except ValueError:
+                continue
+        return out
+    except Exception:
+        return {}
+
 
 class MCPDifferentialFuzzer:
     def __init__(self, command: str, args: list, target_tool: str, api_key: str, 
@@ -54,10 +183,17 @@ class MCPDifferentialFuzzer:
             self.runner_factory = runner_factory
 
         if reporter is None:
-            self.reporter = CompositeVulnerabilityReporter([
-                ConsoleVulnerabilityReporter(),
-                MongoVulnerabilityReporter()
-            ])
+            # The Mongo sink was unconditional while FuzzerConfig.export_mongo
+            # (default False) was ignored. With no mongod running, EVERY finding
+            # cost a 2s serverSelectionTimeoutMS: the 2026-09-10 appium run spent
+            # ~124s of its 540.4s wall clock on 62 connection-refused retries,
+            # which silently corrupts the per-run time budget the campaign
+            # accounts in. Console only unless the config asks for Mongo.
+            # This changes where findings are LOGGED, never what is found.
+            sinks = [ConsoleVulnerabilityReporter()]
+            if getattr(self.config, "export_mongo", False):
+                sinks.append(MongoVulnerabilityReporter())
+            self.reporter = CompositeVulnerabilityReporter(sinks)
         else:
             self.reporter = reporter
             
@@ -68,6 +204,19 @@ class MCPDifferentialFuzzer:
         self.silent_bug_found = False
         self.target_tool_name = ""
         self.exec_count = 0
+        # EXECUTABILITY ACCOUNTING. A tool whose every execution returns
+        # isError/JSON-RPC-error never really ran, so no sanitizer can fire and
+        # the run reports a healthy "0 findings". Measured 2026-09-10 on
+        # api7/apisix-mcp::delete_resource: every input returned
+        #   "Status: undefined\nMessage: connect ECONNREFUSED 127.0.0.1:9180"
+        # because the tool is an Admin-API client and no APISIX is running. All
+        # 32 apisix tools are in that state, and libFuzzer's cov: is flat by
+        # construction because there is exactly one reachable path.
+        # "Ran and found nothing" and "never actually ran" must not look alike.
+        self.exec_success = 0
+        self.exec_total = 0
+        self.exec_error_counts = {}
+        self._failfast_after = int(os.environ.get("TOFU_FAILFAST_EXECS", "2000"))
         self.start_fuzz_time = None
 
         # Instantiated helpers
@@ -108,8 +257,30 @@ class MCPDifferentialFuzzer:
         if self.metrics_collector:
             self.metrics_collector.record_execution_progress(self.exec_count)
 
-        # 1. Check if sequence mode is enabled (e.g. data length > 128 or config sequence_steps > 1)
-        sequence_steps = getattr(self.config, "sequence_steps", 2) if hasattr(self, "config") else 1
+        # 1. Sequence mode. OFF BY DEFAULT -- it used to default to 2.
+        #
+        # FuzzerConfig has no `sequence_steps` field, so the getattr default of
+        # 2 always won and EVERY corpus entry was sliced into fragments before
+        # parsing. Measured 2026-09-10 on a real LLM-generated seed:
+        #   original : {"filePath": "predefined_seed:test_file.xlsx", "sheetName": "Sheet1", "cell": "A1"}
+        #     chunk 0: {"filePath": "predefined_seed:test_file.x       -> not JSON
+        #     chunk 1: lsx", "sheetName": "Sheet1", "cell": "A1"       -> not JSON
+        #     chunk 2: }                                               -> not JSON
+        # None of the three parses, so input_parser fell through to
+        # FuzzedDataProvider on every fragment and the tool received garbage:
+        #   EXEC_ERROR n=1304 detail='MCP error -32600: Invalid cell address: '
+        #   EXEC_SUMMARY tool=get_cell n_exec=512 n_success=0
+        #
+        # This silently defeated the JSON-first parse order (audit Fix 3), the
+        # restored seed_bank/, LLM seed generation and the seed validation --
+        # all of which exist to deliver a COMPLETE argument object. A seed can
+        # be perfect and still never arrive.
+        #
+        # Splitting a serialised argument object at an arbitrary byte offset is
+        # not a sequence of tool calls; it is corruption. If stateful multi-call
+        # testing is wanted it needs its own representation, not a byte slice.
+        # Opt in explicitly with FuzzerConfig.sequence_steps.
+        sequence_steps = getattr(self.config, "sequence_steps", 1) if hasattr(self, "config") else 1
         
         # Split data if sequence mode is active
         data_chunks = [data[i:i+len(data)//sequence_steps] for i in range(0, len(data), max(1, len(data)//sequence_steps))] if sequence_steps > 1 else [data]
@@ -124,6 +295,53 @@ class MCPDifferentialFuzzer:
             # 3. Execute and Measure
             res, elapsed, leaked_files, leaked_pids = self._execute_and_time(generated_arguments, created_temp_files)
 
+            # Counted per EXECUTION. self.exec_count increments once per
+            # test_one_input, but sequence mode can run several executions
+            # inside one call, so the two were on different bases: a log showed
+            # n_exec=512 alongside an error bucket of n=1304.
+            self.exec_total += 1
+            if getattr(res, "success", False):
+                self.exec_success += 1
+            else:  # noqa: E501
+                # Bucket by the error's shape, not its full text, so one
+                # recurring cause does not become thousands of distinct keys.
+                key = (str(getattr(res, "error", "") or "unknown"))[:120]
+                self.exec_error_counts[key] = self.exec_error_counts.get(key, 0) + 1
+
+            # EMIT PERIODICALLY, NOT AT THE END. libFuzzer terminates the
+            # process itself when -max_total_time expires, so everything after
+            # engine.fuzz() is dead code: "[FUZZING METRICS]" and "Fuzzing
+            # session completed" appear in ZERO of the logs this repo has ever
+            # produced, and libFuzzer's own closing "Done ... runs" line is lost
+            # with them (the stderr reader is a daemon thread and the pipe is
+            # not drained on a hard exit). A summary that only prints at the end
+            # is a summary that never prints. run_eval takes the LAST one.
+            if self.exec_count == 1 or self.exec_count % 512 == 0:
+                self._emit_exec_summary()
+
+            # FAIL FAST. A tool that has failed every one of its first N
+            # executions is not going to start working, and the remaining
+            # budget buys nothing: 143 of 173 configs are in that state here
+            # (no APISIX on :9180, no graphlit credential, no n8n backend), and
+            # at ~450s each that is ~9h of a campaign spent proving the same
+            # ECONNREFUSED over and over. Ending the run keeps the evidence
+            # (EXEC_SUMMARY / EXEC_ERROR / NOT_EXECUTABLE are already in the
+            # log) and drops the cost.
+            #
+            # The threshold is deliberately generous: the deterministic seeds
+            # alone cannot execute excel-reader (they cannot guess a sheet
+            # name) while the LLM seeds can, so a small sample would discard a
+            # target that actually works. Set TOFU_FAILFAST_EXECS=0 to disable.
+            if (self._failfast_after
+                    and self.exec_total >= self._failfast_after
+                    and self.exec_success == 0):
+                self._emit_exec_summary()
+                logger.error(
+                    f"FAILFAST tool={self.target_tool_name} -- stopping after "
+                    f"{self.exec_total} executions, none of which succeeded. The "
+                    f"remaining budget cannot change this. This is NOT a clean run.")
+                sys.exit(0)
+
             # 4. Run Sanitizers
             sanitizer_triggered, triggered_by, err_details = self._run_sanitizers(
                 generated_arguments, res, elapsed, leaked_files, leaked_pids
@@ -134,6 +352,22 @@ class MCPDifferentialFuzzer:
                 self._handle_violation(generated_arguments, res.result if hasattr(res, 'result') else res, triggered_by, f"[Sequence Step {step_idx+1}/{len(data_chunks)}] {err_details}")
                 break
 
+
+    def _emit_exec_summary(self) -> None:
+        """One greppable line per tool. eval/run_eval.py parses the LAST one."""
+        n = self.exec_total or self.exec_count
+        rate = (self.exec_success / n) if n else 0.0
+        logger.info(f"EXEC_SUMMARY tool={self.target_tool_name} n_exec={n} "
+                    f"n_success={self.exec_success} success_rate={rate:.3f}")
+        for err, n in sorted(self.exec_error_counts.items(), key=lambda kv: -kv[1])[:3]:
+            logger.info(f"EXEC_ERROR n={n} detail={err!r}")
+        if (self.exec_total or self.exec_count) >= 64 and self.exec_success == 0:
+            logger.error(
+                f"NOT_EXECUTABLE tool={self.target_tool_name} -- all {n} "
+                f"executions returned an error, so NO sanitizer could fire and coverage "
+                f"cannot vary. This run is NOT evidence that the tool is clean. Most "
+                f"common cause: the tool is a client for a backend/credential that is "
+                f"not present in this environment.")
 
     def _handle_violation(self, inputs: dict, result: any, triggered_by: list[str], err_details: str) -> None:
         """Logs the triggered security exception and marks bug found without stopping the session."""
@@ -156,11 +390,23 @@ class MCPDifferentialFuzzer:
             before_files = set()
 
         before_pids = set()
-        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
-            try:
-                before_pids = {int(x) for x in os.listdir("/proc") if x.isdigit()}
-            except Exception:
-                pass
+        ps_before = {}
+        # Gate on EITHER consumer. _check_process_leak fires for
+        # check_process_and_fd_leaks OR check_terminal_dos_and_leak, but the
+        # snapshot was only taken for the latter -- and the former is one of the
+        # 10 BASE_MANDATORY_SANITIZERS, i.e. always on. So a mandatory sanitizer
+        # could never fire: leaked_pids was empty whenever the opt-in one was
+        # not also selected.
+        if _PROC_SANITIZERS & set(self.selected_sanitizer_names):
+            ps_before = _ps_snapshot()
+            # Descendants of THIS run's server only -- never a global pid set.
+            before_pids = _descendants(_runner_pid(self.current_runner), ps_before)
+            if not ps_before and not getattr(self, "_ps_warned", False):
+                self._ps_warned = True
+                logger.error(
+                    "check_terminal_dos_and_leak is selected but the process "
+                    "snapshot is EMPTY, so process-leak detection cannot fire. "
+                    "Do not read a clean run as evidence of no leak.")
 
         start_time = time.time()
         try:
@@ -177,34 +423,17 @@ class MCPDifferentialFuzzer:
         leaked_files = {f for f in (after_files - before_files) if not f.endswith((".cpuprofile", ".cpuprofile.json")) and "systemd-private-" not in f}
 
         after_pids = set()
-        if "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
-            try:
-                after_pids = {int(x) for x in os.listdir("/proc") if x.isdigit()}
-            except Exception:
-                pass
+        ps_after = {}
+        if _PROC_SANITIZERS & set(self.selected_sanitizer_names):
+            ps_after = _ps_snapshot()
+            after_pids = _descendants(_runner_pid(self.current_runner), ps_after)
 
+        # Both sides are already restricted to descendants of this run's own
+        # server, so the difference is exactly "processes this tool call left
+        # behind". No ancestry re-filter is needed, and nothing another worker
+        # starts can appear here.
         leaked_pids = after_pids - before_pids
-        if leaked_pids and self.current_runner and self.current_runner.process:
-            ancestor_pid = self.current_runner.process.pid
-            filtered_leaked_pids = set()
-            for pid in leaked_pids:
-                curr = pid
-                is_child = False
-                for _ in range(100):
-                    if curr == ancestor_pid:
-                        is_child = True
-                        break
-                    if curr <= 1:
-                        break
-                    try:
-                        with open(f"/proc/{curr}/stat", "r") as f:
-                            stat = f.read().split()
-                        curr = int(stat[3])
-                    except Exception:
-                        break
-                if is_child:
-                    filtered_leaked_pids.add(pid)
-            leaked_pids = filtered_leaked_pids
+        self._last_ps = ps_after
 
         return res, elapsed, leaked_files, leaked_pids
 
@@ -634,13 +863,10 @@ class MCPDifferentialFuzzer:
         """Returns True and diagnostic message if background processes were leaked."""
         if ("check_process_and_fd_leaks" in self.selected_sanitizer_names or "check_terminal_dos_and_leak" in self.selected_sanitizer_names) and leaked_pids:
             details = []
+            snap = getattr(self, "_last_ps", None) or _ps_snapshot()
             for pid in leaked_pids:
-                try:
-                    with open(f"/proc/{pid}/comm", "r") as f:
-                        comm = f.read().strip()
-                    details.append(f"PID {pid} ({comm})")
-                except Exception:
-                    details.append(f"PID {pid}")
+                info = snap.get(pid)
+                details.append(f"PID {pid} ({info[1]})" if info and info[1] else f"PID {pid}")
             err = f"Process leak/leftover detected: {', '.join(details)}. "
             return True, err
         return False, ""
@@ -683,7 +909,7 @@ class MCPDifferentialFuzzer:
                         continue
 
                 sanitizer_fn = getattr(sanitizers, sanitizer_name, None)
-                if sanitizer_fn:
+                if sanitizer_fn and _takes_a_string(sanitizer_fn):
                     rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
                     triggered = False
                     if sanitizer_name == "check_blocked_command_bypass":
@@ -692,6 +918,13 @@ class MCPDifferentialFuzzer:
                         triggered = sanitizer_fn(val, allowed_dirs=rule.get("allowed_directories"))
                     else:
                         triggered = sanitizer_fn(val)
+
+                    # Some sanitizers return bool, others (bool, detail). A
+                    # 2-tuple is ALWAYS truthy -- (False, '') included -- so a
+                    # bare `if triggered:` fired every tuple-returning sanitizer
+                    # on every string argument. Normalise before testing.
+                    if isinstance(triggered, tuple):
+                        triggered = triggered[0]
 
                     if triggered:
                         rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
@@ -831,7 +1064,12 @@ class MCPDifferentialFuzzer:
         if self.predefined_seeds:
             seeds = self.predefined_seeds
         else:
-            seeds = self.llm.generate_seeds(self.target_tool_name, self.target_tool_desc, self.current_schema)
+            # Pass the SELECTED sanitizers so seed generation draws from their
+            # adversarial input classes. Without this the property exercised and
+            # the property judged are chosen independently (sec4_design.tex:10).
+            seeds = self.llm.generate_seeds(
+                self.target_tool_name, self.target_tool_desc, self.current_schema,
+                selected_sanitizers=self.selected_sanitizer_names)
         if os.path.exists(self.corpus_dir):
             shutil.rmtree(self.corpus_dir, ignore_errors=True)
         os.makedirs(self.corpus_dir, exist_ok=True)
@@ -944,6 +1182,8 @@ class MCPDifferentialFuzzer:
         elapsed_total = (time.time() - self.start_fuzz_time) if self.start_fuzz_time else 0.0
         exec_speed = (self.exec_count / elapsed_total) if elapsed_total > 0 else 0.0
         logger.info(f"[FUZZING METRICS] Total Executions: {self.exec_count} | Duration: {elapsed_total:.2f}s | Speed: {exec_speed:.2f} exec/s")
+
+        self._emit_exec_summary()
 
         if self.metrics_collector:
             self.metrics_collector.emit_final_snapshot(self.exec_count)

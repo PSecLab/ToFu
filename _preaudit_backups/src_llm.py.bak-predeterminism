@@ -1,0 +1,631 @@
+import json
+import logging
+import os
+import re
+
+# seed_generators was deleted in commit 87d8602 together with src/seed_bank/
+# and src/predefined_seeds/, but the eight @tool functions below were left
+# calling it. Every LLM seed-generation tool call therefore died with
+# "name 'seed_generators' is not defined" -- visible in the campaign logs as
+# "Error running tool create_json" -- and seeding fell back to the
+# deterministic mapper on every tool. Restored from b1b657e.
+from . import seed_generators
+try:
+    from langchain_openai import ChatOpenAI
+    from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
+    from langchain_core.tools import tool
+except ImportError as _e:
+    _LANGCHAIN_IMPORT_ERROR = _e
+    ChatOpenAI = None
+    HumanMessage = SystemMessage = ToolMessage = None
+    def tool(func):
+        return func
+else:
+    _LANGCHAIN_IMPORT_ERROR = None
+
+
+
+logger = logging.getLogger(__name__)
+
+
+_FENCE_RE = re.compile(r"```(?:[A-Za-z0-9_+-]*)\s*\n?(.*?)```", re.DOTALL)
+
+
+def _coerce_text(content) -> str:
+    """Flatten a LangChain message payload to plain text.
+
+    Most backends hand back a str, but some return a list of content
+    blocks; treating that list as a string is what produced the
+    ``'list' object has no attribute 'strip'`` class of failure.
+    """
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for b in content:
+            if isinstance(b, dict):
+                parts.append(b.get("text") or b.get("content") or "")
+            elif isinstance(b, str):
+                parts.append(b)
+        return "".join(parts)
+    return str(content)
+
+
+def _balanced_span(text: str, open_ch: str, close_ch: str):
+    """First balanced ``open_ch``..``close_ch`` span, ignoring delimiters
+    that occur inside JSON string literals. Returns None if unbalanced."""
+    depth = 0
+    start = -1
+    in_str = False
+    esc = False
+    for i, ch in enumerate(text):
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+            continue
+        if ch == open_ch:
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == close_ch and depth:
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
+
+
+def _extract_json(content, expect=None):
+    """Recover a JSON value from an LLM reply that may wrap it in prose
+    and/or a markdown fence.
+
+    Small local models (llama3.1:8b, qwen2.5, mistral, ...) routinely
+    ignore a "raw JSON only" instruction and answer with an explanation,
+    a fenced block, and a trailing summary. The code this replaces did
+    ``s.strip().strip("```json").strip("```")``, which is wrong twice
+    over: ``str.strip(chars)`` removes a *character set* rather than a
+    substring, and nothing there survives prose outside the fence. Every
+    reply from such a model therefore died with "Expecting value: line 1
+    column 1 (char 0)" and the caller silently fell back to the
+    deterministic default sanitizers -- i.e. the LLM stage of the
+    pipeline never ran, while the logs looked healthy.
+
+    ``expect`` may be ``dict``, ``list``, or ``None`` for either.
+    Raises ValueError if nothing parsable is present.
+    """
+    text = _coerce_text(content).strip()
+    if not text:
+        raise ValueError("empty LLM response")
+
+    candidates = [text]
+    candidates.extend(m.strip() for m in _FENCE_RE.findall(text))
+
+    pairs = [("{", "}", dict), ("[", "]", list)]
+    for open_ch, close_ch, typ in pairs:
+        if expect is not None and typ is not expect:
+            continue
+        for base in list(candidates):
+            span = _balanced_span(base, open_ch, close_ch)
+            if span and span not in candidates:
+                candidates.append(span)
+
+    last_err = None
+    for cand in candidates:
+        if not cand:
+            continue
+        try:
+            data = json.loads(cand)
+        except Exception as e:
+            last_err = e
+            continue
+        if expect is not None and not isinstance(data, expect):
+            last_err = ValueError(
+                "parsed a %s, expected %s" % (type(data).__name__, expect.__name__)
+            )
+            continue
+        return data
+    raise ValueError("no parsable JSON in LLM response (%s)" % (last_err,))
+
+
+@tool
+def create_pdf(content: str, filename: str) -> str:
+    """
+    Creates a valid PDF document with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_pdf(content, filename)
+
+
+@tool
+def create_docx(content: str, filename: str) -> str:
+    """
+    Creates a valid Word (DOCX) document with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_docx(content, filename)
+
+
+@tool
+def create_xlsx(sheet_data: list, filename: str) -> str:
+    """
+    Creates a valid Excel (XLSX) spreadsheet with the specified table data and saves it.
+    sheet_data is a list of rows, where each row is a list of cell values.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_xlsx(sheet_data, filename)
+
+
+@tool
+def create_pptx(content: str, filename: str) -> str:
+    """
+    Creates a valid PowerPoint (PPTX) presentation with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_pptx(content, filename)
+
+
+@tool
+def create_zip(files: dict, filename: str) -> str:
+    """
+    Creates a valid ZIP archive containing the specified file names and their text contents and saves it.
+    files is a dictionary mapping sub-filename to its text content.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_zip(files, filename)
+
+
+@tool
+def create_xml(xml_content: str, filename: str) -> str:
+    """
+    Creates a valid XML file with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_xml(xml_content, filename)
+
+
+@tool
+def create_html(html_content: str, filename: str) -> str:
+    """
+    Creates a valid HTML file with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_html(html_content, filename)
+
+
+@tool
+def create_json(json_content: str, filename: str) -> str:
+    """
+    Creates a valid JSON file with the specified content and saves it.
+    Returns the reference format: 'predefined_seed:<filename>'
+    """
+    return seed_generators.create_json(json_content, filename)
+
+
+
+class LLMHandler:
+    """LLM backend for sanitizer selection and seed generation.
+
+    Backend is configurable via environment so the same code runs against
+    Ollama Cloud or a LOCAL Ollama daemon. Local Ollama serves an
+    OpenAI-compatible API at http://localhost:11434/v1 and ignores the key.
+
+        export TOFU_LLM_BASE_URL=http://localhost:11434/v1
+        export TOFU_LLM_MODEL=llama3.1:8b
+        export OLLAMA_CLOUD_API_KEY=ollama     # any non-empty string locally
+
+    Record whichever model you used in the paper's setup subsection: sanitizer
+    selection quality is model-dependent, and VIPER-MCP's own RQ4 showed
+    triggered-server counts swinging from 0 to 88 purely by changing backend.
+    """
+    def __init__(self, api_key: str = None, model_name: str = None, base_url: str = None):
+        base_url = base_url or os.environ.get("TOFU_LLM_BASE_URL", "https://ollama.com/v1")
+        model_name = model_name or os.environ.get("TOFU_LLM_MODEL", "minimax-m3:cloud")
+        api_key = api_key or os.environ.get("OLLAMA_CLOUD_API_KEY") or "ollama"
+        timeout = int(os.environ.get("TOFU_LLM_TIMEOUT", "120"))
+        self.model_name = model_name
+        self.base_url = base_url
+        # How many times to re-ask when a reply will not parse as JSON, and
+        # whether to request the backend's JSON mode. Both are worth
+        # recording in the paper's setup: they change how often the LLM
+        # stage runs at all on a small local model.
+        self.max_json_attempts = int(os.environ.get("TOFU_LLM_JSON_ATTEMPTS", "3"))
+        self.json_mode = os.environ.get("TOFU_LLM_JSON_MODE", "1").lower() not in ("0", "false", "no")
+        if ChatOpenAI is None:
+            raise RuntimeError(
+                "langchain_openai is not importable, so no LLM backend can be "
+                "constructed (%s). Install the pinned requirements into the "
+                "active interpreter before running the campaign." % (_LANGCHAIN_IMPORT_ERROR,)
+            )
+        logger.info(f"LLM backend: model={model_name} base_url={base_url} "
+                    f"json_mode={self.json_mode} json_attempts={self.max_json_attempts}")
+        self.model = ChatOpenAI(api_key=api_key, base_url=base_url, model=model_name,
+                                timeout=timeout, max_retries=2)
+
+    def _load_seed_bank(self) -> dict:
+        """Loads all JSON files from src/seed_bank/ into a dictionary."""
+        seed_bank = {}
+        bank_dir = os.path.join(os.path.dirname(__file__), "seed_bank")
+        if not os.path.exists(bank_dir):
+            return seed_bank
+            
+        for file in os.listdir(bank_dir):
+            if file.endswith(".json"):
+                try:
+                    with open(os.path.join(bank_dir, file), "r") as f:
+                        data = json.load(f)
+                    category = data.get("category")
+                    if category:
+                        seed_bank[category] = {
+                            "description": data.get("description", ""),
+                            "payloads": data.get("payloads", [])
+                        }
+                except Exception as e:
+                    logging.warning(f"Failed to load seed bank file {file}: {e}")
+        return seed_bank
+
+    def _local_fallback_mapping(self, input_schema: dict, seed_bank: dict) -> list:
+        """Generates fuzzing seeds locally without LLM API supporting type fuzzing and type confusion."""
+        logging.warning("LLM_SEEDGEN_FALLBACK deterministic local mapping in use (no LLM seeds)")
+        logging.info("[Seed Gen] Using local fallback mapping mechanism with multi-type fuzzing...")
+        properties = input_schema.get("properties", {})
+        
+        # 1. Map properties to default values based on type
+        defaults = {}
+        for prop, attrs in properties.items():
+            p_type = attrs.get("type", "string")
+            if p_type in ("integer", "number"):
+                defaults[prop] = 1
+            elif p_type == "boolean":
+                defaults[prop] = True
+            elif p_type == "array":
+                defaults[prop] = []
+            elif p_type == "object":
+                defaults[prop] = {}
+            else:
+                defaults[prop] = "test"
+                
+        seeds = []
+        
+        # 2. Generate type-specific boundary values
+        for prop, attrs in properties.items():
+            p_type = attrs.get("type", "string")
+            
+            if p_type in ("integer", "number"):
+                # JSON-compliant boundary numbers
+                boundaries = [0, -1, 2147483647, -2147483648, 1e308, -1e308, None]
+                for val in boundaries:
+                    seed = defaults.copy()
+                    seed[prop] = val
+                    seeds.append(seed)
+            elif p_type == "boolean":
+                # Alternate boolean values
+                for val in [True, False]:
+                    seed = defaults.copy()
+                    seed[prop] = val
+                    seeds.append(seed)
+            elif p_type == "array":
+                # Array boundaries and malformations
+                variations = [
+                    [],
+                    [None],
+                    ["test"],
+                    [1, 2, 3],
+                    ["text", 123, None, {}]
+                ]
+                for val in variations:
+                    seed = defaults.copy()
+                    seed[prop] = val
+                    seeds.append(seed)
+            elif p_type == "object":
+                # Object boundaries
+                variations = [
+                    {},
+                    {"nested": "val"},
+                    {"depth1": {"depth2": {"depth3": "deep"}}}
+                ]
+                for val in variations:
+                    seed = defaults.copy()
+                    seed[prop] = val
+                    seeds.append(seed)
+            elif p_type == "string":
+                # Check keywords and inject from seed bank
+                prop_lower = prop.lower()
+                desc_lower = attrs.get("description", "").lower()
+                
+                category_to_use = None
+                if "sql" in prop_lower or "query" in prop_lower or "sql" in desc_lower or "query" in desc_lower:
+                    category_to_use = "sql_injection"
+                elif "url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "url" in desc_lower or "uri" in desc_lower or "link" in desc_lower:
+                    category_to_use = "ssrf_url"
+                elif "path" in prop_lower or "file" in prop_lower or "dir" in prop_lower or "path" in desc_lower or "file" in desc_lower or "dir" in desc_lower:
+                    category_to_use = "path_traversal"
+                elif "pattern" in prop_lower or "search" in prop_lower or "like" in prop_lower or "pattern" in desc_lower or "search" in desc_lower or "like" in desc_lower:
+                    category_to_use = "wildcards"
+                elif "html" in prop_lower or "xml" in prop_lower or "xml" in desc_lower or "html" in desc_lower or "markdown" in desc_lower:
+                    category_to_use = "xss_markdown"
+                    
+                if category_to_use and category_to_use in seed_bank:
+                    category_data = seed_bank[category_to_use]
+                    for payload in category_data["payloads"][:5]:
+                        seed = defaults.copy()
+                        seed[prop] = payload
+                        seeds.append(seed)
+                else:
+                    # Fallback string injections
+                    for cat in ["path_traversal", "sql_injection"]:
+                        if cat in seed_bank:
+                            for payload in seed_bank[cat]["payloads"][:2]:
+                                seed = defaults.copy()
+                                seed[prop] = payload
+                                seeds.append(seed)
+                                
+        # 3. Generate Type Confusion seeds (deliberate type mismatches)
+        for prop, attrs in properties.items():
+            p_type = attrs.get("type", "string")
+            
+            confusion_vals = []
+            if p_type == "string":
+                confusion_vals = [123, True, ["not_a_string"]]
+            elif p_type in ("integer", "number"):
+                confusion_vals = ["not_a_number", [1]]
+            elif p_type == "boolean":
+                confusion_vals = ["true", 1]
+            elif p_type in ("array", "object"):
+                confusion_vals = ["not_a_structure", 99]
+                
+            for val in confusion_vals:
+                seed = defaults.copy()
+                seed[prop] = val
+                seeds.append(seed)
+
+        # Add basic clean defaults
+        seeds.append(defaults)
+        
+        # Deduplicate seeds
+        unique_seeds = []
+        seen = []
+        for s in seeds:
+            s_str = json.dumps(s, sort_keys=True)
+            if s_str not in seen:
+                seen.append(s_str)
+                unique_seeds.append(s)
+                
+        return unique_seeds
+
+    def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict) -> list:
+        """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
+        logging.info(f"[LLM] Generation of smart seed corpus for '{tool_name}' using Seed Bank...")
+        
+        seed_bank = self._load_seed_bank()
+        if not seed_bank:
+            logging.warning("Seed bank is empty or not found. Falling back to local mapping.")
+            return self._local_fallback_mapping(input_schema, {})
+            
+        example_structure = {}
+        properties = input_schema.get("properties", {})
+        for prop, attrs in properties.items():
+            p_type = attrs.get("type", "string")
+            example_structure[prop] = f"<{p_type}>"
+            
+        # Format the seed bank categories for the prompt
+        seed_bank_desc = ""
+        for cat, data in seed_bank.items():
+            seed_bank_desc += f"- Category: '{cat}'\n  Description: {data['description']}\n  Sample Payloads: {json.dumps(data['payloads'][:3])}\n\n"
+            
+        prompt = f"""
+You are a security and QA engineering expert. You will generate a JSON array of test cases (inputs) to fuzz the following tool.
+
+Tool Name: {tool_name}
+Description: {tool_description}
+Schema Contract: {input_schema}
+
+We have a structured Seed Bank containing pre-curated payloads categorized by attack vectors:
+{seed_bank_desc}
+
+We also have predefined file generator tools that you can call to create valid binary/text files:
+- create_pdf
+- create_docx
+- create_xlsx
+- create_pptx
+- create_zip
+- create_xml
+- create_html
+- create_json
+
+You should call these file generator tools if you want to test the tool with high-quality custom documents. Each tool will save the file and return a string like "predefined_seed:<filename>".
+Use the exact returned string as the value for the file/URI parameter in the test case.
+
+Strict Instructions:
+1. Select the relevant Seed Bank categories for fuzzing this tool.
+2. Adapt the payloads from those selected categories into the parameters of the tool schema.
+3. For non-string parameters:
+   - For integers/numbers, include test cases with boundary values (e.g. 0, -1, large numbers).
+   - For arrays, include empty arrays [] and heterogeneous/malformed arrays.
+   - For booleans, test both true and false.
+4. Intentionally include a few type confusion/type mismatch test cases (e.g., passing a string to an integer, or an array to a string parameter) to check type-handling robustness.
+5. Every object in the array MUST strictly follow this argument structure: {json.dumps(example_structure)}
+6. Return ONLY a valid raw JSON array containing 6 to 12 objects. No explanations, no markdown blocks. Just plain raw JSON.
+"""
+        messages = [HumanMessage(content=prompt)]
+        
+        tools = [
+            create_pdf,
+            create_docx,
+            create_xlsx,
+            create_pptx,
+            create_zip,
+            create_xml,
+            create_html,
+            create_json
+        ]
+        tools_map = {t.name: t for t in tools}
+        model_with_tools = self.model.bind_tools(tools)
+        
+        max_attempts = 4
+        attempt = 1
+        
+        while attempt <= max_attempts:
+            try:
+                response = model_with_tools.invoke(messages)
+                messages.append(response)
+                
+                if response.tool_calls:
+                    for tool_call in response.tool_calls:
+                        t_name = tool_call["name"]
+                        t_args = tool_call["args"]
+                        t_id = tool_call["id"]
+                        
+                        logging.info(f"[LLM Seed Gen Tool Call] Invoking {t_name} with {t_args}")
+                        if t_name in tools_map:
+                            try:
+                                result = tools_map[t_name].invoke(t_args)
+                            except Exception as e:
+                                result = f"Error running tool {t_name}: {e}"
+                        else:
+                            result = f"Error: Tool {t_name} not found."
+                        
+                        logging.info(f"[LLM Seed Gen Tool Call] Result: {result}")
+                        messages.append(ToolMessage(content=result, tool_call_id=t_id))
+                    continue
+                
+                content = _coerce_text(response.content).strip()
+                if not content:
+                    messages.append(HumanMessage(content="Please provide the final raw JSON array of test cases now."))
+                    attempt += 1
+                    continue
+                
+                parsed_seeds = _extract_json(content, expect=list)
+                logging.info(f"LLM_SEEDGEN_OK n_seeds={len(parsed_seeds)} attempt={attempt}")
+                if not isinstance(parsed_seeds, list):
+                    raise ValueError("The LLM returned a JSON object but a JSON ARRAY (list) of objects was expected.")
+                
+                return parsed_seeds
+                
+            except Exception as e:
+                logging.warning(f"Seed generation attempt {attempt} failed ({e}).")
+                if attempt == max_attempts:
+                    break
+                messages.append(HumanMessage(content=f"Your previous output was invalid: {str(e)}. Please correct it and output ONLY the valid raw JSON array."))
+                attempt += 1
+                
+        # Trigger local fallback mapping if LLM failed
+        return self._local_fallback_mapping(input_schema, seed_bank)
+
+
+
+    def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> tuple:
+        """Selects sanitizing functions and their behavioral rules based on docstrings/schemas."""
+        logging.info(f"Selecting relevant sanitizers for '{tool_name}'...")
+        
+        sanitizers_format = "\n".join([f"- {name}: {desc}" for name, desc in available_sanitizers.items()])
+
+        prompt = f"""
+You are an expert security engineer. Analyze the following tool metadata and select which sanitizers from the provided list are relevant to monitor its inputs. Also, analyze the tool description and docstring to determine what the tool's expected behavior is if a sanitizer triggers.
+
+Tool Name: {tool_name}
+Description: {tool_description}
+Schema: {input_schema}
+
+Available Sanitizers:
+{sanitizers_format}
+
+Strict Instructions:
+1. Return ONLY a valid JSON object with two keys:
+   - "selected_sanitizers": A JSON array of strings containing the exact names of the selected sanitizers.
+   - "rules": A JSON object mapping a selected sanitizer name to its expected behavior rule:
+     {{
+       "sanitizer_name": {{
+         "on_trigger": "allow_success_always" or "allow_success_with_fallback" or "raise_exception",
+         "expected_fallback_values": [<expected return values when sanitizer is triggered, e.g. [], "", null, etc.>]
+       }}
+     }}
+     Use "allow_success_always" if the tool is designed to process arbitrary text that might contain invalid elements (like a JSON extractor or lenient parser) and should always succeed normally with any output.
+     Use "allow_success_with_fallback" if the tool expects a specific valid structure but gracefully returns a fallback value when invalid.
+     Use "raise_exception" if the tool should strictly raise an exception/error on invalid input.
+2. If no sanitizers are relevant, return: {{"selected_sanitizers": [], "rules": {{}}}}
+3. No code blocks, no markdown formatting. Just raw JSON.
+"""
+        messages = [HumanMessage(content=prompt)]
+        
+        # A small local model will happily wrap the object in prose and a
+        # markdown fence no matter how the instruction is phrased, so ask
+        # for the backend's JSON mode where available, parse tolerantly,
+        # and re-ask with a sharper instruction before giving up. The
+        # outcome is logged on one greppable line per tool: the fraction
+        # of tools where the LLM stage actually ran is a number the
+        # evaluation has to report, not assume.
+        model = self.model
+        json_mode = self.json_mode
+        if json_mode:
+            try:
+                model = self.model.bind(response_format={"type": "json_object"})
+            except Exception as e:
+                json_mode = False
+                logger.debug(f"backend rejected json_object mode ({e}); continuing without it")
+
+        last_err = None
+        for attempt in range(1, self.max_json_attempts + 1):
+            p = prompt
+            if attempt > 1:
+                p = prompt + (
+                    f"\n\nYour previous reply could not be parsed ({last_err}). "
+                    "Reply with the JSON object and nothing else: no explanation, "
+                    "no markdown fence, no text before or after it. The first "
+                    "character of your reply must be '{' and the last must be '}'."
+                )
+            try:
+                response = model.invoke([HumanMessage(content=p)])
+                logging.info(_coerce_text(response.content))
+                data = _extract_json(response.content, expect=dict)
+                selected = data.get("selected_sanitizers", [])
+                rules = data.get("rules", {})
+                if not isinstance(selected, list) or not isinstance(rules, dict):
+                    raise ValueError(
+                        "expected 'selected_sanitizers' to be a list and 'rules' a "
+                        f"object, got {type(selected).__name__}/{type(rules).__name__}"
+                    )
+                valid_selection = [x for x in selected if x in available_sanitizers]
+                dropped = [x for x in selected if x not in available_sanitizers]
+                valid_rules = {x: r for x, r in rules.items() if x in valid_selection}
+                if dropped:
+                    logger.warning(
+                        f"[{tool_name}] LLM named {len(dropped)} sanitizer(s) that are "
+                        f"not in the registry; dropped: {dropped}"
+                    )
+                logger.info(
+                    f"LLM_SELECTION_OK tool={tool_name} attempt={attempt} "
+                    f"n_selected={len(valid_selection)} n_dropped={len(dropped)}"
+                )
+                logging.info(f"Sanitizers selected: {valid_selection}")
+                logging.info(f"Sanitizer rules: {valid_rules}")
+                return valid_selection, valid_rules
+            except Exception as e:
+                last_err = e
+                logger.warning(
+                    f"[{tool_name}] sanitizer-selection attempt "
+                    f"{attempt}/{self.max_json_attempts} failed: {e}"
+                )
+                if json_mode:
+                    # A backend that rejects response_format only says so at
+                    # invoke time, which would otherwise burn every attempt
+                    # on the same error. Drop the constraint and retry plain.
+                    json_mode = False
+                    model = self.model
+                    logger.warning(
+                        f"[{tool_name}] retrying without json_object mode"
+                    )
+
+        logger.error(f"LLM_SELECTION_FAILED tool={tool_name} after "
+                     f"{self.max_json_attempts} attempts: {last_err}")
+        raise RuntimeError(
+            f"LLM API Call Failed during sanitizer selection for '{tool_name}': {last_err}"
+        ) from last_err
+

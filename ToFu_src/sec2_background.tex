@@ -1,0 +1,68 @@
+
+\section{Background}
+\label{sec:background}
+
+\subsection{Tool-Enabled LLM Agents and Metadata}
+
+Tool-enabled LLM agents augment a language model with external functionality,
+such as filesystem access, Web retrieval, database queries, and code execution.
+A typical system consists of an \emph{LLM}, an \emph{orchestration layer}, and
+a set of \emph{tools}. The orchestrator exposes each tool to the LLM through
+metadata describing its purpose, arguments, primitive types, and
+natural-language semantics, then translates model outputs into structured
+invocations and dispatches them to the corresponding implementations.
+Importantly, schemas generally capture only syntactic constraints, whereas
+tool descriptions may specify stronger semantic requirements. For example, a
+\texttt{path} argument may be typed as a string but described as a ``file
+within the workspace,'' implying a filesystem-containment property absent from
+the schema. Similarly, strings representing URLs, commands, queries, or
+hostnames require different security constraints despite sharing the same
+primitive type. Thus, tool metadata provides a semantic specification of
+LLM-generated arguments that ultimately become ordinary program inputs at the
+tool boundary.
+
+\subsection{Fuzzing Semantic Security Bugs}
+
+Traditional fuzzers detect bugs using observable failures such as crashes,
+assertion violations, sanitizer reports, or abnormal termination. Tool
+implementations can instead execute successfully while violating their
+documented semantics. For example, a workspace-local file tool may accept
+\texttt{../../etc/passwd}, successfully access the file, and return normally.
+We call such failures \emph{semantic security bugs}: executions that satisfy a
+tool's syntactic interface but violate a security property implied by its
+documented semantics.
+
+Detecting these bugs requires semantic oracles rather than crash-based ones.
+The required property depends on how an input is consumed: paths require
+containment and traversal checks, URLs may require restrictions on schemes and
+destinations, and command arguments require checks on interpretation by the
+shell. Consequently, there is no universal sanitizer even for inputs sharing
+the same primitive type. CWE captures recurring classes of such weaknesses,
+including path traversal, command injection, improper input validation, and
+server-side request forgery, but determining which checks apply normally
+requires program-specific knowledge. Tool-enabled LLM systems expose an
+unusual opportunity: the argument descriptions already supplied to the LLM
+encode much of this semantic information, allowing security checks and
+corresponding fuzzing oracles to be specialized to individual tool arguments.
+
+
+\section{Threat Model}
+\label{sec:threat-model}
+
+\project{} assumes that the orchestration layer faithfully exposes a tool's
+declared interface and dispatches schema-valid invocations to the corresponding
+implementation. We trust the \project{} analysis infrastructure, but do not
+trust the LLM or the tool implementation. In particular, tool metadata
+describes the behavior expected by the LLM, while the implementation may fail
+to enforce the corresponding security properties.
+
+We consider an attacker who can influence information consumed by the LLM,
+including user prompts, retrieved content, and outputs of other tools. Because
+such information may propagate into structured tool arguments, we treat every
+schema-valid argument as potentially adversarial. A vulnerability exists when
+the tool accepts or processes such an argument in a way that violates a
+security property implied by its documented interface. Vulnerability discovery
+is independent of a particular LLM or prompting strategy; we separately
+evaluate whether discovered triggering inputs can be delivered through the
+normal LLM tool-calling path.
+

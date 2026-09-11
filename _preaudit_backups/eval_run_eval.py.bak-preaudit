@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""
+STEP 2 of the ToFu evaluation: run the fuzzing campaign over prepared configs.
+
+RESUMABLE. Every completed run is appended to eval/state/runs.jsonl; re-running
+skips them. Ctrl-C is safe -- the in-flight run is lost, nothing else.
+
+Each run invokes ToFu exactly as a user would:
+    python -m src --config <cfg> --time <budget>
+with override_rules EMPTY, so llm.select_sanitizers() actually runs.
+
+Usage:
+    export OLLAMA_CLOUD_API_KEY=...        # REQUIRED, no default
+    python3 eval/run_eval.py --time 900 --workers 4
+    python3 eval/run_eval.py --time 60 --limit 3      # smoke test first!
+    python3 eval/run_eval.py --status                 # progress only
+"""
+import argparse, json, os, subprocess, sys, threading, time
+from concurrent.futures import ThreadPoolExecutor
+
+ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EVAL  = os.path.join(ROOT, "eval")
+CFG   = os.path.join(EVAL, "configs")
+STATE = os.path.join(EVAL, "state")
+OUT   = os.path.join(EVAL, "runs")
+RUNS  = os.path.join(STATE, "runs.jsonl")
+
+lock = threading.Lock()
+counter = {"done": 0, "findings": 0, "errors": 0}
+
+def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
+
+def done_set():
+    s = set()
+    if os.path.exists(RUNS):
+        for line in open(RUNS):
+            try: s.add(json.loads(line)["config"])
+            except Exception: pass
+    return s
+
+def one(cfgfile, budget):
+    name = os.path.basename(cfgfile)[:-5]
+    cfgpath = os.path.join(CFG, os.path.basename(cfgfile))
+    logpath = os.path.join(OUT, name + ".log")
+    t0 = time.time()
+    rec = {"config": os.path.basename(cfgfile), "started": time.time()}
+    try:
+        cfg = json.load(open(cfgpath))
+        rec.update(repo=cfg.get("_repo"), set=cfg.get("_set"),
+                   lang=cfg.get("_lang"), tool=cfg.get("target_tool"))
+        # generous kill margin over the fuzzing budget
+        p = subprocess.run([sys.executable, "-m", "src", "--config", cfgpath,
+                            "--time", str(budget)],
+                           cwd=ROOT, capture_output=True, timeout=budget + 600)
+        out = p.stdout.decode(errors="ignore") + "\n" + p.stderr.decode(errors="ignore")
+        with open(logpath, "w") as f: f.write(out)
+        low = out.lower()
+        # Count findings by what the reporter ACTUALLY prints
+        # (src/reporters.py ConsoleVulnerabilityReporter + fuzzer.py Silent Bug
+        # Alert), not by strings that never appear in the log. The previous
+        # keyword set ("sanitizer triggered"/"violation"/...) matched NOTHING
+        # the tool emits, so a genuine finding would have been recorded as
+        # finding_hits=0 -- the same silent-underreporting failure mode as the
+        # LLM-selection bug.
+        hits = (low.count("potential vulnerability / bug found")
+                + low.count("silent bug alert"))
+        # Which sanitizers actually fired -- needed to score by vuln CLASS
+        # (Set D) rather than by a bare yes/no. Parse every
+        #   -> Triggered Sanitizers : ['check_x', 'check_y']
+        # and every  Sanitizers ['check_x'] flagged ...  line.
+        fired = set()
+        for m in re.finditer(r"Triggered Sanitizers\s*:\s*(\[[^\]]*\])", out):
+            for nm in re.findall(r"check_[a-z0-9_]+", m.group(1)):
+                fired.add(nm)
+        for m in re.finditer(r"Sanitizers\s*(\[[^\]]*\])\s*flagged", out):
+            for nm in re.findall(r"check_[a-z0-9_]+", m.group(1)):
+                fired.add(nm)
+        # Did the LLM stage actually run for this tool? Without recording
+        # this the campaign degrades silently to the deterministic
+        # fallback while the logs still look healthy -- which is exactly
+        # what the first attempt did on every tool. RQ2/RQ3 need the
+        # fraction of tools where LLM selection succeeded, so it is
+        # measured here rather than assumed.
+        if "LLM_SELECTION_OK" in out:
+            rec["llm_selection"] = "ok"
+        elif "LLM_SELECTION_FAILED" in out or "Falling back to default sanitizers" in out:
+            rec["llm_selection"] = "failed"
+        else:
+            rec["llm_selection"] = "unknown"
+        m = re.search(r"LLM_SELECTION_OK .*?n_selected=(\d+) n_dropped=(\d+)", out)
+        if m:
+            rec["llm_n_selected"], rec["llm_n_dropped"] = int(m.group(1)), int(m.group(2))
+        if "LLM_SEEDGEN_OK" in out:
+            rec["llm_seeds"] = "ok"
+        elif "LLM_SEEDGEN_FALLBACK" in out:
+            rec["llm_seeds"] = "fallback"
+        else:
+            rec["llm_seeds"] = "unknown"
+        m = re.search(r"LLM_SEEDGEN_OK n_seeds=(\d+)", out)
+        if m:
+            rec["llm_n_seeds"] = int(m.group(1))
+        failed = p.returncode != 0
+        rec.update(returncode=p.returncode, seconds=round(time.time()-t0, 1),
+                   log=os.path.relpath(logpath, ROOT), finding_hits=hits,
+                   triggered_sanitizers=sorted(fired), ok=not failed)
+        if failed:
+            # surface the actual exception line, not just a returncode
+            tail = [ln for ln in out.splitlines()
+                    if ("Error" in ln or "error:" in ln.lower()) and ln.strip()]
+            rec["error"] = (tail[-1].strip()[:200] if tail else
+                            f"exit {p.returncode}")
+        with lock:
+            counter["done"] += 1
+            if failed: counter["errors"] += 1
+            elif hits: counter["findings"] += 1
+    except subprocess.TimeoutExpired:
+        rec.update(ok=False, error="timeout", seconds=round(time.time()-t0,1))
+        with lock: counter["done"] += 1; counter["errors"] += 1
+    except Exception as e:
+        rec.update(ok=False, error=str(e)[:200], seconds=round(time.time()-t0,1))
+        with lock: counter["done"] += 1; counter["errors"] += 1
+    with lock:
+        with open(RUNS, "a") as f: f.write(json.dumps(rec) + "\n")
+    return rec
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--time", type=int, default=900, help="fuzzing seconds per tool")
+    ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--set", choices=["A","B"], default=None)
+    ap.add_argument("--status", action="store_true")
+    ap.add_argument("--skip-preflight", action="store_true")
+    a = ap.parse_args()
+
+    for d in (STATE, OUT): os.makedirs(d, exist_ok=True)
+    if not os.path.isdir(CFG):
+        log("no eval/configs/ -- run prepare_targets.py first"); sys.exit(1)
+
+    all_cfg = sorted(f for f in os.listdir(CFG) if f.endswith(".json"))
+    if a.set:
+        keep = []
+        for f in all_cfg:
+            try:
+                if json.load(open(os.path.join(CFG, f))).get("_set") == a.set: keep.append(f)
+            except Exception: pass
+        all_cfg = keep
+    done = done_set()
+    todo = [f for f in all_cfg if f not in done]
+
+    if a.status:
+        log(f"configs={len(all_cfg)} done={len(done)} remaining={len(todo)}")
+        if os.path.exists(RUNS):
+            recs=[json.loads(l) for l in open(RUNS)]
+            withf=[r for r in recs if r.get("finding_hits")]
+            log(f"runs recorded={len(recs)} with_findings={len(withf)} errors={sum(1 for r in recs if not r.get('ok'))}")
+        return
+
+    base_url = os.environ.get("TOFU_LLM_BASE_URL", "https://ollama.com/v1")
+    model    = os.environ.get("TOFU_LLM_MODEL", "minimax-m3:cloud")
+    is_local = "localhost" in base_url or "127.0.0.1" in base_url
+    if not is_local and not os.environ.get("OLLAMA_CLOUD_API_KEY"):
+        log("ERROR: no LLM backend configured.")
+        log("  LOCAL Ollama:  export TOFU_LLM_BASE_URL=http://localhost:11434/v1")
+        log("                 export TOFU_LLM_MODEL=llama3.1:8b")
+        log("  or CLOUD:      export OLLAMA_CLOUD_API_KEY=<fresh key>")
+        log("                 (rotate the one committed in targets/*.py)")
+        sys.exit(1)
+    log(f"LLM backend: model={model} base_url={base_url}")
+
+    # preflight: fail in seconds, not mid-campaign
+    if not a.skip_preflight:
+        try:
+            import urllib.request
+            req = urllib.request.Request(
+                base_url.rstrip("/") + "/chat/completions",
+                data=json.dumps({"model": model, "max_tokens": 8,
+                                 "messages":[{"role":"user","content":"reply with OK"}]}).encode(),
+                headers={"Content-Type":"application/json",
+                         "Authorization":"Bearer " + (os.environ.get("OLLAMA_CLOUD_API_KEY") or "ollama")})
+            with urllib.request.urlopen(req, timeout=90) as r:
+                body = json.loads(r.read().decode())
+            reply = body["choices"][0]["message"].get("content","")
+            log(f"preflight OK -- model answered: {reply[:60]!r}")
+        except Exception as e:
+            log(f"PREFLIGHT FAILED: {str(e)[:200]}")
+            if is_local:
+                log("  Is the daemon up?   ollama serve")
+                log("  Is the model pulled? ollama pull " + model)
+            log("  Re-run with --skip-preflight to bypass this check.")
+            sys.exit(1)
+
+    imp = subprocess.run([sys.executable, "-c", "import src.fuzzer"],
+                         cwd=ROOT, capture_output=True, timeout=120)
+    if imp.returncode != 0:
+        raw = imp.stderr.decode(errors="ignore").strip()
+        err = raw.splitlines()
+        log("PREFLIGHT FAILED: ToFu is not importable. Full traceback:")
+        for ln in err[-25:]: log("    " + ln)
+        v = sys.version_info
+        log(f"  python: {v.major}.{v.minor}.{v.micro}  ({sys.executable})")
+        if "dis" in raw and "Positions" in raw:
+            log("  DIAGNOSIS: atheris/Python version mismatch. dis.Positions exists")
+            log("             only in Python 3.11+, so this atheris build wants")
+            log(f"             >=3.11 but you are on {v.major}.{v.minor}.")
+            log("  Fix A (preferred): use Python 3.11 or 3.12 for the venv, then")
+            log("             reinstall:  pip install -r requirements.txt pymongo")
+            log("  Fix B: pin an atheris that supports your Python, e.g.")
+            log("             pip install 'atheris==2.2.2'")
+        elif "ModuleNotFoundError" in raw:
+            log("  Fix:  pip install -r requirements.txt pymongo")
+            log("  (pymongo is imported by src/ but missing from requirements.txt)")
+        sys.exit(1)
+    log("preflight OK -- src.fuzzer imports")
+
+    if a.limit: todo = todo[:a.limit]
+    log(f"configs={len(all_cfg)} done={len(done)} todo={len(todo)} "
+        f"budget={a.time}s/tool workers={a.workers}")
+    est = len(todo) * a.time / max(a.workers,1) / 3600
+    log(f"rough wall-clock estimate: {est:.1f} h")
+
+    t0 = time.time()
+    with ThreadPoolExecutor(max_workers=a.workers) as ex:
+        for i, r in enumerate(ex.map(lambda f: one(f, a.time), todo), 1):
+            tag = "HIT " if r.get("finding_hits") else ("ERR " if not r.get("ok") else "    ")
+            log(f"{tag}[{i}/{len(todo)}] {r.get('repo')}::{r.get('tool')} "
+                f"{r.get('seconds')}s hits={r.get('finding_hits',0)}")
+    log(f"DONE {counter['done']} runs, {counter['findings']} with hits, "
+        f"{counter['errors']} errors, {(time.time()-t0)/3600:.2f} h")
+    # LLM-stage health over the whole index, not just this invocation --
+    # a campaign where selection fell back everywhere is not evidence
+    # about ToFu's LLM-assisted design and must not be reported as such.
+    try:
+        allrecs = [json.loads(l) for l in open(RUNS) if l.strip()]
+    except Exception:
+        allrecs = []
+    if allrecs:
+        sel = {}
+        seed = {}
+        for r in allrecs:
+            sel[r.get("llm_selection", "unknown")] = sel.get(r.get("llm_selection", "unknown"), 0) + 1
+            seed[r.get("llm_seeds", "unknown")] = seed.get(r.get("llm_seeds", "unknown"), 0) + 1
+        log(f"  LLM sanitizer selection: " +
+            ", ".join(f"{k}={v}" for k, v in sorted(sel.items())))
+        log(f"  LLM seed generation:     " +
+            ", ".join(f"{k}={v}" for k, v in sorted(seed.items())))
+        if sel.get("ok", 0) == 0:
+            log("  !! LLM selection never succeeded -- every run used the "
+                "deterministic fallback. Do NOT report these as ToFu results.")
+    log(f"  per-run logs -> {OUT}")
+    log(f"  index        -> {RUNS}")
+
+if __name__ == "__main__":
+    main()

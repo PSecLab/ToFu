@@ -5,6 +5,7 @@ import sys
 import logging
 from .fuzzer import MCPDifferentialFuzzer
 from .sanitizers import SECURITY_PROFILES
+from .config import FuzzerConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("src.cli")
@@ -19,6 +20,12 @@ def parse_args():
     parser.add_argument("--config", help="Path to JSON target configuration file")
     parser.add_argument("--api-key", help="Ollama / Cloud LLM API Key (optional)")
     parser.add_argument("--test-input", help="Arguments JSON string to run a single test execution instead of fuzzing")
+    parser.add_argument("--corpus-dir", default=None,
+                        help="Corpus directory for this run. MUST be unique per concurrent run: "
+                             "the fuzzer wipes this directory when it starts a tool, so runs sharing "
+                             "the default ./fuzz_corpus delete each other's corpora.")
+    parser.add_argument("--metrics-dir", default=None,
+                        help="Metrics/coverage output directory for this run (default: metrics).")
     return parser.parse_args()
 
 def main():
@@ -30,6 +37,7 @@ def main():
     target_tool = None
     override_rules = {}
     predefined_seeds = []
+    file_backed_params = {}
     
     # 1. Load from config file if specified
     if args.config:
@@ -44,6 +52,17 @@ def main():
             target_tool = config_data.get("target_tool")
             override_rules = config_data.get("override_rules", {})
             predefined_seeds = config_data.get("predefined_seeds", [])
+            # FILE-BACKED PARAMETERS. Without these, a tool that takes a file
+            # path receives the literal string the mapper produced ("test") and
+            # answers "File not found" on EVERY input -- so it never executes,
+            # no sanitizer can fire, and the run reports a healthy 0 findings.
+            # Measured 2026-09-10 on ArchimedesCrypto/excel-reader-mcp.
+            # __main__ previously never read this key at all, so the whole
+            # file-backed path (src/predefined_seeds/, FuzzFileManager, the
+            # "predefined_seed:<name>" protocol) was dead in the eval harness
+            # even though targets/fuzz_*.py used it. That is why the paper's
+            # binary-seed claim was never observed working.
+            file_backed_params = config_data.get("file_backed_params", {}) or {}
             logger.info(f"Loaded configuration from {args.config}")
         except Exception as e:
             logger.error(f"Failed to parse config file: {e}")
@@ -75,15 +94,35 @@ def main():
         override_rules = merged_rules
 
     # API key resolution
-    api_key = args.api_key or os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z")
+    # No credential default. A hardcoded key here was committed to git history;
+    # local Ollama ignores the value, so "ollama" is the right local placeholder.
+    _base = os.environ.get("TOFU_LLM_BASE_URL", "")
+    api_key = (args.api_key
+               or (os.environ.get("OPENAI_API_KEY") if "openai.com" in _base else None)
+               or os.environ.get("OLLAMA_CLOUD_API_KEY"))
+    if not api_key:
+        base = os.environ.get("TOFU_LLM_BASE_URL", "")
+        if "localhost" in base or "127.0.0.1" in base:
+            api_key = "ollama"
+        else:
+            logger.error("No LLM credential. Set OLLAMA_CLOUD_API_KEY, or point "
+                         "TOFU_LLM_BASE_URL at a local Ollama daemon.")
+            sys.exit(1)
+
+    fuzzer_config = FuzzerConfig()
+    if args.metrics_dir:
+        fuzzer_config.metrics_dir = args.metrics_dir
 
     fuzzer = MCPDifferentialFuzzer(
         command=command,
         args=cmd_args,
         target_tool=target_tool,
         api_key=api_key,
+        corpus_dir=args.corpus_dir or "./fuzz_corpus",
         override_rules=override_rules,
-        predefined_seeds=predefined_seeds
+        predefined_seeds=predefined_seeds,
+        file_backed_params=file_backed_params,
+        config=fuzzer_config
     )
     
     if args.test_input:

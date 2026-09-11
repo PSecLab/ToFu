@@ -29,7 +29,7 @@ def main():
         command=python_path,
         args=[server_path],
         target_tool="load_state",
-        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
+        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "ollama"),
         config=config,
         override_rules={
             "check_untrusted_deserialization": {},

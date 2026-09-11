@@ -9,11 +9,49 @@ class FuzzInputParser:
         self.current_runner = current_runner
 
     def parse(self, data: bytes) -> tuple[dict, bool]:
-        """Parses inputs using schema-aware FuzzedDataProvider or JSON parsing."""
+        """Turn a corpus entry into tool arguments.
+
+        ORDER MATTERS, AND IT USED TO BE INVERTED.
+
+        The previous version tried ``_generate_fallback_inputs`` FIRST. That
+        method populates every declared property unconditionally, so for any
+        tool with a schema -- i.e. every MCP tool -- it always returned a
+        non-empty dict and the JSON branch below was unreachable dead code.
+
+        The consequence was that a structured seed such as
+        ``{"path": "../../../etc/passwd"}`` never reached the tool as that
+        string. It was handed to ``atheris.FuzzedDataProvider`` and consumed
+        by ``ConsumeUnicodeNoSurrogates``, which reinterprets the bytes in a
+        wide encoding. Real campaign logs show the tool receiving
+        ``'\u6162\u676e...'`` -- the UTF-16 reading of the seed file's own
+        JSON text (``language": "java", "useElement":``). Every semantic seed,
+        whether from src/seed_bank/ or from the LLM, was destroyed on the way
+        in, and the seeds acted as nothing but entropy.
+
+        Correct order: if the entry parses as JSON matching the schema, honour
+        it; otherwise generate schema-conforming values from the bytes. Atheris
+        mutation naturally breaks most entries out of valid JSON, so structured
+        seeds are exercised as written AND the mutation space is still covered.
+        """
         properties = self.schema.get("properties", {})
         sig = self._get_runner_signature()
 
-        # 1. Try schema-conforming structure generation with Atheris FuzzedDataProvider
+        # 1. Structured seed: honour it exactly as written.
+        json_arguments, parsed_successfully = self._try_parse_json(data, properties)
+        if parsed_successfully:
+            json_arguments = self._decode_bytes_arguments(json_arguments, sig)
+            if properties:
+                # Fill any property the seed did not specify so the call is
+                # still schema-complete; seed-provided values always win.
+                try:
+                    filled = self._generate_fallback_inputs(data, properties, sig)
+                    filled.update(json_arguments)
+                    return filled, True
+                except Exception:
+                    pass
+            return json_arguments, True
+
+        # 2. Not JSON (or not matching the schema): generate from the bytes.
         if properties:
             try:
                 generated_arguments = self._generate_fallback_inputs(data, properties, sig)
@@ -22,13 +60,7 @@ class FuzzInputParser:
             except Exception:
                 pass
 
-        # 2. Try raw JSON parsing fallback
-        generated_arguments, parsed_successfully = self._try_parse_json(data, properties)
-
-        if parsed_successfully:
-            generated_arguments = self._decode_bytes_arguments(generated_arguments, sig)
-
-        return generated_arguments, parsed_successfully
+        return {}, False
 
     def _get_runner_signature(self):
         """Extracts the signature of the target function if available."""

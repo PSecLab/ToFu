@@ -1,0 +1,2569 @@
+- write/re-write related works
+    MCP Scanner
+    MCP at First Glance
+    MCP SecLint
+    Chord
+    MCPSecBench
+    MCP-safetybench
+    MCPDiff
+    DCI Checker
+    ToolFuzz
+
+    Viper-MCP
+    MCPZoo - MCP Store - MCPWorld - MCPMarket -         Smithery
+    
+    
+- re-select dataset from "appropirate" prior work
+- run the evaluation
+- 
+- [DONE by Claude] Table 2 (table/motivation.tex, tab:motivation) updated with rows for:
+    MCPSecBench, VIPER-MCP, MCPZoo, MCPDiff/DCIChecker, Cisco MCP Scanner
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+    1. Table 2: MCPSecBench "Auto. Harness" column marked as X (not automated) --
+       based on OpenReview reviewers' criticism that its evaluation is largely
+       manual/GUI-driven. Verify this framing is fair/accurate before it ships.
+    2. Table 2: MCPZoo row -- it's a meta-study that runs OTHER scanners against
+       64,611 servers rather than a vulnerability-finding system itself, so most
+       of its columns are marked X/partial by nature. Verify this framing is fair.
+
+================================================================
+TRIAGE INDEX -- added 2026-09-10 by request. READ ONLY THIS PART.
+36 TO DOUBLE-CHECK items accumulated below. Nothing is deleted (per the
+rules); this index sorts them so you only look at four.
+================================================================
+
+*** YOURS -- these four need a decision only you can make ***
+
+  A. item 31  NOT-EXECUTABLE TARGET POLICY.  103 of 173 configs cannot run
+              here: api7/apisix-mcp (32 tools) wants an APISIX Admin API on
+              :9180, graphlit (71) wants an org credential, n8n-builder (10)
+              wants an n8n backend. Options: stand the backends up, exclude
+              and report them, or exclude for the ecosystem set and stand up
+              a small purposive set. Everything about the campaign's size and
+              its denominator follows from this.
+
+  B. item 30  FILE-BACKED PARAMS SIGN-OFF.  23 configs now mark a parameter
+              file-backed, so its value becomes a path to a temp file. This
+              CHANGES WHAT THE TOOL RECEIVES. It is what made excel-reader
+              executable for the first time. `eval/infer_file_params.py`
+              re-prints the proposal; `--revert` undoes all 23.
+
+  C. NEW      G-TO-S COUPLING.  The paper's thesis sentence (sec4_design.tex
+              line 10) says the property exercised is the property judged.
+              In code they are chosen independently: generate_seeds() never
+              receives the selected sanitizers, and the seed-bank category is
+              picked by a keyword match on the argument name (llm.py:476-487).
+              65 of 71 sanitizers have no adversarial inputs at all. RQ4 asks
+              exactly this question and cannot currently be answered. Fixing
+              it changes what the fuzzer sends.
+
+  D. item 24  THE THINKING ARM IS OWED.  gemma4 runs with reasoning DISABLED
+              (uncapped it hung past the harness ceiling). Every gemma4 number
+              is therefore a non-thinking number and must be labelled as such.
+              Plan agreed: campaign with reasoning off, then re-run a 20-30
+              tool subset with it on as a deliberate ablation.
+
+*** CLOSED BY MEASUREMENT -- no action, recorded for the paper ***
+  8, 9, 10   JS coverage. takePreciseCoverage RESETS counters (measured), so
+             the "cumulative" diagnosis was wrong; the real cause was the
+             count>0 filter discarding V8's count:0 branch ranges. Fixed.
+  11         Acceptance test (a)(b)(c): ALL THREE PASS. cov 97->109, corp 3->6,
+             exec/s 0-33 -> 100-227.
+  14, 16, 34 Seed validation added; the appium 62 and the 295 alerts were all
+             bug 14 (tuple truthiness + wrong-arity dispatch). HANDOFF open
+             decision 2 is answered: NOT true positives, NOT tracer noise.
+  17         HANDOFF section 2 rewritten.
+  26         The "COVERAGE ON JS TARGETS IS INERT" section's mechanism is
+             disproven. Do not cite it; cite the 2026-09-10 08:20 section.
+
+*** MINE -- done, or I will do them; no decision needed ***
+  15  DONE  TOFU_SEED_DIR; run_eval gives each run its own seed dir. The 14
+            test_case_*.json a run had written into the tracked source tree
+            are moved to _preaudit_backups/predefined_seeds_runtime_leftovers/.
+  19  DONE  eval/state/quarantine-pre-seedfix/ created, with WHY.md.
+  20  DONE  root fuzz_corpus/ removed (pre---corpus-dir leftover).
+  23  DONE  the 46 timed-out records stay in the index but now carry
+            executable=no/unknown and are excluded from any denominator by
+            run_eval's summary.
+  29, 32, 33, 35, 36, 27, 28   open, mechanical or paper-wording; I will
+            handle or flag them. None blocks a campaign.
+
+*** SUPERSEDED ***
+  12, 13, 18, 21, 22, 25  llama3.1:8b is dropped; gemma4:12b at
+            OLLAMA_CONTEXT_LENGTH=32768, temperature 0, reasoning off is the
+            arm. The chatml-template suspicion is downgraded: gemma4 follows
+            a "reply with exactly" instruction correctly.
+
+================================================================
+PIERRE TODO AUDIT (43 total: 15 casestudy.tex, 5 sec4_design.tex, 23 sec6_eval.tex)
+All \TODO{Pierre...} remarks are LEFT IN PLACE on purpose -- Ananto wants a
+reading pass first and will delete them himself. Do not remove them.
+================================================================
+
+They collapse into 7 actions:
+
+  A1. Delete dead scaffolding in sec4_design.tex          -> resolves 5
+      STATUS: nothing to edit. All 5 are ALREADY non-rendering (4 are
+      %-commented, 1 sits inside \iffalse..\fi at lines 65-70). Two of them
+      (corpus-entry representation at L66, hallucinated-sanitizer at L96) are
+      already ANSWERED by the prose immediately below them -- safe to just
+      delete during the reading pass. The other 3 sit inside blocks Nazmul
+      already marked \TODO{Remove,...} (tool-specific specialization,
+      corpus extension, end-to-end reachability) -- they die with those blocks.
+
+  A2. RQ list + RQ-to-subsection mapping                  -> resolves 1
+      STATUS: [DONE by Claude] RQ4 written ("Fuzzing effectiveness"), typos
+      fixed ("extend"->"extent", "ovserved"->"observed"), RQ labels bolded,
+      added \label{sec:eval-tools} / {sec:eval-vulns} / {sec:eval-coverage}
+      and a sentence mapping RQ1->9.1, RQ2+RQ3->9.2, RQ4->9.3.
+
+  A3. Experimental setup + repo selection methodology     -> resolves 6
+      (machine config, OS, Python/Node versions, cores, timeout, budget,
+      single-vs-repeated runs; corpus provenance, date, criteria, commit
+      hashes, tools-main 412/569 dominance, star-count claim)
+      BLOCKED ON: dataset decision + real run parameters.
+
+  A4. Sanitizer corpus provenance paragraph               -> resolves 2
+      (when the 66 sanitizers were authored relative to the eval; whether any
+      were added/modified AFTER seeing target behavior -- overfitting risk,
+      esp. MarkItDown- and HAR/ZIP-specific ones; how each group was produced)
+      BLOCKED ON: git history / dev timeline of src/sanitizers/.
+
+  A5. Vulnerability funnel + disclosure + expanded table  -> resolves 7
+      (raw alerts -> dedup -> confirmed; per-finding CWE, triggering
+      condition, responsible sanitizer/oracle, disclosure status; how the 5
+      "architectural" defects were actually found; distinct-root-cause claim)
+      BLOCKED ON: triage notes / run logs / disclosure tracker.
+
+  A6. Coverage subsection rewrite                         -> resolves 5
+      (define the metric + denominator precisely -- "features"/"branch"/"basic
+      blocks" are currently used interchangeably; justify which 6 tools are
+      plotted; the "<1hr" claim is not supported by a 24h-only figure, so
+      either show time-series or soften it; caveat Python-vs-JS comparability;
+      move runner mechanism prose to Implementation)
+      BLOCKED ON: coverage-over-time data (only if keeping the "<1hr" claim).
+
+  A7. casestudy.tex end-to-end rewrite                    -> resolves 15
+      Single missing throughline: walk the bug from tool metadata -> sanitizer
+      selection -> seed -> mutation -> intercepted runtime event -> oracle
+      verdict. Also: show the REAL minimized PoC (not the illustrative one),
+      fix the CWE-732 misclassification (CWE-732 is permission assignment;
+      root cause is CWE-88, need a correct secondary CWE for uncontrolled
+      file write), drop/validate the "deeply nested paths" claim, fix the
+      nested \texttt{} LaTeX bug, add the closing trust-boundary paragraph.
+      BLOCKED ON: actual fuzzer trace/logs for extract_issue_numbers.
+
+  => 6 of 43 resolvable with no new data (A1 mechanical + A2 done).
+     37 of 43 need real data from the codebase, logs, or a fresh run.
+
+================================================================
+AGREED PLAN / ORDER OF WORK
+================================================================
+  1. Pick a dataset that is reproducible AND runnable on the MacBook Pro M2 Pro.
+     Leading candidate: MCPCorpus (Lin et al., ASE 2025) ~13,875 servers,
+     public on GitHub + HuggingFace, sample deterministically with
+     sample_corpus.py (already in this folder, seeded + stratified).
+     Runner-up anchors: MCP at First Glance (TOSEM 2026, 583/1899 servers),
+     Toeppe et al. (MSR 2026, 2297 projects).
+  2. Run the evaluation on the M2 Pro. Record AS YOU GO the things A3-A6 need:
+     machine config, per-tool time budget, seeds, raw alert counts before and
+     after filtering, commit hashes of every target, disclosure status.
+  3. Then write up the rest of the paper against real numbers.
+
+  NOTE ON MACHINE SPECS: the Linux VM reachable through the Claude desktop
+  bridge reports only 4 cores / 3.8 GB RAM / ~9.6 GB root disk -- that is the
+  sandbox, NOT the actual M2 Pro. Running natively on macOS gives far more
+  headroom (10-12 cores, 16-32 GB). Size the corpus against the real machine,
+  and report the real machine in the paper's setup subsection.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+    3. Pierre's intro TODO asks the RQs to cover FIVE topics: sanitizer
+       applicability, semantic bug discovery, runtime filtering, fuzzing
+       effectiveness, AND real-world vulnerability discovery. The paper has
+       only RQ1-RQ4. I folded "real-world vulnerability discovery" into RQ4
+       rather than adding an RQ5, because RQ1-RQ4 are referenced elsewhere and
+       renumbering would ripple. Decide if you want a separate RQ5 instead.
+
+================================================================
+DATASET DECISION -- EMPIRICALLY VERIFIED 2026-09-08 (not paper claims)
+================================================================
+PICK: MCPCorpus (Lin, Ruan, Liu, Zhao -- ASE 2025 Tool Demonstrations,
+arXiv:2506.23474). Verified by actually downloading and parsing it.
+
+  Grab it with ONE curl, no token, no HuggingFace account:
+    https://raw.githubusercontent.com/Snakinya/MCPCorpus/main/Website/mcpso_servers_cleaned.json
+    13 MB, 13,875 records, downloaded in 7.5 seconds.
+  (HuggingFace mirror is blocked by the Claude sandbox egress proxy; GitHub is
+   not. On the M2 Pro natively both should work. GitHub path needs no token.)
+
+  Funnel on the real data (sample_corpus.py reproduces it):
+    13,875 records
+    -> 2,501 after filters (has repo, >=10 stars, not archived, not client)
+    -> 2,222 UNIQUE repos after dedup (279 duplicate entries collapsed)
+    -> 808 Python / 1,039 Node-TS / 375 other (other = no ToFu runner)
+    -> 25 drawn, seed 20260908, fingerprint 053a84c90891
+       (saved as targets_seed20260908_n25.csv)
+
+  THREE REAL GOTCHAS FOUND BY TOUCHING THE DATA (all handled in the script):
+   1. Do NOT filter on record["type"]=="server". That field is None on 12,976
+      of 13,875 records; filtering FOR it silently discards 93% of the corpus.
+      The servers file is servers-only by construction.
+   2. Monorepos appear as MANY records sharing ONE repo --
+      modelcontextprotocol/servers appears 35x, awslabs/mcp 7x, baidu-maps/mcp
+      8x. Sampling without repo-level dedup reproduces exactly the flaw Pierre
+      flagged (412 of 569 tools from one repo). Dedup step is mandatory.
+   3. Only 82 repos in the filtered pool ship a tools schema in the corpus, so
+      ToFu must clone and extract tool metadata itself (its Metadata Extraction
+      stage already does this). Don't rely on the corpus 'tools' field.
+
+  STALENESS -- state this honestly in the paper, it is a FEATURE not a bug:
+  the MCPCorpus repo was last pushed 2025-09-01 and its records' last_commit
+  dates are 2024-2025, so despite the paper's "evolvable" framing it is in
+  practice a FIXED SNAPSHOT. That is BETTER for reproducibility: cite the
+  MCPCorpus repo at a pinned commit and the population is frozen for any
+  reader. If a fresher population is wanted, Crawler/ ships the collection
+  scripts to re-run it (needs a GITHUB_TOKEN).
+
+  Rejected as the primary corpus, with reasons:
+   - Chord / Les Dissonances (NDSS 2026): its 66 targets are LangChain and
+     LlamaIndex framework tools, NOT MCP servers. Wrong unit of analysis.
+   - MCP at First Glance (TOSEM 2026) and Toeppe et al. (MSR 2026): both
+     describe good, reproducible methodology and are stronger venues, but I
+     could not verify a public downloadable artifact for either. Use them to
+     JUSTIFY the >=10-star threshold (Hasan et al. use the same one) and as
+     comparison points, not as the data source.
+
+BASELINES RUNNABLE AGAINST THIS SAME CORPUS (for the comparison Pierre wants):
+   - Cisco MCP Scanner  -- BEST BASELINE. Apache-2.0, Python, 1,068 stars,
+     pushed 2026-09-08 (today). Install: uv tool install --python 3.13
+     cisco-ai-mcp-scanner. Has a stdio mode (mcp-scanner stdio --stdio-command
+     ...) so it can be driven in batch over a target list, and supports a LOCAL
+     LLM so no API key/cost and no nondeterminism from a hosted model.
+   - MCPSafetyScanner (johnhalloran321/mcpSafetyScanner) -- MPL-2.0, Python,
+     178 stars, but STALE (last push 2025-04-10). This is the MCP Safety Audit
+     paper's tool; already referenced (commented out) in table/motivation.tex.
+   - MCPSecBench (AIS2Lab/MCPSecBench) -- MIT, Python, pushed 2026-03-04. Note
+     it is an ATTACK benchmark, not a scanner, and its own ICLR reviewers said
+     the harness is largely manual/GUI-driven -- so it is a weak automated
+     baseline. Cite, do not lean on.
+   - No public code found for VIPER-MCP, MCPZoo, or the academic MCP-Scanner
+     (Abadeh et al.) as of this check.
+
+  => Comparison design: run ToFu + Cisco MCP Scanner (+ MCPSafetyScanner if it
+     still installs) over the SAME seeded 25-repo sample, then report what each
+     finds and, importantly, what ToFu finds that the catalog-bounded scanners
+     structurally cannot (the semantic/argument-level bugs). That is the
+     experiment that substantiates the Table 2 claims.
+
+================================================================
+!! BIBLIOGRAPHY INTEGRITY INCIDENT -- 2026-09-08 -- READ THIS
+================================================================
+Claude generated many of the newer .bib entries from web-search SNIPPETS rather
+than from the papers themselves, and FABRICATED titles and author given names.
+A verification pass against arxiv.org/abs pages found that 13 OF 19 checked
+entries were wrong. All 13 have now been CORRECTED in paper.bib from the real
+arXiv pages, and the prose in sec8_related.tex was fixed to match.
+
+Signature of the error: surnames right and in the right order, GIVEN NAMES
+INVENTED. Also several invented system names and invented subtitles.
+
+WHAT WAS WRONG (now fixed):
+  viper-mcp        title invented + all given names invented. Real title:
+                   "VIPER-MCP: Detecting and Exploiting Taint-Style
+                   Vulnerabilities in Model Context Protocol Servers";
+                   real authors Pengyu Sun, Zifeng Kang, Qishu Jin, Enhao
+                   Huang, Xin Liu, Dakun Shen, Song Li.
+  shi2026description  "DCIChecker" was INVENTED -- no such name in the paper.
+  padilla2026exposed  "Corvus" was INVENTED -- no such name in the paper.
+  mtguard          "MTGuard" was INVENTED. Real: "Hybrid Analysis for Secure
+                   MCP Tool Use in LLM Agents" (He, Xie, Li, Ji).
+  spellsmith       INVERTED THE PAPER'S MEANING. Cited as an ATTACK
+                   ("adversarial tool-description synthesis"); it is actually a
+                   DEFENSE ("Mitigating Taint-Style Vulnerabilities in MCP
+                   Servers via Security-Aware Tool Descriptions"). Prose fixed.
+  aclemcp          ACLE expanded as "Access-Control List Enforcement" --
+                   INVENTED. It is "Attested Capability Leases for
+                   Execution-time trust". Prose fixed.
+  aegis, flowguard, mcpzoo, web3survey, trustshiftprobe, li2026don,
+  yang2025mcpsecbench, shi2025promptarmor -- titles and/or authors corrected.
+
+  huang2026give    *** WITHDRAWN FROM ARXIV *** by its authors, for
+                   "flaws in experimental methodology and unresolved ethical
+                   issues in data collection". The citation has been REMOVED
+                   from sec8_related.tex. Do not re-add it. The bib entry is
+                   kept but carries a note={} warning.
+
+VERIFIED CORRECT, no action: hou2025landscape, song2025beyond, zhu2025miniscope
+(note: arXiv styles it "MiniScope"), li2026towards, shi2025promptarmor (title
+was fine; author list had been truncated with a literal "et al", now complete
+with all 16 authors).
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+    4. STILL UNVERIFIED, verify before submission:
+       - wang2025mcpguard (arXiv 2510.23673) was not covered by the
+         verification pass -- check its real title and authors.
+       - guo2026systematic (MCPXKIT / IEEE TDSC) -- author list and the
+         "accepted at TDSC" claim came from a fetched summary, not the
+         publisher page. Confirm on IEEE Xplore.
+       - lin2025mcpcorpus -- I cite it as "ASE 2025 Tool Demonstrations" based
+         on co-author Bonan Ruan's personal website. The repo's own README
+         still gives an @misc/arXiv citation. Confirm which to use.
+       - toeppe2026largescale (MSR '26) -- confirm page numbers/DOI.
+       - The "64,611 servers" figure previously attributed to mcpzoo was
+         REMOVED from the prose as unverified. If you want a number there,
+         get it from the paper.
+       - EVERY remaining pre-existing entry that predates this session
+         (mcp-scanner, mcp-seclint, les-dissonances, mcp-first-glance,
+         toolhijacker, wang2026mpma, etc.) was NOT part of this audit.
+         Spot-check them too.
+
+================================================================
+BIB VERIFICATION STATUS -- updated 2026-09-09 (supersedes item 4 above)
+================================================================
+VERIFIED against a primary source (27):
+  via arXiv abstract pages: hou2025landscape, song2025beyond, zhu2025miniscope,
+    li2026towards, shi2025promptarmor, yang2025mcpsecbench, li2026don,
+    shi2026description, huang2026give, mcpzoo, padilla2026exposed, flowguard,
+    mtguard, trustshiftprobe, aegis, aclemcp, web3survey, spellsmith
+  via the paper's own full text: viper-mcp
+  via Google Scholar BibTeX: toeppe2026largescale, jia2026promptlocate,
+    wang2025webinject, debenedetti2024agentdojo, wang2026mpma, sekar2003model,
+    wallace2024instruction, les-dissonances
+
+STILL UNVERIFIED -- 11 substantive entries:
+  HIGH RISK (never checked, from the same batch where 13/19 were fabricated):
+    wang2025mcpguard   arXiv 2510.23673 -- missed by the audit entirely
+    guo2026systematic  "accepted IEEE TDSC" came from a fetched summary only;
+                       confirm on IEEE Xplore
+    lin2025mcpcorpus   cited as ASE 2025 Tool Demos (from co-author Bonan
+                       Ruan's website) but the repo README still gives an
+                       @misc/arXiv citation -- unresolved conflict
+  MEDIUM (plausible but unchecked):
+    toolhijacker       NDSS 2026 + doi 10.14722/ndss.2026.230675
+    zou2023universal   classic, entry never checked this session
+    greshake2023not    classic, ditto
+    xia2024fuzz4all    ditto
+    deng2023large      ditto
+  CONTENT-GROUNDED but bib fields unchecked (built from PDFs Ananto supplied,
+  so titles/authors are sound; pages/DOI/exact workshop name are not):
+    mcp-scanner        EnCyCriS 2026, pages 41--48
+    mcp-seclint        IWSPA 2026, pages 89--100
+  VENUE from arXiv HTML, not the publisher page (ACM DL blocks automated fetch):
+    mcp-first-glance   TOSEM, doi 10.1145/3814959
+
+DOIs COULD NOT BE RESOLUTION-CHECKED -- doi.org is blocked by the egress proxy
+in both the cloud sandbox and the desktop VM. Click these by hand:
+  10.1145/3786160.3788471, 10.1145/3806007.3810961, 10.1145/3814959,
+  10.14722/ndss.2026.230675, 10.1145/3605764.3623985
+
+URL-only @misc entries: agentthreatrules, atheris, cisco2025mcpscanner all
+return HTTP 200. The nine framework-doc URLs (langgraph,
+microsoft-agent-framework, google-adk2, autogen, openai-agents, strands,
+crewai, langchain-tools, mcp-tools) could NOT be reached -- the desktop VM's
+egress only allows GitHub. They are probably fine; open them once to confirm.
+
+OPEN DECISIONS:
+  - shi2025promptarmor: we keep all 16 authors (from arXiv). Scholar truncates
+    to 10 + "and others". Ours is strictly more complete; revert if you prefer
+    Scholar's exact form.
+  - les-dissonances: Scholar's entry was keyed li2025xthp; kept under the
+    existing key so \cite{les-dissonances} still resolves. Rename if desired.
+  - wang2026mpma: Scholar gives BOTH volume={40} and number={42}. BibTeX
+    hard-errors on that pair, so number was dropped. Do not re-add it.
+
+================================================================
+BIB VERIFICATION -- ROUND 2 COMPLETE (2026-09-09, via Google Scholar)
+================================================================
+NEWLY VERIFIED / FIXED:
+  wang2025mcpguard -> DELETED, was FABRICATED END TO END. Wrong title AND
+      wrong authors (I had "Wang, Yifei et al."). The real paper is
+      Xing et al., "MCP-Guard: A multi-stage defense-in-depth framework for
+      securing model context protocol in agentic AI", FINDINGS OF ACL 2026,
+      pp. 4877--4889. Now keyed xing2026mcpguard. Prose updated to match
+      (it is a layered proxy defense, not a server-interposition scanner).
+  hou2025landscape -> UPGRADED from arXiv to its published venue:
+      ACM Transactions on Software Engineering and Methodology (TOSEM).
+      Scholar shows 817 citations on the TOSEM record.
+  lin2025mcpcorpus -> ASE claim CONFIRMED. Official record is
+      "2025 40th IEEE/ACM International Conference on Automated Software
+      Engineering (ASE)", pp. 3985--3988. The ASE-vs-arXiv conflict is
+      resolved in favour of ASE.
+  toolhijacker -> authors and title CONFIRMED correct. BUT Scholar indexes
+      ONLY the arXiv preprint (arXiv:2504.19793); it has no NDSS record. The
+      unverified DOI has been REMOVED and a note added. CONFIRM THE NDSS 2026
+      VENUE YOURSELF before submission.
+  guo2026systematic -> authors and title CONFIRMED exactly. Scholar still
+      lists it as arXiv e-prints 2025, NOT TDSC. The TDSC acceptance is
+      author-asserted (arXiv comments field) and remains unconfirmed; the
+      claim was REMOVED from the Related Work body text but is still in the
+      .bib as "To appear". Confirm on IEEE Xplore.
+  CONFIRMED CORRECT AS-WAS, no change needed: zou2023universal,
+      greshake2023not, xia2024fuzz4all, deng2023large, mcp-scanner
+      (authors + pages 41--48), mcp-seclint (authors + pages 89--100),
+      mcp-first-glance (ACM TOSEM).
+
+ALSO CORRECTED IN THE PROSE (my own earlier claims were wrong):
+  - MCPCorpus described as "continuously updated" -> it is a FIXED SNAPSHOT
+    (repo last pushed 2025-09-01). Reworded.
+  - "(IEEE TDSC)" removed from the MCPXKIT sentence, per above.
+
+REMAINING UNVERIFIED (small):
+  - The 5 DOIs still cannot be resolution-checked from here (doi.org is
+    blocked by the egress proxy in BOTH environments). Click them by hand:
+    10.1145/3786160.3788471, 10.1145/3806007.3810961, 10.1145/3814959,
+    10.1145/3605764.3623985  (toolhijacker's DOI was removed).
+  - 9 framework-doc @misc URLs (langgraph, microsoft-agent-framework,
+    google-adk2, autogen, openai-agents, strands, crewai, langchain-tools,
+    mcp-tools) -- unreachable from the desktop VM, whose egress only allows
+    GitHub. Open each once to confirm it still resolves.
+  - toolhijacker NDSS 2026 venue, and guo2026systematic IEEE TDSC acceptance
+    (both above).
+
+================================================================
+BIB VERIFICATION -- ROUND 3, both open venue questions now CLOSED
+================================================================
+toolhijacker -- NDSS 2026 CONFIRMED (Ananto checked the first author Jiawen
+  Shi's Google Scholar profile: "ISOC Network and Distributed System Security
+  Symposium (NDSS)", 2026/2, 171 citations). Scholar's SEARCH index only had
+  the arXiv preprint cluster, which is why my earlier check came up empty --
+  the profile record is the authoritative one. The "venue unconfirmed" note is
+  removed. The DOI is still left out: 10.14722/ndss.2026.230675 was my own
+  unverified invention. Add it back only if you confirm it on the NDSS site.
+
+guo2026systematic -- RESOLVED, and Ananto was right. There are not two papers.
+  arXiv 2508.12538 is ONE entry with two versions:
+    v1 (18 Aug 2025) titled "Systematic Analysis of MCP Security"
+    v2 (25 May 2026) retitled "MCPXKIT: The Unified Toolkit for Analyzing
+       Model Context Protocol Security"
+  AUTHOR LIST IS IDENTICAL ACROSS BOTH VERSIONS, same order, 8 authors:
+    Yongjian Guo, Puzhuo Liu, Wanlun Ma, Zehang Deng, Xiaogang Zhu, Peng Di,
+    Xi Xiao, Sheng Wen
+  arXiv Comments field states: "Accepted by IEEE Transactions on Dependable
+  and Secure Computing (TDSC)" and links the official version at
+  ieeexplore.ieee.org/abstract/document/11531012, with related
+  DOI 10.1109/TDSC.2026.3695553.
+  => The TDSC publication is REAL and now has a verifiable DOI. Google Scholar
+     is simply STALE: it still indexes the v1 title as an arXiv e-print, and
+     separately shows an "MCPXKIT" record. Do not trust Scholar's venue field
+     over the arXiv comments + IEEE DOI here.
+  The bib entry now cites the published TDSC version under the MCPXKIT title,
+  and "(IEEE TDSC)" is restored in the Related Work text.
+
+LESSON FOR THE REMAINING CHECKS: Google Scholar's search index lags on
+newly-published venues. When Scholar says "arXiv" but the arXiv comments field
+claims a venue AND supplies a publisher DOI, the arXiv comments win.
+
+================================================================
+EVALUATION CORPUS -- TOOL DISTRIBUTION ANALYSIS (2026-09-09)
+================================================================
+HARD BLOCKER FOUND: MCPCorpus CANNOT give us tool-level distribution.
+  Of 13,875 records, only 55 parse to >=1 tool schema (92 tools total).
+  185 records have a non-empty "tools" field but 130 of those are crawler
+  junk (literal values like '$2d', '$2b' -- unresolved React server-component
+  refs). Within our 1,847 ToFu-runnable repos, only 11 have usable schemas.
+  => Any tool-level distribution MUST come from extracting tools ourselves.
+
+WHAT COVERAGE ACTUALLY MEANS (read from src/sanitizers/):
+  21 runtime tracer classes in introspection.py, spanning 52 distinct CWEs:
+    FileAccess, FileWrite, Deserialization, CommandExecution, SQLExecution,
+    CodeExecution, NetworkExecution, TempFileLeak, LogInjection,
+    SensitiveDataLogging, SSLCertValidation, UnrestrictedIPBinding, ReDoS,
+    BlockingEventLoopCall, WeakHash, WeakPRNG, NonceReuse,
+    UnverifiedCodeDownload, XXE, DataAmplification, LoopCondition
+  Stratify on THESE, not on mcp.so's marketing categories.
+
+mcp.so CATEGORIES ARE USELESS FOR STRATIFICATION:
+  developer-tools 1008 + research-and-data 576 = 85% of the pool.
+  23 categories total, most with <20 repos.
+
+SINK-FAMILY PROXY (keyword on name/title/description/category, 1847 repos):
+  NetworkExec/SSRF 351 (19.0%) | CommandExecution 208 (11.3%)
+  SQLExecution 117 (6.3%) | FileAccess/Write 103 (5.6%)
+  UnverifiedDownload 60 | SensitiveDataLog 36 | CodeExecution 31
+  DataAmplification 29 | SSLCert 26 | WeakHash/PRNG 19 | TempFileLeak 18
+  BlockingEventLoop 5 | XXE 3 | ReDoS 3 | Deserialization 1
+  (IPBinding matched 84.7% -- BROKEN PROBE, "server|port|host" matches nearly
+   every MCP description. Treat as a measurement artifact, not a finding.)
+  198 repos match zero families.
+
+*** THE CENTRAL TENSION -- needs a decision ***
+  "uniform distribution across languages/activity" and "hit all 66 sanitizers"
+  are INCOMPATIBLE at n=25. Deserialization has 1 candidate repo, XXE 3,
+  ReDoS 3, BlockingEventLoop 5. A uniform random draw of 25 from 1,847 will
+  hit NONE of them with high probability.
+  Resolution used by real benchmark papers (incl. VIPER-MCP): report TWO sets
+  and never conflate them --
+    (1) a random stratified set  -> supports ecosystem/representativeness claims
+    (2) a purposive targeted set -> supports capability/coverage claims
+  VIPER-MCP does exactly this: 39,884 mined repos for breadth, plus a separate
+  130-vulnerable + 130-benign hand-built benchmark for measured FPR/FNR.
+
+NEXT STEP (agreed plan): two-stage extraction.
+  Stage 1 (done): cheap proxy shortlisting from corpus metadata.
+  Stage 2 (todo): shallow-clone ~150-250 shortlisted repos and PARSE real tool
+    registrations -- Python: @mcp.tool / @server.tool / types.Tool( /
+    @app.list_tools ; Node/TS: server.tool( / setRequestHandler(
+    ListToolsRequestSchema / tools:[ -- then compute the TRUE distribution of
+    tools per repo and argument semantics per tool, and only then pick the 25.
+
+================================================================
+STAGE-2 EXTRACTION + SET A/B/C PLAN (launched 2026-09-09 ~22:45)
+================================================================
+AGREED DESIGN -- three sets, reported separately, never conflated:
+  Set A  50 repos, seeded stratified draw from MCPCorpus. The reproducible
+         "ecosystem" set. Answers Pierre's reproducibility TODO.
+  Set B  purposive, targets the RARE tracer families. *** The existing 11
+         repos and 14 findings go here, relabelled as intentionally selected
+         -- do not discard that work, and do not present it as sampling. ***
+  Set C  (DEFERRED, Ananto to decide) reconstruct VIPER-MCP's 63 public-CVE
+         servers from NVD + GitHub Security Advisories. Use it to measure
+         COMPLEMENTARITY (which bugs ToFu and a taint scanner each miss), not
+         to compete on recall -- all labelled sets are taint-style CWE-78/918/
+         22, exactly where ToFu does not differentiate.
+
+WHY 1,847 AND NOT 2,222: 2,222 is the full deduped pool across all languages.
+  1,847 = 808 Python + 1,039 Node/TS. The other 375 (Go 154, Rust 41, Java 34,
+  C# 19, PHP 17, +55 unknown, tail) are excluded because ToFu ships exactly two
+  runners, PythonRunner and JSRunner. Report this as a stated exclusion.
+
+EXTRACTION: Benchmarks/extraction/
+  extract_tools.py  clones every one of the 1,847 at --depth 1, extracts MCP
+                    tool registrations AND real sink-API usage keyed to the 21
+                    tracers, then DELETES the clone. Peak disk = workers x repo.
+  targets.jsonl     the 1,847 input rows
+  results.jsonl     append-only output, one line per repo -- RESUMABLE
+  failures.jsonl    append-only failures -- also counts as "done"
+  Re-running skips anything already in either file. Safe to kill anytime.
+
+*** INFRASTRUCTURE FINDING -- IMPORTANT FOR THE OVERNIGHT RUN ***
+  Each device_bash call runs in a FRESH PID NAMESPACE (shell is PID 5). Any
+  nohup/background job is KILLED when its call returns. Long jobs CANNOT run
+  on the desktop VM through Claude.
+  The CLOUD container DOES persist background jobs across turns (verified) and
+  can clone from GitHub. So the extraction was moved there and resumes from the
+  device's partial results.
+  => For the real ToFu fuzzing campaign, either (a) Ananto launches it in a
+     normal Terminal on the M2 Pro himself, or (b) it runs in the cloud
+     container. It cannot be nohup'd via Claude's device shell.
+
+================================================================
+EVAL HARNESS READY (2026-09-09) -- NOTHING HAS BEEN RUN
+================================================================
+eval/prepare_targets.py  clone@pinned-commit -> install -> detect entrypoint ->
+                         tools/list handshake -> one config per tool. Resumable.
+eval/run_eval.py         campaign runner over those configs. Resumable.
+eval/README.md           full runbook, budget maths, expected failure modes.
+Run them NATIVELY in Terminal -- Claude's device shell kills background jobs.
+
+*** TWO THINGS FOUND WHILE BUILDING THIS ***
+
+1. LEAKED CREDENTIAL. All 10 targets/fuzz_*.py hardcode a live key as the
+   default for OLLAMA_CLOUD_API_KEY:
+     f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z
+   Rotate it, strip it from the files, purge it from git history before this
+   repo is published as an artifact.
+
+2. *** THE EXISTING 14 FINDINGS BYPASSED ToFu's CENTRAL CLAIM ***
+   fuzzer.py:796-801 -- if override_rules is NON-empty the fuzzer skips
+   llm.select_sanitizers() and uses exactly what it was handed. Every
+   targets/fuzz_*.py passes explicit override_rules (e.g. fuzz_desktop_commander
+   hardcodes check_introspection_path_traversal + check_file_access + ...).
+   So all 14 current findings were produced with HAND-PICKED sanitizers, not the
+   automated LLM selection the paper claims. This is precisely the
+   target-specific overfitting Pierre's sanitizer TODO warns about, and a
+   reviewer who reads targets/ will see it immediately.
+   The new configs set override_rules={} so the real path runs. KEEP IT EMPTY.
+   Decide how to describe the old findings given this.
+
+EXPECTED PREPARATION FAILURES (legitimate exclusions, do NOT hand-fix):
+  - Dependency drift: corpus is mid-2025, MCP SDKs have had breaking changes.
+    Pinning the repo commit does not pin its deps. nnquant/qmt-mcp-server dies
+    on the FastMCP rename. Lockfile preference helps; it cannot save repos that
+    shipped no lockfile.
+  - Broken build output: StuMason/coolify-mcp and Softeria/ms-365-mcp-server
+    build cleanly then their own dist/index.js throws ERR_MODULE_NOT_FOUND.
+  Record and report counts + reasons; hand-fixing biases the sample.
+
+================================================================
+LLM BACKEND SWITCHED TO LOCAL OLLAMA (2026-09-09)
+================================================================
+src/llm.py LLMHandler.__init__ now reads the backend from env instead of
+hardcoding Ollama Cloud:
+    TOFU_LLM_BASE_URL  (default https://ollama.com/v1)
+    TOFU_LLM_MODEL     (default minimax-m3:cloud)
+    TOFU_LLM_TIMEOUT   (default 120)
+    OLLAMA_CLOUD_API_KEY -- falls back to the literal "ollama" for local
+For local: base_url=http://localhost:11434/v1, model=llama3.1:8b.
+run_eval.py now preflights the endpoint with a 1-token request.
+
+*** MODEL CHOICE IS AN EXPERIMENTAL VARIABLE -- REPORT IT ***
+Sanitizer selection AND seed generation both go through this model.
+VIPER-MCP's RQ4 varied only the backend and saw triggered-server counts move
+from 0 to 88 (Claude Haiku 4.5 refused outright). llama3.1:8b will not select
+sanitizers as well as a frontier model, and a weak selector manifests as LOW
+RECALL rather than as an error.
+  -> State the exact model + endpoint in the experimental setup subsection.
+  -> If findings look sparse, re-run a subset with a stronger model BEFORE
+     concluding ToFu missed them. That comparison doubles as the sanitizer-
+     selection ablation Pierre's TODO already asks for.
+  -> Watch seed generation specifically: src/llm.py:~315 uses bind_tools()
+     (create_pdf/create_docx/create_zip/...). 8B models are unreliable at
+     tool-calling; if seeds come back empty the deterministic fallback mapper
+     takes over and the LLM-seeding contribution is silently untested.
+
+--- eval harness fixes (2026-09-09, after first smoke run) ---
+1. requirements.txt is INCOMPLETE: src/ imports pymongo but it is not listed.
+   Add it. Full set: atheris, mcp, langchain-openai, langchain-core, pymongo.
+2. BUG I INTRODUCED AND FIXED in eval/run_eval.py: a non-zero returncode was
+   recorded as ok=True. The first smoke run reported "3 runs, 0 with hits,
+   0 errors" when in fact all 3 crashed instantly with ModuleNotFoundError.
+   A whole campaign could have reported "no findings" while every run died.
+   Now rc!=0 => ok=False, and the last error line is captured.
+   The 6 bogus records were moved to eval/state/runs.jsonl.bogus-rc1.
+3. run_eval.py now preflights `import src.fuzzer` before starting.
+4. WATCH: atheris on Apple Silicon may need brew llvm + a source build.
+
+================================================================
+CRITICAL (2026-09-09, 21:00): THE LLM STAGE NEVER RAN. ALL RUNS
+BEFORE THIS POINT ARE DETERMINISTIC-FALLBACK RUNS.
+================================================================
+The first real campaign (19 configs, 9 completed) produced 0 findings.
+The reason was NOT the targets and NOT Python 3.11. Both LLM roles in
+the pipeline were dead, silently, while the logs looked healthy.
+
+(a) SANITIZER SELECTION -- json parse bug in src/llm.py
+    select_sanitizers() did:
+        content = response.content.strip().strip("```json").strip("```").strip()
+        json.loads(content)
+    str.strip(chars) removes a CHARACTER SET, not a substring, so
+    .strip("```json") strips any of ` j s o n from both ends; and
+    nothing there survives prose outside the fence. llama3.1:8b returns
+    correct JSON wrapped in an explanation + a bare ``` fence, so every
+    call raised "Expecting value: line 1 column 1 (char 0)".
+    fuzzer.py caught it and logged "Falling back to default sanitizers".
+    => RQ2/RQ3 had NO evidence behind them.
+
+(b) SEED GENERATION -- src/seed_bank/ was deleted in commit 87d8602
+    ("latest edit", which also removed src/predefined_seeds/,
+    dictionaries/ and configs/). _load_seed_bank() returned {} so
+    generate_seeds() short-circuited to _local_fallback_mapping() on
+    every tool. Restored from b1b657e: path_traversal, sql_injection,
+    ssrf_url, wildcards, xml_bomb, xss_markdown.
+    >> STILL MISSING: src/predefined_seeds/ (the create_pdf/create_docx/
+       create_zip tool-calling path writes there; file_manager.py reads
+       "predefined_seed:<name>"). Decide whether to restore it too or to
+       drop the binary-seed claim from the paper.
+
+(c) 'NoneType' object is not callable -- llm.py caught ImportError and
+    set ChatOpenAI = None, so a missing/half-installed langchain_openai
+    surfaced 400 lines later as a TypeError. Now raises at construction
+    with the original ImportError attached.
+
+FIXES APPLIED (src/llm.py):
+  - _extract_json(): fence-aware, prose-tolerant, brace-balanced with
+    string-literal + escape awareness; _coerce_text() flattens
+    content-block lists. Unit-tested against the verbatim llama3.1:8b
+    reply from the failing log, plus 9 other shapes.
+  - select_sanitizers(): 3 attempts (TOFU_LLM_JSON_ATTEMPTS), each
+    re-asking with a sharper instruction; backend JSON mode via
+    response_format={"type":"json_object"} (TOFU_LLM_JSON_MODE=0 to
+    disable); hallucinated sanitizer names are dropped AND counted; the
+    old code also fell off the end returning None when the shape check
+    failed -- now always returns or raises.
+  - greppable markers: LLM_SELECTION_OK / LLM_SELECTION_FAILED /
+    LLM_SEEDGEN_OK / LLM_SEEDGEN_FALLBACK.
+  - backup at src/llm.py.bak-preLLMfix
+
+FIXES APPLIED (eval/run_eval.py):
+  - every run record now carries llm_selection (ok|failed|unknown),
+    llm_n_selected, llm_n_dropped, llm_seeds (ok|fallback|unknown),
+    llm_n_seeds.
+  - end-of-run summary prints the LLM-stage histogram over the WHOLE
+    index and shouts if selection never succeeded once.
+
+QUARANTINED: eval/state/quarantine-pre-llmfix/ holds the 9 old run
+records, their logs, the bogus-rc1 batch, the coverage CSVs and the old
+fuzz_corpus, plus a WHY.md. NONE of it is evidence about ToFu.
+
+*** TO DOUBLE-CHECK (do not delete until you have looked) ***
+[ ] After the next campaign, confirm llm_selection=ok on a clear
+    majority of runs. If it is still mostly "failed", llama3.1:8b is too
+    weak for the selection prompt and the honest move is to report that
+    and re-run with a stronger model -- not to keep the fallback numbers.
+[ ] Sanity-read 3-4 LLM_SELECTION_OK log lines: are the selected
+    sanitizers PLAUSIBLE for the tool? In the pre-fix log llama chose
+    check_strict_markitdown_security_contract and
+    check_markitdown_uri_validation for an Excel export_to_csv tool.
+    Those names exist in the registry so they survive validation, but
+    they are the wrong checks. Selection PRECISION is a result in its
+    own right and belongs in the paper.
+[ ] 2 runs exited rc=77 "libFuzzer: fuzz target exited"
+    (mcp-appium-gestures generate-tap-code / generate-swipe-code).
+    Diagnose before the full campaign -- that is the fuzz target calling
+    exit(), likely the JS server dying mid-session.
+[ ] fuzzer.py passes an unrecognized libFuzzer flag '-pulse=2'
+    (cosmetic, but it is in every log).
+
+================================================================
+CISCO AI DEFENSE MCP SCANNER BASELINE (2026-09-09)
+================================================================
+NEW: eval/run_cisco_scanner.py  +  eval/run_cisco_baseline.sh
+Scans the SAME servers, at the SAME commits, from the SAME launch
+commands as ToFu, by reading eval/state/prepared.jsonl. Resumable into
+eval/state/cisco_runs.jsonl; raw JSON per server in eval/cisco_runs/.
+
+    ./eval/run_cisco_baseline.sh smoke     # 2 servers
+    ./eval/run_cisco_baseline.sh           # setup + smoke + full
+    ./eval/run_cisco_baseline.sh summary   # ToFu vs Cisco table
+
+Its own venv at Benchmarks/Cisco-MCP-Scanner/.venv -- it pins litellm,
+yara-python, tree-sitter and a different `mcp` than ToFu; installing it
+into the toolfuzzer venv would change the versions the ToFu campaign
+runs under.
+
+LLM analyzer points at the same local Ollama (ollama_chat/llama3.1:8b),
+so neither tool gets a better model than the other.
+
+*** TO DOUBLE-CHECK ***
+[ ] The `api` analyzer is OFF by default: it needs a paid Cisco AI
+    Defense key AND uploads tool descriptions to their hosted endpoint.
+    The baseline is therefore the OPEN-SOURCE analyzers only (yara+llm,
+    optionally behavioral). SAY SO in the evaluation -- do not let a
+    reader think the full product was compared. --with-api flips it and
+    the choice is recorded in every run record.
+[ ] Confirm the --format raw + --output JSON shape on the first real
+    scan; count_findings() is written defensively but was tuned from
+    mcpscanner/core/models.py (ToolScanResult: tool_name/status/
+    findings{analyzer}/is_safe), not from an actual run.
+[ ] DO NOT write "ToFu found N, Cisco found M". Cisco reads tool
+    METADATA and never invokes a tool; ToFu executes tools and checks
+    derived properties. Report the disjoint sets and the overlap. The
+    summary output prints this warning on purpose -- keep it in mind
+    when writing sec6.
+[ ] Scanner build is pinned per-record (version + git commit). Copy
+    those into the experimental setup subsection.
+
+================================================================
+SET D -- "IN VIPER-MCP'S COURT" (2026-09-10)
+================================================================
+Goal (your ask): pull VIPER-MCP's vs-Cisco-vs-MCPSafetyScanner comparison
+straight from the VIPER-MCP paper and run ToFu against only those scenarios.
+
+WHAT THE PAPER ACTUALLY GIVES (arXiv 2605.21392v2):
+- Table 2 (RQ2): 260 servers = 130 vulnerable + 130 benign, all LLM parts on
+  GPT-5.4. FNR on the vulnerable set:
+     MCPSafetyScanner 63.8% | Cisco AI Defense 73.1% | VIPER-MCP 7.7%
+  FPR on benign: 43.1% | 24.6% | 0%.
+- VIPER models ONLY 3 classes: command injection, SSRF, path traversal.
+  It EXPLICITLY does NOT model SQL injection or code injection (their own words
+  for the residual 7.7% FN).
+- Appendix B / Table 7: VIPER's 67 own 0-day servers with repo + class + lang.
+- Table 1 + Appendix C: 7 case-study servers WITH the exact vulnerable tool
+  and a verbatim PoC prompt.
+
+THREE HARD LIMITATIONS (these bound what Set D can be -- do not paper over):
+1. Table 2's 130+130 is NOT reproducible from the paper. The 63 historical
+   public CVEs are never listed; only VIPER's own 67 discoveries are. So Set D
+   can only be VIPER's own finds -> the deck is STACKED toward VIPER. Running
+   ToFu here answers "can ToFu ALSO catch what VIPER caught", not a neutral
+   head-to-head. Say this next to every Set D number.
+2. Every CVE number in the arXiv PDF is redacted "CVE-2026-XXXXX", and NO
+   commit hashes are published. The VIPER artifact (Viper-EA4D) explicitly
+   REMOVED all datasets. So the vulnerable revision is unknown.
+3. Because of (2), Set D commits are GitHub HEAD at resolve time. A repo
+   patched since disclosure is a FALSE NEGATIVE THAT IS NOT TOFU'S FAULT.
+
+WHAT WE BUILT:
+- Benchmarks/extraction/set_d_manifest.json  -- ground truth transcribed from
+  the paper (66 App.B rows -> 65 distinct repos; 54yyyu/code-mcp has 2 classes;
+  + lanhu-mcp gold). Carries Table 2 numbers + all caveats. AUDIT THIS against
+  the PDF.
+- eval/resolve_set_d.py  -- resolves each repo to a live GitHub HEAD via
+  git ls-remote (no API token). Re-runnable.
+- Benchmarks/extraction/set_d.json  -- harness-ready, 63 repos resolved
+  (6 gold w/ tool+PoC, 57 silver). Read by prepare_targets.py --only-set d.
+- Benchmarks/extraction/set_d_unresolved.json -- the 3 we could NOT resolve.
+- eval/score_set_d.py -- scores ToFu on Set D using VIPER's own FNR metric,
+  with VIPER/Cisco/MCPSafetyScanner reference numbers.
+
+HOW TO RUN (Set D is OPT-IN; NOT part of the default a+b sweep):
+    python3 eval/resolve_set_d.py                 # refresh HEADs (optional)
+    python3 eval/prepare_targets.py --only-set d  # clone+probe the 63 repos
+    python3 eval/run_eval.py --time 600           # runs D configs too
+    python3 eval/score_set_d.py --md set_d_scorecard.md
+
+SCORING RULES baked into score_set_d.py (so results stay honest):
+- A repo is a ToFu TP iff some tool fired a sanitizer mapping to the repo's
+  ground-truth class (cmdi/ssrf/path). Mapping is in SANI_CLASS.
+- Off-class finds (ToFu found a DIFFERENT bug) are reported separately -- NOT
+  a detection, NOT ignored.
+- TP via the LLM path vs via deterministic fallback are counted separately
+  (a fallback TP is not evidence about ToFu's LLM design).
+- Repos with only errored/no runs are NOT-RUN, excluded from the FNR
+  denominator (never silently scored as misses).
+- code_injection sanitizer is deliberately NOT mapped to cmdi -- VIPER excludes
+  code injection, so crediting it would be unfair.
+
+*** TO DOUBLE-CHECK (do not delete until you've looked) ***
+[ ] Recount Appendix B: I transcribed 66 rows / 65 repos, paper claims 67 CVEs.
+    One row may have been lost to the page break. Recount against the PDF.
+[ ] 3 UNRESOLVED (in set_d_unresolved.json): douinc/mkdocs-mcp-plugin,
+    Agions/taskflow-ai (both git ls-remote 404 -> deleted/renamed/private),
+    and lanhu-mcp (owner NOT in paper). Try to find renames/forks at the
+    disclosure date before including them.
+[ ] gold-tier tool names come from Table 1; confirm each still exists at HEAD.
+    If a gold repo's HEAD no longer exposes its vulnerable tool, it's patched
+    -> mark possibly_patched, don't score as a ToFu miss.
+[ ] Whether to also run the Cisco baseline (eval/run_cisco_scanner.py) on the
+    SAME set_d.json for a 3-way ToFu/Cisco/VIPER row. Cisco reads metadata only;
+    keep the disjoint-set framing.
+
+--- run_eval.py FINDING-DETECTION BUG (found + fixed 2026-09-10) ---
+run_eval counted findings by strings ("sanitizer triggered", "violation",
+"security finding", "oracle fired") that the reporter NEVER prints. The real
+ConsoleVulnerabilityReporter (src/reporters.py) emits
+  "[POTENTIAL VULNERABILITY / BUG FOUND] in '<tool>' !"
+  "   -> Triggered Sanitizers : ['check_...']"
+and fuzzer.py emits "Silent Bug Alert: Sanitizers [...] flagged ...". So even
+AFTER the LLM fix, a genuine finding would have been recorded as finding_hits=0
+-- the same silent-underreporting failure as the select_sanitizers bug.
+FIXED: finding_hits now counts the real strings, and every run records
+triggered_sanitizers=[...] (parsed from the log) so Set D can score by class.
+
+================================================================
+DEEP AUDIT OF THE EVAL HARNESS + LLM PATH -- 2026-09-10
+(requested after the toolfuzzer -> ToFu rename; nothing was run)
+================================================================
+
+*** THE HEADLINE: "0 FINDINGS" WAS AN ARTIFACT. THE DATA WAS ON DISK. ***
+eval/run_eval.py used re.finditer / re.search but never imported `re`. The
+NameError fired at the parsing step -- AFTER the log had been written and
+AFTER the subprocess had finished -- so the bare `except Exception` recorded
+each run as ok=False, error="name 're' is not defined", finding_hits=0. Nine
+completed runs were thrown away, not nine failed runs.
+
+Re-parsing eval/runs/*.log (new `python3 eval/run_eval.py --reparse`) recovers
+what the campaign actually produced:
+    index said                          reality
+    LLM selection ok on 2 runs   ->     ok on 7 of 9
+    LLM seed-gen: not recorded   ->     ok on 6, fallback on 1
+    0 findings                   ->     1390 raw alerts across 5 of 9 runs
+                                        collapsing to 5 distinct signatures
+                                        (exactly one per appium tool)
+runs.jsonl has been rebuilt; the old index is at
+eval/state/runs.jsonl.pre-reparse-20260910_032111.
+
+*** BUT DO NOT REPORT THOSE 1390 AS FINDINGS. HERE IS WHY. ***
+The "faulty inputs" in the logs are mojibake, e.g. '慬杮慵敧㨢∠慪慶Ⱒ'.
+Decoded as UTF-16LE that is literally `language": "java", "useElement":` --
+the JSON text of ToFu's OWN seed file. Another is `create_pdf": {"parameters":
+{"content"` -- ToFu's own LLM tool-call schema. Root cause found:
+
+  src/input_parser.py FuzzInputParser.parse() tried _generate_fallback_inputs
+  FIRST. That method fills every declared property unconditionally, so it
+  always returned a non-empty dict and the JSON branch below it was
+  UNREACHABLE for any tool with a schema -- i.e. every MCP tool. A seed
+  {"path": "../../../etc/passwd"} was therefore never parsed as JSON; its
+  bytes went to atheris.FuzzedDataProvider and came back through
+  ConsumeUnicodeNoSurrogates in a wide encoding.
+
+  => The restored src/seed_bank/ and every LLM-generated seed have been acting
+     as pure entropy. RQ2/RQ3's "semantic seeds drive the fuzzing" claim has
+     had no mechanism behind it. The method being named "_generate_FALLBACK_
+     inputs" while running first says the order was inverted at some point.
+
+  FIXED: JSON-first, FDP-fallback, with seed values completing the schema.
+  *** THIS CHANGES WHAT THE FUZZER SENDS. Read the new parse() docstring and
+  sign off before the campaign -- it is the one audit change that alters
+  measured behaviour rather than just recording it correctly. ***
+
+*** SANITIZER SELECTION PRECISION -- first real evidence, and it is poor ***
+Per-run, split into LLM-selected vs the always-on Layer-1 set
+(sanitizers/__init__.py BASE_MANDATORY_SANITIZERS, 10 checks):
+  generate-tap-code       n_selected=2  LLM-attributable fired: url_raw_input_validation
+  generate-swipe-code     n_selected=4  url_{raw_input,hostname_canon,ssrf_ip_ranges,structure}
+  generate-scroll-code    n_selected=3  markitdown_uri_validation
+  generate-long-press     n_selected=2  markitdown_uri_validation
+  generate-double-tap     n_selected=3  NONE -- 100% mandatory layer
+llama3.1:8b picked check_markitdown_uri_validation (a document-conversion
+check) and the SSRF/URL family for an Appium gesture CODE GENERATOR whose
+schema is {language, useElement, elementId, x, y}. No URL, no document, no
+file. This is the precision failure the previous session predicted, now
+measured. It is a paper result -- and it means a stronger-model re-run is not
+optional if RQ2/RQ3 are to say anything.
+
+Also: 3 of the 4 sanitizers in most signatures (check_file_access,
+check_process_and_fd_leaks, check_unhandled_promise_rejection) are MANDATORY,
+so they fire regardless of the LLM. score_set_d.py splits TPs into "LLM path"
+vs "deterministic fallback" but has no third bucket for "fired only because
+Layer 1 is always on". Add it before Set D is scored.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+    5. Sign off on the input_parser.py parse-order change before the campaign
+       (it changes what the target receives).
+    6. Decide whether check_file_access / check_process_and_fd_leaks firing on
+       a pure string-templating tool is a true positive at all, or whether the
+       Layer-1 tracers are catching the Node runtime's own I/O. If the latter,
+       every mandatory-layer alert in the paper is noise and needs a filter.
+    7. Whether to force-push the scrubbed history to PSecLab/toolfuzzer
+       (see below) -- it rewrites every commit hash including Pierre's.
+
+OTHER BUGS FOUND AND FIXED IN eval/run_eval.py
+  - TIMEOUT DISCARDED EVERYTHING. subprocess.run(timeout=) raised, and the
+    handler wrote no log and parsed nothing. With a 600s budget producing
+    553-970s runs, timeouts were common, and each one threw away the whole
+    log including any findings it had already produced. Now the output is
+    captured, written and parsed on the timeout path too.
+  - ORPHANED SERVERS. subprocess.run kills the direct child only, so each
+    timed-out run leaked the node/python MCP server it had spawned. Now
+    start_new_session=True + killpg.
+  - HARNESS BUGS MASQUERADED AS TARGET FAILURES. One bare `except Exception`
+    put our own NameError into the same `error` field a target crash uses.
+    Now a separate `harness_error` field, counted and shouted about in the
+    summary. This is what let the `re` bug hide for two campaigns.
+  - finding_hits DOUBLE-COUNTED. It summed the reporter's banner AND the
+    "Silent Bug Alert" text, which are two lines of ONE finding. Now the
+    banner only, plus finding_classes = distinct sanitizer-set signatures
+    (the number that belongs in the paper) and finding_signatures.
+  - NO PROVENANCE. Records did not carry the time budget, model, endpoint,
+    ToFu commit, python version or platform -- everything A3 (experimental
+    setup) needs and none of it reconstructable later. Now recorded per run.
+  - --set only accepted A|B, so Set D could not be run selectively despite
+    the runbook. Now A|B|D.
+  - NEW: --reparse rebuilds runs.jsonl from eval/runs/*.log. The log is now
+    always written before it is parsed, so a parser bug can never destroy a
+    campaign's data again.
+  - NEW PREFLIGHT: run_eval now runs pyflakes over itself, llm.py, fuzzer.py
+    and input_parser.py and REFUSES TO START if any undefined name exists.
+    Both campaign-killing bugs this year were undefined names.
+
+BUG: src/seed_generators.py WAS NEVER RESTORED
+  Commit 87d8602 (Pierre, "latest edit") deleted src/seed_generators.py,
+  src/interfaces.py, src/predefined_seeds/ (36 files), dictionaries/, configs/
+  and 86 files total. The previous session restored src/seed_bank/ but missed
+  seed_generators.py -- while src/llm.py still calls seed_generators.create_*
+  in all 8 @tool functions. Every LLM seed-generation tool call died with
+  "name 'seed_generators' is not defined" (visible in the 20:46 run records as
+  "Error running tool create_json"). Restored src/seed_generators.py and all
+  36 src/predefined_seeds/ files from b1b657e, and added the missing import.
+  => the binary-seed path (create_pdf/docx/zip -> "predefined_seed:<name>")
+     can now actually run. Whether it WORKS is untested; verify before the
+     paper claims it.
+
+CONCURRENCY BUG: ALL PARALLEL RUNS SHARED ONE CORPUS
+  src/__main__.py never passed corpus_dir, so every run used the default
+  ./fuzz_corpus relative to cwd=ROOT, and _setup_corpus_seeds() shutil.rmtree's
+  that directory when it starts a tool. run_eval defaults to --workers 4, all
+  with cwd=ROOT. So four concurrent runs were deleting and rewriting each
+  other's corpora, while atheris read from a directory another process was
+  removing. Every parallel campaign so far is non-reproducible for this reason
+  alone. Added --corpus-dir and --metrics-dir to src/__main__.py; run_eval now
+  gives each run eval/corpora/<config>/ and eval/metrics/<config>/.
+
+RENAME FALLOUT (toolfuzzer -> ToFu), all repathed
+  20 eval/configs/*.json, eval/state/prepared.jsonl, eval/README.md and 13
+  .venv/bin console-script shebangs hardcoded /Users/.../pseclab/toolfuzzer.
+  The configs are what feed the target launch command, so the campaign could
+  not have started. ~2274 remaining hits inside .venv are RECORD/direct_url
+  metadata and .pyc paths -- harmless. Historical logs under eval/runs/ and
+  eval/state/quarantine-pre-llmfix/ keep the OLD path on purpose: they record
+  what actually ran.
+  Also cleared: a stale .git/index.lock from a crashed git process, which was
+  making every `git checkout`/`git add` fail.
+
+CREDENTIAL SCRUB -- DONE LOCALLY, PUSH IS YOUR CALL
+  The key was in 12 files, not 10: the 10 in the handoff plus
+  targets/fuzz_http_check.py AND src/__main__.py -- the latter being the
+  entrypoint the whole eval uses. All 12 now read the env var with "ollama"
+  (or a hard error) instead of a baked-in default.
+  History: git filter-repo --replace-text over a mirror clone. Verified by
+  walking EVERY blob in EVERY ref: 0 blobs and 0 commits contain the key.
+  The rewritten mirror is at _history_scrub/tofu-scrubbed.git (not applied to
+  your working repo -- rewriting rewrites Pierre's commit hashes too).
+  *** THE REMOTE IS https://github.com/PSecLab/toolfuzzer.git *** If that repo
+  is or ever was public, treat the key as disclosed regardless of the rewrite,
+  and note that GitHub keeps unreferenced objects reachable via the API until
+  they are GC'd -- open a support request to purge them if it matters.
+  To apply:  cd _history_scrub/tofu-scrubbed.git
+             git push --force --mirror https://github.com/PSecLab/toolfuzzer.git
+  then re-clone locally. Everyone else with a clone must re-clone.
+
+STATIC SWEEP: pyflakes over src/ eval/ targets/ tests/ reports exactly TWO
+undefined-name sites in the whole tree -- the `re` one and the seed_generators
+one, both now fixed. There is no third instance of this bug family hiding.
+(134 unused imports and 22 unused locals remain; cosmetic, left alone.)
+
+TESTS: tests/test_audit_regressions.py -- 12 tests, one per bug above,
+including a tree-wide undefined-name test and a parse_log test whose fixture
+is copied VERBATIM from a real campaign log rather than written from reading
+the source (fixtures invented from source are how the original never-matching
+keyword set shipped). 7 pass without ToFu's deps; the 5 that need
+atheris/mcp will run on the Mac.
+Backups of every file I touched are in _preaudit_backups/.
+
+================================================================
+COVERAGE ON JS TARGETS IS INERT -- INVESTIGATION, 2026-09-10
+(reported only, NO code changed; this is Pierre's A6 and it needs your call)
+================================================================
+
+FINDING: on Node/TS targets, libFuzzer's cov: never changes during a run.
+Coverage guidance is therefore dead and ToFu degenerates to random mutation
+of a 2-3 entry corpus. Node/TS is 1,039 of the 1,847 runnable repos, and
+Set A is majority node, so this affects most of the evaluation.
+
+EVIDENCE (all from real logs, nothing inferred)
+  excel-reader-mcp::filter_rows, 60s budget:
+      #14  INITED cov: 3768 ft: 5631 corp: 3/263b exec/s: 0
+      #364 REDUCE cov: 3768 ft: 5631 corp: 3/121b exec/s: 30
+  mcp-appium-gestures::generate-tap-code, 600s budget:
+      #4   pulse  cov: 2766 ft: 3768 corp: 2/153b exec/s: 0
+      #309 REDUCE cov: 2766 ft: 4805 corp: 4/93b  exec/s: 0
+  cov: is IDENTICAL from the first status line to the last, over 600 seconds.
+  Both excel tools report the same 3768 -- it is a property of the SERVER,
+  sampled once, not a measurement of what the fuzzer explored.
+  metrics/coverage_timeline_20260909_220315.csv is 62 rows: 60 of them
+  cov_edges=3768, 2 of them 0. That is the data behind any coverage figure.
+
+MECHANISM (four links, all confirmed in source)
+  1. src/runners/coverage_wrapper.js:23-24 calls
+     Profiler.startPreciseCoverage ONCE at startup, then line 117 calls
+     Profiler.takePreciseCoverage per request WITHOUT stopping/restarting.
+     V8 precise-coverage counters are CUMULATIVE, so every call returns the
+     whole process's coverage so far, not the delta for that call.
+  2. src/runners/js_runner.py:34 initialises `self.already_covered = set()`
+     -- and NEVER USES IT AGAIN. That dead attribute is the missing delta
+     computation. The intended code is obviously
+     `new = coverage_set - self.already_covered` before mapping.
+  3. So after execution #1 the mapped index set is fixed; js_runner.py:176-180
+     assigns no new cov_map entries, and fake_coverage.trigger() reaches no
+     new branch. cov: is pinned for the rest of the run.
+  4. libFuzzer therefore sees NO new coverage from ANY input, so no input is
+     ever "interesting", so the corpus cannot grow: corp: stays at 2-4 despite
+     LLM_SEEDGEN_OK n_seeds=13. Coverage-guided fuzzing is not happening.
+
+SECOND, LATENT DEFECT (not currently binding, would bite once #3 is fixed)
+  js_runner.py:178  self.next_cov_idx = (self.next_cov_idx + 1) % 10000
+  but fake_coverage.trigger() only has branches for idx 0..1999 (2000 ifs,
+  then `return -1`). Any index >= 2000 falls through the entire chain to the
+  same terminal path, so distinct JS coverage items beyond the 2000th become
+  indistinguishable AND each such call executes all 2000 comparisons. Either
+  raise the generated chain to 10000 or take the modulo at 2000 -- but note
+  that an index space smaller than the target's coverage surface aliases
+  distinct edges onto one slot either way, which is its own bias.
+
+THIRD OBSERVATION -- THROUGHPUT
+  exec/s runs 0-33. The appium 600s run completed ~309 executions total.
+  A coverage-guided fuzzer doing hundreds of executions per run is not
+  meaningfully exploring anything, regardless of the coverage bug. The cost is
+  a JSON round-trip per execution over a Unix socket plus a full
+  takePreciseCoverage on every call (which gets more expensive as cumulative
+  coverage grows -- fixing link 1 above should also speed this up).
+
+WHAT THIS MEANS FOR THE PAPER (A6, and RQ4)
+  - Any coverage-over-time figure for a JS target is FLAT BY CONSTRUCTION.
+    The "coverage plateaus in under an hour" claim Pierre flagged is not
+    merely unsupported by a 24h-only figure -- on JS targets it plateaus at
+    t=0, as an artifact. Do not ship that claim from JS data.
+  - Python targets are NOT affected by this bug: fuzzer.py:909 instruments the
+    target's own modules directly via atheris.instrument_imports, so cov: is
+    real there. That makes the metric NON-COMPARABLE across languages, which
+    is exactly the caveat A6 asks for -- now with a mechanism to cite.
+  - RQ4 has no coverage evidence on the majority of the corpus until link 2
+    is fixed and the JS runs are redone.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+    8. Decide whether to fix js_runner (wire up `already_covered` to send only
+       the per-call delta) and re-run the JS targets, or to scope every
+       coverage claim in the paper to Python targets and say plainly that the
+       JS runner reports a cumulative snapshot rather than per-input coverage.
+    9. If fixing: also settle the index-space question in the second defect
+       above, then re-check exec/s -- the throughput number may change a lot.
+   10. Confirm independently that V8's takePreciseCoverage is cumulative
+       without stopPreciseCoverage (I read this off the wrapper's usage plus
+       the flat cov: line, not off the CDP spec).
+
+================================================================
+DETERMINISM + JS COVERAGE FIXES -- 2026-09-10 (both applied)
+================================================================
+
+FIX 1: THE LLM WAS SAMPLING AT TEMPERATURE 0.7
+  src/llm.py built ChatOpenAI(api_key, base_url, model, timeout, max_retries)
+  with NO temperature and NO seed, so it inherited LangChain's default of 0.7.
+  Every sanitizer selection was a sample from a distribution.
+  Consequences, all of which invalidate results already discussed:
+    - No run was reproducible. The paper cannot claim reproducibility.
+    - The measured selection-precision failures (markitdown checks for an
+      Appium gesture tool) are NOT attributable to llama3.1:8b being weak --
+      they could be single unlucky draws. That evidence is now suspect and
+      should be re-collected under temperature=0.
+    - Any model-vs-model comparison would have measured sampling noise as much
+      as the model, which would have quietly broken the RQ4-style ablation.
+  NOW: TOFU_LLM_TEMPERATURE (default 0) and TOFU_LLM_SEED (default 20260910),
+  both recorded in every run record's provenance. Seed is passed as the named
+  ChatOpenAI arg with a model_kwargs fallback for older langchain-openai.
+  CAVEAT written into the code: temperature=0 is necessary but not sufficient
+  for bit-identical output -- llama.cpp/Ollama batching and GPU scheduling can
+  still perturb logits. Run one tool twice and diff the selections before
+  claiming reproducibility.
+
+FIX 2: JS COVERAGE IS NOW PER-CALL, SO GUIDANCE ACTUALLY WORKS
+  src/runners/coverage_wrapper.js reported every V8 range with count > 0 against
+  counters that are cumulative since startPreciseCoverage, so the coverage array
+  was identical on every call after warm-up (see the previous section for the
+  full evidence chain).
+  NOW: a module-level prevCounts map keyed on url|startOffset|endOffset, and a
+  range is reported only when its count has INCREASED since the last take --
+  i.e. it was executed by THIS call. callCount:true was already being requested,
+  so no new profiler capability was needed.
+  src/runners/js_runner.py correspondingly triggers a slot for every item in the
+  per-call set on every execution (the mapping item -> slot stays stable for the
+  runner's life), because libFuzzer requires the edge set to be a function of
+  the input. `already_covered` is now maintained for reporting only.
+
+  Also fixed the index-space mismatch: indices were assigned `% 10000` against a
+  generated chain of only 2000 branches, so every item past the 2000th fell
+  through to the same `return -1`. COV_SLOTS (env TOFU_JS_COV_SLOTS, default
+  10000) now drives BOTH, fake_coverage.py is regenerated whenever its branch
+  count no longer matches, and exhausting the space prints a loud one-time
+  warning and aliases by hash instead of collapsing everything onto one path.
+  js_cov_slots is recorded in run provenance.
+
+  PREDICTION TO VERIFY ON THE NEXT JS RUN (this is the acceptance test):
+    (a) cov: must now INCREASE during a run instead of being pinned.
+    (b) corp: must grow past 2-4 entries.
+    (c) exec/s should rise substantially. The old code called
+        fake_coverage.trigger() once per item in the CUMULATIVE set on EVERY
+        execution -- roughly 1400-1900 calls each walking an average of ~700-950
+        if-comparisons, so order 1-2 million comparisons per execution. That is
+        why appium logged exec/s: 0 and completed ~309 executions in 600s.
+    If (a) does not happen, the remaining suspect is worker-thread coverage:
+    coverage_wrapper.js attaches sessions to Node Workers (lines 27-41) but
+    `combinedResults` only ever collects from the MAIN session, so any target
+    doing its work in a worker reports nothing. NOT FIXED -- no target in Set
+    A/B is known to use workers. Check before blaming the delta logic.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   11. Run one JS tool and confirm (a), (b), (c) above before launching any
+       campaign whose coverage numbers you intend to publish.
+   12. Re-collect the sanitizer-selection precision evidence under
+       temperature=0. The earlier markitdown/SSRF misselections were sampled at
+       0.7 and cannot be attributed to the model as they stand.
+   13. Decide the model tier (see below) and record the exact model + endpoint
+       + temperature + seed in the experimental-setup subsection (A3).
+
+MODEL CHOICE -- decided 2026-09-10: gemma4:12b as the local mid arm (16 GB M2 Pro)
+  llama3.1:8b dates to mid-2024 and is two generations old; Ollama's current
+  tools-capable library is qwen3.8/qwen3.6 (27B/35B), gemma4 (12B/26B/31B),
+  granite4.1 (3B/8B/30B), glm-5.x, nemotron3 and minimax-m3. On 16 GB unified
+  memory the 27B+ class does not fit alongside a running target server and
+  ToFu itself (~16 GB at q4 for a 27B, and MoE models need ALL weights resident
+  regardless of active-parameter count, so nemotron-3.5-lightning's 30B total
+  rules it out too). gemma4:12b is roughly 7 GB at q4 and leaves headroom.
+  Proposed arms, all at temperature=0 and the same seed:
+    - llama3.1:8b   keep as the OLD baseline, for continuity with what exists
+    - gemma4:12b    the local mid arm
+    - granite4.1:8b optional third: IBM tunes Granite for tool calling, which
+                    is the role llama3.1:8b visibly struggled with (seed gen
+                    needed attempt=2 on get_cell and fell back on export_to_json)
+  A hosted frontier arm is DEFERRED until the local sweep is in; if added, note
+  in sec10_ethical that third-party tool descriptions would leave the machine.
+  DO NOT report model rankings from secondary sources -- the search results for
+  local-model comparisons are SEO content farms with no primary data, and BFCL's
+  leaderboard did not render. Any ranking in the paper must come from our own
+  measurements on our own labeled set.
+
+  OPERATIONAL CAVEAT: run_eval defaults to --workers 4 and all four workers hit
+  the same Ollama daemon at run start (2 calls each: selection + seed gen). With
+  a 12B on 16 GB that will contend. Set OLLAMA_NUM_PARALLEL=1 and consider
+  --workers 2 for the first gemma4 campaign, then compare wall-clock. Part of
+  the fixed ~90-140s per-run overhead visible in the 60s-budget smoke run
+  (150.2s and 200.9s actual) is very likely this contention.
+
+STILL NEEDED BEFORE RQ2/RQ3 SAY ANYTHING: a labeled ground truth for sanitizer
+selection. Take 30-50 tools across Set A/B, label which sanitizer families
+genuinely apply to each, then measure precision/recall PER MODEL. Without it
+"selection precision" is anecdote. This is cheap and is itself a contribution.
+
+================================================================
+SESSION 2026-09-10 (later) -- REVIEW OF THE UNCOMMITTED AUDIT DIFF
+A FIFTH SILENT-ZERO BUG FOUND. NOTHING CHANGED IN THE CODE.
+================================================================
+
+*** THE ACCEPTANCE TEST IN HANDOFF.md SECTION 4 HAS ALREADY BEEN RUN, AND
+*** HANDOFF.md DOES NOT KNOW ABOUT IT.
+
+HANDOFF.md was written at 01:15:43. A third run finished at 01:19:04:
+    eval/runs/AppiumTestDistribution__mcp-appium-gestures__generate-double-tap-code.log
+    eval/state/runs.jsonl line 3: 540.4s, finding_hits=62, finding_classes=1,
+                                  llm_selection=ok, llm_seeds=ok
+So HANDOFF section 2 ("the active run index is 2 runs, both excel-reader-mcp,
+both 0 alerts") is STALE. It is 3 runs, and the third reports 62 hits.
+
+ORDERING IS DECISIVE -- this run is POST every audit fix (mtimes):
+    src/input_parser.py        Sep  9 23:21:52
+    coverage_wrapper.js        Sep 10 00:56:19
+    js_runner.py               Sep 10 00:56:43
+    fake_coverage.py           Sep 10 01:09:17   (regenerated, 10000 slots)
+    the appium log             Sep 10 01:19:04
+The log header confirms it: "temperature=0.0 seed=20260910", LLM_SELECTION_OK,
+LLM_SEEDGEN_OK -- all the new markers are present.
+
+--- BUG 5: THE SEED CORPUS IS WRITTEN WITH LLM TOOL-CALL ENVELOPES, NOT WITH
+--- TOOL ARGUMENTS. THE PARSER FIX IS CORRECT AND STILL GETS BYPASSED. ---
+
+Verbatim from disk, eval/corpora/AppiumTestDistribution__mcp-appium-gestures__
+generate-double-tap-code/seed_1.json (207 bytes):
+
+  {"name": "create_json", "parameters": {"filename": "test_case.json",
+   "json_content": "{\"language\": \"java\", \"useElement\": false,
+   \"elementId\": \"element2\", \"x\": 0, \"y\": 0, \"pauseDuration\": 0}"}}
+
+All 12 seed files have this shape. The tool's schema is
+{language, useElement, elementId, x, y, pauseDuration}. The seed's TOP-LEVEL
+keys are "name" and "parameters". input_parser._try_parse_json requires
+matched > 0 against the schema properties (input_parser.py:88), so matched=0,
+parsed_successfully=False, and parse() correctly falls through to the
+FuzzedDataProvider branch -- which re-reads those bytes through
+ConsumeUnicodeNoSurrogates. That is where the mojibake comes back:
+
+  log line 114: -> Faulty Input : {'language': 'javascript', 'useElement': True,
+    'elementId': '慮敭㨢∠牣慥整機潳≮...', 'x': 0.0, 'y': 0.0, 'pauseDuration': 0.0}
+  '慮敭㨢∠牣慥整機潳≮' is UTF-16LE for  name": "create_json
+
+So the mojibake from the pre-parserfix quarantine is BACK, from a different
+cause. Fix 3 (JSON-first) did its job; the input it is handed cannot match any
+schema, so there is nothing for it to honour.
+
+MECHANISM (all four links in the log, lines 43-62 and 111):
+ 1. The LLM made 12 correct create_json tool calls. Their ARGUMENTS are right:
+      {"language": "javascript", "useElement": true, "elementId": "element1",
+       "x": 10, "y": 20, "pauseDuration": 200}
+ 2. create_json wrote those to src/predefined_seeds/test_case_N.json and
+    returned the reference string "predefined_seed:test_case_N.json".
+ 3. On attempt=2 the model emitted, as its FINAL JSON array, an array of its
+    own tool-call envelopes rather than an array of tool-argument objects.
+    _extract_json(expect=list) accepts it -- it IS a list -- and llm.py:528
+    logs LLM_SEEDGEN_OK n_seeds=12. The marker reports SUCCESS over seeds that
+    cannot match any schema. Same failure family as bugs 1-4: a healthy log
+    line over a dead stage.
+ 4. libFuzzer: "seed corpus: files: 12 min: 207b max: 227b" then collapses to
+    corp: 1/207b, because all 12 envelopes drive identical coverage.
+
+CONTRAST -- the path CAN work. The excel run's seeds are correctly shaped:
+  eval/corpora/ArchimedesCrypto__excel-reader-mcp__get_cell/seed_0.json =
+  {"filePath": "predefined_seed:example.xlsx", "sheet": "Sheet1", "cell": "A1"}
+Keys match the schema. So this is per-tool/per-reply, which makes it exactly
+the kind of bug that a campaign averages into a plausible-looking result.
+
+--- CONSEQUENCE: THE JS COVERAGE ACCEPTANCE TEST IS NOT YET ANSWERED ---
+The appium log has only 5 libFuzzer status lines, all identical:
+    #4  pulse  cov: 2761 ft: 2761 corp: 1/207b exec/s: 0 rss: 566Mb
+    #32 pulse  cov: 2761 ft: 2761 corp: 1/207b lim: 207 exec/s: 0 rss: 566Mb
+(a) cov: did not increase. (b) corp: did not grow past 1. (c) exec/s still 0.
+DO NOT read this as "Fix 2 failed". The run was driven by ONE 207-byte corpus
+entry of ToFu's own tool-call JSON against a pure string-templating code
+generator. There was nothing to discover. The test must be re-run on a corpus
+that actually varies, on a tool that branches. Until then Fix 2 is UNTESTED,
+not refuted.
+
+--- SIDE EFFECT: RUNS WRITE INTO THE TRACKED SOURCE TREE ---
+src/predefined_seeds/ held 36 files at b1b657e (git ls-tree). It now holds 50.
+The extra 14 are test_case*.json written BY the run at 01:14/01:16 via the
+create_json @tool. Every run appends there, all runs share the directory, and
+it is a restored source asset. Cross-run contamination + dirty git state.
+
+--- SMALLER THINGS FOUND IN THE DIFF (none fixed, none urgent) ---
+ * js_runner.py: on index-space exhaustion the aliasing uses hash(cov_item).
+   Python string hashing is randomised per process unless PYTHONHASHSEED is
+   set, so the aliasing -- and therefore the coverage numbers -- would differ
+   between runs. In a codebase that just pinned temperature and seed for
+   exactly this reason, use a stable digest (zlib.crc32 / hashlib) instead.
+   Only bites past 10000 distinct JS coverage items, and it warns loudly.
+ * fake_coverage.trigger() is now a 10000-branch linear if-chain (was 2000),
+   so reaching a high slot costs ~5x more comparisons per item than before.
+   The per-call delta set is far smaller than the old cumulative set, so net
+   throughput should still improve a lot -- but exec/s is the thing to watch,
+   not assume, in the re-run.
+ * llm.py select_sanitizers: the retry loop drops json_object mode after the
+   FIRST exception of any kind, including an ordinary parse failure that had
+   nothing to do with the backend rejecting response_format. Cosmetic.
+ * llm.py generate_seeds: LLM_SEEDGEN_OK is logged for n_seeds=0 as well, and
+   an empty list is returned WITHOUT falling back to _local_fallback_mapping.
+   A run could legitimately record llm_seeds=ok with zero seeds.
+ * All 3 records in runs.jsonl have budget/model/temperature = null. They were
+   rebuilt by --reparse, which cannot recover provenance. None of the three is
+   usable as evidence regardless of the above.
+ * MongoDB reporter floods the log: 62 x "[MongoDB] Failed to log vulnerability
+   ... localhost:27017 Connection refused", each with a 2s timeout. That is
+   ~124s of the appium run's 540.4s wall clock spent on a DB nobody is running.
+   Disable the Mongo sink for campaign runs or the budget accounting is wrong.
+ * requirements.txt is now a full pip freeze of the venv (60 pins, includes
+   pytest/pyflakes). Good for reproducibility; note atheris==3.0.0 will not
+   install cleanly off this Mac.
+ * fuzz_corpus/ at the repo root is leftover from before Fix 5 (--corpus-dir).
+   Its seed_0.json is excel-shaped. Untracked junk; safe to delete.
+ * `python3` on Ananto's PATH is 3.10.11, not the 3.11.15 venv. Every command
+   in HANDOFF section 4 and eval/README.md says `python3 eval/...`, which will
+   fail (atheris needs dis.Positions). Use .venv/bin/python everywhere.
+ * Test count: .venv/bin/python -m pytest tests/ -q gives 67 passed, 0 skipped
+   -- not the "66 passed, 1 skipped" that CLAUDE.md and HANDOFF section 14
+   state as the gate. The previously-skipped test now runs. Update the gate.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   14. Decide how generate_seeds should validate its output. Proposal: reject
+       a seed object whose keys match ZERO schema properties, log
+       LLM_SEEDGEN_REJECTED with the count, retry, and fall back to
+       _local_fallback_mapping if no seed survives. This is a MEASUREMENT
+       CHANGE -- it changes what enters the corpus -- so it needs sign-off
+       alongside item 5 (the parse-order change), not instead of it.
+   15. Decide whether create_json and the other 7 @tool writers should write
+       into a per-run scratch directory instead of src/predefined_seeds/.
+   16. The 62 hits in the appium run are NOT a finding. They are the mandatory
+       Layer-1 sanitizers firing on mojibake. Quarantine that run before it is
+       ever counted, the same as the pre-parserfix nine.
+   17. HANDOFF.md section 2 needs correcting: 3 runs, not 2.
+
+--- 2026-09-10, later: BUG 5 FIXED (Ananto signed off), overnight script built ---
+src/llm.py    new _validate_seeds(). generate_seeds now validates BEFORE it
+              declares success: a seed is kept iff it is a dict sharing at
+              least one key with the schema's declared properties -- the SAME
+              predicate input_parser._try_parse_json gates on (matched > 0), so
+              "accepted here" means "honoured there". Rejects are logged as
+              LLM_SEEDGEN_REJECTED with counts + the offending keys; if nothing
+              survives it raises into the existing retry loop and ultimately
+              falls back to _local_fallback_mapping. LLM_SEEDGEN_OK now carries
+              tool=, n_seeds= (kept only) and n_rejected=, and can no longer be
+              logged for an empty list.
+              *** THIS IS A MEASUREMENT CHANGE: envelope-shaped seeds no longer
+              enter the corpus. Signed off 2026-09-10. Item 14 closed. ***
+src/fuzzer.py MongoVulnerabilityReporter was unconditional while
+              FuzzerConfig.export_mongo (default False) was ignored. With no
+              mongod, every finding cost a 2s serverSelectionTimeoutMS -- ~124s
+              of the appium run's 540.4s. Now gated on config.export_mongo.
+              Changes where findings are LOGGED, never what is found.
+tests/        5 new tests, fixtures copied VERBATIM from the corpus that run
+              wrote (eval/corpora/...generate-double-tap-code/seed_1.json), incl.
+              one that fails if input_parser stops gating on `matched > 0`, so
+              the two predicates cannot drift apart. Suite is now 72 passed,
+              0 skipped -- update the gate in CLAUDE.md and HANDOFF section 14
+              (both still say "66 passed, 1 skipped"; it was 67 before tonight).
+.env          model switched llama3.1:8b -> gemma4:12b. Old file kept at
+              .env.bak-20260910. *** .env IS INERT ON ITS OWN *** -- nothing in
+              src/ or eval/ calls load_dotenv and python-dotenv is not in the
+              venv. It must be sourced. run_overnight.sh does `set -a; . .env`.
+eval/run_overnight.sh   NEW. Resumable, Ctrl-C safe, phases
+              preflight|prepare|smoke|campaign|status. Preflight HALTS on:
+              wrong python, missing pyflakes (the silent-skip trap), missing
+              deps, red tests, unreachable Ollama, absent model. The smoke phase
+              prints the section-4 JS coverage acceptance test AND the first
+              seed file actually written, so the morning verdict does not depend
+              on trusting a marker.
+              Also exports PYTHONHASHSEED=0 so js_runner's past-COV_SLOTS hash
+              aliasing is stable across runs (see the note above).
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   18. llama3.1:8b is being DROPPED as an arm (Ananto, 2026-09-10: "very much
+       out of date"). The old-baseline-continuity argument in the MODEL CHOICE
+       section above is therefore void -- the arms are now gemma4:12b, with
+       granite4.1:8b still optional. Nothing in the paper may cite llama3.1:8b
+       numbers, including the temperature-0.7 selection-precision anecdote.
+   19. eval/state/quarantine-pre-seedfix/ has NOT been created yet. The appium
+       run (62 hits on mojibake) is still live in runs.jsonl line 3 and will be
+       counted by --status and by score_set_d. Quarantine it before any number
+       leaves this repo.
+   20. fuzz_corpus/ at the repo root is pre---corpus-dir leftover (excel-shaped
+       seed_0.json). Untracked. Delete once you have looked at it.
+
+================================================================
+OVERNIGHT CAMPAIGN 2026-09-10 01:40-06:51 -- ZERO FUZZING EXECUTIONS
+gemma4:12b arm. Diagnosed, root causes confirmed against the live daemon.
+================================================================
+
+WHAT THE NIGHT PRODUCED
+  prepare : 14 prepared / 44 skipped of 58  -> 173 configs
+  campaign: 46 runs attempted, 46 TIMED OUT at 780s, 0 alerts, 0 signatures
+  runs that reached libFuzzer: 0 of 47.  Every gemma4 log ends at
+    "[LLM] Generation of smart seed corpus for '<tool>'".
+  llm_selection over the 47: failed 43, ok 2, unknown 2.
+  ~5h10m of wall clock spent entirely inside LLM calls.
+  Log: eval/state/overnight_20260910_013957.log
+
+The harness behaved correctly throughout. It recorded 46 honest failures
+rather than 46 healthy-looking zeroes. That is the audit working.
+
+ROOT CAUSE 1 -- OLLAMA SERVES gemma4:12b WITH A 4096-TOKEN CONTEXT
+  Verbatim from eval/runs/api7__apisix-mcp__create_route.log:
+    sanitizer-selection attempt 1/3 failed: Could not parse response content as
+    the length limit was reached - CompletionUsage(completion_tokens=2045,
+    prompt_tokens=2051, total_tokens=4096, ...)
+  2051 + 2045 = 4096 EXACTLY. Confirmed twice against the live daemon, not
+  inferred:
+    curl /api/ps            -> "context_length": 4096
+    llama-server argv       -> ... -c 4096 -np 1 ...
+  `ollama serve --help` documents OLLAMA_CONTEXT_LENGTH as "default:
+  4k/32k/256k based on VRAM". On a 16 GB M2 Pro with a 12B resident it picks
+  4k. gemma4:12b's NATIVE context is 262144 (`ollama show`).
+  The selection prompt is ~2051 tokens because it inlines all 72 sanitizer
+  names + descriptions. That leaves ~2045 for a reply that must carry
+  selected_sanitizers AND a rules object with on_trigger +
+  expected_fallback_values per sanitizer. It truncates mid-JSON.
+  Attempts 2 and 3 then append the parse error to an already-2051-token
+  prompt and come back EMPTY.
+
+ROOT CAUSE 2 -- gemma4 IS A THINKING MODEL AND ITS REASONING EATS THE BUDGET
+  `ollama show gemma4:12b` lists capability "thinking". A direct probe returned
+  a message object with a SEPARATE reasoning field alongside content:
+    "content":"{\"ok\":true}",
+    "reasoning":"The user wants a specific JSON response: `{\"ok\":true}`. ..."
+  Reasoning tokens are billed against completion_tokens. With only ~2045 left
+  under root cause 1, gemma4 spends them thinking and returns an EMPTY content
+  string -- which is precisely the "empty LLM response" in attempts 2 and 3.
+  The two causes compound; fixing context alone may not be enough.
+
+ROOT CAUSE 3 -- THROUGHPUT ON THIS MACHINE IS NOT VIABLE AS CONFIGURED
+  A 25-token prompt / 51-token completion took 246.2 SECONDS end to end.
+  A later short call returned HTTP 000 after 36s. Meanwhile:
+    memory free 13%, pageouts 842139, load avg 2.89
+    llama-server resident at size_vram 8046205991 (8.0 GB) on a 16 GB machine
+    Chrome and Claude both running and in the top-5 CPU consumers
+  Part of the 246s is an 8 GB cold load (expires_at had just lapsed), but a
+  warm re-probe could not be completed cleanly either. Treat gemma4:12b as
+  UNMEASURED on throughput here, not as measured-slow -- but do not launch
+  another campaign until a warm tokens/sec figure exists.
+
+SUSPECT, NOT CONFIRMED -- WRONG CHAT TEMPLATE
+  The llama-server argv contains:  --no-jinja --chat-template chatml
+  i.e. Ollama is serving gemma4 with a GENERIC ChatML template rather than
+  gemma4's own. If that is real and not just how Ollama 0.33.3 spells it
+  internally, the model is being prompted in a format it was not tuned for,
+  which independently degrades instruction-following and would explain empty
+  replies. VERIFY before blaming the model for poor selection precision --
+  publishing "gemma4:12b selects badly" off a template mismatch would be the
+  same class of error as the temperature-0.7 anecdote.
+
+HARNESS PROBLEMS THIS EXPOSED (none fixed yet)
+  a) A DEAD RUN COSTS budget+600s REGARDLESS OF --time. run_eval.py:172 uses
+     communicate(timeout=budget+600), so at --time 180 a run that cannot even
+     select sanitizers still burns 780s -- 4.3x the budget. 46 x 780s IS the
+     lost night. Needs a fail-fast: if LLM_SELECTION_FAILED and seed generation
+     has not produced a corpus within ~60s, abort the run.
+  b) budget IS NULL IN ALL 50 RECORDS. llm_model is recorded, budget is not
+     (run_eval.py:63 area). A3 needs it.
+  c) 15 ORPHANED node MCP SERVERS still resident, ages up to 14h52m. NINE of
+     them are under the PRE-RENAME path /Users/.../pseclab/toolfuzzer/, so
+     they predate the rename and have outlived several campaigns; six are
+     under ToFu/, oldest 6h41m. The start_new_session+killpg fix only covers
+     the timeout path of the CURRENT harness. Kill them before any timing
+     measurement:  pkill -f coverage_wrapper.js
+
+PREPARE: 44 OF 58 SKIPPED (76%). Top reasons, all legitimate exclusions:
+    6  pip install -e . failed
+    4  pip -r requirements.txt failed
+    4  no node entrypoint (is a build step required?)
+   13  no tools/list reply (various: MCP SDK API drift, missing module,
+       required config/ORG URL, health-check server that never speaks stdio)
+    2  no python entrypoint
+  ONE IS NOT A LEGITIMATE EXCLUSION AND MUST BE RETRIED:
+    clone failed: unable to unlink '/sessions/rcw-01fnueyd8thpmq7mb5c697e9/
+    mnt/toolfuzzer...'  -- a stale CLOUD SANDBOX path leaked into the local
+    state. Not a property of the target repo. Re-run prepare for it.
+  The 14 that survived yield 173 configs, dominated by api7/apisix-mcp (32
+  tools) and graphlit/graphlit-mcp-server (71 tools). NOTE FOR A3: that is the
+  same single-repo tool dominance Pierre flagged (412/569 from one repo).
+  103 of 173 configs come from two repos. Any per-tool average over Set A+B
+  as it currently stands is really an average over apisix and graphlit.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   21. Decide the model arm. gemma4:12b is not usable at 4k context on this
+       machine as configured. Options, in order of cost:
+         (i)   OLLAMA_CONTEXT_LENGTH=16384 + OLLAMA_KV_CACHE_TYPE=q8_0, close
+               Chrome/Claude, re-measure warm tokens/sec before committing.
+         (ii)  shrink the selection prompt -- it inlines 72 descriptions. This
+               is a MEASUREMENT CHANGE (it changes what the model is asked)
+               and needs sign-off.
+         (iii) an 8B-class arm. Installed right now: llama3.1:8b (dropped as
+               outdated), qwen2.5:14b-instruct (9 GB, BIGGER, not a fix).
+               granite4.1:8b is NOT installed.
+   22. Whether "gemma4:12b" numbers may be reported at all until the chatml
+       template question above is settled.
+   23. The 46 timed-out records are in runs.jsonl and --status counts them.
+       They are honest failures, not findings, but they are also not evidence
+       about ToFu. Decide whether they stay in the active index or move to
+       eval/state/quarantine-no-llm-context/.
+
+--- 2026-09-10 07:40 -- WHY THE 32k FIX MADE IT WORSE, AND THE REAL FIX ---
+Smoke run at ctx=32768 was WORSE than at 4096: 720.1s timeout with ZERO
+completed HTTP requests (eval/runs/api7__apisix-mcp__delete_plugin_metadata.log
+ends at "Retrying request in 0.44s"). Raising the context did not fix the LLM
+stage, it removed the accidental brake.
+
+MEASURED WARM THROUGHPUT (memory free 82%, orphans killed, ctx 32768):
+    prompt  3016 tok in 19.8s  = 152 tok/s prefill
+    gen      512 tok in 29.3s  = 17.5 tok/s
+The model is NOT slow. 3000-token prompt + 512 generated = 49s.
+
+ROOT CAUSE: gemma4:12b is a thinking model and nothing capped it. At 17.5
+tok/s, ~12k reasoning tokens is ~11 minutes for ONE call. At 4096 context the
+thinking was truncated at ~2045 tokens ("length limit was reached"); at 32768
+it ran free until the harness killed the run. THE CONTEXT AND THE REASONING
+CAP HAVE TO MOVE TOGETHER -- fixing one alone just changes the symptom.
+
+MEASURED AGAINST THE LIVE DAEMON, same prompt:
+    default (no cap)          hangs > 720s
+    max_tokens=800             4s, 78 completion tokens, correct JSON
+    reasoning_effort="none"    1s, 19 completion tokens, correct JSON
+Verified end to end through langchain after the patch: 1.2s round trip,
+content='{"ok":true}', 6 output tokens.
+
+APPLIED (Ananto chose "reasoning off now, thinking arm later"):
+  src/llm.py       TOFU_LLM_REASONING (default "none") -> reasoning_effort on
+                   ChatOpenAI, with the model_kwargs fallback used for `seed`.
+                   TOFU_LLM_MAX_TOKENS (default 4096) as a hard runaway stop
+                   even with reasoning off.
+  eval/run_eval.py llm_reasoning + llm_max_tokens added to run provenance.
+  .env             TOFU_LLM_REASONING=none, TOFU_LLM_MAX_TOKENS=4096
+  *** MEASUREMENT CHANGE. Reasoning off changes how sanitizers are selected,
+  which is precisely what RQ2/RQ3 measure. Every gemma4 number from here is a
+  NON-THINKING gemma4 number and must be labelled as such. ***
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   24. THE THINKING ARM IS OWED. Plan agreed 2026-09-10: run Set A+B with
+       reasoning off to get the campaign, then re-run a 20-30 tool subset with
+       TOFU_LLM_REASONING unset as a deliberate ablation, and report selection
+       precision for both. Until that second pass exists, no claim may be made
+       about what gemma4 "can" select -- only about what it selects with
+       reasoning disabled.
+   25. Budget the thinking arm honestly: at 17.5 tok/s a reasoning call costs
+       minutes, not seconds. 20-30 tools is the realistic ceiling on this Mac,
+       and it needs its own timeout, not the standard budget+600.
+
+CORRECTION TO MY OWN EARLIER ENTRY IN THIS FILE (2026-09-10, overnight
+diagnosis, harness problem "b"): I wrote that budget was null in all 50
+records. THAT WAS WRONG -- I queried the key "budget"; the field is
+"budget_s" and it is populated correctly (180 on 46 runs, 120 on 3, 60 on 2).
+No provenance bug there. Harness problems (a) fail-fast and (c) orphaned
+servers stand; (c) is now resolved -- pkill -f coverage_wrapper.js cleared all
+15 and system-wide free memory went from 13% to 82%.
+
+================================================================
+JS COVERAGE -- THE ORIGINAL DIAGNOSIS WAS WRONG. 2026-09-10 08:20
+Both prior conclusions overturned by direct measurement.
+================================================================
+
+item 10 in this file asked someone to confirm, independently, that
+takePreciseCoverage is cumulative without stopPreciseCoverage, because that was
+read off the wrapper's usage and a flat cov: line rather than off the CDP spec.
+It is NOT cumulative. Measured with a standalone inspector.Session, same
+1000-iteration loop before each of three consecutive takes:
+    take #1: nonzero=8 maxCount=1000
+    take #2: nonzero=8 maxCount=1000
+    take #3: nonzero=8 maxCount=1000
+Counts do not accumulate; takePreciseCoverage RESETS the execution counters.
+range.count was ALREADY "executed by this call". Item 10 is answered: NO.
+
+=> FIX 2 (the prevCounts delta) was built on a false premise and made things
+   strictly worse. It stored the max count seen and reported only
+   count > prevCount, so after the first call almost every range was
+   suppressed. REVERTED.
+
+=> BUT THE REVERT DID NOT RESTORE COVERAGE GUIDANCE EITHER, which means the
+   ORIGINAL pinned-cov diagnosis in "COVERAGE ON JS TARGETS IS INERT" was also
+   wrong about the mechanism. The real cause, measured on one function with
+   three branches, detailed:true:
+       [routes  ] isBlockCoverage=true ranges= 157-265:1  207-263:0
+       [services] isBlockCoverage=true ranges= 157-265:1  194-207:0  244-263:0
+       [zzz     ] isBlockCoverage=true ranges= 157-265:1  194-207:0  231-244:0
+   V8 emits ONE range spanning the whole function carrying its execution count,
+   then carves the branches that did NOT run out of it as nested count:0
+   sub-ranges. So the set of count>0 ranges is IDENTICAL (just 157-265) for all
+   three inputs, and every bit of branch information lives in precisely the
+   count:0 ranges that `if (range.count > 0)` discarded. Three inputs taking
+   three different branches produced one identical coverage set.
+   The line expansion (each range widened to whole lines, then unioned) is a
+   second, independent loss on top -- it re-merges branches that share a line,
+   and most Set A targets ship a minified dist/index.js where a whole handler
+   IS one line.
+
+APPLIED: coverage_wrapper.js processCoverage() now calls executedIntervals(),
+which subtracts nested count:0 ranges from each count>0 range and reports the
+resulting disjoint intervals keyed by BYTE OFFSET (fileName|start|end), not by
+line. Against the three measured range sets it yields 3 distinct coverage sets
+instead of 1. 4 new tests in tests/test_audit_regressions.py, fixtures copied
+verbatim from the measured ranges. Suite now 75 passed, 0 skipped.
+*** MEASUREMENT CHANGE: this changes what cov: counts. Every coverage number
+from here is BRANCH-INTERVAL coverage and is NOT comparable to any earlier
+figure. ***
+
+THE A/B/C, same config (api7/apisix-mcp::delete_resource), same seed, kept:
+  A  eval/state/preRevertFix2/              Fix 2 active
+       #13   INITED cov: 1388 ft: 1388 corp: 1/32b exec/s: 0
+       #8192 pulse  cov: 1388 ft: 1388 corp: 1/32b exec/s: 107
+     ft: == cov: exactly -- every slot triggered at most once, the suppression.
+  B  eval/state/postRevertFix2-preBlockCov/ reverted, count>0 filter
+       #13   INITED cov: 1390 ft: 2181 corp: 3/103b
+       #355  REDUCE cov: 1390 ft: 2557 corp: 4/46b
+       #4096 pulse  cov: 1390 ft: 2557 corp: 4/38b
+     ft: and corp: move, cov: pinned. Revert was necessary but not sufficient.
+  C  to be produced with executedIntervals().
+Each directory has a WHY.md. Nothing was deleted.
+
+ACCEPTANCE TEST STATUS (HANDOFF section 4):
+  (c) exec/s PASSES already: 0-33 before the audit -> 55-128 now.
+  (a) cov: increasing and (b) corp: growing past 2-4: still OPEN, pending C.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   26. The "COVERAGE ON JS TARGETS IS INERT" section earlier in this file
+       states the mechanism as "V8 precise-coverage counters are CUMULATIVE"
+       and blames the unused already_covered set. BOTH CLAIMS ARE NOW
+       DISPROVEN by measurement. The section is left in place per the rules,
+       but do not cite its mechanism in the paper -- cite this section.
+   27. cov: went 1388 -> 1390 between A and B, i.e. the JS coverage surface
+       moved by 2 slots between two runs of the SAME config with the same
+       seed. Small, but it means the JS coverage number is not bit-stable
+       across runs. Establish the run-to-run variance before any coverage
+       figure is published.
+   28. Whether the paper's coverage figure can put Python and JS on the same
+       axes at all now: Python is Atheris edge coverage of the target's own
+       bytecode; JS is V8 branch-intervals aliased into COV_SLOTS Python
+       branches. Different denominators, different units.
+
+================================================================
+FULL AUDIT PASS -- 2026-09-10 08:00-09:00. SIX MORE BUGS, ALL MEASURED.
+"Why did the last guy say it worked?" -- because nothing ever told him it
+didn't. Every one of these reports a healthy "0 findings".
+================================================================
+
+BUG 6 -- V8 BLOCK COVERAGE: count>0 THROWS AWAY THE BRANCH INFORMATION
+  Measured on one function, three branches, detailed:true:
+      [routes  ] isBlockCoverage=true ranges= 157-265:1  207-263:0
+      [services] isBlockCoverage=true ranges= 157-265:1  194-207:0  244-263:0
+      [zzz     ] isBlockCoverage=true ranges= 157-265:1  194-207:0  231-244:0
+  V8 emits ONE range for the whole function carrying its count, then carves the
+  branches that did NOT run out of it as nested count:0 sub-ranges. The set of
+  count>0 ranges is therefore IDENTICAL whichever branch runs. Three inputs,
+  three branches, one coverage set.
+  FIXED: processCoverage() -> executedIntervals(), which subtracts nested
+  count:0 ranges and reports disjoint executed intervals keyed by BYTE OFFSET.
+  Line expansion is gone too (it re-merged branches sharing a line, and most
+  Set A targets ship a minified dist/index.js where a handler is one line).
+  CONTROL EXPERIMENT (this is the proof, not the unit test): a synthetic stdio
+  target with 6 branch-distinct inputs driven through the real JSRunner now
+  yields 6 DISTINCT coverage sets. Before: 1.
+
+BUG 7 -- /proc DOES NOT EXIST ON macOS, AND THE EVAL RUNS ON macOS
+  fuzzer.py read os.listdir("/proc") in four places, each inside a bare
+  `except Exception: pass`. Verified: FileNotFoundError [Errno 2] on
+  Darwin-arm64. So before_pids and after_pids were ALWAYS empty, leaked_pids
+  was ALWAYS empty, and check_process_and_fd_leaks / check_terminal_dos_and_leak
+  could NEVER fire on the platform the campaign actually runs on. No error, no
+  warning, just a sanitizer family that reports nothing forever.
+  FIXED: _ps_snapshot() -> pid:(ppid,comm), /proc on Linux, `ps -Ao` elsewhere.
+  Verified on this Mac: 435 pids, self found with correct ppid. If the snapshot
+  ever comes back empty it now logs an ERROR instead of silently reporting clean.
+
+BUG 8 -- EVERYTHING AFTER engine.fuzz() IS DEAD CODE
+  libFuzzer terminates the process when -max_total_time expires, so the
+  post-fuzz epilogue never runs. "[FUZZING METRICS]" and "Fuzzing session
+  completed" appear in ZERO of every log this repo has ever produced -- and
+  libFuzzer's own closing "Done ... runs" line is lost with them, because the
+  stderr reader is a daemon thread and the pipe is not drained on a hard exit.
+  Consequences: emit_final_snapshot() never ran (so the metrics/coverage CSVs
+  are truncated), the corpus rmtree never ran, and any summary written there
+  was never written at all.
+  FIXED: the exec summary is emitted PERIODICALLY (first execution, then every
+  512) instead of at the end; run_eval takes the LAST one.
+
+BUG 9 -- "RAN AND FOUND NOTHING" WAS RECORDED IDENTICALLY TO "NEVER RAN"
+  api7/apisix-mcp is an Admin-API client. Nothing listens on 127.0.0.1:9180, so
+  EVERY input returns
+      "Status: undefined\nMessage: connect ECONNREFUSED 127.0.0.1:9180"
+  isError=true -> success=False -> _check_string_sanitizers returns early. No
+  sanitizer can fire, coverage cannot vary, and all 32 apisix tools report a
+  clean 0 findings. That is 32 of 173 configs, 18% of the campaign, producing
+  authoritative-looking nothing.
+  FIXED: fuzzer counts executions and successes and emits
+      EXEC_SUMMARY tool=<t> n_exec=<n> n_success=<s> success_rate=<r>
+      EXEC_ERROR n=<n> detail=<the recurring error>
+      NOT_EXECUTABLE ... (once >=64 executions have all failed)
+  run_eval records n_exec / n_exec_success / exec_success_rate / executable and
+  SHOUTS in the summary. VERIFIED END TO END on a real smoke run:
+      tool executability:      no=1, unknown=53
+      !! 1 run(s) NEVER EXECUTED THE TOOL SUCCESSFULLY ... exclude them from
+         any denominator ... 1 run(s): connect ECONNREFUSED 127.0.0.1:9180
+      EXEC_SUMMARY tool=get_all_plugin_names n_exec=13312 n_success=0
+  13312 executions, 0 successes, and the harness now says so instead of
+  reporting a clean run.
+
+BUG 10 -- THE DETERMINISTIC SEED MAPPER IGNORED "enum"
+  _local_fallback_mapping never read enum and filled every string with "test".
+  On mcp-appium-gestures::generate-double-tap-code, whose `language` is
+  enum ['javascript','java'], 34 of 37 seeds carried language="test" and the
+  server rejected EVERY ONE:
+      MCP error -32602: Invalid ... parameters [{"received":"test", ...}]
+  0 of 38 executions succeeded. Any tool with an enum-constrained required
+  field was 100% unfuzzable through the deterministic path -- and the payloads
+  in every OTHER field never reached the tool body either.
+  input_parser._generate_value_for_schema ALREADY honoured enums, so the two
+  paths disagreed with each other about the same schema.
+  FIXED: defaults take a valid member; every member is exercised; exactly one
+  out-of-enum probe is kept.
+  MEASURED AFTER: 21/39 execute, 5 distinct coverage sets. Before: 0/38, 1.
+
+BUG 11 -- THE ENTIRE FILE-BACKED PATH WAS DEAD IN THE EVAL HARNESS
+  All 173 configs shipped predefined_seeds:[] and no file_backed_params, and
+  src/__main__.py never even read that key -- so src/predefined_seeds/ (the 36
+  files restored from b1b657e), FuzzFileManager and the "predefined_seed:<name>"
+  protocol were unreachable from the eval, though targets/fuzz_*.py used them.
+  A tool taking a file path received the literal string "test":
+      MCP error -32600: File not found: test        (excel-reader, every input)
+  THIS IS WHY THE PAPER'S BINARY-SEED CLAIM WAS NEVER OBSERVED WORKING.
+  Nothing ever enabled it. See HANDOFF section 7.
+  FIXED: __main__ reads and forwards file_backed_params; new
+  eval/infer_file_params.py infers them from each tool's real schema
+  (report-first, --apply required, --revert restores, per-config .bak written).
+  23 configs updated.
+  MEASURED AFTER, excel-reader::get_cell with sample.xlsx:
+      cell='A1'      sheet='Sheet1'          success=True  cov=51
+      cell='ZZ9999'  sheet='Sheet1'          success=True  cov=21
+      cell='A1'      sheet='../../../etc/..' success=True  cov=26
+      cell='=1+1'    sheet='Sheet1'          success=False cov=15
+      distinct coverage sets: 4/4
+  The tool executes for the first time. Note the third row: the sheet name
+  '../../../etc/passwd' was ACCEPTED. Probably benign (sheet names are not
+  paths) but it is exactly the shape of thing the oracle exists to judge --
+  triage it, do not assume.
+
+EXECUTABILITY SURVEY (eval/state/executability_survey.json)
+  One representative tool per repo, driven with ToFu's OWN deterministic seeds
+  plus the config's file_backed_params -- i.e. what the fuzzer sends when the
+  LLM path falls back. NOT a claim about every tool in a repo.
+    OK  AppiumTestDistribution/mcp-appium-gestures  21/40  cov_sets=5
+    OK  Heratiki/locallama-mcp                       3/14  cov_sets=7
+    OK  chatmcp/mcp-server-chatsum                  23/23  cov_sets=8
+    OK  freestylefly/mcp-server-weread              32/32  cov_sets=5
+    OK  maoxiaoke/create-mcp-server                   2/2   cov_sets=2
+    OK  yan5236/bing-cn-mcp-server                   4/23  cov_sets=4
+    ERR api7/apisix-mcp          (32 tools)  connect ECONNREFUSED 127.0.0.1:9180
+    ERR graphlit/graphlit-mcp-server (71)    Graphlit organization identifier is required
+    ERR spences10/mcp-n8n-builder    (10)    Error activating workflow: fetch failed
+    ERR tonypan2/minesweeper-mcp-server (4)  MCP error -32603: Game server failed
+    ERR thomasgazzoni/vsc-mcp         (7)    Access denied: /var/folders/... (workspace-confined)
+    ERR ArchimedesCrypto/excel-reader-mcp (14) Sheet not found: test (mapper cannot guess a sheet name; the LLM path emits "Sheet1")
+    ERR screenshotone/mcp (3), tubone24/midi-mcp-server (2)  schema validation
+  => 6 of 14 repos, 30 of 173 configs, are executable in this environment with
+     the deterministic seeds. THE REST ARE ENVIRONMENT EXCLUSIONS AND MUST BE
+     REPORTED AS SUCH, not as clean runs. 103 of the 173 configs come from just
+     two repos (apisix 32, graphlit 71) and BOTH are in the not-executable set.
+
+  vsc-mcp's "Access denied" is worth a second look: the server confines file
+  access to a workspace root and refused a path outside it. That is a security
+  property being ENFORCED, i.e. a true negative, and it is exactly the class of
+  property (a path confined to a declared workspace) that HANDOFF section 10
+  argues is inside ToFu's reach and outside a taint formulation. Consider
+  pointing it at its own workspace so the boundary can actually be probed.
+
+TESTS: 85 passed, 0 skipped (was 66 passed / 1 skipped at the start of the day).
+New fixtures are copied verbatim from measured V8 ranges and real server errors.
+One of them (test_no_undefined_names_anywhere) caught a missing
+`import subprocess` I introduced during this pass, within seconds. It works.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   29. eval/infer_file_params.py used a NAME-ONLY heuristic; matching on the
+       description pulled in far too much. 23 configs were changed. Read the
+       proposal (`python3 eval/infer_file_params.py` re-prints it) and confirm
+       each is genuinely a file handle. `--revert` restores every one.
+   30. Marking a parameter file-backed CHANGES WHAT THE TOOL RECEIVES (the
+       value becomes a temp-file path). Sign this off the way you signed off
+       the parse-order change and the seed validation.
+   31. Decide the policy for not-executable targets: (a) stand up the backends
+       (APISIX, n8n, graphlit creds) and re-run, (b) exclude them and report
+       the exclusion, or (c) both -- exclude for the ecosystem set, stand up
+       for a smaller purposive set. This is now a MEASURED number, not a guess.
+   32. The excel `sheet: "../../../etc/passwd"` acceptance above: triage it.
+   33. exec/s is 100-147 on JS targets now (was 0-33). The 10000-branch linear
+       if-chain in fake_coverage.py costs ~5000 comparisons per coverage item;
+       worth revisiting if throughput matters, but it is no longer the
+       bottleneck it was.
+
+================================================================
+BUGS 13 AND 14 -- 2026-09-10 09:00-09:20. THE TWO THAT MATTERED MOST.
+Found by running the full pipeline on an EXECUTABLE target and reading
+every number, instead of on apisix, which cannot execute at all.
+================================================================
+
+BUG 13 -- EVERY CORPUS ENTRY WAS SLICED INTO FRAGMENTS BEFORE PARSING
+  fuzzer.py: sequence_steps = getattr(self.config, "sequence_steps", 2)
+  FuzzerConfig has NO sequence_steps field, so the default of 2 ALWAYS won and
+  sequence mode was permanently on. Measured on a real LLM-generated seed:
+    original : {"filePath": "predefined_seed:test_file.xlsx", "sheetName": "Sheet1", "cell": "A1"}
+      chunk 0: {"filePath": "predefined_seed:test_file.x        -> not JSON
+      chunk 1: lsx", "sheetName": "Sheet1", "cell": "A1"        -> not JSON
+      chunk 2: }                                                -> not JSON
+  None of the three parses, so input_parser fell through to FuzzedDataProvider
+  on every fragment:
+      EXEC_ERROR n=1304 detail='MCP error -32600: Invalid cell address: '
+      EXEC_SUMMARY tool=get_cell n_exec=512 n_success=0
+  *** THIS SILENTLY DEFEATED audit Fix 3 (JSON-first parse order), the restored
+  seed_bank/, LLM seed generation AND the new seed validation. All of those
+  exist to deliver a COMPLETE argument object. A seed could be perfect and
+  still never arrive. Fix 3 was correct and had no effect. ***
+  FIXED: default 1. Sequence mode is opt-in via FuzzerConfig.sequence_steps.
+  Splitting a serialised argument object at an arbitrary byte offset is not a
+  sequence of tool calls; it is corruption. If stateful multi-call testing is
+  wanted it needs its own representation.
+
+BUG 14 -- EVERY ALERT FROM THE STRING PATH WAS A FALSE POSITIVE
+  _check_string_sanitizers called EVERY selected sanitizer with a plain string,
+  whatever its declared parameter type, then did `if triggered:` on the result.
+  Sanitizers return either bool OR (bool, detail) -- and A 2-TUPLE IS ALWAYS
+  TRUTHY, (False, '') INCLUDED. Measured against the live registry:
+      check_file_access(...)                  called with a string -> (False, '')
+      check_unhandled_promise_rejection(...)  called with a string -> (False, '')
+      check_process_and_fd_leaks(leaked_pids: set[int])
+          called with '/var/folders/.../tmp32djxuif.xlsx' ->
+          (True, 'Leaked background subprocess PIDs detected ... <that path>')
+          -- a non-empty string is a truthy "set of leaked pids".
+  All three land in triggered_by: two via tuple-truthiness, one via a genuine
+  type-confusion inside the sanitizer itself.
+  ONE 90-SECOND RUN PRODUCED 295 ALERTS, ALL ONE SIGNATURE:
+      ['check_file_access', 'check_unhandled_promise_rejection',
+       'check_process_and_fd_leaks']
+  on the benign input ToFu ITSELF constructed:
+      {'filePath': '<temp>.xlsx', 'sheetName': 'Sheet1', 'cell': 'A1'}
+  and the tool's output was correct. All three names are in
+  BASE_MANDATORY_SANITIZERS. The LLM had selected
+  ['check_path_traversal', 'check_file_access', 'check_resource_exhaustion']
+  and NOT ONE LLM-attributable sanitizer fired.
+  FIXED: tuple returns are unpacked before the truth test, and a sanitizer is
+  only called on the string path if its first parameter is annotated `str` or
+  unannotated (_takes_a_string, cached). 18 of the 71 registered sanitizers are
+  eligible for the string path; the rest have their own dispatch. Deliberately
+  permissive about UNannotated parameters -- most genuine string sanitizers
+  predate the annotations and excluding them would silently disable the real
+  checks, which is the precise failure this codebase keeps having.
+
+  *** THIS ANSWERS HANDOFF OPEN DECISION 2 (nazmul.todo item 6). ***
+  check_file_access / check_process_and_fd_leaks firing on a pure
+  string-templating tool were NOT true positives and were NOT the Layer-1
+  tracers catching the Node runtime's own I/O. They were this bug. The
+  mandatory layer did not need a filter; the dispatch needed a type check.
+  By extension every alert in eval/state/quarantine-pre-llmfix/ and
+  quarantine-pre-parserfix/ (the 1390) and the 62 in the appium run carries
+  this defect too. Quarantining them was right for a different reason than
+  we thought.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   34. Item 6 / HANDOFF decision 2 can now be CLOSED, but confirm the reasoning
+       yourself before you delete it -- it changes how the mandatory layer is
+       described in the paper.
+   35. _check_string_sanitizers still only inspects arguments where
+       isinstance(val, str). With JSON-first parsing a seed can carry ints,
+       bools, arrays and nested objects, and none of those is examined by any
+       string sanitizer. Decide whether that is intended scope or a gap.
+   36. _takes_a_string lets UNannotated sanitizers through. Annotate the real
+       string sanitizers explicitly so the filter stops depending on absence of
+       information, then tighten it to require `str`.
+
+================================================================
+G-TO-S COUPLING + FAIL-FAST -- 2026-09-10, Ananto signed off
+================================================================
+
+WHY: sec4_design.tex:10 -- "Tool metadata informs both seed generation and
+sanitizer selection, ensuring that the property being exercised is also the
+property used to judge the execution" -- and sec4_design.tex:158-163 --
+"Values for the selected arguments are generated using the corresponding
+sanitizer's adversarial input classes". Neither was implemented.
+generate_seeds() never received the selected sanitizers, and
+_local_fallback_mapping picked a seed-bank category by keyword match on the
+ARGUMENT NAME. So the property exercised was chosen by one heuristic and the
+property judged by a separate LLM call. Measured on excel-reader::get_cell:
+the LLM selected check_path_traversal, the seeds were generic, and
+check_path_traversal never fired. RQ4 asks exactly this and could not be
+answered.
+
+APPLIED (src/llm.py, src/fuzzer.py):
+  - SANITIZER_SEED_CATEGORIES + categories_for_sanitizers(): maps a selected
+    sanitizer to its adversarial input class, longest-fragment first.
+  - generate_seeds(..., selected_sanitizers=...) -- the prompt now lists the
+    selected sanitizers and offers ONLY their categories.
+  - _local_fallback_mapping(..., selected_sanitizers=...) -- the argument name
+    still decides WHICH argument carries the payload; the sanitizer decides
+    WHAT payload.
+  - fuzzer passes self.selected_sanitizer_names into seed generation.
+  *** MEASUREMENT CHANGE: this changes what the fuzzer sends. Signed off. ***
+
+FIRST REAL NUMBER OUT OF IT, and it is a paper result:
+    Sanitizers selected: ['check_path_traversal','check_file_access','check_resource_exhaustion']
+    SEEDGEN_CLASSES tool=get_cell categories=['path_traversal']
+                    n_sanitizers_mapped=2 n_unmapped=9
+    SEEDGEN_UNMAPPED n=9 sanitizers=['check_resource_exhaustion',
+                    'check_unexpected_crash','check_introspection_...']
+  11 active sanitizers (3 LLM-selected + the 10 always-on mandatory layer,
+  minus overlap); only 2 have an adversarial input class. THE SEED BANK HAS 6
+  CATEGORIES AGAINST 71 REGISTERED SANITIZERS, so most of any selection gets no
+  generated inputs and its oracle can only fire incidentally. That fraction is
+  now logged per tool (SEEDGEN_CLASSES / SEEDGEN_UNMAPPED) instead of being
+  invisible. It belongs in RQ1 and it bounds RQ4.
+
+FAIL-FAST (src/fuzzer.py): TOFU_FAILFAST_EXECS (default 2000). A tool with 0
+successes after that many executions stops instead of burning the rest of the
+budget. Threshold is deliberately generous -- the deterministic seeds alone
+cannot execute excel-reader (they cannot guess a sheet name) while the LLM
+seeds can, so a small sample would discard a target that actually works.
+HONEST SAVING: a dead config costs ~450s, of which ~270s is the two gemma4
+calls that happen BEFORE any execution. Fail-fast removes the ~180s fuzz tail,
+not the LLM stage -- roughly 3h off a 143-dead-config campaign, not 9h. To
+remove the LLM cost as well the executability probe would have to run before
+seed generation, which risks discarding targets that only the LLM can drive.
+
+PAPER MISMATCHES FOUND IN THE DESIGN-VS-CODE PASS (recorded, not all fixed --
+Ananto's call is that results come first, but do not let these ship unchecked):
+  1. FIXED: G-to-S coupling (above).
+  2. OPEN: selection is per-TOOL; sec4_design.tex:79-82 defines S(a_i) per
+     ARGUMENT. Consequence: a path sanitizer selected for a tool is applied to
+     every string argument of that tool.
+  3. OPEN: NO runtime instrumentation exists for JS targets.
+     coverage_wrapper.js does coverage only -- no fs/child_process/http hooks.
+     accessed_files is produced solely by python_runner.py:394, so for every
+     Node target it is [] and every introspection oracle silently returns
+     False. Table 3's 21 hooks are Python-only. Node is 1039/1847 runnable
+     repos and the majority of Set A. Either add JS tracers or scope
+     sec4.5.1 and RQ3 to Python explicitly.
+  4. OPEN: the harness mutates SERIALISED BYTES; sec4_design.tex:147-150 says
+     it operates on structured arguments precisely because "arbitrary
+     byte-level mutations would frequently violate the invocation schema".
+     EXEC_SUMMARY can now measure what fraction survives as schema-valid.
+  5. OPEN: MCPInspector is a passthrough (name, description, inputSchema).
+     sec4_design.tex:30 claims normalisation across MCP/LangChain/AutoGen/
+     FastMCP, recursive leaf-level a_i descriptors, oneOf/anyOf/Union
+     disjunctions and required/optional partitioning. None of it exists; only
+     enum, and only in the input decoder and the seed mapper.
+  6. OPEN: "alternating between partial invocations relying on defaults and
+     fully specified adversarial payloads" -- the parser always fills every
+     declared property. No partial-invocation path exists.
+  7. NIT: paper says "~66 sanitizers"; the registry has 71.
+  8. NIT: sec4_design.tex:212 says "Python's introspection library"; it is
+     builtins monkey-patching, not sys.audit or inspect.
+
+================================================================
+SET E -- THE EXPANSION SET, 2026-09-10 (Ananto: "fetch and run every repo
+until we get at least 30 we can work on, keep the sink distribution uniform")
+================================================================
+
+THE YIELD PROBLEM, MEASURED
+  Set A 50 + Set B 8 = 58 repos attempted
+    -> 44 failed PREPARATION (26 "no tools/list reply", 6 pip install -e .,
+       4 requirements.txt, 4 no node entrypoint, 2 no python entrypoint,
+       1 clone, 1 npm install)
+    -> 14 prepared
+    -> ~6 EXECUTE without external infrastructure
+  ~10% end-to-end yield. The run-time half is not a ToFu defect: most MCP
+  servers are thin wrappers over a hosted or paid API (apisix wants an APISIX
+  admin API on :9180, graphlit an org credential, n8n a server, minesweeper its
+  own game server). It bounds what ANY dynamic MCP fuzzer can do without
+  provisioning, and it is a reportable ecosystem result. Report BOTH funnels
+  separately -- prepare-time exclusions and run-time exclusions are different
+  claims and must not be merged into one number.
+
+  => reaching 30 usable repos means attempting a few hundred.
+
+Benchmarks/extraction/select_set_e.py  NEW. Seeded, stratified draw.
+  set_e.json: 300 repos, seed 20260910, fingerprint 7e0e91147748,
+  pool 1336 (Python+Node, >=1 tool, disjoint from Set A/B/D).
+  Round-robin over sink families, RAREST FIRST, using the real per-repo `sinks`
+  map in results.jsonl (parsed from each repo's source for the sink APIs behind
+  the 21 tracers) -- not mcp.so categories, which are 85% two buckets.
+  UnrestrictedIPBinding is EXCLUDED from stratification: that probe matched
+  84.7% of the corpus and is a known measurement artifact.
+  Representation achieved (a uniform random draw hits none of the rare ones):
+    LogInjection 265, SensitiveDataLogging 247, FileAccess 237, FileWrite 205,
+    NetworkExecution 201, BlockingEventLoopCall 181, CommandExecution 165,
+    CodeExecution 148, ReDoS 145, LoopCondition 123, TempFileLeak 120,
+    WeakPRNG 120, UnverifiedCodeDownload 113, SQLExecution 91,
+    DataAmplification 88, WeakHash 64, NonceReuse 49, Deserialization 39,
+    XXE 36, SSLCertValidation 28.      langs: node 171, python 129.
+
+*** SET A IS NOT REDRAWN. *** It stays final at seed 20260909 / aa6f0cffff64.
+Set E is a separate seeded draw from the same frame by the same method, so
+A alone remains citable and A+E is defensible as one ecosystem sample if you
+later want the larger n. Say which you are reporting.
+
+eval/prepare_targets.py  --only-set now accepts e.
+eval/expand_until.sh     NEW. Prepares Set E in chunks and stops as soon as
+                         TARGET (default 30) repos are prepared. Resumable,
+                         Ctrl-C safe.
+eval/run_eval.py         NEW --only-repo / --skip-repo (substring on _repo).
+                         Selection only; changes nothing about how a run works.
+                         Needed because 108 of the 116 remaining configs belong
+                         to repos that cannot execute here, so an unordered
+                         sweep spends ~7h re-confirming that.
+
+FAIL-FAST RECORDING FIXED: a fail-fast exit made libFuzzer print
+"ERROR: libFuzzer: fuzz target exited" and return non-zero, so run_eval logged
+ok=False with a crash-looking error -- a deliberate stop recorded as a target
+failure, the same class the audit already fixed once. parse_log now sets
+stopped_early from the FAILFAST marker and such runs are ok=True with a note.
+
+FIRST HEALTHY CAMPAIGN RUN ON RECORD (13:08, appium generate-double-tap-code):
+    n_exec=3584 n_success=3027 success_rate=0.845 executable=yes
+    llm_selection=ok llm_seeds=ok alerts=0
+  84.5% of executions succeeded. Compare the same tool before today: mojibake
+  input, 62 alerts, all false positives.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   37. Set E is drawn but NOT prepared. Its prepare-time yield is unknown; the
+       ~10% figure comes from Set A/B and may not transfer.
+   38. Decide how Set A and Set E are reported: separately, or pooled as one
+       ecosystem sample. Do not pool silently.
+
+================================================================
+FIRST CAMPAIGN WITH ALERTS -- 2026-09-10 13:22-14:48, 20 configs, 1.43h
+ALL THREE HITS TRIAGED TO FALSE POSITIVES. TWO NEW DEFECTS.
+================================================================
+
+    HIT [2/20]  weread::get_book_best_reviews  334 alerts  1 sig  check_invalid_json
+    HIT [5/20]  weread::search_books            70 alerts  1 sig  check_log_injection
+    HIT [20/20] bing-cn::crawl_webpage          19 alerts  4 sigs url contract, resource
+                                                                 exhaustion, process leak
+
+These are the first alerts EVER produced by a pipeline that was verified
+working, and all three signatures are LLM-ATTRIBUTABLE sanitizers rather than
+the mandatory layer -- which is why they were worth taking seriously. They are
+still false positives, for two new reasons.
+
+BUG 16 -- A SANITIZER THAT CANNOT FIND ITS ARGUMENT FIRED ANYWAY
+  check_strict_url_security_contract did generated_arguments.get("url").
+  Written for targets/fuzz_http_check.py, whose argument IS called url; the LLM
+  selects it for any URL-ish tool. crawl_webpage's argument is `urlMap`, so
+  url_input was None and EVERY sub-check fired on None:
+      Violations: [Raw Input Error: Expected str type, got NoneType |
+        Structure Error: Missing scheme | Canonicalization Error: Hostname is
+        empty | SSRF Check Error: Empty hostname].  Input: 'None'
+  FIXED: _find_url_argument() locates the URL whatever it is called and handles
+  the three real shapes -- plain string, list of strings, and MAP WHOSE VALUES
+  are URLs. Returns False when the tool has no URL argument at all. A sanitizer
+  that is not applicable must be SILENT; firing is a false positive that costs
+  a reviewer's trust.
+  *** GENERALISE THIS: every sanitizer in targets/fuzz_*.py was written against
+  one hand-written harness with known argument names. Any of them that reads a
+  fixed key has the same defect the moment the LLM selects it for a real tool.
+  Audit the rest before the campaign that produces published numbers. ***
+
+BUG 17 -- IN-BAND ERROR PAYLOADS COUNTED AS SUCCESSFUL EXECUTIONS
+  mcp-server-weread has no cookie configured and answers EVERY input with a
+  NORMAL MCP result whose payload is an error object, without setting isError:
+      Tool Output : {'error': {'message': '没有找到cookie，请按照文档填写cookie或配置Cookie Cloud'}}
+  So the runner scored every call a success. The tool reported
+  n_exec=4096 n_success=4096 success_rate=1.0 executable=yes -- looking like
+  the healthiest target in the campaign -- while never running its own logic,
+  and the outcome oracle concluded it "executed successfully without raising"
+  for inputs the sanitizers flagged. 404 of the 423 alerts are this.
+  FIXED: JSRunner treats a top-level truthy `error`/`errors` member as a failed
+  execution. Deliberately narrow -- {"error": null} and {"errors": []} are fine,
+  and guessing at error text inside content blocks would trade one class of
+  false positive for another. sec4_design.tex:270 already specifies this: the
+  oracle evaluates "structured error types and schema rejections".
+
+  *** THIS WIDENS THE ENVIRONMENT-EXCLUSION PROBLEM. *** weread passed the
+  executability gate while being just as credential-blocked as graphlit. Any
+  server that reports failure in-band was being counted as live. Re-measure the
+  executability survey after this fix; the "6 of 14 repos execute" figure is
+  optimistic.
+
+WORTH RE-RUNNING, NOT DISMISSING
+  With bug 16 fixed, urlMap {"u": "http://10.0.0.1/internal_api"} fires for the
+  RIGHT reason, and the log shows crawl_webpage DID attempt that fetch,
+  returning "抓取网页失败: 无法连接到服务器". A tool that accepts an RFC1918
+  destination and tries to reach it is the SSRF shape ToFu exists to find. It
+  failed only because nothing is listening on 10.0.0.1. Re-run it.
+
+QUARANTINED: eval/state/quarantine-fp-20260910/ (3 records + 3 logs + WHY.md).
+Active index is back to 74 runs, 0 alerts.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   39. check_resource_exhaustion fired at 5.01s against config.timeout_limit
+       2.0s on a WEB-CRAWLING tool. A network fetch taking 5s is normal
+       behaviour, not resource exhaustion. The limit has to be per-tool, or
+       network-bound tools excluded from it, or the check is pure noise on any
+       tool that makes an outbound request.
+   40. check_process_and_fd_leaks reported "PID 60149 (node)" while TWO workers
+       were running concurrently -- plausibly the other worker's MCP server.
+       The ancestor filter in _execute_and_time uses the post-execution ps
+       snapshot; verify it under --workers 2 before trusting any process-leak
+       alert.
+   41. Audit every sanitizer that reads a FIXED argument name (bug 16's family)
+       before publishing numbers.
+
+================================================================
+BUG 16/17 FIXES VERIFIED + SET E PREPARED -- 2026-09-10 15:00-15:30
+================================================================
+
+RE-RUN OF THE THREE FALSE-POSITIVE CONFIGS (15:13, --only-repo bing-cn,weread):
+  weread::get_book_best_reviews  334 alerts -> 0.  executable=no, n_success=0,
+      fail-fast fired at 2000 execs, recorded ok=True + stopped_early=True.
+      BUG 17 FIX CONFIRMED: the credential-blocked tool is now correctly
+      reported as never having executed, instead of success_rate=1.0.
+  weread::search_books           70 alerts -> 0 (timed out at 780s; its
+      EXEC_SUMMARY was not parsed, executable=unknown -- see item 42).
+  bing-cn::crawl_webpage         19 alerts / 4 sigs -> 6 alerts / 2 sigs.
+      BUG 16 FIX CONFIRMED: check_strict_url_security_contract no longer fires;
+      the remaining two signatures are the two already-known-noisy ones
+      (items 39, 40).
+
+THE SSRF QUESTION IS UNANSWERABLE ON A NODE TARGET, AND HERE IS THE PROOF
+  crawl_webpage was fed http://192.168.1.1/admin, http://10.0.0.1/internal_api
+  and http://169.254.169.254/latest/meta-data/. The URL contract stayed silent
+  because is_input_rejected(res) saw the tool return an error, and counted that
+  as a rejection. But the tool returned "抓取网页失败: 无法连接到服务器" --
+  it ATTEMPTED the fetch and the connection was refused. "Refused to fetch"
+  and "fetched and failed" are the difference between a correctly defended tool
+  and an SSRF, and from the response alone they are indistinguishable.
+  Telling them apart needs the NetworkExecution tracer, WHICH DOES NOT EXIST
+  FOR JS (open mismatch 3). This is no longer an abstract gap: it is the reason
+  a concrete SSRF candidate cannot be adjudicated. Node is the majority of the
+  corpus.
+
+CRASH CANDIDATE -- INVESTIGATED, NOT A FINDING
+  The run exited with
+      ==9038== ERROR: libFuzzer: fuzz target exited
+      Test unit written to /tmp/crash-e05fe2e17ee75243e27eb5cec1051e5c3b594220
+      {"u5ids": ["uuid_10"], "urlMap": {"uuid_10": "http://0.0.0.0:z0"}}
+  Replayed that exact input against a live server: the process stayed ALIVE and
+  returned a normal error. NOT REPRODUCIBLE, so it is not a target crash and
+  must not be reported as one. Something else ended that process; the run also
+  shows [JSRunner] Socket Communication Error: timed out elsewhere in the
+  campaign. Diagnose before any crash count is published (item 43).
+
+SET E PREPARATION -- TARGET MET
+  33 repos prepared (was 14), 470 configs (was 173), 145 skipped.
+  19 new repos / 297 new tools from 120 Set E repos attempted.
+  PREPARE-TIME YIELD ON SET E: 19/120 = 16%, vs Set A/B's 14/58 = 24%.
+  Skip reasons are the same families as Set A plus a large new one: repos that
+  need an API key or service to even answer tools/list (GCP keys, NTFY_TOPIC,
+  NILE_API_KEY, GITHUB_OWNER/REPO). That is the ecosystem, not the harness.
+
+  *** 33 PREPARED IS NOT 33 WORKING. *** Prepared = clone + install +
+  tools/list answered. Executable = the tool actually runs. Set A's ratio was
+  14 prepared -> 6 executable, and weread just demonstrated a repo can pass the
+  prepare gate while being entirely credential-blocked. Several of the new
+  repos are obviously gated (gmail-mcp 64 tools needs OAuth, google-workspace
+  13, circleci 13, square 3, google-cloud 34 -- whose build actually FAILED yet
+  it was still marked READY, see item 44).
+  eval/survey_executability.py (promoted out of scratch) re-measures this.
+  Early rows: nationalparks 29/29 OK, mcpFirebird 2/5 OK,
+  google-workspace 3/33 OK, pluggedin-mcp-proxy 0/5 ERR.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   42. weread::search_books timed out at 780s and produced no parsable
+       EXEC_SUMMARY (executable=unknown). Fail-fast should have caught it at
+       2000 executions; find out why it did not.
+   43. "libFuzzer: fuzz target exited" on crawl_webpage is NOT reproducible
+       from the recorded crash input. Find the real cause before any crash or
+       availability claim.
+   44. krzko/google-cloud-mcp was marked READY with "npm:install;build(FAILED)".
+       A repo whose build failed should not produce 34 configs. Check whether
+       prepare_targets is too permissive here.
+
+--- EXECUTABILITY CROSS-CHECK OF ALL 33 PREPARED REPOS (2026-09-10 15:40) ---
+eval/survey_executability.py, one representative tool per repo, driven with
+ToFu's own deterministic seeds + the config's file_backed_params.
+Raw output: eval/state/executability_survey_20260910.txt
+
+  15 of 33 repos executable   (was 6 of 14)
+  240 of 470 configs behind an executable repo   (was 30 of 173)
+
+EXECUTABLE, best first by ok/tried:
+  zengwenliang416/mcp-server-sequential-thinking  39/53  cov_sets=12  1 tool
+  KyrieTangSheng/mcp-server-nationalparks         29/29  cov_sets=3   6 tools
+  chatmcp/mcp-server-chatsum                      23/23  cov_sets=8   1 tool
+  AppiumTestDistribution/mcp-appium-gestures      21/40  cov_sets=5   5 tools
+  bhouston/mcp-server-text-editor                 12/40  cov_sets=3   1 tool
+  yan5236/bing-cn-mcp-server                       4/23  cov_sets=4   2 tools
+  krzko/google-cloud-mcp                           4/24  cov_sets=3  34 tools
+  Heratiki/locallama-mcp                           3/14  cov_sets=7  17 tools
+  aaronsb/google-workspace-mcp                     3/33  cov_sets=8  13 tools
+  PuroDelphi/mcpFirebird                           2/5   cov_sets=3  28 tools
+  wonderwhy-er/DesktopCommanderMCP                 2/5   cov_sets=5  26 tools
+  b-open-io/bsv-mcp                                2/8   cov_sets=6  23 tools
+  shinzo-labs/gmail-mcp                            2/5   cov_sets=3  64 tools
+  aurda012/cursor10x-mcp                           2/2   cov_sets=2  18 tools
+  maoxiaoke/create-mcp-server                      2/2   cov_sets=2   1 tool
+
+NOT EXECUTABLE (18): apisix (ECONNREFUSED :9180), graphlit (org credential),
+  n8n-builder, minesweeper (own game server), vsc-mcp (workspace-confined),
+  weread (IN-BAND COOKIE ERROR -- now correctly detected, bug 17),
+  anki (fetch failed, needs Anki running), circleci, square, screenshotone,
+  excalidraw, midi, knowledge-base, openrpc, tung-shing, pluggedin-proxy,
+  boilerplate (socket timeout), + excel-reader under deterministic seeds only.
+
+*** READ THIS BEFORE USING "240 CONFIGS" ***
+The survey tests ONE representative tool per repo. 240 is therefore an UPPER
+BOUND that assumes every tool in a repo behaves like its representative, which
+is false: google-workspace was 3/33 and gmail-mcp 2/5 on their representative,
+and most of their remaining tools need OAuth. The only authority on a given
+tool is that tool's own EXEC_SUMMARY from a real run. Do not put 240 in the
+paper as "tools fuzzed".
+
+TWO REPOS WORTH PRIORITISING ON SECURITY GROUNDS, not just on yield:
+  wonderwhy-er/DesktopCommanderMCP  26 tools, local filesystem + command
+     execution. This is the class ToFu's sanitizers were actually written for,
+     and it is one of the original hand-written targets in targets/.
+  bhouston/mcp-server-text-editor   file read/write, 12/40 executing.
+  Both are LOCAL tools -- no credential wall, and the introspection oracle can
+  observe them IF they are Python. Check: both are node, so the JS
+  instrumentation gap (open mismatch 3) still applies to their file operations.
+
+================================================================
+HOSTED ARM: gpt-4.1 -- FIRST RUN, 2026-09-10 16:14-16:48, 9 configs, 0.56h
+================================================================
+
+SETUP (eval/run_arm_gpt41.sh)
+  gpt-4.1 at https://api.openai.com/v1, temperature=0, seed=20260910.
+  CHOSEN OVER gpt-5 / o3 / o4-mini DELIBERATELY: those are reasoning models,
+  they ignore `temperature` and reject max_tokens ("Unsupported parameter:
+  'max_tokens' is not supported with this model. Use 'max_completion_tokens'").
+  The gemma4 arm runs at temperature=0 with reasoning DISABLED so that the model
+  is the only variable; pairing it with a model that reasons unconditionally
+  would confound the comparison. gpt-5 belongs in the thinking arm (item 24).
+  gpt-4.1 also REJECTS reasoning_effort outright -- 400 "Unrecognized request
+  argument supplied" -- and that 400 arrives at INVOKE time, so it would have
+  killed every call of a campaign. llm.py now drops the argument and rebuilds
+  the client on that specific error.
+
+RESULT SEPARATION (--arm / TOFU_ARM)
+  eval/state/runs.<arm>.jsonl, eval/runs/<arm>/, eval/corpora_<arm>/,
+  eval/metrics_<arm>/. Without it done_set() would make the second arm SKIP
+  every config the first arm ran, and summarize() would average two models
+  together. Default ("" ) keeps the existing layout byte-for-byte.
+
+*** THE NUMBER THAT MATTERS: 9/9 EXECUTABLE, 9/9 llm_selection ok,
+*** 9/9 llm_seeds ok, 0 harness errors.
+  First arm where every run reached the target AND the LLM stage worked on
+  every config. gemma4's comparable figures across 77 runs: selection ok on 31,
+  executability yes on 7.
+  LLM TAX: gpt-4.1 ~8s per config (select 4.0s + seedgen 3.6s) vs gemma4 ~270s.
+  ~35x. That tax was ~60% of every gemma4 run, so the hosted arm is roughly
+  2.3x faster end to end at the same 180s budget.
+
+ALL 761 ALERTS TRIAGED -> FALSE POSITIVE OR KNOWN NOISE. 4 signatures:
+
+  check_path_traversal   426 alerts  bhouston/mcp-server-text-editor
+      The tool REFUSED every one, in a normal MCP result:
+        {"success":false,"message":"Path must be absolute"}
+        {"success":false,"message":"File not found: /etc/passwd..."}
+        {"success":false,"message":"new_str parameter is required..."}
+      No isError, no top-level error -- a STRUCTURED refusal inside
+      content[].text. BUG 18, the same failure as bug 17 one layer deeper.
+      FIXED: _inband_error parses a content block's JSON and treats an explicit
+      "success": false (or its own error) as a failed execution. Prose is still
+      not guessed at -- "an error occurred" does not count.
+
+  check_invalid_json     313 alerts  sequential-thinking
+      NOT a tool defect. A SELECTION error, and a usable RQ2 datum: gpt-4.1
+      chose check_invalid_json for `thought`, a FREE-TEXT field. The sanitizer
+      fires whenever mutated text contains "{" and does not parse, which for
+      free text is meaningless. Report as selection precision.
+      NOTE the frontier model made a selection error of the same KIND as
+      llama3.1:8b's markitdown-for-appium -- applying a format checker to a
+      field whose contract does not mention that format. Worth saying in RQ2:
+      the failure mode is not exclusive to small models.
+
+  check_process_and_fd_leaks  4 tools   -- item 40, UNFIXED
+  check_resource_exhaustion   4 tools   -- item 39, UNFIXED
+      "Execution took 5.01 seconds (Limit: 2.0s)" on tools calling the National
+      Park Service API over HTTPS. A 5s network fetch is normal.
+
+QUARANTINED: eval/state/quarantine-fp-gpt41-20260910/ (6 records + logs +
+WHY.md). Active gpt41 index is 3 runs, 0 alerts.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   45. sec10_ethical.tex STILL OWES the hosted-model note. This arm sends
+       third-party tool names, descriptions and schemas to OpenAI; the local
+       arms do not. HANDOFF section 13 item 6 made this a precondition.
+   46. Rotate the OpenAI key when the experiment is done. It is in .env in
+       plaintext (gitignored and untracked -- no repeat of section 8) and it
+       passed through a Claude conversation.
+   47. Items 39 and 40 have now fired in THREE separate arms and produce most
+       of the remaining alert volume. Until they are fixed or scoped, every
+       campaign's "runs with alerts" number is dominated by them. 39 is a
+       threshold judgement (yours); 40 is a bug in the ancestor filter under
+       --workers 2 (mine, if you want it).
+
+--- ITEM 40 FIXED (2026-09-10): PROCESS-LEAK DETECTION WAS GLOBAL ---
+_execute_and_time diffed a GLOBAL pid snapshot (set(ps_before) vs
+set(ps_after)), so it saw every process the whole machine started during the
+execution window. With --workers 2 that is the OTHER worker's MCP server:
+    "Process leak/leftover detected: PID 38747 (node)"
+reported on four nationalparks tools that spawn nothing. It fired in three
+separate arms and produced most of the residual alert volume.
+
+There WAS an ancestry filter and it is correct in isolation -- verified against
+a synthetic ps map -- but it sat behind
+    if leaked_pids and self.current_runner and self.current_runner.process:
+so with no live `process` it was SKIPPED and the unfiltered global diff was
+returned. IT FAILED OPEN. Same shape as every other bug in this file: the
+degraded path was the permissive one.
+
+FIXED: _descendants(root_pid, ps_map) walks the child map from the run's own
+server pid, and BOTH snapshots are restricted to it before differencing. The
+difference is therefore exactly "processes this tool call left behind". With no
+root there are no descendants, so it now fails CLOSED. The ancestry re-filter is
+gone as redundant.
+4 tests: own-descendants only, other worker never attributed, no-root returns
+empty, and a source check that a global pid set is never diffed again.
+Suite: 109 passed.
+
+STILL OPEN -- item 39 (check_resource_exhaustion, 2.0s limit vs tools that make
+outbound HTTPS calls) is untouched: the threshold is a threat-model judgement,
+not a bug. Expect nationalparks to keep alerting on it after this fix.
+
+--- BUGS 18 + 19 VERIFIED, AND AN OVERCORRECTION CAUGHT (2026-09-10 18:32) ---
+Re-ran the four false-positive configs on the gpt-4.1 arm:
+    text_editor       426 alerts -> 0
+    getAlerts          14 alerts -> 0
+    getCampgrounds      2 alerts -> 0
+    getEvents           2 alerts -> 0
+    DONE 4 runs, 0 with alerts, 0 errors, 0 harness bugs
+Bug 18 (structured refusal inside content[].text) and item 40 (global pid diff)
+both confirmed fixed.
+
+*** BUT THE BUG-18 FIX OVERCORRECTED `executable`. ***
+Those tools are now marked executable=no:
+    findParks          2560/2560 succ  yes
+    getParkDetails     1024/1024       yes
+    getVisitorCenters  1024/1024       yes
+    getAlerts             0/1024       no   490x "Server error"
+    text_editor           0/2000       no   428x "Path must be absolute"
+
+text_editor WORKS. It rejected 2000 consecutive inputs because NOT ONE of
+ToFu's mutated paths was absolute. That is a SEED-QUALITY defect in ToFu, not
+an environment exclusion, and marking it "not executable" would silently drop a
+working, security-relevant target out of the denominator -- the same
+fail-quietly shape as everything else in this file, just pointing the other way.
+It is also the same class as the enum bug: the input generator ignoring a
+contract the tool states plainly ("Path must be absolute").
+
+FIXED (reporting, not classification): parse_log records exec_error_kinds and
+exec_error_top_share; summarize() now says a 0-success run is AMBIGUOUS and
+prints both readings, with a stated heuristic rather than a silent verdict:
+    (a) tool cannot run here      -> real environment exclusion
+    (b) tool rejected OUR inputs  -> ToFu seed defect, KEEP in the denominator
+    3 run(s): 'Server error'          [top error 64% across 5 kind(s)  -- varied, likely (b)]
+    1 run(s): 'Path must be absolute' [top error 27% across 16 kind(s) -- varied, likely (b)]
+One invariant message across wildly different inputs looks like (a); many
+varied validation messages look like (b). The tool prints both and refuses to
+decide. Do NOT let this heuristic become a silent classifier.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   48. SEED QUALITY IS NOW THE MEASURED BOTTLENECK ON WORKING TARGETS.
+       text_editor: 0 of 2000 inputs were a valid absolute path.
+       nationalparks getAlerts: 0 of 1024 succeeded while findParks on the SAME
+       server succeeded 2560/2560. The fuzzer is generating inputs that never
+       reach the tool's success path, so no sanitizer can observe real
+       behaviour. This is a bigger limiter on findings than the sanitizer
+       corpus. Root cause is the same family as the enum bug: byte-level
+       mutation destroys contract-bearing fields (absolute paths, IDs, enum
+       members) and the parser then rebuilds them from garbage.
+       Candidate fix: structure-aware mutation that preserves a field's
+       declared/inferred format, i.e. sec4_design.tex:147-150's actual claim.
+
+================================================================================
+2026-09-10  ADVERSARIAL REVIEW: Node code_exec instrumentation design  -> REJECT
+================================================================================
+Reviewed the proposed coverage_wrapper.js + js_runner.py code_exec hook
+(inspector Debugger.scriptParsed + node:vm patch -> RunnerResult.evaluated_code_calls).
+Everything below was MEASURED on Node v22.19.0, driving the PATCHED wrapper over
+the real Unix-socket protocol with a Python client replicating js_runner.
+Scratch artifacts: <scratchpad>/ce/{adv_target.mjs,adv_drive.py,probe1-6.mjs,covdrv.py}
+
+WHAT HOLDS UP (verified, credit where due):
+ - Not patching globalThis.eval is correct. `function calc(e){const secret=42;
+   return eval(e)} calc("secret + 1")` returned 43 through the instrument.
+   Patching it demotes direct eval to indirect eval -> ReferenceError. Keep this.
+ - Debugger.scriptParsed carries params.stackTrace by DEFAULT (no
+   setAsyncCallStackDepth needed), and session.post('Debugger.getScriptSource')
+   invoked from inside the notification handler DOES call back synchronously.
+   Both are load-bearing assumptions and both are true.
+ - scriptFailedToParse fires for eval('this is (((not js') and its source is
+   retrievable. Real gap, correctly closed.
+ - vm patch via process.getBuiltinModule('node:module').createRequire does
+   propagate to a target's `import { runInNewContext } from 'node:vm'`
+   (ns.runInNewContext === patched -> true). The facade-snapshot reasoning is right.
+ - Module.prototype._compile disk-compare produced NO false positive on shebang
+   or BOM .cjs files.
+ - Element dict shape {"function":str,"expression":str} matches
+   check_introspection_code_injection (introspection.py:487-488) exactly; the
+   oracle raises AttributeError on a bare string, so js_runner's _sane_code_calls
+   coercion is required and sufficient. Target tool results were unchanged.
+
+WHY IT IS REJECTED ANYWAY -- three measured defects, all of the HANDOFF.md §0 kind:
+
+ 1. SILENT MISS, PAYLOAD-CONTROLLABLE. A `//# sourceURL=` comment in the
+    evaluated source sets scriptParsed's `url`, and all three of the block's
+    bail-outs then drop the record (block.js:123-127).
+      eval(payload)                                -> recorded
+      eval(payload + '\n//# sourceURL=payload.js') -> NOT recorded, eval still ran
+      eval(payload + '\n//# sourceURL=file:///tmp/p.js') -> NOT recorded
+    Any target that appends a sourceURL for debugging (common in template
+    engines / `eval(code + '//# sourceURL=' + name)`) makes the WHOLE family
+    report zero for that target, forever, with a healthy-looking tofu_diag.
+
+ 2. MANUFACTURED FINDING ON LAZY INIT. check_introspection_code_injection fires
+    on the PRESENCE of any record. The novelty baseline only covers compiles
+    that happen BEFORE the first tools/call. Most MCP servers lazy-init. A
+    target caching `new Function(...)` on first call:
+      call 1 (lazy_init) -> fires=True, function='new Function'   <-- FP
+      call 2 (lazy_init) -> fires=False
+    _handle_violation reports and sets silent_bug_found. The design's own noise
+    test compiled its validator at STARTUP, which is exactly the case this misses.
+
+ 3. ORDER-DEPENDENT ORACLE. Identical input, twice:
+      call 8 (direct_eval "1+1") -> fires=True
+      call 9 (direct_eval "1+1") -> fires=False (suppressedNovel:1)
+    The eval genuinely ran both times. The attribute stops meaning "code was
+    evaluated during this execution" -- which is what the oracle's alert text
+    asserts and what PythonRunner's evaluated_code_calls means. Python-vs-JS
+    arm numbers are then not comparable, and tofuSeen.clear() at 4096 makes
+    the suppression depend on unrelated compiles.
+
+MEASUREMENT METHODOLOGY OF THE DESIGN IS ITSELF WRONG (both guards measure the
+wrong quantity -- flagging because this is the recurring failure):
+ - "throughput within ~5% (-2.6/-4.0/-3.1%)": measured on a target that never
+   compiles code, where Debugger.enable costs NOTHING (no-eval loop: 196ms vs
+   197ms, i.e. 0%). On an eval-per-call target the real cost is:
+     end-to-end over the socket: 1737 -> 1495 calls/s  (-14%, 2 trials)
+     microbench:  426k -> 75k evals/s  (6.3x slower, stable across N)
+   check_resource_exhaustion is in BASE_MANDATORY_SANITIZERS, so a 6x slowdown
+   on eval-heavy targets can manufacture a timeout finding.
+ - "coverage identity unchanged": the guard compared the FILE-NAME SET. Split by
+   file, target coverage really is identical (11 == 11 entries, sets equal) --
+   but wrapper self-coverage went 47 -> 101 entries. That only bites when no
+   package.json is found (targetDir degenerates to '/', coverage_wrapper.js:176-182),
+   in which case the patch doubles the junk fed to Atheris as target coverage.
+ - Debugger.enable also retains parsed scripts: post-gc RSS over 100k evals
+   grew +11.7MB with it off vs +34.6MB with it on. A long eval-heavy campaign
+   will grow monotonically.
+
+OTHER BLIND SPOTS (not necessarily disqualifying, must be documented if adopted):
+ - Any compile AFTER the first stdout chunk is missed -- tofuCollecting is
+   cleared there. Verified: a tool that writes its response then evals 5ms later
+   -> fires=False. Also inherits the pre-existing split-response truncation bug.
+ - Worker threads and child processes (acknowledged by the design).
+ - WebAssembly.compile/instantiate emits no scriptParsed -- arbitrary code
+   execution with zero records.
+ - vm.SourceTextModule (--experimental-vm-modules) and module.register()/custom
+   ESM loader hooks are not covered.
+ - js_runner early returns at :206 and :226 carry no tofu_js_diag, so a
+   socket-error run reports no diagnostics -- a silent-zero hole in the very
+   field added to prevent silent zeros.
+
+CONDITIONS FOR RE-REVIEW (all four):
+ a. Do not bail on a non-empty scriptParsed url. Distinguish a REAL module load
+    from a sourceURL-relabelled eval by the stack frame + embedderName, not by
+    the url string.
+ b. Kill the cross-call novelty set, or move dedup to the Python side where it
+    is visible and per-execution. The oracle must stay a pure function of the
+    execution.
+ c. Baseline the framework by call index (e.g. ignore records from call #1, or
+    require a site to be attacker-reachable), not by "before the first call".
+ d. Re-run the CLAUDE.md §4 acceptance test against a target that ACTUALLY
+    compiles code per call, and compare coverage entry sets per file, not
+    file-name sets.
+
+TO DOUBLE-CHECK: whether SECURITY_PROFILES["read_only"] (sanitizers/__init__.py:200-208)
+can force check_introspection_code_injection on. It lists that sanitizer, but I
+found no reference to SECURITY_PROFILES in fuzzer.py or llm.py -- if it is wired
+in elsewhere, this family becomes a third always-on layer (attribution trap,
+HANDOFF.md §2) rather than the LLM-selection-gated one it looks like at
+fuzzer.py:768.
+
+================================================================
+JS RUNTIME INSTRUMENTATION -- DESIGN PASS, 2026-09-10 (15 agents,
+2.1M subagent tokens, 85 evidenced facts). NOTHING SHIPPED, ON PURPOSE.
+================================================================
+
+Six hook families designed independently (fs, child_process, network,
+code_exec, crypto, sql_and_data), each adversarially reviewed by an agent told
+to assume the design is WRONG and to execute the real oracles against the
+proposed records. Result:
+
+    contract_matches: FALSE on ALL SIX.
+    4 REJECT, 2 ADOPT_WITH_CHANGES, and network additionally
+    will_break_target: TRUE.
+
+*** THE SHARED BLOCKER (5 of 6 designs) -- FIX THIS BEFORE ANY HOOK ***
+Every design adds its data to the wrapper's socket payload. NONE of them edits
+js_runner.py. src/runners/js_runner.py:231-241 reads exactly two keys --
+    cov_data  = payload.get("coverage", [])
+    resp_str  = payload.get("response", "")
+-- inside a bare `except Exception: pass`, and builds RunnerResult at :329-335
+with five fields. Anything else is JSON-serialised, sent over the socket, and
+DROPPED ON THE FLOOR; every getattr(res, ...) in fuzzer.py then returns its []
+default. Verified: grep for accessed_files|written_files|res_obj|setattr in
+js_runner.py returns NOTHING.
+=> As specified, all six families would have shipped a perfectly-shaped
+   instrument that reports 0 findings while looking healthy. HANDOFF section 0,
+   verbatim, for the fifth time. The integration point is the bug, not the hooks.
+
+PER-FAMILY DEFECTS, each MEASURED by running the real oracle on the real record:
+  child_process  emits "command"; check_introspection_unnecessary_root_privileges
+                 indexes cmd.get("cmd", "") at introspection.py:2024 -> CWE-250/272
+                 silently dead.
+  sql_and_data   `params: null` overloads two meanings; introspection.py:308 reads
+                 `params is None or len(params)==0` as UNPARAMETERISED -> false
+                 positives on correctly parameterised queries.
+  fs             written_files["mode"] is an open-mode STRING ("w"); 
+                 check_introspection_insecure_file_permissions (:1976) needs an
+                 int and falls back to os.stat IN THE FUZZER PROCESS. chmod's
+                 permission argument is discarded entirely -- the exact CWE-276/732
+                 signal. Delete handlers omit the underTmp() guard recWrite has, so
+                 ANY failed delete of any still-existing path manufactures
+                 CWE-533 + CWE-459. Measured: fs.rmSync('./pkg') on a directory ->
+                 leaked_temp_files ["./pkg"] -> two findings.
+  code_exec      per-element shape correct; LIST SEMANTICS wrong.
+  crypto         shapes verified correct against three real oracles; other defects.
+  network        shapes correct AND THE TRACER ALTERS TARGET BEHAVIOUR:
+                 the dns.lookup hook rebuilds the function without copying
+                 Symbol(customPromisifyArgs), so promisify(dns.lookup) changes
+                 semantics. Worse, extractAddress defaults an absent host to
+                 'localhost', which is in check_introspection_ssrf's
+                 internal_host_patterns (:567) -- a benign target doing
+                 net.connect({port:6379}) to a local Redis would emit a
+                 GUARANTEED SSRF ALERT ON EVERY EXECUTION. It would have
+                 manufactured the finding we most want.
+
+BLIND SPOTS COMMON TO EVERY FAMILY (measured, not assumed):
+  child processes  execSync('cat /etc/passwd') -> accessed_files []
+  worker threads   new Worker(...,{eval:true}) reading /etc/passwd -> []
+                   (compounded: coverage_wrapper.js:35 stores workerSessions
+                    that :117-121 never polls, so worker COVERAGE is discarded too)
+  native addons    better-sqlite3, sharp, esbuild -- N-API I/O in C++ bypasses
+                   the JS exports entirely
+These are the same exclusion class as "ToFu ships two runners". State them.
+
+ONE VERIFIER CAUGHT A FABRICATED JUSTIFICATION, worth recording as process:
+a design justified an edit with "getLineOffsets runs inside processCoverage, so
+without this the target's source files land in accessed_files on every call".
+VERIFIED FALSE: getLineOffsets/offsetToLine are defined at :139/:158 and CALLED
+NOWHERE -- the byte-offset rewrite at :235-273 made them dead code. The edit is
+a harmless no-op with a measured-sounding rationale attached. That is exactly
+the CLAUDE.md rule-1 pattern, produced by a model, caught by an adversarial
+reader. Keep the adversarial stage.
+
+ORDER OF WORK WHEN THIS IS BUILT (not started):
+  1. js_runner.py payload plumbing FIRST, with a test that fails if a known key
+     does not reach RunnerResult. Without it every hook is decorative.
+  2. Then ONE family end to end, with a control target, before the next.
+     Start with network -- it is what makes an SSRF verdict possible -- but only
+     after the dns.lookup symbol copy and the 'localhost' default are fixed.
+  3. Never land a family whose verifier says contract_matches:false.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   49. The full designs + verdicts are in the workflow journal:
+       .claude/projects/.../subagents/workflows/wf_a107e419-5ce/journal.jsonl
+       They contain runnable code. Nothing from them is in the repo yet.
+   50. Decide whether JS instrumentation is in scope for THIS paper at all. If
+       not, sec4.5.1 / Table 3 / RQ3 must be scoped to Python explicitly and the
+       Node majority reported as a stated limitation -- which is defensible, and
+       cheaper than six families done properly.

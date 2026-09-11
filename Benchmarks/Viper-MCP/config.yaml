@@ -1,0 +1,48 @@
+mcp_server:
+  repo_path: "/path/to/target-mcp-server"
+  transport: "stdio"
+  startup_command: ["node", "dist/index.js"]
+  timeout: 30
+  interaction_log_path: "./results/interactions.jsonl"
+
+llm:
+  prompt_generator:
+    provider: "openai"
+    model: "gpt-5.4"
+    api_key: ""
+    base_url: ""
+    temperature: 0.7
+    max_tokens: 2000
+
+  agent:
+    provider: "openai"
+    model: "gpt-5.4"
+    instruction: ""
+    temperature: 0.7
+    api_key: ""
+    base_url: ""
+
+codeql:
+  language: "javascript"
+  codeql_binary_path: "/path/to/codeql"
+  report_path: "./output"
+  query_pack_root: "./ql"
+  queries:
+    - "jsql/src/CommandInjectionFromRequest.ql"
+    - "jsql/src/FileAccessFromRequest.ql"
+    - "jsql/src/RequestForgeryFromRequest.ql"
+  enabled: true
+
+fuzz:
+  rounds: 10
+  interval: 1.0
+
+logging:
+  level: "INFO"
+  file: "./results/fuzzer.log"
+  console: true
+
+output:
+  directory: "./results/fuzz_results"
+  save_all: false
+  save_exceptions_only: true
