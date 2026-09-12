@@ -2567,3 +2567,1319 @@ ORDER OF WORK WHEN THIS IS BUILT (not started):
        not, sec4.5.1 / Table 3 / RQ3 must be scoped to Python explicitly and the
        Node majority reported as a stated limitation -- which is defensible, and
        cheaper than six families done properly.
+
+================================================================
+PYTHON CORPUS NUMBERS + THE REASON THERE IS NO PYTHON ARM
+2026-09-10, measured for the paper
+================================================================
+
+FUNNEL (MCPCorpus, Lin et al. ASE 2025, pinned snapshot)
+  13,875 records -> 2,222 unique repos after filters+dedup
+  -> 1,847 ToFu-runnable (two runners only):  python 808, node 1,039
+  -> 1,778 extraction succeeded:              python 777, node 1,001
+  -> python repos with >=1 extracted tool:    597   (10,130 tools)
+     node   repos with >=1 extracted tool:          (14,064 tools)
+
+PYTHON DISTRIBUTIONS (597 repos, tools parsed from source, not corpus metadata)
+  tools/repo   min 1  p25 2  median 6  p75 14  max 881  mean 17.0
+  stars        min 10 median 31  p90 214  max 51,119
+               ^^^ p90 214 IS WRONG -- see 2026-09-11 correction below. Use 201
+                   (index) / 206.2 (linear interp). Median and max are correct.
+  sink families (share of the 597; a repo can match several):
+    LogInjection            85.4%   CodeExecution           24.3%
+    SensitiveDataLogging    72.5%   TempFileLeak            21.8%
+    FileAccess              59.5%   SQLExecution            20.3%
+    NetworkExecution        57.8%   UnverifiedCodeDownload  17.3%
+    FileWrite               34.8%   WeakPRNG                16.4%
+    ReDoS                   31.0%   DataAmplification       10.9%
+    CommandExecution        30.8%   WeakHash                 9.0%
+    BlockingEventLoopCall   30.2%   XXE                      5.0%
+    LoopCondition           27.8%   SSLCertValidation        4.2%
+    UnrestrictedIPBinding   26.0%  <- BROKEN PROBE, exclude from any table
+                                       ("server|port|host" matches almost
+                                        every MCP description)
+    Deserialization          4.0%   NonceReuse               3.2%
+    repos matching no family: 12
+  mcp.so categories are useless for stratification and must not be used:
+    developer-tools 264 + research-and-data 251 = 86% of the 597.
+
+SAMPLED SETS, python share
+    Set A  50 repos  = 21 python / 29 node   (252 python tools)
+    Set B   8 repos  =  4 python /  4 node   ( 33 python tools)
+    Set E 300 repos  = 129 python / 171 node (3,875 python tools)
+
+*** THE BLOCKER: 0 PYTHON TARGETS HAVE EVER BEEN PREPARED. ***
+    prepared repos: 33  -- ALL 33 ARE NODE
+    configs:       470  -- ALL 470 ARE NODE
+    python repos attempted: 75.  python repos prepared: 0.  100% failure.
+  Failure reasons:
+    23  "No module named <pkg>" when launched
+    18  pip -r requirements.txt failed
+    14  pip install -e . failed
+    11  no python entrypoint
+     9  no tools/list reply
+
+  ROOT CAUSE, read from eval/prepare_targets.py: sys.executable is used for
+  BOTH installing a target and launching it --
+      :81  run([sys.executable, "-m", "pip", "install", "-q", "-r", "requirements.txt"])
+      :86  run([sys.executable, "-m", "pip", "install", "-q", "-e", "."])
+      :136 return sys.executable, [fp]
+      :147 return sys.executable, ["-m", mod]
+  So every Python target's dependencies are installed into ToFu's OWN venv,
+  where they collide with each other and with ToFu's pins (mcp==2.2.0, atheris,
+  langchain-*). Several failures are literally the mcp<2 migration error. The
+  "No module named" bucket is repos that ship only requirements.txt: their deps
+  install but the package itself never does, so `python -m <mod>` cannot resolve.
+  HANDOFF already gives the Cisco scanner its own venv for exactly this reason
+  ("installing it into the toolfuzzer venv would change the versions the ToFu
+  campaign runs under"). That was never applied to targets.
+
+  *** WHY THIS MATTERS MORE THAN ANYTHING ELSE OPEN ***
+  The introspection oracle -- Table 3's 21 tracers, all 19 of the runner-fed
+  oracle inputs, sec4.5.1, RQ3 -- WORKS ONLY ON PYTHON. Node gets coverage and
+  nothing else. So ToFu has never once run its own oracle on a real corpus
+  target. Every campaign to date has been the one language where the central
+  mechanism is switched off. Fixing preparation to give each target its own
+  venv converts 0 python targets into potentially dozens and is the
+  precondition for ANY finding the paper can claim.
+
+- TO DOUBLE-CHECK (Ananto, do not erase until confirmed done):
+   51. Per-target venv in prepare_targets.py (uv venv is fast), install there,
+       launch with THAT interpreter. Highest-value fix open. Until it lands the
+       Python arm does not exist and the oracle has never been exercised.
+   52. The 75 python skips are currently in skipped.jsonl as if they were
+       ecosystem exclusions. They are NOT -- they are a harness defect. They
+       must be re-attempted after item 51 and the exclusion list recomputed
+       before any exclusion count goes in the paper.
+
+================================================================================
+2026-09-11  NODE CORPUS NUMBERS + CORRECTION TO PYTHON STARS p90
+================================================================================
+Source: Benchmarks/extraction/results.jsonl (1,778 rows). Recomputed, not recalled.
+
+  extraction succeeded          python 777    node 1,001
+  repos with >=1 extracted tool python 597    node   807   (total 1,404)
+  tools                         python 10,130 node 14,064  (total 24,194)
+  tools/repo med                       6             6
+              p75                     14            16
+              max                    881           918
+              mean                  17.0          17.4
+  stars med                             31            27
+        max                         51,119       103,313
+  repos matching no sink family         12            26
+
+Node sink families (% of 807): SensitiveDataLogging 79.1, LogInjection 66.7,
+NetworkExecution 61.5, FileAccess 50.3, FileWrite 47.6, BlockingEventLoopCall 39.7,
+UnrestrictedIPBinding 37.1 (BROKEN PROBE - exclude), CommandExecution 33.0,
+CodeExecution 24.7, WeakPRNG 24.0, ReDoS 20.0, TempFileLeak 17.0, LoopCondition 16.9,
+UnverifiedCodeDownload 15.4, SQLExecution 14.7, DataAmplification 12.8, WeakHash 7.6,
+NonceReuse 7.1, Deserialization 4.6, SSLCertValidation 2.5, XXE 2.4.
+
+Language shapes are near-identical on tool count (median 6 both, mean 17.0 vs 17.4),
+so language is not a confound for tools/repo. Sink mix does differ: node skews
+FileWrite (+12.8pp) and BlockingEventLoopCall (+9.5pp) -- consistent with an async
+runtime; python skews ReDoS (+11.0pp) and LoopCondition (+10.9pp).
+
+CORRECTION (mine). On 2026-09-11 I reported python stars p90 = 214. That number is
+NOT reproducible from results.jsonl and I cannot trace it to any log. Correct values:
+201 (index-based) / 206.2 (linear interpolation, statistics.quantiles inclusive).
+Use 201 and state the method. Median 31 and max 51,119 were correct.
+Node p90: 269 (index) / 278.6 (interp).
+LESSON: percentile method must be stated alongside any percentile that reaches the
+paper -- the two methods differ by ~3% here and by more in the tails.
+
+SCOPE REMINDER for both tables: 0 of the 1,404 repos have been fuzzed. 33 prepared
+(all node), 15 executable = 1.1% of corpus. Tables describe the CORPUS, not ToFu's
+measured targets. Captions must not imply otherwise. See items 51/52.
+
+================================================================
+2026-09-11  SINK-PROBE PROVENANCE + A CORRECTION I OWE
+================================================================
+WHERE THE 21 FAMILIES CAME FROM: they are the inverse image of ToFu's own
+oracle, not a taxonomy. extract_tools.py:38 says so -- "sink patterns, keyed
+to ToFu's 21 introspection tracers". Verified 1:1 against
+src/sanitizers/introspection.py: 21 *Tracer classes, 21 SINKS keys, names
+match exactly (only SSLCertificateValidationTracer -> SSLCertValidation).
+Consequence: the table cannot be captioned "sink prevalence in MCP servers"
+without being circular. Captioned as TRACER COVERAGE instead.
+
+CORRECTION (mine, stated twice to Ananto before being caught). I claimed
+UnrestrictedIPBinding's pattern was "server|port|host". WRONG. Two different
+proxies exist in this project and I conflated them:
+  (a) nazmul.todo:480 -- keyword proxy over repo name/title/description.
+      IPBinding 84.7%. THAT one is the "server|port|host" probe.
+  (b) extract_tools.py SINKS -- static scan of cloned source. IPBinding
+      26.0% py / 37.1% node. Pattern is r'0\.0\.0\.0', r'host\s*=\s*["\']0',
+      r'listen\s*\('.
+The table's numbers come from (b). Still over-broad -- r'listen\s*\(' matches
+every socket/HTTP server -- but the REASON I gave was wrong. Footnote in
+tab_corpus.tex corrected.
+
+NINE LOW-SPECIFICITY PROBES (match language constructs, not sink APIs):
+  LogInjection (print(), SensitiveDataLogging (os.environ -- no logging at all
+  despite the name), FileAccess (any open(), FileWrite (any .write(),
+  ReDoS (any re.compile), BlockingEventLoopCall (any sleep/sync IO, and it
+  SHARES readFileSync with FileAccess and execSync with CommandExecution ->
+  probes are NOT disjoint, marginals cannot be summed), LoopCondition
+  (while True), UnrestrictedIPBinding, WeakPRNG (random.shuffle counts).
+  These 9 are valid as an UPPER BOUND on tracer reach. They are NOT valid for
+  stratification, prevalence ranking, or as detection-rate denominators.
+TWELVE SPECIFIC PROBES report 2-5% and are informative (Deserialization,
+  SSLCertValidation, XXE, NonceReuse, WeakHash, ...).
+
+NOT MEASURED: no hand-labelled sample, so no precision/recall, no error bar.
+Also cannot decompose which subpattern drove a family hit -- results.jsonl
+stores only the per-family total. Would need a rescan.
+
+NEW FILES FOR THE PAPER:
+  ToFu_src/tab_corpus.tex  -- corpus funnel prose + Table funnel + Table
+                              sink-families (py/node, split low-spec/specific)
+  ToFu_src/app_probes.tex  -- appendix: probe validity, patterns verbatim,
+                              overlap, unvalidated precision
+Both carry header comments naming the source file for every number. Neither
+has been compiled yet -- Ananto must \input them and build.
+
+================================================================
+2026-09-11  GIT PROVENANCE OF THE 21 TRACERS AND THE 21 PROBES
+================================================================
+TRACERS (src/sanitizers/introspection.py) -- Pierre, all of it:
+  b1b657e 2026-07-28 "Add introspection sanitizers and file access tracing"
+                     71 lines, 1 tracer (FileAccessTracer)
+  87d8602 2026-08-04 "latest edit"   71 -> 2238 lines, 1 -> 21 tracers
+  20ca12c 2026-08-19 set unchanged
+  2aac17b 2026-08-24 set unchanged
+  Class list diffed 87d8602 vs working tree: IDENTICAL. Set frozen since
+  2026-08-04. 20 of 21 tracers landed in ONE commit whose message is
+  "latest edit".
+
+PROBES (Benchmarks/extraction/extract_tools.py) -- ours, September:
+  e14a363 2026-09-10 Nazmul Islam Ananto, +147 lines, NEW FILE. No history
+  before that; untracked until the new_eval commit. Sole provenance is its own
+  comment: "sink patterns, keyed to ToFu's 21 introspection tracers".
+
+CORRECTION (mine, second one today). I told Ananto the 21 families were "not
+derived from a taxonomy". WRONG for the TRACERS. introspection.py contains 129
+CWE references, 52 distinct, one per oracle docstring (CWE-502 deserialization,
+CWE-77/78 command injection, CWE-89 SQLi, CWE-918 SSRF, CWE-94 code injection,
+CWE-434 file upload, ...). sec4_design.tex:59-62 already states CWE is the
+knowledge source and Table 3 is described as CWE-based. Only the STATIC PROBES
+are the non-taxonomy inverse image. app_probes.tex corrected to separate the
+two layers.
+
+*** THE REAL GAP, FOR ANANTO ***
+  51b. WHY THESE 21 AND NOT OTHERS IS RECORDED NOWHERE. One commit, message
+       "latest edit", no selection criteria, no note on CWEs considered and
+       rejected. 52 distinct CWEs appear in the file but only 21 became
+       tracers; nothing documents how that cut was made. Either ask Pierre, or
+       accept that the paper's rationale is a POST HOC RECONSTRUCTION and do
+       not write it as original design intent. A reviewer asking "why 21?" has
+       no answer in this repo today.
+
+================================================================
+2026-09-11  THE PAPER'S 569 TOOLS ARE NOT REPRODUCIBLE ON THIS MACHINE
+================================================================
+Ananto asked to "run all the tools" because the paper already promises it.
+Checked what the paper promises and whether the targets still exist.
+
+WHAT IS PROMISED (sec0_abstract.tex:11, sec1_intro.tex:59/80, sec6_eval.tex:32):
+  "569 tools across 11 repositories", "14 previously unknown bugs"
+  Table tab:evaluation_repositories, sec6_eval.tex:41-62.
+
+THE 11 REPOS ARE NOT THE CORPUS. They are Pierre's hand-picked set, fuzzed
+through targets/fuzz_*.py + third_party/, NOT through eval/configs. Two
+entirely separate execution paths. 8 of the 11 are Python.
+
+third_party/ IS GITIGNORED (.gitignore:15). Checked what survives:
+  PRESENT: pmb 68 tools, chrome-devtools-mcp 6, DesktopCommanderMCP 4,
+           brightdata-mcp 2, markitdown 1 (no third_party dep)   =  81
+  MISSING: tools-main 412, serena 43, memo 17, basic-memory 9,
+           chroma-mcp 3, terravision 4                           = 488
+  81 + 488 = 569. Checks out.
+  Wrappers exist for serena/memo/basic_memory/sentinelx but the REPOS they
+  import are gone, so those harnesses cannot import.
+
+*** 488 OF 569 TOOLS (86%) CANNOT BE RUN TODAY. tools-main alone is 412
+    (72%) and is the repo Pierre himself flagged as dominating the dataset. ***
+
+SO "RUN ALL THE TOOLS" IS BLOCKED BY THREE INDEPENDENT THINGS:
+  (1) third_party/ gitignored, 6 of 11 target repos absent. Must re-vendor at
+      the commits the paper claims -- and sec6_eval.tex:65 is an open Pierre
+      TODO asking for exactly those commit hashes, which we do not have.
+  (2) item 51: Python targets do not run through eval/ at all (sys.executable).
+  (3) the 14-bug claim has no recorded funnel (sec6_eval.tex:103 TODO) and no
+      disclosure status (sec6_eval.tex:105 TODO). We have reproduced 0 of 14.
+
+GPT-4.1 FULL-CORPUS COST, measured not guessed:
+  sanitizer catalogue = 71 sanitizers, 10,813 chars = ~2,703 tokens, sent on
+  EVERY select_sanitizers call (src/llm.py:796). Two LLM calls per run.
+  ~7,500 tokens/run in+out -> 470 configs ~= 3.5M tokens. Cost is NOT the
+  constraint; verify current gpt-4.1 pricing before quoting a dollar figure.
+  Wall time is the constraint: 470 x 180s / 2 workers = 11.75h; /4 = 5.9h.
+  Only 240 of 470 configs sit behind executable repos.
+  Token usage is NOT recorded in the run logs -- add it before any cost claim.
+
+  53. DECIDE (Ananto): does the paper keep the 569/11/14 claim, or is the
+      evaluation rebuilt on the MCPCorpus sets? Keeping it requires
+      re-vendoring 6 repos at unknown commits and re-deriving 14 findings we
+      have never reproduced. Rebuilding it requires item 51 first. This is the
+      single biggest open question in the project and it is not a code fix.
+
+================================================================
+2026-09-11  ITEM 51 LANDED + BUG 20 (transport failure scored as a finding)
+================================================================
+ITEM 51 -- PER-TARGET VENV. DONE. eval/prepare_targets.py.
+  Before: 0 of 75 Python repos prepared. After: 6 of 21 Set A Python repos
+  READY, 60 Python configs written. FIRST PYTHON TARGETS ToFu HAS EVER HAD.
+  Three distinct root causes, all measured, none guessed:
+   (a) sys.executable everywhere -- deps installed into ToFu's OWN venv and
+       collided with our pins (mcp==2.2.0). Even the one correct path,
+       `uv sync --frozen`, built dest/.venv and then LAUNCHED WITH
+       sys.executable anyway, throwing the good venv away.
+   (b) uv venv defaults to the newest Python present (3.14.4 here). Mid-2025
+       deps (pydantic-core 2.27) ship no 3.14 wheels -> source build -> needs
+       Rust -> fail. Pinned TARGET_PYTHON=3.11 (env TOFU_TARGET_PYTHON).
+   (c) Repos pin their code but NOT their SDK. mindmap-mcp-server asks for
+       "mcp>=1.2.0" -> resolves to mcp 2.x -> FastMCP renamed to MCPServer ->
+       dies on import. Now resolving with `uv --exclude-newer <last_commit>`,
+       which is both contemporary AND reproducible. Falls back to an unpinned
+       retry (noted as "no-cutoff") because some repos were updated after the
+       snapshot and genuinely need 2.x.
+  Also: target_env() strips VIRTUAL_ENV/PYTHONPATH/PYTHONHOME/CONDA_PREFIX from
+  child processes, and detect_launch() now prefers the venv's CONSOLE SCRIPT
+  over `-m pkg` (a "pkg:main" entry point is a FUNCTION; `-m pkg` fails with
+  "cannot be directly executed" unless __main__.py exists -- that was 2 of 10).
+  New flags: --only-lang {python,node}, --retry-skipped (item 52 needs it).
+
+REMAINING PYTHON SKIPS (15 of 21), now with HONEST reasons:
+  genuinely not our fault: repo SyntaxError (VibeCheck), missing credentials
+  (REPLICATE_API_TOKEN, gmail creds-file), missing system binary (adb),
+  requires-python >3.11 (linkedin-mcp), fastmcp version conflict (kolada).
+  possibly still ours: 4x "no python entrypoint", 2x "no tools/list reply".
+  -> item 52 still open: rerun ALL 75 with --retry-skipped and recompute the
+     exclusion list BEFORE any exclusion count is written in the paper.
+
+*** BUG 20 -- INSTRUMENT REPORTED ITSELF AS A FINDING (found live) ***
+  During the gpt41-full run Ananto saw HIT [1..4/470] on mcp-appium-gestures,
+  alerts=1,5,3,21, sigs=1. All 21 on generate-swipe-code were:
+    "Resource exhaustion/Timeout detected: Execution took 5.01s (Limit: 2.0s)"
+    "Tool Output : None"
+    "[JSRunner] Socket Communication Error: timed out"
+  js_runner.py:166 sets sock.settimeout(5.0); config.timeout_limit is 2.0.
+  A TIMED-OUT READ THEREFORE ALWAYS EXCEEDS THE THRESHOLD. Nothing executed --
+  output is None -- yet it scored as resource exhaustion. The runner then
+  restarts the server, whose boot time makes the next read time out too, so one
+  dead server cascades into many identical "findings".
+  FIX: _check_resource_exhaustion(elapsed, res) now returns False when res
+  indicates a transport failure. 6 regression tests, fixtures verbatim from
+  eval/runs/gpt41-full/...generate-swipe-code.log.
+  HONEST LIMITATION, stated in the docstring: a GENUINE hang also surfaces as a
+  socket timeout, so this trades recall for soundness. Telling "tool hung" from
+  "server died" needs a liveness probe after the timeout -- item 39, open.
+  Run was killed at 4/470 and must be restarted. Nothing from it is evidence.
+
+  Also fixed: test_no_undefined_names_anywhere now ignores eval/targets/,
+  which since item 51 contains third-party site-packages. run_eval.py's
+  preflight checks 4 explicit files, so it was never affected.
+
+================================================================
+2026-09-11  TRIAGE OF ALL 8 gpt41-full RUNS + BUG 21 (target ran from OUR cwd)
+================================================================
+Ananto asked for all 8 logs to be checked rather than the 4 I had seen. Right
+call -- they were NOT all the same failure. 56 alerts total, TWO classes.
+
+CLASS 1 -- 42 alerts, check_resource_exhaustion. ALL transport failures.
+  42 exhaustion alerts vs 43 socket timeouts in the same logs; every elapsed in
+  [5.00, 5.17] against a 5.0s sock.settimeout and a 2.0s threshold; every one
+  with "Tool Output : None". Bug 20, already fixed. Not evidence.
+
+CLASS 2 -- 14 alerts, check_path_traversal, ArchimedesCrypto/excel-reader-mcp
+  ::export_to_json. "Silent Bug Alert: sanitizers flagged this input as
+  malicious, but the tool executed successfully." DIFFERENT MECHANISM, and it
+  led to a second, worse bug.
+
+*** BUG 21 -- TARGETS RAN FROM ToFu'S REPO ROOT, NOT THEIR OWN DIRECTORY ***
+  prepare_targets.py has ALWAYS written "cwd" into every config. NOTHING EVER
+  READ IT. js_runner.py called subprocess.Popen(cmd, ...) with no cwd=, so the
+  target inherited ToFu's cwd. src/__main__.py never parsed the key, and
+  FuzzerConfig had no field for it.
+  REPRODUCED BOTH WAYS, same input, outputPath="../../../../tmp/evil.json":
+    cwd = target's own dir -> MCP error -32603 ENOENT. Tool fails safely.
+    cwd = ToFu repo root   -> SUCCESS, wrote /tmp/evil.json (content [] then
+                              [{"col":"val"}]). Four levels up from the repo
+                              root is exactly "/", which is why the escape
+                              landed in /tmp and not where cwd arithmetic on
+                              the target dir predicted.
+  The two files found on disk (/tmp/evil.json, /tmp/evil.jso, 2 bytes each,
+  mtimes 02:14:56 and 02:16:33, inside the run window) are preserved under the
+  session scratchpad evidence/ dir.
+  COMPOUNDING: fuzzer.py's traversal oracle resolved allowed_dir as
+  "allowed_workspace_dir or os.getcwd()" -- so escapes were judged against
+  ToFu's OWN tree. Two independent expressions of the same confusion.
+  FIX: FuzzerConfig.target_cwd; __main__ reads config["cwd"] and also seeds
+  allowed_workspace_dir from it; JSRunner takes cwd= and passes it to Popen;
+  fuzzer passes config.target_cwd when constructing JSRunner; allowed_dir now
+  prefers target_cwd and keeps os.getcwd() only as a last resort.
+  6 regression tests, including one asserting EVERY prepared config has a cwd.
+
+  VERDICT ON THE 14 ALERTS: NOT SOUND EVIDENCE AS RECORDED. Under the correct
+  cwd the same input fails with ENOENT, so the observed escape to /tmp is our
+  artefact. DO NOT report them. But do NOT dismiss the underlying question
+  either: export_to_json performs no validation of outputPath, so "../evil.json"
+  would still escape into eval/targets/ under a correct cwd. Whether that is a
+  real finding must be RE-TESTED after bug 21, not inferred from these logs.
+   54. RE-TEST excel-reader-mcp::export_to_json outputPath validation under the
+       corrected cwd before writing anything about it.
+
+  WIDER IMPACT, not yet quantified: every Node target so far ran from the wrong
+  directory. Any target that reads relative config/data files was mis-run, and
+  some "no tools/list reply" and executability failures may be this. The
+  15-executable / 18-not-executable split predates the fix and is now suspect.
+   55. Re-run the executability survey after bug 21. The exclusion counts in
+       the paper depend on it.
+
+================================================================
+2026-09-11  LIVE RUN IS HEALTHY + BUG 22 FOUND (fix DEFERRED on purpose)
+================================================================
+First 8 configs of the post-fix gpt41-full run, read from
+eval/state/runs.gpt41-full.jsonl:
+  all 8 executable=yes; exec success 1731-2037 of 2048 (85-99%)
+  ZERO check_resource_exhaustion alerts  -> BUG 20 FIX CONFIRMED IN PRODUCTION
+  no stray writes into the repo root after 02:27 -> BUG 21 FIX CONFIRMED
+  (the five junk files C:\temp\out.json, "+.csv", output.json etc. in the repo
+   root all have mtimes 02:14-02:17, i.e. the QUARANTINED run. Preserved under
+   the session scratchpad evidence/bug21-repo-root-writes/.)
+
+export_to_json still reports 7 check_path_traversal hits (was 14). Read the
+inputs before believing it -- I did:
+   'outputPath': ''                       <- empty, nothing written
+   'dateFormat': '../../../../../etc/passwd'   <- THE PAYLOAD IS HERE
+Tool returns content inline, writes no file, and is called a "Silent Bug".
+
+*** BUG 22 -- check_path_traversal RUNS ON NON-PATH ARGUMENTS ***
+  fuzzer.py:944 guards path/URL sanitizers by parameter NAME:
+    if sanitizer_name in ("check_unsafe_url_ssrf", "check_local_file_uri",
+                          "check_directory_jailbreak_write"):
+        if not ("url"/"uri"/"link"/"path" in prop_lower): continue
+  check_path_traversal IS NOT IN THAT LIST, so it fires on every string arg.
+  A traversal payload in a DATE FORMAT string is not an attack, and a tool that
+  ignores it is behaving correctly. Same family as bugs 16/17/18 and the
+  _find_url_argument fix. This is items 35/36 finally reproducing on real data.
+
+  FIX DEFERRED DELIBERATELY. The campaign is running; each config is a fresh
+  subprocess, so editing src/fuzzer.py now would give configs before and after
+  the edit different oracle semantics inside ONE index. A third restart costs
+  more than the fix is worth: coverage, exec-rate and executability -- the
+  reasons this run exists -- are all unaffected by bug 22.
+   56. AFTER the run finishes: add check_path_traversal (and audit every other
+       string sanitizer) to the parameter-name context guard, with a path-ish
+       name set wider than the URL one (path|file|dir|folder|output|dest|
+       target|src|source|location). Then re-run the affected configs.
+   57. WHEN READING runs.gpt41-full.jsonl: subtract every check_path_traversal
+       hit whose payload sits in a non-path parameter. Do NOT report raw alert
+       counts from this run without that subtraction.
+
+================================================================
+2026-09-11  AGGREGATE COVERAGE FIGURE + A CDF BUG ANANTO CAUGHT
+================================================================
+NEW: eval/plot_coverage_aggregate.py -- corpus-wide, not one figure per tool.
+  4 panels: (a) every tool + median/IQR, (b) normalised saturation,
+  (c) median per repository, (d) CDF of final coverage.
+  Refuses to plot: executable != yes, and timelines older than --since.
+  eval/metrics_<arm>/<tool>/ accumulates one CSV PER INVOCATION, so a tool
+  fuzzed twice has both the quarantined pre-fix run and the current one. Always
+  pass --since or the figure mixes bug-20/21-era data with post-fix data.
+  Run: python3 eval/plot_coverage_aggregate.py --arm gpt41-full \
+         --since "2026-09-11 07:00"
+
+BUG (mine) IN PANEL (d), caught by Ananto asking "is the X axis alright here?":
+  CDF was y = i/n over i in 0..n-1. That starts at 0.0 -- claiming NO tool
+  reaches the minimum value when one does -- and ends at (n-1)/n, so the curve
+  never reached 1.0 (it visibly stopped at ~0.97). Correct is (i+1)/n.
+  He asked about X; the X axis was merely a bad choice (linear 0-2000 with 60%
+  of tools under 250 squashes the bulk into the left eighth) and the Y axis was
+  actually WRONG. Fixed both: (i+1)/n, log x, xlim from the data not 0.
+
+WHAT THE FIXED FIGURE SHOWS (34 tools, run still in progress, DO NOT QUOTE):
+  final coverage  min 72  p25 123  median 167  p75 776  max 3411
+  THE DISTRIBUTION IS BIMODAL. Flat shelf between ~200 and ~700 edges where
+  almost no tool lands: 53% sit at 72-170, the rest at 700-3400. Panel (c)
+  splits the same way -- excel-reader-mcp and mcp-appium-gestures low,
+  locallama-mcp and mcpFirebird high. Two regimes, not a spread of target
+  complexity. HYPOTHESIS ONLY (how much server code one tool call reaches);
+  not measured, must not be asserted in the paper.
+
+SATURATION, measured over 26 executable runs earlier in the same run:
+  coverage at first sample   median 128   (final median 143)
+  edges gained after it      median  30
+  seconds to 90% of final    median  24.7   (p25 8.5, p75 55.4)
+  seconds to 99% of final    median 100
+  total execs                median 2235
+  zero gain after first sample: 1/26; <=5 edges gained all budget: 3/26
+  => a 180s budget buys ~10% more coverage than 25s would. Either the budget is
+     oversized (cut to 60s, triple throughput across 530 configs) or the
+     mutator is unproductive: ~2235 execs at 85-99% acceptance yielding +30
+     edges means mutants are schema-valid and behaviourally EQUIVALENT. That is
+     item 48 (structure-preserving mutation), now with a measurement behind it.
+     CANNOT separate the two from this data.
+   58. Decide the budget question with an experiment, not a guess: re-run one
+       repo at 30/60/180/600s and plot final coverage vs budget. Cheap, and it
+       is the difference between "530 configs in 6h" and "530 configs in 2h".
+
+================================================================
+2026-09-11  RE-TRIAGE OF THE gpt41-full RUN FOR REAL FINDINGS (44 runs, ~75k execs)
+================================================================
+Ananto pushed back: "did the earlier triage dismiss real threats as harness
+errors?" Partly yes. Bugs 20/21/22 are real and reproduced -- but quarantining
+the run's NUMBERS was right while quarantining its LEADS was wrong. Everything
+below re-verified from source + disk + directed reproduction, never from the
+alert text alone.
+
+CONFIRMED
+ V1  ArchimedesCrypto/excel-reader-mcp  export_to_json + export_to_csv
+     ARBITRARY FILE WRITE via outputPath (CWE-73).  Only check is
+     typeof outputPath === 'string' (export-to-json.ts:15, :89 writeFileSync;
+     export-to-csv.ts:100).  Reproduced UNDER THE CORRECT cwd (item 54):
+       absolute path outside cwd -> SUCCESS, file written
+       "../../x.json" relative   -> SUCCESS, wrote eval/x.json
+     Content = xlsx cell values -> attacker controls content AND location.
+     Same class as Pierre's "insufficiently constrained output path".
+     Schema text: "Path to save CSV file (optional...)" -- no scoping promise,
+     so a reviewer can call it intended. Argue from the paper's threat model.
+     DETECTION HONESTY: ToFu found it ONCE, in the quarantined bug-21 run
+     (wrote /tmp/evil.json). Under the fixed harness, 180s, outputPath was
+     mutated to only '' and the literal seed placeholder (the tool duly wrote
+     "predefined_seed:output.json" inside its cwd). Never an escaping path.
+     -> item 48 (mutation) is why the fixed fuzzer did not re-find it.
+ V2  Heratiki/locallama-mcp  subtask_results.log
+     LOG INJECTION + UNBOUNDED LOG (CWE-117, CWE-779).  codeTaskCoordinator.ts
+     logSubtaskResult() appends `## Subtask: ${subtask.description}` and a
+     ```-fenced ${result} RAW via appendFileSync, no sanitising, no cap (file
+     only reset at startup, :39). description = the LLM-supplied task text.
+     ON DISK after ~1.4h: 602 KB, 644 lines containing NUL, 6 headings split
+     by injected control chars (\x13 \x0b \x10) so the record structure is
+     broken; e.g. heading '## Subtask: "task": "Read file ../../../../etc/
+     passwd..."' followed by a raw '\x0b\x10ut_length": 50...' line.
+     0 ANSI CSI sequences -> terminal-escape angle is weak; stick to CWE-117.
+     ToFu's check_log_injection flagged 43 inputs on preemptive_route_task and
+     5 on rate_model; routing/index.ts:1046-1094 is the path from that tool
+     into codeTaskCoordinator, so the fuzzer flagged the right input class on
+     the right tool. The SINK itself was confirmed by hand (JS -> no tracer).
+ V3  Heratiki/locallama-mcp  update_server
+     INPUT-INDEPENDENT: zero-arg, zero-auth tool runs
+       git pull origin future-testing && npm install && npm run build
+     (updater/index.ts:110-117, execFile, no guard) and the server respawns on
+     the new build. Any MCP client can make the server fetch+execute a
+     hardcoded DEV branch. Pierre's "input-independent" class.
+     CAVEAT: `future-testing` DOES NOT EXIST on origin (only main). The tool is
+     currently inert -- git pull fails after ~2s, which is exactly the 3
+     "2.12/2.64/3.15s" exhaustion alerts (genuine slow-but-completed calls; the
+     bug-20 guard correctly let them through). Target stayed at the pinned
+     commit, node_modules untouched. Latent, not live.
+
+NOT FINDINGS (checked, with reasons)
+  - 42 exhaustion alerts = socket timeouts (bug 20).  7 path_traversal on
+    export_to_json = payload in dateFormat, tool ignores it (bug 22) -- still
+    NOT traversal evidence even though V1 is real; V1 stands on item 54.
+  - 1777 check_invalid_json on benchmark_model: free-text model_id containing
+    braces. model_id only ever bound as a SQL parameter (db.ts:123 uses ?) and
+    sent in an HTTP JSON body, never URL path or shell. Sanitizer FP class.
+    ADD check_invalid_json TO THE BUG-22 AUDIT (item 56).
+  - jobs.db 1840 rows: all status=completed; cleanupCompletedJobs default
+    maxAgeMs=3600000 (1h). Bounded. Not DoS.
+  - Crashes: 8 socket timeouts across 4 tools post-fix. get_cost_estimate's
+    three logged pre-crash inputs (huge floats, garbage model) REPRODUCED at
+    0.00s, server alive -> load flake, not input-triggered. generate-tap-code
+    and get_telemetry_summary: no input recoverable (no alert fired), 3 and 2
+    timeouts in 2048 execs. No MCP-Server-Crash finding in this run.
+  - mcpFirebird: 'Potentially unsafe SQL query' guard fired 8x, no DML ever
+    succeeded -> positive control, the tool ENFORCES.
+  - CWE-209: zero /Users/ paths, zero stack frames, zero node_modules paths in
+    any tool response or error across 44 runs.
+
+THE SEMANTIC-MISMATCH -> ERROR CENSUS (what Ananto asked for)
+  75,025 execs: 47,498 ok, 1,996 structural rejections (-32602),
+  6,535 got past the schema then errored. Top 18 shapes = 95%: ALL are the
+  tool correctly refusing with a clean message ('Invalid cell address: ',
+  'Invalid range: ', 'elementId is required when useElement is true',
+  'validator_verdict is only allowed when role is validator', ...) or an
+  environment wall (2,535 nationalparks 'Server error' = no API key; 511
+  'Could not reach GitHub API'). Not one crash, not one leak.
+  => In this run the vulnerabilities are where the tool DID NOT error (V1
+     accepts any path, V2 accepts any text) or where the danger needs no
+     input at all (V3). Correctly-erroring tools are the paper's positive
+     controls, not its findings.
+
+  59. DISCLOSE V1 and V2 to maintainers before any paper text names them
+      (sec10_ethical). V3 is a design report, not a CVE.
+  60. Lesson for triage: a run whose NUMBERS are quarantined can still carry
+      LEADS. Re-read quarantined alerts for sinks worth a directed test.
+
+================================================================
+2026-09-11  FINDINGS FOLDER + FULL TRIAGE OF 187-RUN gpt41-full (in progress)
+================================================================
+Ananto: created findings/ for disclosure. Structure:
+  findings/confirmed/   -- reproduced, disclose to maintainer
+  findings/potential/   -- mechanism real, exploitability conditional
+  findings/evidence/    -- raw artifacts (seed, alert log, directed-test output)
+  findings/README.md    -- index + FP explanation + positive control
+
+CONFIRMED (2): excel-reader-mcp export_* arbitrary file write (V1, CWE-73);
+  locallama-mcp subtask_results.log injection + unbounded (V2, CWE-117).
+POTENTIAL (1): locallama-mcp update_server unauth self-update (V3, inert:
+  branch future-testing missing on origin).
+
+TRIAGE OF THE 4 NEW HIGH-HIT REPOS (none are findings):
+  bsv-mcp 3788      -- check_url_* on address/txid (NOT urls); fetches go to
+                       hardcoded blockchain APIs. FP cascade. Not SSRF.
+  cursor10x 10040   -- check_url_* + invalid_json on storeRequirement etc.
+                       (no url args); DB writes use db.prepare(?) parameterised.
+                       FP cascade. Not SQLi.
+  google-workspace 5561 -- POSITIVE CONTROL. manage_scratchpad got 208
+                       check_path_traversal yet is SAFE: resolveWorkspacePath()
+                       sanitises+resolves+rejects escapes (workspace.ts:161),
+                       verifyPathSafety() adds realpath symlink check. This is
+                       exactly what excel-reader OMITS. USE AS CONTRAST PAIR IN
+                       THE PAPER: same alert, opposite verdict, decided by
+                       reading the sink -- the core triage argument.
+  apisix 3          -- temp_file_leak on error path; n_exec=2000 n_success=0
+                       (no APISIX backend, ECONN). Environment exclusion.
+  pluggedin 1       -- invalid_json; tool needs API key, never executed. Excl.
+
+ROOT CAUSE OF THE FP CASCADES (extends bug 22): check_url_structure_and_parsing,
+  check_url_hostname_canonicalization, check_url_ssrf_ip_ranges, and
+  check_strict_har_security_contract / check_strict_markitdown_security_contract
+  are NOT in the fuzzer.py:944 parameter-name context guard, so they run on
+  every string argument and on every tool regardless of relevance. Item 56 must
+  cover ALL of these, not only check_path_traversal.
+   56. (EXPANDED) Context-guard the full string-sanitizer set, not just
+       path_traversal: add url-family (needs url/uri/link/endpoint/host name
+       match) and scope the *_security_contract sanitizers to their own tool
+       families (har -> har tools, markitdown -> markitdown tools). Until then
+       every silent-bug count on a non-matching arg is noise.
+
+TRIAGE PRINCIPLE CONFIRMED (item 60): raw hit count is anti-correlated with
+  real bugs here. The two confirmed findings came from 7 and ~1800 hits; the
+  10040-hit repo was pure FP. Rank leads by SINK, not by alert volume.
+
+STILL TODO: run is at 187/530. Re-triage remaining repos as they land, same
+  method: sink-first, ignore counts, directed-test any file/exec/persistence
+  sink before calling anything a finding.
+
+================================================================
+2026-09-11  CISCO MCP SCANNER: NEVER RAN BEFORE -> NOW WORKS. 3 BUGS FIXED.
+================================================================
+Ananto asked: did we run Cisco MCP Scanner? Answer: NO -- two prior attempts
+(appium, excel-reader) both crashed and produced zero results. Now fixed and
+producing honest output.
+
+THREE INDEPENDENT BLOCKERS, all fixed:
+  1. THEIR BUG. Benchmarks/Cisco-MCP-Scanner/mcpscanner/cli.py had a local
+     `import os` at line 2377 inside async def main() (spans 1024..2377). Python
+     function-scope rule makes `os` local for the WHOLE function, so the earlier
+     os.environ[...] at line 1680 raised
+       UnboundLocalError: cannot access local variable 'os'
+     -> EVERY stdio scan crashed before starting. FIX: removed the redundant
+     local import (module already imports os at line 32). Patch is marked
+     "PATCH (ToFu)" in their cli.py. DISCLOSE/RECORD: we patched the baseline
+     tool to run it; state this in the paper's baseline methodology.
+  2. OUR STALE VENV. The scanner venv was built when the repo lived at
+     /pseclab/toolfuzzer/; after the move to /pseclab/ToFu/ the console-script
+     shims still had `#!/.../toolfuzzer/.venv/bin/python` (venvs are not
+     relocatable) -> FileNotFoundError: .venv/bin/mcp-scanner. FIX: `uv sync`
+     in the scanner dir rebuilt shims at the current path. The os-patch
+     survives because install is editable.
+  3. OUR RUNNER (eval/run_cisco_scanner.py), two bugs:
+     (a) It read a --output .json file, but `--format raw` prints the report to
+         STDOUT and writes no file -> json.load failed, reported as a fake
+         per-repo error. FIX: parse stdout when the --output file is absent,
+         persisting it to the .json for inspection.
+     (b) count_findings phantom-counted: line was
+           c = int(val.get("total_findings") or 0) or (1 if val else 0)
+         A SAFE tool reports total_findings=0 with a populated result dict, so
+         the fallback counted it as 1 -> excel-reader showed 14 "findings" when
+         the raw verdict is 14x severity=SAFE, is_safe=True, total_findings=0.
+         FIX: total_findings is authoritative when present; the truthy fallback
+         fires only when the count key is ABSENT and severity is not SAFE.
+         THIS IS THE SAME PHANTOM-FINDING FAMILY AS THE TOFU INSTRUMENT BUGS --
+         an unverified count is exactly what CLAUDE.md forbids. Caught by
+         cross-checking the printed count against the raw scanner JSON.
+
+VERIFIED yara-only smoke (2 servers): 19 tools scanned, 0 flagged, 0 findings,
+  matching the raw JSON. Scanner sees 41 ready servers / 537 tools from
+  eval/state/prepared.jsonl. Stale pre-fix state quarantined under
+  eval/state/quarantine-cisco-stale-toolfuzzer-path/.
+
+HOW TO RUN (for Ananto's terminal):
+  yara-only, all servers, no LLM needed:
+    .venv/bin/python eval/run_cisco_scanner.py --analyzers yara
+  yara + LLM (llm analyzer): default model is llama3.1:8b which we DROPPED and
+  ollama was not running. Point it at a live model first, e.g.
+    CISCO_LLM_MODEL=ollama_chat/gemma4:12b  (start ollama), or a gpt-4.1 LiteLLM
+    id with the OpenAI key. Then add llm to --analyzers.
+  The `api` analyzer needs a paid Cisco AI Defense subscription -> DISABLED.
+  Baseline is open-source analyzers only; state as a limitation (Table 2).
+   61. Run the full yara(+llm) Cisco baseline over all 41 prepared servers and
+       fill the ToFu-vs-Cisco disjoint-set comparison (NOT a difference: Cisco
+       reads metadata, ToFu executes -- run_cisco_scanner.py says so).
+
+================================================================
+2026-09-11  DEFENSECLAW (Benchmarks/defenseclaw) -- RUNNABILITY ASSESSMENT
+================================================================
+Ananto asked if defenseclaw (another Cisco AI Defense product) is runnable.
+Repo: github.com/cisco-ai-defense/defenseclaw @ 27cafb9. Go+Python governance
+tool for "OpenClaw and agentic AI runtimes": scan capabilities, inspect runtime
+traffic, export audit evidence.
+
+VERDICT: NOT runnable as-is, and adds ~nothing over the MCP Scanner we already
+fixed. Do not invest unless we specifically want the runtime-governance angle.
+
+WHY not runnable now:
+  - No Go toolchain installed. go.mod pins `go 1.26.4` (a minimum directive).
+    brew go is 1.27.1 -> would satisfy it, but installing is a user action.
+  - `make build` = THREE components: Python CLI (have py3.11 OK), Go gateway
+    (needs go), and an OpenClaw plugin. Multi-toolchain build.
+  - No prebuilt binary vendored.
+
+WHY not worth it for the baseline:
+  - Its LOCAL MCP scan just WRAPS the same open-source mcp-scanner binary we
+    already patched and got working (config.py:897 `binary: str="mcp-scanner"`,
+    bootstrap.py:1532 "defenseclaw setup mcp-scanner"). Same detections, extra
+    layers. No new static-analysis capability for the ToFu comparison.
+  - Its differentiated value (remote scan, guardrails, runtime traffic
+    inspection) is scanner_mode remote/both -> Cisco AI Defense CLOUD
+    (cisco_api_key_env=CISCO_AI_DEFENSE_API_KEY, cisco_endpoint), i.e. the same
+    paid subscription the MCP Scanner's `api` analyzer needs. We don't have it.
+  - It targets OpenClaw runtimes, not standalone MCP servers over stdio; wiring
+    it to ToFu's prepared.jsonl targets would be new integration work for a
+    result equivalent to the mcp-scanner baseline (item 61).
+
+RECOMMENDATION: for Table 2's static-analysis baseline, use the MCP Scanner
+directly (already working, item 61). Cite defenseclaw as the productized
+wrapper and note the runtime/cloud features are out of scope (no subscription).
+Only build defenseclaw if a reviewer demands the runtime-governance comparison.
+   62. (only if needed) Build defenseclaw: brew install go; `make build`;
+       point its local mcp-scanner at prepared.jsonl. Expect parity with the
+       mcp-scanner baseline, so low priority.
+
+================================================================
+2026-09-11  CISCO MCP SCANNER + gpt-4.1 -- WIRED, SMOKED, READY FOR FULL RUN
+================================================================
+Ananto chose gpt-4.1 (same model as ToFu's gpt41-full arm -> LLM held fixed,
+only the tool varies. Correct comparison design).
+
+RUNNER PATCHES (eval/run_cisco_scanner.py):
+  - build_env(): MCP_SCANNER_LLM_API_KEY now resolves from OPENAI_API_KEY when
+    base_url is non-ollama (was hardcoded "ollama" -> would 401 on OpenAI).
+  - preflight(): the /api/tags Ollama probe now runs ONLY for an ollama
+    base_url; hosted providers just require a key present. (Was hardcoded to
+    Ollama -> false-failed on OpenAI.)
+NEW SCRIPT: eval/run_cisco_gpt41.sh
+    ./eval/run_cisco_gpt41.sh smoke     # 2 servers, yara+llm
+    ./eval/run_cisco_gpt41.sh yara      # yara-only, no LLM (fast)
+    ./eval/run_cisco_gpt41.sh           # ALL 41 prepared servers, yara+llm
+    ./eval/run_cisco_gpt41.sh summary   # ToFu-vs-Cisco disjoint-set table
+  Sets CISCO_LLM_MODEL=openai/gpt-4.1, base_url=api.openai.com/v1,
+  MCP_SCANNER_LLM_API_KEY=$OPENAI_API_KEY. Resumable. api(cloud) analyzer OFF.
+
+SMOKE VERIFIED (2 servers, yara+llm, gpt-4.1):
+  19 tools scanned, BOTH yara_analyzer AND llm_analyzer present on every tool
+  (proof the LLM ran, not a silent no-op), all severity SAFE, 0 findings,
+  6.6s/server. Benign warning: chatty targets (appium banner on stdout) log a
+  JSONRPC parse error in the scanner's mcp client; scan still completes.
+
+STANDING LIMITATIONS for Table 2:
+  - api (Cisco AI Defense cloud) analyzer OFF (no subscription). Baseline =
+    open-source analyzers (yara + llm) only.
+  - We patched one bug in the scanner's own cli.py (the `os` shadowing) to run
+    it. State this in baseline methodology.
+  - Comparison is DISJOINT SETS not a difference: Cisco reads tool metadata and
+    never invokes a tool; ToFu executes tools. run_cisco_scanner.py prints this.
+   61. (READY TO RUN) Full Cisco gpt-4.1 baseline: `./eval/run_cisco_gpt41.sh`
+       over all 41 servers, then compare to the ToFu gpt41-full findings.
+
+================================================================
+2026-09-11  CISCO gpt-4.1 BASELINE RAN (40/41) + SUMMARY INDEX BUG FIXED
+================================================================
+Full Cisco gpt-4.1 baseline over the prepared servers: 40 ok/41, 535 tools,
+23 flagged, 28 findings (yara 20, llm 8), 3.5s/server. All flags severity HIGH
+but METADATA verdicts (yara/llm on tool descriptions: PROMPT INJECTION,
+CREDENTIAL HARVESTING, TOOL POISONING, DATA EXFILTRATION). Result saved:
+  findings/baselines/cisco_baseline_gpt41_20260911.md
+  findings/baselines/cisco_runs_gpt41_20260911.jsonl   (raw index copy)
+
+BUG FIXED: run_cisco_scanner.py summary read TOFU_RUNS=eval/state/runs.jsonl
+(the OLD default arm, 77 runs, 0 recorded hits) -> "ToFu only: []" and
+locallama wrongly in "Cisco only". Now TOFU_RUNS defaults to
+runs.gpt41-full.jsonl (override TOFU_RUNS_INDEX). Corrected disjoint sets:
+  Cisco only : circleci, square, DesktopCommander, excalidraw
+  ToFu only  : excel-reader(V1 REAL), cursor10x(FP), bsv-mcp(FP)
+  both       : locallama(V2/V3 REAL), pluggedin, google-workspace(FP), apisix(excl)
+
+CRITICAL for the paper: the script's sets use RAW finding_hits (FP-heavy). The
+real comparison uses CONFIRMED findings:
+  - ToFu-only real bug Cisco missed: excel-reader V1 (arbitrary file write) --
+    Cisco scanned excel-reader and returned all SAFE; it cannot see a runtime
+    write.
+  - Same-repo different-class: locallama -- Cisco flags description wording,
+    ToFu finds runtime log-injection (V2) + unauth self-update (V3).
+  - Cisco flags google-workspace/apisix on metadata where ToFu confirmed
+    nothing at runtime (google-workspace is a positive control: path-safe).
+  This is the disjoint-set thesis of Table 2, now with concrete cases.
+
+   63. Build Table 2 from findings/confirmed + triage, NOT raw finding_hits.
+   64. Finish gpt41-full so ToFu covers square/DesktopCommander/excalidraw
+       (currently Cisco-only only because ToFu has not reached them). Then
+       re-run `./eval/run_cisco_gpt41.sh summary`.
+
+================================================================
+2026-09-11  BASELINE MAP: WHAT CAN RUN NOW, WHAT CANNOT, AND WHY
+================================================================
+Ananto: "what other baselines can we run now? eventually all." Checked every
+vendored one for INSTALL + INTERFACE + INPUT, not from the README but by
+building the venv and reading the CLI.
+
+  Cisco MCP Scanner   DONE. gpt-4.1, 40/41 servers. See baselines/ file.
+  MCPSafetyScanner    RUNNABLE NOW. Installs clean (agno 3.0.9). Input =
+                      claude_desktop_config.json {"mcpServers":{name:{command,
+                      args}}} -> generated per server from prepared.jsonl.
+                      Model via OPENAI_MODEL (default gpt-4o) -> gpt-4.1.
+                      NO REPORT FILE, rich console only -> wrapper captures
+                      stdout; n_flag_lines is a HEURISTIC, not a finding count.
+                      No cwd field in its config -> wrapper runs scan.py with
+                      cwd=target dir so the stdio child inherits it (bug-21).
+                      NEW: eval/run_mcpsafety.py (resumable, --limit/--only).
+  Viper-MCP           RUNNABLE NOW for Phase II. Installs clean. jsql+pyql and
+                      js+python instrumentation -> covers BOTH runners. One
+                      config.yaml per server (batch scripts removed from the
+                      artifact) -> wrapper generates a config per target from
+                      prepared.jsonl. CLI: main.py <cfg> [--skip-codeql]
+                      [--skip-fuzz] [--test-agent]. Default model gpt-5.4 ->
+                      gpt-4.1; temperature 0.7 -> 0 (DEVIATION, state it).
+                      Phase I (CodeQL) needs the CodeQL CLI: brew has 2.27.0
+                      (>= 2.16 OK) -- USER INSTALL. Until then --skip-codeql.
+                      ~15 min/server per paper -> 40 servers ~= 10 h.
+                      NEW: eval/run_viper.py (resumable, per-target results dir).
+  MCPSecBench         NOT A SCANNER. code/main.py drives pyautogui alt-tab /
+                      screenshots / clicks into Claude Desktop or Cursor. A
+                      GUI attack harness against a client, not a tool that
+                      scans a server. Cannot run headless over our targets.
+                      Cite as a benchmark; exclude from the baseline table.
+  Set D (63 servers)  A DATASET, not a scanner: VIPER-MCP's public-CVE
+                      servers resolved to GitHub (Benchmarks/extraction/
+                      set_d.json). 0 prepared so far (opt-in --only-set d).
+                      CAVEAT already in the manifest: commits are GitHub HEAD
+                      at resolve time, NOT the vulnerable commit -> may be
+                      patched -> a ToFu miss there is not evidence. Use
+                      eval/score_set_d.py for "ToFu in VIPER's court" only
+                      after checking each commit predates the fix.
+  defenseclaw         dropped (wraps the same mcp-scanner; cloud needs sub).
+
+PROTOCOL for ALL baselines (so Table 2 is one experiment, not five):
+  same targets (prepared.jsonl), same commits, same LLM (gpt-4.1), temp 0
+  where the tool allows it, api/cloud analyzers OFF, results as DISJOINT SETS
+  by CONFIRMED finding -- never a subtraction, never raw hit counts.
+
+   65. Run MCPSafetyScanner over all ready servers (eval/run_mcpsafety.py),
+       then hand-read each log: its output is prose, the flag heuristic is
+       screening only.
+   66. brew install codeql (2.27.0) so Viper Phase I can run; until then run
+       Phase II with --skip-codeql. Budget ~10 h for 40 servers.
+   67. Decide whether Set D goes in the paper: needs per-repo confirmation that
+       the resolved commit still contains the CVE'd code. Otherwise drop.
+
+================================================================
+2026-09-11  MCPSafetyScanner + Viper-MCP: BOTH WIRED, BOTH SMOKED
+================================================================
+MCPSafetyScanner -- first attempt died on
+  ModuleNotFoundError: No module named 'agno.knowledge.website'
+  Stale repo (last push 2025-04-10), unpinned `agno` resolved to 3.0.9 which
+  moved that module. SAME DRIFT CLASS as prepare_targets' mcp>=1.2.0 -> 2.x.
+  FIX: rebuilt its venv with `uv pip install --exclude-newer 2025-04-11T00:00:00Z`
+  (deps as of its last upstream push). All 8 agno imports resolve. Smoke on
+  excel-reader: OK, 20.8s, full multi-agent audit report on the console.
+  n_flag_lines=285 -- that is the WHOLE prose report matching risk words, NOT
+  a finding count. Validity of the report content assessed separately below.
+  NOTE for the paper: era-pinning a stale baseline is a methodology decision;
+  state the cutoff date.
+
+Viper-MCP -- first attempt: my wrapper passed --test-agent WITHOUT
+  --skip-codeql, so it tried `codeql database create` -> FileNotFoundError.
+  FIX: test-agent now implies skip-codeql. Re-smoke: OK, 3.7s,
+  "Agent test result: {'success': True ...}" -> the gpt-4.1 agent connects to
+  the target over stdio and lists its tools. LLM path verified.
+
+OPEN QUESTION (being checked): orchestrator.run() does
+  sarif = run_codeql_scan(); if sarif: extract_rules(sarif) -> (enter, oracle)
+  i.e. the fuzzer's ENTRY POINTS and ORACLES come from CodeQL's SARIF. If the
+  fuzz stage requires those files, then --skip-codeql with no prior SARIF is a
+  HOLLOW run and CodeQL is NOT optional for Viper. Do not claim "Phase II
+  runs without CodeQL" until this is resolved.
+
+MCPSafetyScanner OUTPUT VALIDITY (excel-reader smoke, read the report):
+  target-aware: names read_excel/export_to_json/list_sheets etc. 18x, "Excel" 8x.
+  33 "Vulnerability:" bullets = 6 distinct headings emitted TWICE (two agents /
+  team+reviewer). Headings: Unrestricted File Read Access; Path Traversal;
+  Arbitrary Code Execution via Modified Input; Credential Dumping via Local File
+  Read; Backdoor Installation via Script Modification; Data Exfiltration with
+  netcat and Reverse Shells. 115 boilerplate tokens (nc/netcat/authorized_keys/
+  .pem) -- excel-reader has no shell, no netcat.
+  VERDICT: LLM-agent HYPOTHESES from tool descriptions. No execution, no PoC,
+  no verification. 2-3 plausible (file read/traversal; "backdoor via script
+  modification" gestures at V1's unconstrained WRITE sink but does not name
+  outputPath or show a write), 3 boilerplate. Matches VIPER's measured FPR of
+  43.1% for this tool. In Table 2, treat its output as a hypothesis list;
+  count a repo as "flagged" only after a human reads the log; NEVER use
+  n_flag_lines as a number. Example report saved:
+    findings/baselines/mcpsafety_excel-reader_example_report.log
+   68. Run MCPSafetyScanner over all 41 (eval/run_mcpsafety.py, ~21s/server
+       but agents can hang on cred-gated servers -> --timeout 600 default).
+       Then hand-classify each report's distinct headings vs ToFu confirmed.
+
+================================================================
+2026-09-11  VIPER-MCP: PHASE II IS HOLLOW WITHOUT CODEQL, AND THE ARTIFACT
+            NEVER INSTRUMENTS NODE. Three patches applied, all marked.
+================================================================
+Empirical run (excel-reader, --skip-codeql, rounds=2): "Fuzzing completed.
+Anomalies: 5" -- but every anomaly was tool_error, oracle.json was 0 bytes,
+and static_context.json held ONE placeholder entry
+  tool_name="mcp_tool", vulnerability_type="general", tool_candidates=[]
+so the agent literally called search_text(filePath="mcp_tool.xlsx"). Without
+SARIF there is no target list: --skip-codeql fuzzes a synthetic target.
+=> CODEQL IS NOT OPTIONAL FOR VIPER. "Phase II now, Phase I later" is wrong.
+   Any Viper number requires `brew install codeql` (2.27.0 >= 2.16) first.
+
+FIVE ERROR KINDS IN THE LOG, THREE CAUSES:
+ (1) base_url: "" -- src/llm/__init__.py:10 hands cfg["base_url"] straight to
+     AsyncOpenAI(base_url=...); the SDK treats "" as a literal URL ->
+     "Connection error" for seed_generator, mutator, strategy scoring AND
+     hit_judge (which inherits prompt_llm at engine.py:326). The langchain
+     agent tolerates "", which is exactly why --test-agent passed while fuzz
+     failed. Their shipped config.yaml has base_url: "" too -> their default
+     is broken for OpenAI. FIX (wrapper): omit the key unless OPENAI_BASE_URL
+     is set; set llm.hit_judge explicitly (it is read by config.py:60 but
+     absent from the shipped yaml).
+ (2) name 'prompts' is not defined -- src/feedback/optimizer.py:78 uses
+     prompts.SCHEDULING_PROMPT (defined in src/fuzz/prompts.py) without
+     importing it. THEIR BUG, masked until the LLM works. PATCH (ToFu):
+     `from ..fuzz import prompts`.
+ (3) NO NODE INSTRUMENTATION. src/utils/instrumentation.py has ONLY
+     inject_python_hook_env (PYTHONPATH/.pth). instrumentation/javascript/
+     node_hook.js exists -- hooks fs.writeFile*/appendFile*/child_process.exec
+     and logs to $MCP_FUZZER_ORACLE_LOG -- but nothing ever adds
+     NODE_OPTIONS=--require for it. On every Node target the runtime oracle
+     is blind: no hook_init, no sink events. Viper AS SHIPPED could not have
+     observed V1's writeFileSync regardless of its LLM or CodeQL output.
+     PATCH (ToFu): inject_node_hook_env() mirroring the python one, wired in
+     surrogate_agent.py next to it. Their hook file, their env var; we added
+     the one line that loads it. STATE THIS IN METHODOLOGY exactly as we
+     state the Cisco `os` patch.
+ (4) error='target_call_chain' (KeyError in _score_round_with_llm) -- likely
+     downstream of (1) (fallback dict lacking the key); falls back to
+     rule-based scoring (strategy.py:158). Re-check after (1).
+ (5) per-target oracle: node_hook default is <viper>/results/oracle.json,
+     SHARED across a loop. Wrapper now sets output.oracle_path and
+     MCP_FUZZER_ORACLE_LOG per target and records hook_injected /
+     n_oracle_events so a blind run is visible in the index.
+
+WRAPPER (eval/run_viper.py) now: all three LLM roles explicit, base_url
+omitted, per-target oracle, recursive fuzz_results scan, n_anomalies,
+hook_injected flag. Re-smoke pending.
+   69. brew install codeql (user). Until then no Viper number is valid.
+   70. Viper deviations to state: gpt-4.1 (theirs gpt-5.4), temperature 0
+       (theirs 0.7), three patches (base_url handling is config not code;
+       prompts import; node hook injection), CodeQL 2.27.0.
+
+VIPER RE-SMOKE AFTER PATCHES (excel-reader, rounds=2, --skip-codeql, 29.3s):
+  VERIFIED FIXED: zero "Connection error" (base_url omitted -> seed_generator,
+    hit_judge, mutator all reach gpt-4.1); zero NameError (prompts import).
+    Agent now discovers and targets a REAL tool: "Discovery threshold met via
+    template=minimal_embedding target=read_excel"; interactions show real
+    read_excel / list_sheets calls.
+  STILL OPEN:
+   (i) hook_injected=False, oracle.json EMPTY -> my NODE_OPTIONS injection did
+       not take effect in the child. Diagnosing: hook-works-by-hand vs env
+       not propagated through langchain-mcp-adapters stdio config.
+  (ii) "LLM round scoring failed target=read_excel -> none_detected
+       error='target_call_chain'" x8 -> KeyError, NOT a connection error now.
+       Suspect prompts.ROUND_SCORING_TEMPLATE uses NAMED {target_call_chain}
+       placeholders while strategy.py calls .format(positional...). Their bug;
+       degrades the LLM feedback loop to rule-based scoring (graceful, but it
+       IS the core of Phase II). Checking placeholders before patching.
+  (iii) "No target call chains from CodeQL; using single generic target." ->
+       confirms Phase II is untargeted without SARIF, BUT the agent still
+       self-discovers tools from tools/list and probes them with
+       vulnerability_type=none_detected. So skip-codeql = generic probing,
+       not zero. Still not a Viper result.
+  (iv) 6 anomalies, ALL tool_error "File not found": the agent guesses
+       filenames; there is no seed file. excel-reader's export_to_json reads
+       the xlsx BEFORE writeFileSync, so with no real input file Viper can
+       NEVER reach V1's write sink -- the exact problem ToFu's file-backed
+       parameters (predefined_seed:*.xlsx) solved (nazmul.todo 2026-09-10).
+       COMPARISON POINT: file-taking tools are structurally out of Viper's
+       reach without a fixture mechanism it does not have.
+
+VIPER HARNESS: RESOLVED (excel-reader, rounds=2, --skip-codeql, 37.6s)
+  All three PATCH (ToFu) edits verified in a live run:
+   - base_url omitted            -> 0 "Connection error"
+   - prompts import              -> 0 NameError
+   - keyword .format (strategy.py ROUND_SCORING_TEMPLATE, optimizer.py
+     SCHEDULING_PROMPT; both templates use NAMED fields, both call sites were
+     positional) -> 0 "LLM round scoring failed", 0 "Mutator choice failed".
+     The LLM feedback loop -- the core of their Phase II -- now actually runs.
+   - node hook injection (inject_node_hook_env) -> hook_injected=True; a
+     hook_init event carrying the child's pid/cwd landed in the per-target
+     oracle.json (same signature as the hand-injected control).
+  Probe of the real builder (src.agent.create_agent_from_config) shows the
+  stdio env handed to langchain-mcp-adapters = {MCP_FUZZER_ORACLE_LOG,
+  NODE_OPTIONS=--require .../node_hook.js}; the adapter only expands ${VAR};
+  the mcp SDK MERGES with get_default_environment() (mcp/client/stdio.py:126).
+  Earlier "hook_injected=False" was a MEASUREMENT artefact: RuntimeMonitor
+  consume-and-clears oracle.json between rounds, so the file left on disk
+  under-reports. Wrapper now derives hook_injected / max_oracle_hits_in_round
+  from fuzzer.log as well ("oracle_hits=N" per hit_judge line).
+  Behaviour observed = as designed: agent generated "Read the Excel file
+  located at ../../etc/passwd" -> read_excel -> "File not found". Viper does
+  taint-style traversal probing on the READ side.
+  max_oracle_hits=0, export_to_json NEVER CALLED in 2 rounds -> V1 not reached;
+  and it cannot be reached without a real xlsx fixture (read precedes write).
+  Their default provider path is probably deepseek (the only branch tolerant
+  of base_url ""), which explains why the openai path shipped untested.
+  STILL REQUIRED FOR ANY VIPER NUMBER: CodeQL (brew install codeql, 2.27.0).
+  "No target call chains from CodeQL; using single generic target." on every
+  skip-codeql run. Harness is ready the moment codeql is on PATH.
+
+================================================================
+2026-09-12  CODEQL INSTALLED -> VIPER PHASE I UNBLOCKED
+================================================================
+Ananto: brew install codeql -> Cask codeql 2.27.0, /opt/homebrew/bin/codeql.
+Their query packs declare deps on codeql/javascript-queries and
+codeql/python-queries ("*"); ran `codeql pack install` in ql/jsql and ql/pyql
+(one-time, network) -> codeql-pack.lock.yml written in both; `codeql resolve
+queries ql/jsql/src` lists their 4+ queries (CommandInjectionFromRequest,
+FileAccessFromRequest, RequestForgeryFromRequest, AnchoredFileFlow,
+AnchoredCommandFlow, EnclosingFunctionForAnchor). Preflight without
+--skip-codeql passes: 41 ready servers.
+Their runner (src/pipeline/codeql_runner.py): `codeql database create <db>
+--language=<js|python> --source-root=<repo> --overwrite` (cwd=repo), then
+`codeql database analyze --format=sarif-latest --output=<sarif>
+--sarif-add-snippets -- <db> <queries...>` with cwd=query_pack_root so the
+relative "jsql/src/*.ql" paths in config resolve. Wrapper sets
+query_pack_root=<viper>/ql absolute and report_path per target.
+NEW: eval/run_viper_full.sh -- the campaign script for Ananto's terminal
+(rounds=10 paper default, serial, timeout 1800/server, tee'd log, resumable).
+Item 69 closed (codeql). Item 66 -> run via run_viper_full.sh.
+
+VIPER PHASE I+II SMOKE WITH CODEQL (excel-reader, rounds=2): WORKS. 246.3s.
+  Phase I: codeql database create + analyze (3 queries) ~2.3 min ->
+    results.sarif: 5 results, all js/file-access-from-request, anchored at
+    src/index.ts:85 readExcelFile and src/utils/workbook-cache.ts:39/40/76
+    (WorkbookCache.get/set) + loadWorkbook:155.
+    "Converted SARIF to report: 5 vulnerabilities, 2 tools"; anchored
+    evidence written; static_context.json = 5 entries, every one
+    vuln="Path Traversal", sink_family="file", tool_candidates=[] (their
+    SARIF->MCP-tool mapping found no candidates; targets are internal fns).
+  Phase II: hook_injected=True; agent probed list_sheets with
+    ../../secret.xlsx and ../../etc/passwd (READ-side traversal, exactly what
+    the SARIF pointed at). All "File not found" -> 0 oracle hits, 4 anomalies
+    (tool_error). export_to_json never called.
+  COMPLEMENTARITY, concrete: on the SAME repo CodeQL/Viper surfaces the
+  read-side sink (filePath -> readExcelFile, CWE-22 read; static, runtime-
+  unconfirmed) while ToFu confirmed the WRITE-side sink (outputPath ->
+  writeFileSync, V1, reproduced). Neither found the other's. Their hook does
+  not observe fs.readFile*, so Viper cannot runtime-confirm its own read
+  finding on Node; and without an xlsx fixture it cannot reach the write.
+  TIMING: 246s at rounds=2 (Phase I ~140s dominant here). At rounds=10 Phase II
+  ~5x -> est. 5-7 min/server -> 40 servers ~= 4-5 h (paper: ~15 min/server).
+  Large repos may hit --timeout 1800 on DB create; the wrapper records the
+  timeout and moves on (resumable). CodeQL DBs are ~100s of MB each; ~41 of
+  them -> a few GB under eval/viper_runs/*/codeql_output. Prune after.
+  Smoke artefacts (sarif, static_context, anomalies, fuzzer.log) preserved at
+  findings/baselines/viper_smoke_excel-reader/. Index reset to rounds=10 only.
+   66. RUN NOW (Ananto's terminal): ./eval/run_viper_full.sh
+
+================================================================
+2026-09-12  SANDBOX: why targets must not run on the host, + the Docker plan
+================================================================
+Ananto asked why the servers run on his machine and not a sandbox. Correct
+instinct. Verified exposure, NOT hypothetical:
+  1. npm install runs WITHOUT --ignore-scripts (prepare_targets.py:188) ->
+     an untrusted package's postinstall executes as the user AT PREPARE TIME,
+     before any fuzzing. pip sdists (setup.py) same.
+  2. A target ALREADY wrote to the real FS this session: bug-21 residue
+     (findings/evidence/bug21-repo-root-writes/: output.json, C:\temp\out.json,
+     earlier /tmp/evil.json). Benign tool, but proves reach; a malicious one
+     writing ~/.ssh/authorized_keys looks identical to the harness.
+  3. Prepared OS/command tools: DesktopCommanderMCP (26, "OS & Terminal
+     Control"), mcpFirebird (SQL), apisix. Viper feeds them ../../etc/passwd
+     and command-injection payloads by design -- at the host.
+  No sandbox existed: targets ran as the user, unconfined. Not a decision,
+  just how the harness was built.
+
+DECISION (Ananto): Docker container.
+
+DESIGN (files written, build pending Docker daemon):
+  Dockerfile.sandbox  python3.11-slim + node22 + clang/llvm (atheris builds
+                      libFuzzer from source on Linux) + uv; builds ToFu's OWN
+                      Linux venv (/opt/tofu-venv) from requirements.txt; runs
+                      as non-root uid 1000, no host home.
+  .dockerignore       keeps the 7.1GB eval/targets and all venvs OUT of the
+                      build context.
+  eval/sandbox.sh     build | shell | prepare | run | smoke. Mounts the repo
+                      at its IDENTICAL host path (so prepared.jsonl absolute
+                      paths stay valid; an escape lands in the container, not
+                      $HOME). Repo mounted READ-ONLY; writable overlays only at
+                      eval/{targets,state,runs,metrics,corpora,configs} backed
+                      by eval/sandbox/* so the LIVE host campaign is untouched.
+                      --memory 8g --cpus 4 --pids-limit 1024; egress ON (LLM +
+                      git clone); .env mounted ro, OPENAI_API_KEY passed by -e.
+
+  Why whole-harness-in-container: python_runner imports the target in-process
+  to hook builtins.open, so fuzzer+target share a process -> same container.
+
+STATUS / RISKS TO RESOLVE ON BUILD (cannot verify until daemon is up):
+  - atheris==3.0.0 on arm64 Linux may need the exact libFuzzer archive name;
+    the Dockerfile probes clang -print-file-name but expect 1-2 build iters.
+  - node-gyp native deps in some targets need python3+make (present) but may
+    still fail per-repo (that is a target property, record as a skip).
+  - macOS .venv / Cisco / Viper venvs are NOT reused (Linux). v1 sandboxes the
+    TOFU fuzzer (the core, and what actually executes targets adversarially).
+    Cisco already ran (metadata-only, does not execute tools). MCPSafety/Viper
+    launch servers too -> sandbox them next (v2) before their final numbers.
+  - Existing gpt41-full + cisco results were produced ON THE HOST. Findings
+    (V1/V2) stand regardless, but the PUBLISHED numbers should be reproduced
+    in-container. Flag in methodology.
+   71. Start Docker Desktop; ./eval/sandbox.sh build; ./eval/sandbox.sh smoke.
+       Iterate the Dockerfile on atheris if needed.
+   72. After the host gpt41-full run finishes: re-prepare + re-run in-sandbox
+       (eval/sandbox/), compare to host results, adopt the sandbox numbers.
+   73. v2: sandbox the baselines (MCPSafety, Viper) the same way before their
+       numbers are published.
+
+================================================================
+2026-09-12  HOST CAMPAIGN STOPPED; CAMPAIGN CONTINUES IN THE SANDBOX
+================================================================
+Ananto stopped the host gpt41-full run (see count below) and confirmed the
+architecture: ToFu's introspectors hook the target IN-PROCESS, so fuzzer and
+target live in the same container -- whole harness in Docker (Option B). The
+"ToFu on host, server in Docker" split was rejected on two hard facts:
+python_runner imports the target in-process (oracle dies across a boundary),
+and js_runner talks over a /tmp Unix socket with the coverage wrapper inside
+the node process. The log-writing concern is moot: bind mounts write straight
+to the host FS in real time.
+
+ARM NAMING: sandbox runs use --arm gpt41-sandbox (index
+eval/sandbox/state/runs.gpt41-sandbox.jsonl). Host arm gpt41-full is frozen as
+host-run evidence. NEVER merge the two indices; published numbers = sandbox.
+
+FIRST BUILD FAILED on atheris: my Dockerfile used
+  LIBFUZZER_LIB=$(clang -print-file-name=... || echo "")
+but -print-file-name NEVER fails -- it echoes the bare name back when the
+file is missing -- so the fallback never fired and atheris got a relative
+filename. Probe container showed the archive IS present after `apt-get
+install clang llvm`: /usr/lib/llvm-14/lib/clang/14.0.6/lib/linux/
+libclang_rt.fuzzer_no_main-aarch64.a (Debian clang 14.0.6). Dockerfile now
+resolves it in its own RUN, asserts an absolute existing path (fail-loud),
+adds procps+lsof (python:3.11-slim ships no `ps`; _ps_snapshot would fail
+closed = no process-leak detection), and self-tests `import atheris, mcp`.
+A background probe is compiling atheris with LIBFUZZER_LIB set to confirm.
+
+NEW: eval/run_sandbox_campaign.sh  prepare|run|status  (wraps sandbox.sh;
+TOFU_PY=/opt/tofu-venv/bin/python; ARM=gpt41-sandbox). run_arm_gpt41.sh and
+run_overnight.sh now honour TOFU_PY.
+NEXT: confirm atheris probe -> docker build -> sandbox.sh smoke -> re-prepare
+all sets in-sandbox (npm/pip postinstall now confined) -> run.
+
+ATHERIS-IN-LINUX PROBE: CONFIRMED. In python:3.11-slim-bookworm + `apt-get
+install clang llvm build-essential python3-dev`, with
+  LIBFUZZER_LIB=/usr/lib/llvm-14/lib/clang/14.0.6/lib/linux/libclang_rt.fuzzer_no_main-aarch64.a
+`uv pip install atheris==3.0.0` builds in 1m04s and `import atheris` succeeds.
+So the whole-harness-in-container design is viable; the split is not needed.
+Image build (fixed Dockerfile) running in background -> eval/sandbox/build.log.
+Host gpt41-full frozen at 423/530 (last write 2026-09-12 00:51:29).
+
+SANDBOX WRITE-PATH AUDIT: repo is mounted READ-ONLY, so every dir the harness
+writes must be an overlay or a run dies with EROFS halfway. Overlays now:
+targets state runs configs seeds metrics corpora metrics_$ARM corpora_$ARM,
+plus a private tmpfs on /tmp (js_runner's Unix socket + target scratch; never
+the host /tmp). ARM passed into the container (ARM, TOFU_ARM) so arm-scoped
+dirs line up with the overlays. Any new eval/* write path added to the harness
+must be added to OVERLAYS in eval/sandbox.sh -- noted in the script header.
+
+SANDBOX BUILD #2 FAILED -- and the fail-loud check I added did its job:
+  FATAL: libFuzzer archive not found (got: libclang_rt.fuzzer_no_main-aarch64.a)
+ROOT CAUSE: the archive ships in libclang-rt-14-dev, which is only a
+RECOMMENDED dependency of clang. The Dockerfile installs with
+--no-install-recommends (good hygiene) so apt silently dropped it; the probe
+container used plain apt-get (recommends on) and therefore HAD the archive --
+which is why the probe passed and the build failed. Same package set, one
+flag. FIX: name libclang-rt-dev explicitly in the apt line. Confirmed by a
+30s probe with --no-install-recommends + libclang-rt-dev before rebuilding.
+Also: requirements.txt has no platform-specific pins; the pip step never ran
+in build #2. And the background-build wrapper now propagates the docker exit
+code (build #2 reported exit 0 from the shell while docker had failed --
+appended-to-log exit codes are not exit codes).
+LESSON for the lab notebook: a probe must use the SAME flags as the build.
+
+SANDBOX BUILD #3: SUCCESS. tofu-sandbox:latest, 1.91GB, "atheris+mcp import OK"
+in-image. First smoke died at container START, not in the harness:
+  runc: create mountpoint for .../eval/corpora_gpt41-sandbox: read-only file
+  system
+Docker needs the mountpoint DIRECTORY to exist inside the ro repo bind before
+it can overlay onto it; the pre-existing dirs (targets/state/runs/...) mounted
+fine, the arm-scoped ones (corpora_$ARM, metrics_$ARM) did not exist on the
+host. FIX: sandbox.sh now mkdirs both the sandbox-backed source AND an empty
+host-side mountpoint per overlay; both gitignored (eval/sandbox/,
+eval/corpora_*-sandbox/, eval/metrics_*-sandbox/). The host-side dirs stay
+empty forever -- writes go through the overlay to eval/sandbox/<d>.
+
+SANDBOX HARNESS BUG (mine) FIXED: uv installed into /root/.local + symlinked to
+/usr/local/bin, but /root is mode 700 so the non-root `tofu` user got
+"Permission denied" -> shutil.which("uv")=None -> EVERY per-target Python venv
+skipped with "uv not installed". Dockerfile now copies the real uv binary to a
+world-executable path (late layer -> atheris stays cached, ~30s rebuild).
+Verified: uv 0.12.13, which(uv)=/usr/local/bin/uv as tofu.
+Restart prepare WITH --retry-skipped so the uv-blocked python repos re-attempt
+(they were written to skipped.jsonl). The other skips the user saw were
+LEGITIMATE and match host classes: locallama ERR_DLOPEN_FAILED (native sqlite),
+azure-devops/google-search missing API keys, mcp-starter needs a build step.
+Node prepare already works in-sandbox (appium 5, excel 14, whistle 34 READY;
+npm postinstall now runs as uid 1000, no host home).
+
+================================================================
+2026-09-12  set_host.json -- reproduce the host executable corpus in the sandbox
+================================================================
+Ananto: the sandbox default prepared Set A+B (58) but the HOST campaign ran on
+Set A + Set E (41 READY: A node 14, A python 8, E node 19; Set B contributed 0
+runnable). A+B != what we analyzed -> not comparable. Decision: prepare exactly
+the 41 host-READY repos in the sandbox.
+  Built Benchmarks/extraction/set_host.json from eval/state/prepared.jsonl
+  (status=ready), enriched with last_commit/stars from the source set files.
+  19 node repos (Set E) lack last_commit -> harmless (cutoff is python-only;
+  all 8 python repos have it).
+  prepare_targets.py: --only-set now accepts "host".
+  Cleared the aborted A+B sandbox targets/configs/state for a clean start.
+  User will run (later, drives it): 
+    ./eval/run_sandbox_campaign.sh prepare --only-set host
+  then the campaign:
+    ./eval/run_sandbox_campaign.sh run
+  Deferred by Ananto: preparing/running ALL repos (full corpus) is a later job;
+  for now reproduce the known-executable 41 under the sandbox.
+
+CLARIFY (Ananto asked "run the remaining gpt-4.1 runs"): the host arm
+gpt41-full (423/530, unsandboxed) does NOT transfer to the sandbox. Sandbox
+arm gpt41-sandbox is a FRESH FULL run of the 41-repo host corpus (~537 configs,
+one/tool), resumable within itself (run_eval done_set() skips configs already
+in runs.gpt41-sandbox.jsonl). Cleared the orphan whistle smoke so the arm is
+pristine. Sequence: prepare --only-set host  ->  run. Host 423 kept as host-run
+evidence; published numbers come from the sandbox arm.
+
+================================================================
+2026-09-12  VIPER SANDBOX -- SEPARATE IMAGE (Ananto: "different docker image")
+================================================================
+CodeQL ships codeql-bundle-linux-arm64 (verified on the codeql-action release
+API) -> native arm64, NO x86 emulation needed. Pinned to codeql-bundle-v2.27.0
+(same version brew installed on the host). The BUNDLE includes the standard
+query libraries Viper's ql/jsql,pyql depend on, so no `codeql pack install`
+into the read-only repo mount.
+
+NEW FILES:
+  Dockerfile.viper            python3.11 + node22 + uv + CodeQL bundle
+                              (/opt/codeql) + Viper venv (/opt/viper-venv) from
+                              Benchmarks/Viper-MCP/requirements.txt; non-root.
+  Dockerfile.viper.dockerignore  BuildKit per-Dockerfile ignore: only
+                              Benchmarks/Viper-MCP/requirements.txt enters the
+                              context (keeps it tiny).
+  eval/viper_sandbox.sh       build|smoke|run|shell. Reuses the SAME sandbox
+                              targets (eval/sandbox/targets+state) so Viper and
+                              ToFu score the IDENTICAL corpus; Viper output ->
+                              eval/sandbox/viper_runs (per-target CodeQL DB +
+                              SARIF + fuzz results, can be GBs). Repo mounted ro
+                              at real path; --memory 10g (CodeQL DB build is
+                              heavy). VIPER_PY=/opt/viper-venv/bin/python,
+                              VIPER_MODEL=gpt-4.1.
+  run_viper.py: VPY now honors $VIPER_PY (container venv != VDIR/.venv).
+Build running -> eval/sandbox/viper_build.log.
+
+OPEN QUESTION for smoke (same as host): Viper's runner sets query_pack_root to
+the ro repo's ql/. With the bundle, analyze should resolve pack deps from the
+bundle search path WITHOUT writing a lock into ql/. If it insists on writing
+codeql-pack.lock.yml, the wrapper must copy ql/ into the per-target
+viper_runs dir (writable) and point query_pack_root there. Resolve at smoke.
+   74. After the ToFu sandbox run: build tofu-viper-sandbox, smoke excel-reader
+       (Phase I+II), then run over all sandbox-prepared targets. Compare to the
+       host viper smoke (findings/baselines/viper_smoke_excel-reader/).
+
+================================================================
+2026-09-12  SANDBOX MOUNT BUG (Docker Desktop same-path) + VIPER IMAGE
+================================================================
+Viper image (tofu-viper-sandbox, 3.37GB) builds fine: codeql 2.27.0 native
+arm64, node22, viper venv, bundle ships javascript/python query libs (no
+`codeql pack install` into ro repo). BUT the first viper smoke's "OK + 5 SARIF"
+was STALE overlay data -- Viper could not actually read its own code.
+
+ROOT CAUSE (cost several probes to isolate):
+  Mounting the repo at its IDENTICAL host path (-v $REPO:$REPO) collides with
+  Docker Desktop's auto-shared /Users and yields an EMPTY mount (container sees
+  repo root as root:root 755, 0 files; Benchmarks = ENOENT). Intermittent --
+  it worked for earlier ToFu prepare, then silently went empty after the
+  daemon/session restart. `-v $REPO:/mnt` showed all 38 files, proving it is
+  the TARGET PATH, not perms or sharing scope.
+  ALSO a red herring chased first: Benchmarks/Viper-MCP was mode 700 (umask);
+  chmod 755 did not help because the real issue was the same-path mount.
+
+FIX: mount the repo at /work; bake a symlink in BOTH images so prepared.jsonl's
+absolute paths still resolve:
+  ARG REPO_PATH=/Users/nazmulislamananto/pseclab/ToFu
+  RUN mkdir -p "$(dirname "$REPO_PATH")" && ln -sfn /work "$REPO_PATH"
+  Verified as root: /work=38 files, node_hook.js READABLE via the symlinked
+  abs path. sandbox.sh + viper_sandbox.sh mounts rewritten $REPO->/work,
+  overlays ->/work/eval/*, -w /work. Rebuilding both images (symlink is a late
+  layer -> atheris/codeql cached).
+
+SEPARATE REAL BUG to fix after the mount lands (do NOT trust viper numbers
+until then): the node runtime hook is NOT wired into server_launcher.py --
+it calls inject_python_hook_env only (line 44); node injection lives in
+_build_command via instrument+instrumentation_script, which the caller must
+set. On host hook_injected=True, in sandbox it was False. Re-smoke after the
+mount fix; if still False, wire inject_node_hook_env / pass instrumentation_
+script=node_hook.js for node targets. hook=False => Viper reports static
+candidates without runtime confirmation => HIGHER FP, not fewer findings.
+   75. Re-smoke viper sandbox after rebuild; confirm node_hook.js loads
+       (oracle.json non-empty, hook_init present) before any viper campaign.
+
+================================================================
+2026-09-12  STANDALONE CODEQL SECURITY BASELINE (host, static, no docker)
+================================================================
+Ananto: run stock CodeQL on all repos as a baseline, keep results; correctly
+noted no docker needed (static analysis reads source, does NOT run tools).
+NEW: eval/run_codeql_baseline.sh  (run | summary). Verified end-to-end on
+excel-reader: pack download (codeql/javascript-queries 2.4.5, python-queries
+1.8.10 -- already cached from the viper pack install), `codeql database create
+--build-mode=none` (24 files, no execution), `database analyze` with
+codeql/javascript-queries:codeql-suites/javascript-security-extended.qls ->
+SARIF, 0 findings on excel-reader (a real disjoint-set point: stock CodeQL
+finds nothing there, ToFu found the write bug).
+  DISTINCT from Viper Phase I: that runs Viper's 3 CUSTOM taint queries
+  (cmd-inj/ssrf/path-traversal); THIS runs CodeQL's off-the-shelf
+  security-extended suite = "what stock SAST finds on these servers".
+  Corpus: 41 prepared (33 node -> javascript-security-extended, 8 python ->
+  python-security-extended). Reads eval/targets/<repo> source at pinned commit.
+  Output: eval/codeql_baseline/<repo>/results.sarif + eval/state/codeql_runs.jsonl.
+  Resumable; DBs deleted post-analyze; --threads=2 --ram=4096 to co-exist with
+  the running ToFu container (host RAM separate from docker VM; only CPU shared).
+BASELINE MATRIX now: ToFu (sandbox, running) | Cisco MCP Scanner (done, gpt-4.1)
+  | CodeQL security-extended (this, static) | Viper Phase I+II (after ToFu).
+   76. After codeql baseline: add its column to the disjoint-set comparison
+       (findings/baselines/). Expect stock CodeQL to fire mostly on taint
+       classes (cmd-inj, path-traversal, unsafe-deserialization) and miss the
+       semantic/logic bugs ToFu targets -- another complementarity data point.
+
+CODEQL BASELINE RAN + SAVED (2026-09-12): 39 unique repos, 309 findings, 20
+flagged. (Raw index had dup entries for mindmap-mcp-server + uml-mcp -> pasted
+"41/320"; deduped, raw backed up to eval/state/codeql_runs.raw.jsonl.)
+Saved findings/baselines/codeql_baseline_20260912.md + codeql_runs_20260912.jsonl.
+Top rules: js/file-access-to-http 134, js/file-system-race 54,
+js/insecure-temporary-file 33, js/log-injection 18. CROSS-CHECK: excel-reader
+CodeQL=0 but ToFu V1 (arbitrary write) -> ToFu-only; locallama CodeQL=11 but
+different rules than ToFu V2/V3 -> same repo, disjoint issues. Third baseline
+column done. Item 76 -> fold into the comparison table.

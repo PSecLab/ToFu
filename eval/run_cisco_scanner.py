@@ -72,7 +72,13 @@ CLI = os.path.join(VBIN, "mcp-scanner")
 STATE = os.path.join(ROOT, "eval", "state")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
 RUNS = os.path.join(STATE, "cisco_runs.jsonl")
-TOFU_RUNS = os.path.join(STATE, "runs.jsonl")
+# ToFu index to compare against. Default to the gpt-4.1 arm (runs.gpt41-full)
+# when present so the LLM is held fixed against Cisco+gpt-4.1; override with
+# TOFU_RUNS_INDEX. The bare runs.jsonl (old default arm) is the last resort.
+TOFU_RUNS = os.environ.get("TOFU_RUNS_INDEX") or (
+    os.path.join(STATE, "runs.gpt41-full.jsonl")
+    if os.path.exists(os.path.join(STATE, "runs.gpt41-full.jsonl"))
+    else os.path.join(STATE, "runs.jsonl"))
 OUT = os.path.join(ROOT, "eval", "cisco_runs")
 
 lock = Lock()
@@ -158,7 +164,16 @@ def build_env(analyzers, with_api):
         "CISCO_LLM_MODEL", "ollama_chat/llama3.1:8b")
     env["MCP_SCANNER_LLM_BASE_URL"] = os.environ.get(
         "CISCO_LLM_BASE_URL", "http://localhost:11434")
-    env.setdefault("MCP_SCANNER_LLM_API_KEY", "ollama")
+    # Key resolution: an explicit MCP_SCANNER_LLM_API_KEY wins; else for a
+    # non-ollama base_url (e.g. OpenAI) use OPENAI_API_KEY; else the ollama
+    # placeholder. Without this the llm analyzer sends "ollama" as the bearer
+    # token to OpenAI and every call 401s.
+    if not env.get("MCP_SCANNER_LLM_API_KEY"):
+        base_l = env["MCP_SCANNER_LLM_BASE_URL"].lower()
+        if "11434" in base_l or "ollama" in base_l:
+            env["MCP_SCANNER_LLM_API_KEY"] = "ollama"
+        else:
+            env["MCP_SCANNER_LLM_API_KEY"] = os.environ.get("OPENAI_API_KEY", "")
     env["MCP_SCANNER_LLM_TIMEOUT"] = os.environ.get("CISCO_LLM_TIMEOUT", "120")
     if not with_api:
         # Make sure a stray key in the shell cannot silently turn the cloud
@@ -191,21 +206,31 @@ def preflight(analyzers, with_api):
         base = env["MCP_SCANNER_LLM_BASE_URL"]
         model = env["MCP_SCANNER_LLM_MODEL"]
         log(f"llm analyzer -> {model} @ {base}")
-        try:
-            import urllib.request
-            with urllib.request.urlopen(base.rstrip("/") + "/api/tags",
-                                        timeout=10) as r:
-                tags = json.loads(r.read().decode())
-            names = [m.get("name", "") for m in tags.get("models", [])]
-            want = model.split("/", 1)[-1]
-            if want in names:
-                log(f"  OK -- '{want}' is pulled locally")
-            else:
-                log(f"  PREFLIGHT FAIL: '{want}' not in local Ollama. Have: {names}")
+        base_l = base.lower()
+        if "11434" in base_l or "ollama" in base_l:
+            # local Ollama: verify the model is actually pulled
+            try:
+                import urllib.request
+                with urllib.request.urlopen(base.rstrip("/") + "/api/tags",
+                                            timeout=10) as r:
+                    tags = json.loads(r.read().decode())
+                names = [m.get("name", "") for m in tags.get("models", [])]
+                want = model.split("/", 1)[-1]
+                if want in names:
+                    log(f"  OK -- '{want}' is pulled locally")
+                else:
+                    log(f"  PREFLIGHT FAIL: '{want}' not in local Ollama. Have: {names}")
+                    ok = False
+            except Exception as e:
+                log(f"  PREFLIGHT FAIL: cannot reach Ollama at {base} ({e})")
                 ok = False
-        except Exception as e:
-            log(f"  PREFLIGHT FAIL: cannot reach Ollama at {base} ({e})")
-            ok = False
+        else:
+            # hosted provider (e.g. OpenAI): just require a key is present
+            if env.get("MCP_SCANNER_LLM_API_KEY"):
+                log(f"  OK -- hosted provider, key present (len={len(env['MCP_SCANNER_LLM_API_KEY'])})")
+            else:
+                log("  PREFLIGHT FAIL: no LLM API key (set OPENAI_API_KEY or MCP_SCANNER_LLM_API_KEY)")
+                ok = False
     targets = read_jsonl(PREPARED)
     ready = [t for t in targets if t.get("status") == "ready"]
     log(f"targets: {len(ready)} ready servers "
@@ -245,9 +270,17 @@ def count_findings(results):
                 if isinstance(val, list):
                     c = len(val)
                 elif isinstance(val, dict):
-                    c = int(val.get("total_findings") or 0) or (1 if val else 0)
+                    # total_findings is authoritative when present: a SAFE tool
+                    # reports total_findings=0 with a populated result dict, so
+                    # the old `or (1 if val else 0)` fallback counted EVERY safe
+                    # tool as one finding (excel-reader: 0 real -> 14 phantom).
+                    if "total_findings" in val:
+                        c = int(val.get("total_findings") or 0)
+                    else:
+                        sev0 = str(val.get("severity", "")).upper()
+                        c = 1 if (val and sev0 not in ("", "SAFE", "NONE")) else 0
                     sev = val.get("severity")
-                    if sev:
+                    if sev and c:
                         by_sev[sev] = by_sev.get(sev, 0) + c
                 n += c
                 if c:
@@ -301,9 +334,23 @@ def one(target, analyzers, with_api, timeout, source_scan):
             f.write(out)
         rec["returncode"] = p.returncode
         rec["log"] = os.path.relpath(logfile, ROOT)
+        # The scanner honours --output only for some formats; with --format raw
+        # it prints the JSON report to STDOUT. Prefer the --output file, else
+        # parse stdout (which we already captured). Both are the same schema.
+        results = None
         if os.path.exists(outfile):
             with open(outfile) as f:
                 results = json.load(f)
+        else:
+            stdout_txt = p.stdout.decode(errors="ignore").strip()
+            if stdout_txt.startswith("{"):
+                try:
+                    results = json.loads(stdout_txt)
+                    with open(outfile, "w") as f:
+                        f.write(stdout_txt)   # persist for later inspection
+                except json.JSONDecodeError:
+                    results = None
+        if results is not None:
             per_tool, flagged, by_analyzer, by_sev = count_findings(results)
             rec.update(raw=os.path.relpath(outfile, ROOT),
                        n_tools_scanned=len(per_tool),

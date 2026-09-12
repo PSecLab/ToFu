@@ -38,6 +38,7 @@ def main():
     override_rules = {}
     predefined_seeds = []
     file_backed_params = {}
+    target_cwd = None
     
     # 1. Load from config file if specified
     if args.config:
@@ -63,6 +64,9 @@ def main():
             # even though targets/fuzz_*.py used it. That is why the paper's
             # binary-seed claim was never observed working.
             file_backed_params = config_data.get("file_backed_params", {}) or {}
+            # BUG 21: prepare_targets.py has always written "cwd", and nothing
+            # ever read it. Targets therefore ran from ToFu's repo root.
+            target_cwd = config_data.get("cwd") or None
             logger.info(f"Loaded configuration from {args.config}")
         except Exception as e:
             logger.error(f"Failed to parse config file: {e}")
@@ -112,6 +116,11 @@ def main():
     fuzzer_config = FuzzerConfig()
     if args.metrics_dir:
         fuzzer_config.metrics_dir = args.metrics_dir
+    if target_cwd:
+        fuzzer_config.target_cwd = target_cwd
+        # The path-traversal oracle judges escapes relative to this.
+        if not fuzzer_config.allowed_workspace_dir:
+            fuzzer_config.allowed_workspace_dir = target_cwd
 
     fuzzer = MCPDifferentialFuzzer(
         command=command,

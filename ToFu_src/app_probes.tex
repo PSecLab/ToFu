@@ -1,0 +1,126 @@
+% ---------------------------------------------------------------------------
+% Appendix: static sink-probe validity.
+% Patterns are copied VERBATIM from Benchmarks/extraction/extract_tools.py
+% (the SINKS dict). If that file changes, this appendix is stale.
+% Rates are from Benchmarks/extraction/results.jsonl, n=597 Python / 807 Node.
+% ---------------------------------------------------------------------------
+
+\section{Validity of the Static Sink Probes}
+\label{app:probes}
+
+Table~\ref{tab:sink-families} reports, for each of ToFu's 21 introspection
+tracers, the fraction of corpus repositories containing a static reference to
+an API that the tracer instruments. Those fractions are produced by regular
+expressions over repository source, and the expressions vary widely in how
+specific they are. We document that variation here rather than suppress it,
+because it determines what the table can and cannot support.
+
+\paragraph{How the probes were built.}
+ToFu's 21 introspection tracers are anchored in CWE: each oracle names the
+weakness class it monitors (\eg{} CWE-502 for unsafe deserialization, CWE-918
+for SSRF), and CWE serves as the reusable security knowledge behind the
+sanitizer corpus (\S\ref{sec:design}). The \emph{static probes} used to
+measure corpus coverage are a separate, later artefact and are not
+taxonomy-derived: they are the inverse image of the instrumentation, one
+regular expression per tracer, written to approximate ``would this tracer ever
+have anything to observe in this repository.'' Each repository is cloned at depth
+one; every file with a Python or JavaScript/TypeScript extension is scanned,
+excluding \texttt{node\_modules}, virtual environments, build output and test
+directories, and files over 900\,KB; a family is recorded as present if any
+pattern matches anywhere in the repository. Matching is therefore at
+repository granularity and is not confined to the bodies of registered tools.
+
+\paragraph{Two regimes.}
+The probes fall into two groups. The first targets a distinctive API whose
+presence genuinely indicates the corresponding behaviour: \texttt{pickle} and
+\texttt{yaml.load} for \textsc{Deserialization}, \texttt{verify=False} and
+\texttt{rejectUnauthorized: false} for \textsc{SSLCertValidation},
+\texttt{lxml} and \texttt{xml2js} for \textsc{XXE}. These probes report low
+rates (2--5\%), and we regard their rates as informative.
+
+The second group, listed in Table~\ref{tab:probe-validity}, matches ordinary
+language constructs. \textsc{LogInjection} matches \texttt{print(}, which
+appears in nearly every Python file; \textsc{FileAccess} matches any
+\texttt{open(}; \textsc{ReDoS} matches any use of the \texttt{re} module.
+A repository scoring positive for these families has not been shown to be at
+risk---it has been shown to be written in Python or JavaScript. Their high
+rates (16--85\%) are a property of the probe, not of the ecosystem.
+
+\paragraph{Why the distinction matters.}
+We use the coverage numbers for one purpose only: to argue that a tracer has
+enough reachable surface in the corpus to be worth running. For that purpose
+a low-specificity probe is still a valid \emph{upper bound}---a repository
+with no \texttt{open(} anywhere certainly has no file-access defect---and the
+nine families in Table~\ref{tab:probe-validity} clear it comfortably. We do
+not use these nine families to stratify samples, to rank threat prevalence,
+or to form denominators for detection rates, because a denominator built from
+\texttt{print(} is not a population of at-risk servers.
+
+\paragraph{Overlap.}
+The probes are not disjoint. \textsc{BlockingEventLoopCall} shares
+\texttt{readFileSync} with \textsc{FileAccess} and \texttt{execSync} with
+\textsc{CommandExecution}, so a single Node file using both constructs
+contributes to three families. Marginal rates in
+Table~\ref{tab:sink-families} therefore cannot be summed, and no
+joint-distribution claim should be read from them.
+
+\paragraph{Unvalidated precision.}
+We did not hand-label a sample, so the probes have no measured precision or
+recall, and the coverage rates carry no error bar. We state the rates as
+properties of the scan rather than estimates of a latent quantity.
+Establishing precision would require a labelled sample per family and is
+future work. Two further limitations follow from the method: static matching
+cannot see dynamically constructed calls, and repository-granularity matching
+attributes a sink to a repository even when it occurs in code no registered
+tool can reach.
+
+\begin{table}[t]
+\centering
+\caption{The nine low-specificity probes. Patterns are verbatim from the
+  scanner; rates are the fraction of repositories matching
+  ($n=597$ Python, $n=807$ Node/TS).}
+\label{tab:probe-validity}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lrrp{2.6cm}p{2.9cm}@{}}
+\toprule
+\textbf{Family} & \textbf{Py} & \textbf{Node} & \textbf{Pattern} & \textbf{What it matches} \\
+\midrule
+LogInjection & 85.4 & 66.7 &
+  \texttt{logging.} \texttt{logger.} \texttt{console.log} \texttt{print\textbackslash s*(} &
+  Any file that prints or logs at all. \\
+\addlinespace
+SensitiveData\-Logging & 72.5 & 79.1 &
+  \texttt{os.environ} \texttt{process.env} \texttt{getenv} \texttt{dotenv} &
+  Any configuration read. No logging is implied by the match. \\
+\addlinespace
+FileAccess & 59.5 & 50.3 &
+  \texttt{\textbackslash bopen\textbackslash s*(} \texttt{Path(} \texttt{pathlib} \texttt{fs.readFile} \texttt{readFileSync} &
+  Any file open, including reading the program's own config. \\
+\addlinespace
+FileWrite & 34.8 & 47.6 &
+  \texttt{fs.writeFile} \texttt{writeFileSync} \texttt{shutil.(copy|move)} \texttt{.write\textbackslash s*(} &
+  Any \texttt{.write(} call, including \texttt{sys.stdout.write}. \\
+\addlinespace
+ReDoS & 31.0 & 20.0 &
+  \texttt{re.compile} \texttt{re.(match|search|findall)} \texttt{new RegExp} &
+  Any regular expression, regardless of whether it can backtrack. \\
+\addlinespace
+BlockingEvent\-LoopCall & 30.2 & 39.7 &
+  \texttt{time.sleep} \texttt{execSync} \texttt{readFileSync} \texttt{sleep\textbackslash s*(} &
+  Any sleep or sync I/O. Overlaps \textsc{FileAccess} and \textsc{CommandExecution}. \\
+\addlinespace
+LoopCondition & 27.8 & 16.9 &
+  \texttt{while\textbackslash s+True} \texttt{while(\ true)} \texttt{for(;;)} &
+  Any unbounded loop, including a normal server accept loop. \\
+\addlinespace
+Unrestricted\-IPBinding & 26.0 & 37.1 &
+  \texttt{0.0.0.0} \texttt{host\textbackslash s*=\textbackslash s*"0} \texttt{listen\textbackslash s*(} &
+  Any \texttt{listen(} call. Most matches are ordinary localhost servers. \\
+\addlinespace
+WeakPRNG & 16.4 & 24.0 &
+  \texttt{\textbackslash brandom.} \texttt{Math.random} \texttt{randint} \texttt{choice(} &
+  Any randomness, including \texttt{random.shuffle} on a list. \\
+\bottomrule
+\end{tabular}
+\end{table}

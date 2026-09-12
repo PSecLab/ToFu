@@ -19,7 +19,7 @@
 #   ARM=gpt41-full ./eval/run_arm_gpt41.sh --only-repo DesktopCommander
 set -u
 cd "$(dirname "$0")/.." || exit 1
-PY="$PWD/.venv/bin/python"
+PY="${TOFU_PY:-$PWD/.venv/bin/python}"   # TOFU_PY overrides (sandbox: /opt/tofu-venv/bin/python)
 
 set -a; . ./.env; set +a
 [ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set in .env"; exit 1; }

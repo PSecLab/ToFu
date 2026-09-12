@@ -1,0 +1,223 @@
+#!/usr/bin/env python3
+"""
+BASELINE #3: VIPER-MCP (Sun et al. 2026) over ToFu's own prepared targets.
+The closest competing system. Its batch scripts were REMOVED from the anonymous
+artifact and config.yaml takes ONE server, so this generates a config per
+target from eval/state/prepared.jsonl and loops. RESUMABLE via
+eval/state/viper_runs.jsonl.
+
+TWO PHASES. Phase I = CodeQL taint queries (needs the CodeQL CLI >= 2.16;
+`brew install codeql` gives 2.27.0). Phase II = LLM agent that evolves prompts
+until a value provably reaches a sink at runtime. --skip-codeql runs Phase II
+alone, which is what we can do before CodeQL is installed. Paper reports ~15
+min/server, Phase II dominating -- budget accordingly.
+
+LLM held fixed at gpt-4.1 (their default is gpt-5.4) to match the ToFu
+gpt41-full arm and the Cisco/MCPSafety baselines. Temperature forced to 0
+(theirs 0.7) for reproducibility -- STATE THIS; it is a deviation from their
+default protocol.
+
+VIPER models exactly three classes -- command injection, SSRF, path traversal
+-- and its authors say so. Do not read a VIPER miss on any other class as a
+weakness; it is out of scope by design (MANIFEST.md).
+
+  python3 eval/run_viper.py --preflight
+  python3 eval/run_viper.py --test-agent --limit 1     # LLM connectivity, cheap
+  python3 eval/run_viper.py --skip-codeql --limit 1    # Phase II smoke
+  python3 eval/run_viper.py --skip-codeql              # all, Phase II
+  python3 eval/run_viper.py                            # full, needs codeql
+"""
+import argparse, copy, json, os, shutil, subprocess, sys, time
+
+ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATE = os.path.join(ROOT, "eval", "state")
+PREPARED = os.path.join(STATE, "prepared.jsonl")
+RUNS  = os.path.join(STATE, "viper_runs.jsonl")
+OUT   = os.path.join(ROOT, "eval", "viper_runs")
+VDIR  = os.path.join(ROOT, "Benchmarks", "Viper-MCP")
+VPY   = os.environ.get("VIPER_PY") or os.path.join(VDIR, ".venv", "bin", "python")  # sandbox: /opt/viper-venv/bin/python
+BASE_CFG = os.path.join(VDIR, "config.yaml")
+
+sys.path.insert(0, os.path.join(VDIR, ".venv", "lib"))  # not needed; yaml via VPY below
+
+def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
+
+def read_jsonl(p):
+    out = []
+    if os.path.exists(p):
+        for line in open(p):
+            try: out.append(json.loads(line))
+            except Exception: pass
+    return out
+
+def load_yaml(path):
+    # Use VIPER's own interpreter, which has pyyaml; ToFu's venv may not.
+    code = "import sys,yaml,json; print(json.dumps(yaml.safe_load(open(sys.argv[1]))))"
+    p = subprocess.run([VPY, "-c", code, path], capture_output=True, text=True)
+    if p.returncode != 0: raise RuntimeError("yaml load failed: " + p.stderr[:200])
+    return json.loads(p.stdout)
+
+def dump_yaml(obj, path):
+    # JSON is valid YAML 1.2 -- write it as such. No yaml dep in ToFu's venv.
+    with open(path, "w") as f: json.dump(obj, f, indent=2)
+
+def make_cfg(base, target, slug, skip_codeql, codeql_bin, rounds):
+    cfg = copy.deepcopy(base)
+    resdir = os.path.join(OUT, slug)
+    os.makedirs(resdir, exist_ok=True)
+    ms = cfg.setdefault("mcp_server", {})
+    ms["repo_path"] = target.get("cwd")
+    ms["transport"] = "stdio"
+    ms["startup_command"] = [target["command"]] + list(target.get("args", []))
+    ms["timeout"] = 30
+    ms["interaction_log_path"] = os.path.join(resdir, "interactions.jsonl")
+    model = os.environ.get("VIPER_MODEL", "gpt-4.1")
+    key = os.environ.get("OPENAI_API_KEY", "")
+    base_url = os.environ.get("OPENAI_BASE_URL") or None
+    # hit_judge is read by config.hit_judge_llm (engine.py:327) but is ABSENT
+    # from the shipped config.yaml -> {} -> falls back to prompt_llm. Set all
+    # three so every LLM role is explicit and identical.
+    for role in ("prompt_generator", "agent", "hit_judge"):
+        r = cfg.setdefault("llm", {}).setdefault(role, {})
+        r["provider"] = "openai"; r["model"] = model; r["api_key"] = key
+        r["temperature"] = 0
+        # base_url MUST be absent (None), never "". src/llm/__init__.py hands
+        # the value straight to AsyncOpenAI(base_url=...), and the SDK treats
+        # "" as a literal URL -> "Connection error" on every non-agent call.
+        # Measured 2026-09-11: seed_generator, mutator, strategy scoring and
+        # hit_judge all died this way while the langchain agent (tolerant of
+        # "") kept working, which is why --test-agent passed and fuzz failed.
+        if base_url: r["base_url"] = base_url
+        else: r.pop("base_url", None)
+    cq = cfg.setdefault("codeql", {})
+    cq["language"] = "python" if target.get("lang") == "python" else "javascript"
+    cq["codeql_binary_path"] = codeql_bin
+    cq["report_path"] = os.path.join(resdir, "codeql_output")
+    cq["query_pack_root"] = os.path.join(VDIR, "ql")
+    cq["enabled"] = not skip_codeql
+    if cq["language"] == "python":
+        cq["queries"] = [q.replace("jsql/", "pyql/") for q in cq.get("queries", [])]
+    cfg.setdefault("fuzz", {})["rounds"] = rounds
+    cfg.setdefault("logging", {})["file"] = os.path.join(resdir, "fuzzer.log")
+    out = cfg.setdefault("output", {})
+    out["directory"] = os.path.join(resdir, "fuzz_results")
+    out["oracle_path"] = os.path.join(resdir, "oracle.json")   # engine._resolve_oracle_path
+    p = os.path.join(resdir, "config.yaml")
+    dump_yaml(cfg, p)
+    return p, resdir
+
+def preflight(skip_codeql, codeql_bin):
+    ok = True
+    if not os.path.exists(VPY):
+        log(f"PREFLIGHT FAIL: {VPY} missing -- uv venv + uv pip install -r requirements.txt in {VDIR}"); ok = False
+    if not os.environ.get("OPENAI_API_KEY"):
+        log("PREFLIGHT FAIL: OPENAI_API_KEY not set"); ok = False
+    if not skip_codeql and not shutil.which(codeql_bin) and not os.path.exists(codeql_bin):
+        log(f"PREFLIGHT FAIL: codeql binary '{codeql_bin}' not found -- brew install codeql, or use --skip-codeql"); ok = False
+    log(f"model={os.environ.get('VIPER_MODEL','gpt-4.1')}  codeql={'SKIPPED' if skip_codeql else codeql_bin}")
+    ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
+    log(f"targets: {len(ready)} ready servers from {PREPARED}")
+    if not ready: ok = False
+    return ok
+
+def one(target, base, skip_codeql, codeql_bin, rounds, timeout, test_agent):
+    repo = target["repo"]; slug = repo.replace("/", "__")
+    rec = {"repo": repo, "set": target.get("set"), "lang": target.get("lang"),
+           "commit": target.get("commit"), "started": time.time(),
+           "model": os.environ.get("VIPER_MODEL", "gpt-4.1"), "skip_codeql": skip_codeql,
+           "test_agent": test_agent, "rounds": rounds}
+    t0 = time.time()
+    try:
+        cfgp, resdir = make_cfg(base, target, slug, skip_codeql, codeql_bin, rounds)
+        cmd = [VPY, "main.py", cfgp]
+        if skip_codeql: cmd.append("--skip-codeql")
+        if test_agent: cmd.append("--test-agent")
+        rec["cmd"] = " ".join(cmd)
+        # VIPER resolves ./ql, ./results relative to ITS OWN dir -> cwd=VDIR.
+        env = os.environ.copy()
+        env["MCP_FUZZER_ORACLE_LOG"] = os.path.join(resdir, "oracle.json")
+        p = subprocess.run(cmd, cwd=VDIR, env=env, capture_output=True, timeout=timeout)
+        out = p.stdout.decode(errors="ignore") + "\n" + p.stderr.decode(errors="ignore")
+        rec.update(returncode=p.returncode, ok=p.returncode == 0)
+        fr = os.path.join(resdir, "fuzz_results")
+        if os.path.isdir(fr):
+            # results land one level down, <fuzz_results>/<repo_slug>/*.json
+            files = [os.path.join(d, f) for d, _, fs in os.walk(fr) for f in fs]
+            rec["n_result_files"] = len(files)
+            hits = 0
+            for fp in files:
+                try:
+                    txt = open(fp, errors="ignore").read().lower()
+                    hits += txt.count('"vulnerable": true') + txt.count("exploit_success")
+                except Exception: pass
+            rec["n_hit_markers"] = hits
+            an = os.path.join(fr, slug, "anomalies.json")
+            if os.path.exists(an):
+                try: rec["n_anomalies"] = len(json.load(open(an)))
+                except Exception: pass
+        # oracle events = sink observations from the injected hook. hook_init
+        # is the launcher's own marker (engine._is_internal_launcher_event);
+        # count it separately -- its ABSENCE means the hook was never injected.
+        # The engine may consume-and-clear the oracle file between rounds, so
+        # the file left on disk after the run UNDER-reports. Derive injection
+        # and hit evidence from the run's own log too: the hit_judge logs
+        # "oracle_hits=N" every round, and the launcher logs hook_init.
+        op = os.path.join(resdir, "oracle.json")
+        ev = []
+        if os.path.exists(op):
+            ev = [l for l in open(op, errors="ignore") if l.strip()]
+        flog = os.path.join(resdir, "fuzzer.log")
+        max_hits, hook_seen = 0, False
+        if os.path.exists(flog):
+            import re as _re
+            txt = open(flog, errors="ignore").read()
+            hits = [int(x) for x in _re.findall(r"oracle_hits=(\d+)", txt)]
+            max_hits = max(hits) if hits else 0
+            hook_seen = "hook_init" in txt
+        rec["n_oracle_events_on_disk"] = len(ev)
+        rec["max_oracle_hits_in_round"] = max_hits
+        rec["hook_injected"] = (any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0)
+    except subprocess.TimeoutExpired as e:
+        out = ((e.stdout or b"").decode(errors="ignore") + "\n" + (e.stderr or b"").decode(errors="ignore"))
+        rec.update(ok=False, error=f"timeout after {timeout}s")
+    except Exception as e:
+        out = ""; rec.update(ok=False, error=str(e)[:200])
+    os.makedirs(OUT, exist_ok=True)
+    logfile = os.path.join(OUT, slug + ".log")
+    with open(logfile, "w") as f: f.write(out)
+    lines = [l for l in out.splitlines() if l.strip()]
+    if not rec.get("ok") and "error" not in rec and lines: rec["error"] = lines[-1][:200]
+    rec.update(log=os.path.relpath(logfile, ROOT), seconds=round(time.time() - t0, 1))
+    return rec
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--preflight", action="store_true")
+    ap.add_argument("--skip-codeql", action="store_true")
+    ap.add_argument("--test-agent", action="store_true", help="LLM connectivity check only (one prompt)")
+    ap.add_argument("--codeql", default=os.environ.get("VIPER_CODEQL", "codeql"))
+    ap.add_argument("--rounds", type=int, default=int(os.environ.get("VIPER_ROUNDS", "10")))
+    ap.add_argument("--timeout", type=int, default=1800, help="per-server seconds (paper: ~15 min)")
+    ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--only", default=None)
+    a = ap.parse_args()
+    if not preflight(a.skip_codeql or a.test_agent, a.codeql): sys.exit(1)
+    if a.preflight: return
+    base = load_yaml(BASE_CFG)
+    done = {r["repo"] for r in read_jsonl(RUNS) if not r.get("test_agent")}
+    ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
+    if not a.test_agent: ready = [t for t in ready if t["repo"] not in done]
+    if a.only: ready = [t for t in ready if a.only.lower() in t["repo"].lower()]
+    if a.limit: ready = ready[:a.limit]
+    log(f"todo={len(ready)} already_done={len(done)}")
+    # --test-agent only exercises the LLM; never let it trigger a CodeQL build.
+    skip_cq = a.skip_codeql or a.test_agent
+    for i, t in enumerate(ready, 1):
+        rec = one(t, base, skip_cq, a.codeql, a.rounds, a.timeout, a.test_agent)
+        with open(RUNS, "a") as f: f.write(json.dumps(rec) + "\n")
+        tag = "OK  " if rec.get("ok") else "ERR "
+        log(f"{tag}[{i}/{len(ready)}] {t['repo']} {rec['seconds']}s hits={rec.get('n_hit_markers','-')} {rec.get('error','')[:90]}")
+    log(f"index -> {RUNS}   logs -> {OUT}")
+
+if __name__ == "__main__":
+    main()

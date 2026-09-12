@@ -1,0 +1,127 @@
+% ---------------------------------------------------------------------------
+% Corpus construction + sink-family coverage.
+% Every number here is traceable:
+%   funnel         -> ToFu_src/nazmul.todo, "Funnel on the real data"
+%   per-language   -> Benchmarks/extraction/targets.jsonl (1,847 rows)
+%   tools + sinks  -> Benchmarks/extraction/results.jsonl (1,778 rows)
+%   failures       -> Benchmarks/extraction/failures.jsonl (69 rows)
+% Recomputed 2026-09-11. Do not edit a number here without rerunning the source.
+% ---------------------------------------------------------------------------
+
+\subsection{Corpus construction}
+\label{sec:corpus}
+
+We draw our population from \textsc{MCPCorpus}~\cite{lin2025mcpcorpus}, a
+crawl of the \texttt{mcp.so} directory. We use the published
+\texttt{mcpso\_servers\_cleaned.json} snapshot at a pinned commit: the
+upstream repository has not been updated since 2025-09-01, so the population
+is effectively frozen, which we treat as a benefit for reproducibility rather
+than a limitation.
+
+Construction proceeds in four stages (Table~\ref{tab:funnel}). From 13,875
+records we retain those that name a GitHub repository, have at least ten
+stars, and are neither archived nor an MCP \emph{client}, leaving 2,501
+records. These records are then deduplicated \emph{by repository}: 279
+records collapse, because large monorepos are listed once per server they
+contain (\texttt{modelcontextprotocol/servers} appears 35 times,
+\texttt{baidu-maps/mcp} 8 times). Skipping this step would let a single
+repository dominate any sample. That leaves 2,222 unique repositories.
+
+ToFu ships two runners, for Python and for Node/TypeScript, so we restrict to
+those two languages: 808 Python and 1,039 Node, or 1,847 repositories. The
+remaining 375 (Go 154, Rust 41, Java 34, C\# 19, PHP 17, and a tail) are a
+stated exclusion.
+
+Finally we clone each of the 1,847 repositories at depth one and extract its
+tool registrations and sink usage statically. Extraction succeeded for 1,778;
+the 69 failures are repositories that have since been deleted or made private
+(52), other clone errors (13), and clone timeouts (4). We extract tool
+metadata ourselves rather than reading the corpus \texttt{tools} field,
+because only 55 of the 13,875 records carry a parsable tool schema.
+
+Of the 1,778 repositories scanned, 1,404 expose at least one tool---597
+Python and 807 Node---for a total of 24,194 tools. The remaining 374 register
+no tool our extractor recognises, and we exclude them. The two language
+populations are strikingly similar in shape: both have a median of 6 tools per
+repository (mean 17.0 Python, 17.4 Node) and a long tail reaching 881 and 918
+tools respectively, so language is not a confound for tool count.
+
+\begin{table}[t]
+\centering
+\caption{Corpus construction. Counts are repositories except where noted.}
+\label{tab:funnel}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Stage} & \textbf{Count} \\
+\midrule
+\textsc{MCPCorpus} records                            & 13,875 \\
+\quad has repo, $\geq$10 stars, not archived, not client & 2,501 \\
+\quad deduplicated by repository                      & 2,222 \\
+\quad Python or Node/TS (ToFu has two runners)        & 1,847 \\
+\quad static extraction succeeded                     & 1,778 \\
+\quad exposes $\geq$1 tool                            & \textbf{1,404} \\
+\midrule
+\quad\quad Python & 597 \\
+\quad\quad Node/TS & 807 \\
+\midrule
+Tools extracted & \textbf{24,194} \\
+\quad\quad Python & 10,130 \\
+\quad\quad Node/TS & 14,064 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}[t]
+\centering
+\caption{Corpus coverage of ToFu's 21 introspection tracers. Each row is the
+  fraction of repositories containing at least one static reference to an API
+  that the corresponding tracer instruments; a repository may match several
+  families, so columns do not sum to 100\%. This measures how much of the
+  corpus each tracer can \emph{reach}, not how many defects exist.
+  $n=597$ Python, $n=807$ Node/TS.}
+\label{tab:sink-families}
+\small
+\begin{tabular}{@{}lrr@{}}
+\toprule
+\textbf{Tracer family} & \textbf{Python \%} & \textbf{Node/TS \%} \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Low-specificity probes}$^{\dagger}$} \\
+LogInjection             & 85.4 & 66.7 \\
+SensitiveDataLogging     & 72.5 & 79.1 \\
+FileAccess               & 59.5 & 50.3 \\
+FileWrite                & 34.8 & 47.6 \\
+ReDoS                    & 31.0 & 20.0 \\
+BlockingEventLoopCall    & 30.2 & 39.7 \\
+LoopCondition            & 27.8 & 16.9 \\
+UnrestrictedIPBinding    & 26.0 & 37.1 \\
+WeakPRNG                 & 16.4 & 24.0 \\
+\midrule
+\multicolumn{3}{@{}l}{\emph{Specific probes}} \\
+NetworkExecution         & 57.8 & 61.5 \\
+CommandExecution         & 30.8 & 33.0 \\
+CodeExecution            & 24.3 & 24.7 \\
+TempFileLeak             & 21.8 & 17.0 \\
+SQLExecution             & 20.3 & 14.7 \\
+UnverifiedCodeDownload   & 17.3 & 15.4 \\
+DataAmplification        & 10.9 & 12.8 \\
+WeakHash                 &  9.0 &  7.6 \\
+XXE                      &  5.0 &  2.4 \\
+SSLCertValidation        &  4.2 &  2.5 \\
+Deserialization          &  4.0 &  4.6 \\
+NonceReuse               &  3.2 &  7.1 \\
+\midrule
+matches no family        &  2.0 &  3.2 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.4em}
+{\footnotesize $^{\dagger}$~These probes match common language constructs
+rather than distinctive sink APIs---\texttt{print(} for
+\textsc{LogInjection}, \texttt{os.environ}/\texttt{process.env} for
+\textsc{SensitiveDataLogging}, any \texttt{re.compile} for \textsc{ReDoS},
+any \texttt{listen(} for \textsc{UnrestrictedIPBinding}. Their high rates
+indicate that the tracer is broadly applicable, not that the behaviour is
+widespread, and we do not use them for stratification. Appendix~\ref{app:probes} lists their patterns.}
+\end{table}

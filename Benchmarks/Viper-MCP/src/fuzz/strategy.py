@@ -194,15 +194,20 @@ class FuzzStrategy:
         vuln_type = _normalize_vuln_type(target_vulnerability_type or parsed_vuln)
         try:
             raw = await self.llm_client.generate(
+                # PATCH (ToFu): the template uses NAMED fields
+                # ({target_call_chain}, {target_tool}, ...) but was formatted
+                # positionally -> KeyError('target_call_chain') on EVERY round,
+                # silently degrading LLM scoring to the rule-based fallback
+                # (strategy.py:158). Measured 8/8 rounds on excel-reader.
                 prompt=prompts.ROUND_SCORING_TEMPLATE.format(
-                    target_call_chain,
-                    target_tool or "(unknown)",
-                    vuln_type or "(unknown)",
-                    self._summarize_agent_response(response),
-                    json.dumps([str(tool) for tool in tools_invoked], ensure_ascii=False),
-                    (request_packets or "(no request packets)")[:4000],
-                    (call_trace or "(no call trace)")[:4000],
-                    self._summarize_oracle_hits(oracle_hits),
+                    target_call_chain=target_call_chain,
+                    target_tool=target_tool or "(unknown)",
+                    target_vulnerability_type=vuln_type or "(unknown)",
+                    agent_response=self._summarize_agent_response(response),
+                    tools_invoked=json.dumps([str(tool) for tool in tools_invoked], ensure_ascii=False),
+                    request_packets=(request_packets or "(no request packets)")[:4000],
+                    call_trace=(call_trace or "(no call trace)")[:4000],
+                    oracle_hits=self._summarize_oracle_hits(oracle_hits),
                 ),
                 system_prompt=prompts.ROUND_SCORING_SYSTEM_PROMPT,
                 temperature=0.1,

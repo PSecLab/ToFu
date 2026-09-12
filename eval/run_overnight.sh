@@ -17,7 +17,7 @@
 set -u
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$PWD"
-PY="$ROOT/.venv/bin/python"
+PY="${TOFU_PY:-$ROOT/.venv/bin/python}"   # TOFU_PY overrides (sandbox: /opt/tofu-venv/bin/python)
 STAMP="$(date +%Y%m%d_%H%M%S)"
 LOG="$ROOT/eval/state/overnight_${STAMP}.log"
 mkdir -p "$ROOT/eval/state"

@@ -4,6 +4,10 @@ from typing import List, Optional
 
 from ..llm.base import LLMClient
 from ..fuzz.chromosome import Chromosome
+# PATCH (ToFu): `prompts` was used at SCHEDULING_PROMPT below but never
+# imported -> NameError on every LLM-backed mutator choice. Sibling modules
+# in src/fuzz use `from . import prompts`; from src/feedback that is:
+from ..fuzz import prompts
 
 
 class FeedbackOptimizer:
@@ -75,14 +79,17 @@ class FeedbackOptimizer:
             return "structure"
         try:
             raw = await self.llm_client.generate(
+                # PATCH (ToFu): same named-vs-positional mismatch as
+                # strategy.py -> KeyError('structure_score') once the LLM path
+                # is reachable; mutator choice fell to the "structure" default.
                 prompt=prompts.SCHEDULING_PROMPT.format(
-                    population.structure_score,
-                    population.parameter_score,
-                    population.structure_score_reason or "",
-                    population.parameter_score_reason or "",
-                    self._summarize_agent_response(population.response),
-                    population.request_packets or "(no request packets)",
-                    population.call_stack or "(no call stack)",
+                    structure_score=population.structure_score,
+                    parameter_score=population.parameter_score,
+                    structure_reason=population.structure_score_reason or "",
+                    parameter_reason=population.parameter_score_reason or "",
+                    agent_response=self._summarize_agent_response(population.response),
+                    request_packets=population.request_packets or "(no request packets)",
+                    call_stack=population.call_stack or "(no call stack)",
                 ),
                 system_prompt=prompts.SCHEDULING_SYSTEM_PROMPT,
                 temperature=0.2,

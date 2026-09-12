@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 
 from .base import BaseAgent
 from src.llm.usage import append_usage_log, extract_langchain_usage
-from src.utils.instrumentation import inject_python_hook_env
+from src.utils.instrumentation import inject_python_hook_env, inject_node_hook_env  # PATCH (ToFu): node hook
 
 logger = logging.getLogger("viper_mcp.agent")
 
@@ -531,6 +531,7 @@ def create_langchain_agent_from_config(config) -> LangChainAgent:
     if isinstance(configured_env, dict):
         env.update({str(k): str(v) for k, v in configured_env.items()})
     env = inject_python_hook_env(cmd_list, env, project_root)
+    env = inject_node_hook_env(cmd_list, env, project_root)  # PATCH (ToFu)
 
     # Create MCP client configuration
     mcp_servers = {}

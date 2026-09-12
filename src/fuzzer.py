@@ -241,7 +241,8 @@ class MCPDifferentialFuzzer:
         )
         if is_js:
             from .runners import JSRunner
-            return JSRunner(self.command, self.args, tool)
+            return JSRunner(self.command, self.args, tool,
+                            cwd=getattr(self.config, "target_cwd", None))
         else:
             from .runners import PythonRunner
             return PythonRunner(self.command, self.args, tool)
@@ -456,7 +457,7 @@ class MCPDifferentialFuzzer:
                 err_details += proc_leak_err
 
         # 3. Check resource exhaustion / timeout (e.g. ReDoS)
-        timeout_triggered, timeout_err = self._check_resource_exhaustion(elapsed)
+        timeout_triggered, timeout_err = self._check_resource_exhaustion(elapsed, res)
         if timeout_triggered:
             triggered_by.append("check_resource_exhaustion")
             err_details += timeout_err
@@ -807,7 +808,11 @@ class MCPDifferentialFuzzer:
                 err_details += file_access_err
 
         if "check_introspection_path_traversal" in self.selected_sanitizer_names:
-            allowed_dir = getattr(self.config, "allowed_workspace_dir", None) or os.getcwd()
+            # An escape must be judged against the TARGET's workspace. Falling
+            # back to os.getcwd() measured against ToFu's repo root (bug 21).
+            allowed_dir = (getattr(self.config, "allowed_workspace_dir", None)
+                           or getattr(self.config, "target_cwd", None)
+                           or os.getcwd())
             pt_triggered, pt_err = check_introspection_path_traversal(accessed_files, allowed_base_dir=allowed_dir)
             if pt_triggered:
                 triggered_by.append("check_introspection_path_traversal")
@@ -871,9 +876,42 @@ class MCPDifferentialFuzzer:
             return True, err
         return False, ""
 
-    def _check_resource_exhaustion(self, elapsed: float) -> tuple[bool, str]:
-        """Returns True and diagnostic message if execution duration exceeds config limits."""
-        if "check_resource_exhaustion" in self.selected_sanitizer_names and elapsed > self.config.timeout_limit:
+    # Transport-level failures. When the runner cannot speak to the server at
+    # all, `elapsed` measures OUR socket timeout, not the tool's execution.
+    _TRANSPORT_FAILURES = ("socket error", "socket communication error",
+                           "is not running", "failed to restart",
+                           "broken pipe", "connection reset", "eof")
+
+    def _is_transport_failure(self, res) -> bool:
+        if res is None:
+            return True
+        if getattr(res, "success", True):
+            return False
+        err = (getattr(res, "error", "") or "").lower()
+        return any(k in err for k in self._TRANSPORT_FAILURES)
+
+    def _check_resource_exhaustion(self, elapsed: float, res=None) -> tuple[bool, str]:
+        """Returns True and diagnostic message if execution duration exceeds config limits.
+
+        A TRANSPORT FAILURE IS NOT A TIMING MEASUREMENT. js_runner sets
+        sock.settimeout(5.0) while timeout_limit defaults to 2.0, so before this
+        guard every timed-out read scored elapsed~5.0 > 2.0 and was reported as
+        resource exhaustion -- with Tool Output None, because nothing ran. The
+        runner then restarts the server, whose boot time makes the NEXT read
+        time out too, so one dead server produced a cascade of identical
+        "findings" (measured: 21 on mcp-appium-gestures::generate-swipe-code,
+        gpt41-full run 2026-09-11, all check_resource_exhaustion, all 5.0-5.2s).
+
+        A genuine hang also surfaces as a socket timeout, so this guard trades
+        recall for soundness: it cannot distinguish "tool hung" from "server
+        died". Separating them needs a liveness probe after the timeout --
+        nazmul.todo item 39, still open.
+        """
+        if "check_resource_exhaustion" not in self.selected_sanitizer_names:
+            return False, ""
+        if self._is_transport_failure(res):
+            return False, ""
+        if elapsed > self.config.timeout_limit:
             err = f"Resource exhaustion/Timeout detected: Execution took {elapsed:.2f} seconds (Limit: {self.config.timeout_limit}s). "
             return True, err
         return False, ""

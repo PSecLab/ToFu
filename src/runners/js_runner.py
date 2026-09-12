@@ -95,8 +95,16 @@ class JSRunner(BaseRunner):
     A runner for Node.js/JavaScript MCP servers that uses a Unix domain socket
     for zero-latency IPC and V8 coverage extraction.
     """
-    def __init__(self, command: str, args: list, target_tool: str, custom_env: dict = None):
+    def __init__(self, command: str, args: list, target_tool: str, custom_env: dict = None,
+                 cwd: str = None):
         super().__init__(command, args, target_tool)
+        # BUG 21. Without this the target inherits ToFu's cwd (the repo root),
+        # so "../../../../tmp/x" resolves to /tmp instead of failing inside the
+        # target's own directory -- and the path-traversal oracle scores the
+        # escape as a finding about the TARGET. Measured 2026-09-11:
+        # excel-reader-mcp::export_to_json returned ENOENT under its own cwd and
+        # wrote /tmp/evil.json under ToFu's. 14 alerts, all artefact.
+        self.cwd = cwd
         self.process = None
         self.sock = None
         self.sock_path = f"/tmp/mcp_fuzz_{uuid.uuid4().hex[:8]}.sock"
@@ -145,6 +153,7 @@ class JSRunner(BaseRunner):
 
         self.process = subprocess.Popen(
             cmd,
+            cwd=self.cwd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,

@@ -50,7 +50,13 @@ def test_no_undefined_names_anywhere():
         if os.path.isdir(d):
             pyflakes.api.checkRecursive([d], reporter)
 
-    undefined = [ln for ln in buf.getvalue().splitlines() if "undefined name" in ln]
+    # eval/targets/ holds CLONED THIRD-PARTY REPOS and, since item 51, a
+    # per-target .venv full of their site-packages. Their lint findings are not
+    # ours and must never gate our campaign: a `from x import *` in some
+    # target's h11 dependency is not a NameError waiting to happen in ToFu.
+    tgt = os.path.join(ROOT, "eval", "targets") + os.sep
+    undefined = [ln for ln in buf.getvalue().splitlines()
+                 if "undefined name" in ln and not ln.startswith(tgt)]
     assert not undefined, (
         "undefined names become NameErrors mid-campaign:\n  " + "\n  ".join(undefined)
     )
@@ -905,3 +911,145 @@ def test_leak_detection_no_longer_uses_a_global_pid_set():
     assert "set(ps_before)" not in body and "set(ps_after)" not in body, (
         "a global pid snapshot is being diffed again; other workers' processes "
         "will be reported as leaks")
+
+
+# ---------------------------------------------------------------------------
+# Bug 20: a transport failure was reported as resource exhaustion.
+#
+# Fixtures are VERBATIM from eval/runs/gpt41-full/
+# AppiumTestDistribution__mcp-appium-gestures__generate-swipe-code.log
+# (run started 2026-09-11 02:03:03, commit e14a363). js_runner.py sets
+# sock.settimeout(5.0); config.timeout_limit defaults to 2.0. Every timed-out
+# read therefore scored elapsed ~5.0 > 2.0 and was reported as a finding with
+# "Tool Output: None" -- 21 of them on this one tool, all identical.
+# ---------------------------------------------------------------------------
+class _Res:
+    def __init__(self, success, error=""):
+        self.success = success
+        self.error = error
+
+
+def _exhaustion_checker(selected=("check_resource_exhaustion",), limit=2.0):
+    from src.fuzzer import MCPDifferentialFuzzer
+
+    class _Cfg:
+        timeout_limit = limit
+
+    f = MCPDifferentialFuzzer.__new__(MCPDifferentialFuzzer)
+    f.selected_sanitizer_names = list(selected)
+    f.config = _Cfg()
+    return f
+
+
+def test_socket_timeout_is_not_resource_exhaustion():
+    """The exact failure that produced 21 false alerts."""
+    f = _exhaustion_checker()
+    res = _Res(False, "Socket error: timed out")
+    triggered, _ = f._check_resource_exhaustion(5.01, res)
+    assert triggered is False, "socket timeout must not be reported as exhaustion"
+
+
+def test_runner_restart_failure_is_not_resource_exhaustion():
+    f = _exhaustion_checker()
+    res = _Res(False, "JS runner process is not running and failed to restart: boom")
+    triggered, _ = f._check_resource_exhaustion(5.16, res)
+    assert triggered is False
+
+
+def test_genuine_slow_execution_still_fires():
+    """The guard must not silence real findings: a SUCCESSFUL slow call still alerts."""
+    f = _exhaustion_checker()
+    res = _Res(True, "")
+    triggered, err = f._check_resource_exhaustion(3.5, res)
+    assert triggered is True
+    assert "3.50 seconds" in err
+
+
+def test_fast_execution_does_not_fire():
+    f = _exhaustion_checker()
+    triggered, _ = f._check_resource_exhaustion(0.2, _Res(True, ""))
+    assert triggered is False
+
+
+def test_exhaustion_skipped_when_sanitizer_not_selected():
+    f = _exhaustion_checker(selected=())
+    triggered, _ = f._check_resource_exhaustion(99.0, _Res(True, ""))
+    assert triggered is False
+
+
+def test_missing_result_treated_as_transport_failure():
+    f = _exhaustion_checker()
+    triggered, _ = f._check_resource_exhaustion(5.0, None)
+    assert triggered is False
+
+
+# ---------------------------------------------------------------------------
+# Bug 21: the target ran from ToFu's cwd, not its own.
+#
+# prepare_targets.py has always written "cwd" into every config. Nothing read
+# it: JSRunner called Popen without cwd=, so the target inherited ToFu's repo
+# root. Consequence, measured 2026-09-11 on
+# ArchimedesCrypto/excel-reader-mcp::export_to_json with
+# outputPath="../../../../tmp/evil.json":
+#     cwd = target dir   -> ENOENT, the tool fails safely
+#     cwd = ToFu root    -> writes /tmp/evil.json  (4 levels up from the repo
+#                           root is exactly /)
+# The run logged 14 check_path_traversal "Silent Bug Alert"s from this. They
+# are artefacts of OUR launch directory, not properties of the target.
+# ---------------------------------------------------------------------------
+def test_js_runner_accepts_and_stores_cwd():
+    from src.runners.js_runner import JSRunner
+    r = JSRunner("node", ["/x/index.js"], "t", cwd="/some/target/dir")
+    assert r.cwd == "/some/target/dir"
+
+
+def test_js_runner_passes_cwd_to_popen():
+    """The bug was literally a missing kwarg; assert it reaches Popen."""
+    import inspect
+    from src.runners import js_runner
+    src = inspect.getsource(js_runner.JSRunner.start)
+    assert "cwd=self.cwd" in src, "Popen must receive the target's cwd"
+
+
+def test_fuzzer_config_carries_target_cwd():
+    from src.config import FuzzerConfig
+    c = FuzzerConfig()
+    assert hasattr(c, "target_cwd")
+    c.target_cwd = "/t"
+    assert c.target_cwd == "/t"
+
+
+def test_main_reads_cwd_from_config_json():
+    """prepare_targets.py writes 'cwd'; __main__ must consume it."""
+    import inspect
+    from src import __main__ as m
+    src = inspect.getsource(m)
+    assert 'config_data.get("cwd")' in src, "__main__ must read the config's cwd"
+
+
+def test_traversal_oracle_prefers_target_cwd_over_process_cwd():
+    """allowed_dir fell back to os.getcwd() -- ToFu's root -- so escapes were
+    judged against OUR tree instead of the target's."""
+    import inspect
+    from src import fuzzer
+    src = inspect.getsource(fuzzer)
+    i = src.find("allowed_dir = (")
+    assert i != -1, "allowed_dir resolution changed shape; re-check bug 21"
+    window = src[i:i + 260]
+    assert "target_cwd" in window, "traversal oracle must prefer the target's cwd"
+    assert window.index("target_cwd") < window.index("os.getcwd()"), \
+        "os.getcwd() must remain the LAST fallback, not the first choice"
+
+
+def test_every_prepared_config_records_a_cwd():
+    """A config without cwd silently reintroduces bug 21."""
+    import glob
+    missing = []
+    for p in glob.glob(os.path.join(ROOT, "eval/configs/*.json")):
+        try:
+            d = json.load(open(p))
+        except Exception:
+            continue
+        if not d.get("cwd"):
+            missing.append(os.path.basename(p))
+    assert not missing, f"{len(missing)} config(s) have no cwd: {missing[:5]}"
