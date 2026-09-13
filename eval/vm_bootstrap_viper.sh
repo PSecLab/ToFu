@@ -57,7 +57,10 @@ set -a; . "$REPO/.env"; set +a
 [ -n "${OPENAI_API_KEY:-}" ] || { echo "   .env has no OPENAI_API_KEY"; exit 1; }
 echo "   OPENAI_API_KEY present (len=${#OPENAI_API_KEY})"
 
-echo "== 6/6 re-prepare the 41 host-corpus targets ON THIS VM (arch-specific; 20-40 min; resumable) =="
+echo "== 6/6 re-prepare the 41 host-corpus targets ON THIS VM (arch-specific; 20-40 min) =="
+# prepared.jsonl/skipped.jsonl from git (or a prior host) carry FOREIGN absolute
+# paths; leaving them makes prepare skip everything and targets never clone.
+rm -f eval/state/prepared.jsonl eval/state/skipped.jsonl
 python3 eval/prepare_targets.py --only-set host
 echo
 echo "=================================================================="
