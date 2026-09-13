@@ -213,6 +213,16 @@ def check_strict_markitdown_security_contract(generated_arguments: Dict[str, Any
     """
     uri_input = generated_arguments.get("uri") or generated_arguments.get("source") or generated_arguments.get("url")
 
+    # Same bug as check_strict_har_security_contract / the pre-2026-09-10
+    # check_strict_url_security_contract: this sanitizer was written for one
+    # paper target (MarkItDown's convert_to_markdown), and on any tool without
+    # a uri/source/url argument, uri_input is None. check_markitdown_uri_
+    # validation(None) and friends then fire on the absence itself, and the
+    # unrelated tool "fails to reject" by succeeding normally -> guaranteed
+    # false MarkItDown Security Bypass alert on every non-MarkItDown tool.
+    if uri_input is None:
+        return False, ""
+
     is_invalid = False
     violations = []
 

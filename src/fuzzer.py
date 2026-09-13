@@ -242,6 +242,7 @@ class MCPDifferentialFuzzer:
         if is_js:
             from .runners import JSRunner
             return JSRunner(self.command, self.args, tool,
+                            custom_env=getattr(self.config, "target_env", None),
                             cwd=getattr(self.config, "target_cwd", None))
         else:
             from .runners import PythonRunner
@@ -491,7 +492,17 @@ class MCPDifferentialFuzzer:
             check_introspection_format_string, check_introspection_type_confusion,
             check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges
         )
-        if "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
+        # Item 78: this sanitizer greps the STRINGIFIED response for
+        # substrings like "SyntaxError:" -- it has no way to tell an actually
+        # unhandled exception from a well-formed, successful reply whose own
+        # descriptive text happens to quote one (measured 2026-09-12 on
+        # bsv-mcp::app_explorer_data: the tool caught a JSON.parse error from
+        # an upstream API and returned it as a normal text response,
+        # n_exec_success=1/1 -- not a crash). A caught exception surfaced in
+        # a successful reply's text is not what this sanitizer claims to
+        # detect. Same trade as bug 20: skip when the call was not itself
+        # reported as a failure, trading recall for soundness.
+        if "check_unhandled_promise_rejection" in self.selected_sanitizer_names and not res.success:
             unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
             if unhandled_triggered:
                 triggered_by.append("check_unhandled_promise_rejection")
@@ -940,10 +951,33 @@ class MCPDifferentialFuzzer:
                 if sanitizer_name.startswith("check_introspection_") or sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion", "check_terminal_dos_and_leak"):
                     continue
                 
-                # Context checks
-                if sanitizer_name in ("check_unsafe_url_ssrf", "check_local_file_uri", "check_directory_jailbreak_write"):
+                # Context checks. Item 56/78: check_path_traversal and
+                # check_command_injection had NO guard at all, so they ran on
+                # every string argument of every tool -- measured firing on
+                # dateFormat ("../../../etc/passwd" is not a path there) and
+                # on a filename containing "&&&&&&&&" that was never passed to
+                # a shell. The four check_url_* sanitizers likewise ran on
+                # non-URL args like model_id/address/txid (bsv-mcp, cursor10x:
+                # ~19,000 combined FP alerts in the 2026-09-11 run). Scoped
+                # them the same way check_unsafe_url_ssrf/check_local_file_uri
+                # already were.
+                if sanitizer_name in (
+                    "check_unsafe_url_ssrf", "check_local_file_uri", "check_directory_jailbreak_write",
+                    "check_path_traversal",
+                    "check_url_structure_and_parsing", "check_url_hostname_canonicalization",
+                    "check_url_ssrf_ip_ranges", "check_url_alternative_ip_representations",
+                    "check_url_raw_input_validation",
+                ):
                     prop_lower = prop_name.lower()
-                    if not ("url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "path" in prop_lower):
+                    if not ("url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "path" in prop_lower
+                            or "file" in prop_lower or "dir" in prop_lower or "endpoint" in prop_lower
+                            or "host" in prop_lower or "location" in prop_lower or "dest" in prop_lower
+                            or "target" in prop_lower or "source" in prop_lower):
+                        continue
+                if sanitizer_name in ("check_command_injection", "check_blocked_command_bypass"):
+                    prop_lower = prop_name.lower()
+                    if not ("cmd" in prop_lower or "command" in prop_lower or "exec" in prop_lower
+                            or "shell" in prop_lower or "script" in prop_lower or "arg" in prop_lower):
                         continue
 
                 sanitizer_fn = getattr(sanitizers, sanitizer_name, None)

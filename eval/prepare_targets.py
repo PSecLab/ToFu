@@ -66,7 +66,121 @@ def clone(repo, commit, dest):
     if p.returncode != 0:
         raise RuntimeError(f"checkout {commit[:8]} failed (history may have been rewritten)")
 
-def target_env(dest, interp=None):
+# Credentials that must never reach a target (bug 23). Mirrors
+# src/runners/js_runner._scrub_secrets; kept local so prepare has no import
+# dependency on the fuzzer package.
+_SECRET_EXACT = {
+    "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OLLAMA_CLOUD_API_KEY",
+    "GITHUB_TOKEN", "GH_TOKEN", "HF_TOKEN", "HUGGINGFACE_TOKEN", "HUGGING_FACE_HUB_TOKEN",
+    "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN",
+    "GOOGLE_APPLICATION_CREDENTIALS", "NPM_TOKEN", "PYPI_TOKEN", "TWINE_PASSWORD",
+    "MCP_SCANNER_LLM_API_KEY", "MCP_SCANNER_API_KEY",
+}
+_SECRET_SUFFIX = ("_API_KEY", "_SECRET", "_SECRET_KEY", "_TOKEN", "_PASSWORD", "_PASSWD", "_PRIVATE_KEY")
+
+
+def _scrub_secrets(env):
+    for k in list(env.keys()):
+        ku = k.upper()
+        if ku in _SECRET_EXACT or ku.endswith(_SECRET_SUFFIX):
+            env.pop(k, None)
+    return env
+
+
+# Placeholder credentials for env-gated servers. These servers check that a
+# variable is PRESENT at import time and refuse to start otherwise (e.g.
+# "GOOGLE_API_KEY: ['Required']"), which hid their whole tool surface from us.
+# Values are deliberately fake but format-plausible; network calls will fail
+# at call time (recorded as an environment exclusion per tool), but every
+# pre-network code path -- schema validation, path building, local file and
+# git operations -- becomes fuzzable. NEVER put a real credential here.
+TARGET_ENV_HINTS = {
+    "alexatnordnet/mcp-google-custom-search-server": {
+        "GOOGLE_API_KEY": "AIzaSy-tofu-placeholder-000000000000000000",
+        "GOOGLE_SEARCH_ENGINE_ID": "tofu-placeholder-cx",
+    },
+    "da-okazaki/mcp-neo4j-server": {
+        "NEO4J_URI": "bolt://127.0.0.1:7687", "NEO4J_USER": "neo4j",
+        "NEO4J_USERNAME": "neo4j", "NEO4J_PASSWORD": "tofu-placeholder",
+    },
+    "jatinsandilya/mcp-server-auto-commit": {
+        # placeholder ONLY -- the real key is scrubbed above and must never
+        # reach this target (it is a third-party server).
+        "OPENAI_API_KEY": "sk-tofu-placeholder-000000000000000000000000000000",
+    },
+    "teddyzxcv/ntfy-mcp": {"NTFY_TOPIC": "tofu-placeholder-topic"},
+    "niledatabase/nile-mcp-server": {
+        "NILE_API_KEY": "tofu-placeholder", "NILE_WORKSPACE_SLUG": "tofu-placeholder",
+        "NILE_DB": "tofu", "NILE_WORKSPACE": "tofu-placeholder",
+    },
+    "gerred/mcp-server-replicate": {
+        "REPLICATE_API_TOKEN": "r8_tofuplaceholder0000000000000000000000000",
+    },
+    "Tiberriver256/azure-devops-mcp": {
+        "AZURE_DEVOPS_ORG_URL": "https://dev.azure.com/tofu-placeholder",
+        "AZURE_DEVOPS_AUTH_METHOD": "pat",
+        "AZURE_DEVOPS_PAT": "tofu-placeholder-pat",
+        "AZURE_DEVOPS_DEFAULT_PROJECT": "tofu",
+    },
+}
+
+
+# Servers gated on CLI arguments or on a credentials FILE rather than an env
+# var. "args" are appended to the launch argv; "files" are planted relative to
+# the repo root (only if absent). Same rule as TARGET_ENV_HINTS: placeholders
+# only, format-plausible, so import/startup validation passes and the tool
+# surface becomes visible; real API calls fail at call time and are recorded
+# as per-tool environment exclusions.
+_PLACEHOLDER_OAUTH_CLIENT = json.dumps({"installed": {
+    "client_id": "tofu-placeholder.apps.googleusercontent.com",
+    "project_id": "tofu-placeholder", "client_secret": "tofu-placeholder",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "redirect_uris": ["http://localhost"]}})
+TARGET_LAUNCH_HINTS = {
+    # stderr at prepare: "usage: gmail [-h] --creds-file-path CREDS_FILE_PATH --token-path TOKEN_PATH"
+    "jasonsum/gmail-mcp-server": {
+        "args": ["--creds-file-path", ".tofu/gcp-oauth.keys.json", "--token-path", ".tofu/token.json"],
+        "files": {".tofu/gcp-oauth.keys.json": _PLACEHOLDER_OAUTH_CLIENT, ".tofu/token.json": "{}"},
+    },
+    # stderr at prepare: "GCP keys not found. Please ... copy `gcp-oauth.keys.json` into your ./dist directory."
+    "mkummer225/google-sheets-mcp": {
+        "args": [],
+        "files": {"dist/gcp-oauth.keys.json": _PLACEHOLDER_OAUTH_CLIENT},
+    },
+}
+
+
+def apply_launch_hints(repo, dest, command, args):
+    """Plant hinted files and append hinted argv. Returns (command, args)."""
+    h = TARGET_LAUNCH_HINTS.get(repo)
+    if not h:
+        return command, args
+    for rel, content in (h.get("files") or {}).items():
+        fp = os.path.join(dest, rel)
+        os.makedirs(os.path.dirname(fp), exist_ok=True)
+        if not os.path.exists(fp):
+            with open(fp, "w") as f:
+                f.write(content)
+    return command, list(args) + list(h.get("args") or [])
+
+
+def _err_head(stderr_bytes, n=2, width=160):
+    """First error-bearing lines of a stderr blob. A stack trace's TAIL is
+    useless ('at node:internal/main/run_main_module:36:49'); the message is
+    at the HEAD. Falls back to the first non-empty lines."""
+    try:
+        lines = [l.strip() for l in stderr_bytes.decode(errors="ignore").splitlines() if l.strip()]
+    except Exception:
+        return "(no stderr)"
+    if not lines:
+        return "(no stderr)"
+    errs = [l for l in lines if any(k in l for k in ("Error", "error", "ERR_", "Cannot find", "not found", "Missing", "required"))]
+    pick = (errs or lines)[:n]
+    return " | ".join(l[:width] for l in pick)
+
+
+def target_env(dest, interp=None, extra=None):
     """Environment for a TARGET process.
 
     ToFu runs inside its own virtualenv. If we hand that environment to a child
@@ -74,12 +188,14 @@ def target_env(dest, interp=None):
     target and it imports ToFu's pinned mcp==2.2.0 instead of its own. Strip
     them, then put the target's own venv first on PATH.
     """
-    env = os.environ.copy()
+    env = _scrub_secrets(os.environ.copy())
     for k in ("VIRTUAL_ENV", "PYTHONPATH", "PYTHONHOME", "CONDA_PREFIX"):
         env.pop(k, None)
     if interp:
         env["VIRTUAL_ENV"] = os.path.dirname(os.path.dirname(interp))
         env["PATH"] = os.path.dirname(interp) + os.pathsep + env.get("PATH", "")
+    if extra:
+        env.update({str(k): str(v) for k, v in extra.items()})
     return env
 
 def make_venv(dest):
@@ -187,13 +303,29 @@ def install(dest, lang, last_commit=None):
         if note is None:
             p = run(["npm", "install", "--silent", "--no-audit", "--no-fund"],
                     cwd=dest, timeout=INSTALL_TIMEOUT)
-            if p.returncode != 0: raise RuntimeError("npm install failed")
+            if p.returncode != 0:
+                raise RuntimeError("npm install failed: " + _err_head(p.stderr))
             note = "npm:install"
         try:
             pkg = json.load(open(os.path.join(dest, "package.json")))
-            if "build" in (pkg.get("scripts") or {}):
+            build_script = (pkg.get("scripts") or {}).get("build")
+            if build_script:
+                if "bun" in build_script and shutil.which("bun"):
+                    bi = run(["bun", "install", "--no-progress"], cwd=dest, timeout=INSTALL_TIMEOUT)
+                    note += ";bun-install" + ("" if bi.returncode == 0 else "(FAILED)")
                 b = run(["npm", "run", "build", "--silent"], cwd=dest, timeout=INSTALL_TIMEOUT)
-                note += ";build" + ("" if b.returncode == 0 else "(FAILED)")
+                if b.returncode == 0:
+                    note += ";build"
+                else:
+                    # Keep the tail of stderr. Before this, a failed build left
+                    # only "no node entrypoint (is a build step required?)" in
+                    # skipped.jsonl -- 17 repos, zero diagnosis. The most common
+                    # cause is a missing toolchain (bun, esbuild, tsc via a
+                    # devDependency npm ci skipped), which is OUR gap, not the
+                    # repo's, and must be visible.
+                    note += ";build(FAILED: " + _err_head(b.stderr, n=3, width=120) + ")"
+                    if "bun" in build_script and not shutil.which("bun"):
+                        note += ";needs-bun"
         except Exception: pass
         return note, None
     raise RuntimeError("no package.json")
@@ -217,10 +349,23 @@ def detect_launch(dest, lang, interp=None):
             if isinstance(b, str): cands.append(b)
             elif isinstance(b, dict): cands.extend(b.values())
             if pkg.get("main"): cands.append(pkg["main"])
-            cands += ["index.js", "src/index.js", "server.js"]
+            # tsconfig outDir: `tsc` builds land wherever compilerOptions.outDir
+            # says, which is often not dist/ or build/.
+            try:
+                tsc = json.load(open(os.path.join(dest, "tsconfig.json")))
+                out_dir = ((tsc.get("compilerOptions") or {}).get("outDir") or "").strip("./")
+                if out_dir:
+                    cands += [f"{out_dir}/index.js", f"{out_dir}/server.js", f"{out_dir}/main.js",
+                              f"{out_dir}/index.cjs", f"{out_dir}/index.mjs"]
+            except Exception:
+                pass
+            cands += ["dist/index.cjs", "dist/index.mjs", "build/index.cjs", "build/index.mjs",
+                      "index.js", "index.cjs", "index.mjs", "src/index.js", "server.js"]
             for c in cands:
                 fp = os.path.join(dest, c)
-                if c.endswith(".js") and os.path.exists(fp):
+                # .cjs / .mjs are first-class Node entrypoints; the old test
+                # `c.endswith(".js")` rejected e.g. dist/index.cjs outright.
+                if c.endswith((".js", ".cjs", ".mjs")) and os.path.exists(fp):
                     return "node", [fp]
         raise RuntimeError("no node entrypoint (is a build step required?)")
     # python
@@ -257,7 +402,7 @@ def detect_launch(dest, lang, interp=None):
         except Exception: pass
     raise RuntimeError("no python entrypoint")
 
-def probe_tools(command, args, cwd, interp=None):
+def probe_tools(command, args, cwd, interp=None, extra_env=None):
     """Speak MCP over stdio and ask for tools/list.
 
     MCP servers are long-lived: they do NOT exit after answering, so we must
@@ -272,7 +417,7 @@ def probe_tools(command, args, cwd, interp=None):
             json.dumps({"jsonrpc":"2.0","method":"notifications/initialized"}),
             json.dumps({"jsonrpc":"2.0","id":2,"method":"tools/list"})]
 
-    proc = subprocess.Popen([command] + args, cwd=cwd, env=target_env(cwd, interp),
+    proc = subprocess.Popen([command] + args, cwd=cwd, env=target_env(cwd, interp, extra_env),
                             stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True, bufsize=1)
     q = queue.Queue()
@@ -310,8 +455,14 @@ def probe_tools(command, args, cwd, interp=None):
         except Exception: proc.kill()
 
     if not tools:
+        # Keep the HEAD of stderr (the "Error: ..." line), not the tail of a
+        # stack trace -- the tail is always "at node:internal/..." and told us
+        # nothing for 70 skipped repos. Also keep a short tail for context.
         tail = ""
-        try: tail = (proc.stderr.read() or "")[-200:].replace("\n", " ")
+        try:
+            raw = proc.stderr.read() or ""
+            head = _err_head(raw.encode() if isinstance(raw, str) else raw, n=2, width=160)
+            tail = head + " || tail: " + raw[-120:].replace("\n", " ")
         except Exception: pass
         raise RuntimeError((f"tools/list error: {err}" if err else
                             "no tools/list reply") + (f" | stderr: {tail}" if tail else ""))
@@ -322,6 +473,8 @@ def main():
     ap.add_argument("--only-set", choices=["a","b","d","e","host"], default=None,
                     help="host = the 41 repos that prepared READY on the host (set_host.json); reproduces the host executable corpus in the sandbox")
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--only-repo", default=None,
+                    help="comma-separated substrings; prepare only repos matching one")
     ap.add_argument("--only-lang", choices=["python","node"], default=None,
                     help="restrict to one runtime")
     ap.add_argument("--retry-skipped", action="store_true",
@@ -354,6 +507,9 @@ def main():
     todo = [r for r in sel if r["repo"] not in done]
     if a.only_lang:
         todo = [r for r in todo if r["lang"] == a.only_lang]
+    if a.only_repo:
+        pats = [x.strip().lower() for x in a.only_repo.split(",") if x.strip()]
+        todo = [r for r in todo if any(pt in r["repo"].lower() for pt in pats)]
     if a.limit: todo = todo[:a.limit]
     log(f"selected={len(sel)} already_done={len(done)} todo={len(todo)}")
 
@@ -362,12 +518,15 @@ def main():
         repo, commit, lang = r["repo"], r.get("commit"), r["lang"]
         dest = os.path.join(TGTDIR, repo.replace("/", "__"))
         log(f"({i}/{len(todo)}) {repo} [{lang}, Set {r['set']}]")
+        note = None
         try:
             if not commit: raise RuntimeError("no pinned commit recorded")
             clone(repo, commit, dest)
+            hints = TARGET_ENV_HINTS.get(repo, {})
             note, interp = install(dest, lang, r.get("last_commit"))
             command, args = detect_launch(dest, lang, interp)
-            tools = probe_tools(command, args, dest, interp)
+            command, args = apply_launch_hints(repo, dest, command, args)
+            tools = probe_tools(command, args, dest, interp, hints)
             ncfg = 0
             for t in tools:
                 cfg = {"_repo": repo, "_set": r["set"], "_lang": lang,
@@ -378,7 +537,11 @@ def main():
                        # override_rules INTENTIONALLY EMPTY -> forces
                        # llm.select_sanitizers() (fuzzer.py:801), which is the
                        # automated path the paper actually claims.
-                       "override_rules": {}, "predefined_seeds": []}
+                       "override_rules": {}, "predefined_seeds": [],
+                       # placeholder credentials the runner must pass to the
+                       # target (src/__main__ -> FuzzerConfig.target_env);
+                       # empty for the vast majority of targets.
+                       "env": hints}
                 fn = f"{repo.replace('/','__')}__{t['name']}.json"
                 json.dump(cfg, open(os.path.join(CFGDIR, fn), "w"), indent=1)
                 ncfg += 1
@@ -386,10 +549,19 @@ def main():
                               "commit": commit, "status": "ready", "install": note,
                               "command": command, "args": args, "cwd": dest,
                               "n_tools_probed": len(tools), "n_configs": ncfg,
+                              "env_hints": sorted(hints.keys()),
+                              "launch_hints": bool(TARGET_LAUNCH_HINTS.get(repo)),
                               "tools": [t["name"] for t in tools]})
             ok += 1; log(f"    READY  {len(tools)} tools -> {ncfg} configs ({note})")
         except Exception as e:
             reason = str(e)[:220]
+            # If install ran, append its note: a "no node entrypoint" that
+            # follows "build(FAILED: ...)" is a toolchain gap, not a repo gap.
+            try:
+                if "note" in dir() and note and ("FAILED" in note or "needs-bun" in note):
+                    reason = (reason + " || install: " + note)[:400]
+            except Exception:
+                pass
             record(SKIPPED, {"repo": repo, "set": r["set"], "lang": lang,
                              "commit": commit, "status": "skipped", "reason": reason})
             shutil.rmtree(dest, ignore_errors=True)

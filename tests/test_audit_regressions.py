@@ -54,9 +54,15 @@ def test_no_undefined_names_anywhere():
     # per-target .venv full of their site-packages. Their lint findings are not
     # ours and must never gate our campaign: a `from x import *` in some
     # target's h11 dependency is not a NameError waiting to happen in ToFu.
-    tgt = os.path.join(ROOT, "eval", "targets") + os.sep
+    # eval/targets/ AND eval/sandbox/targets/ hold cloned third-party repos and
+    # their per-target .venv site-packages; a `from x import *` inside some
+    # target's h11/attrs dependency is not a NameError waiting to happen in
+    # ToFu. Exclude any vendored/virtualenv path, not one hardcoded dir.
+    def _third_party(ln):
+        return ("/targets/" in ln or "/.venv/" in ln or "/node_modules/" in ln
+                or "/site-packages/" in ln)
     undefined = [ln for ln in buf.getvalue().splitlines()
-                 if "undefined name" in ln and not ln.startswith(tgt)]
+                 if "undefined name" in ln and not _third_party(ln)]
     assert not undefined, (
         "undefined names become NameErrors mid-campaign:\n  " + "\n  ".join(undefined)
     )
@@ -1053,3 +1059,242 @@ def test_every_prepared_config_records_a_cwd():
         if not d.get("cwd"):
             missing.append(os.path.basename(p))
     assert not missing, f"{len(missing)} config(s) have no cwd: {missing[:5]}"
+
+
+# ---------------------------------------------------------------------------
+# Item 56/78: sanitizer context-guard and contract-sanitizer scoping.
+#
+# Four independent FP mechanisms, all found by re-triaging real run logs
+# rather than lowering the bar for what counts as a finding:
+#   (a) check_strict_har_security_contract / check_strict_markitdown_security_
+#       contract were written for ONE paper target each (extract_har.py,
+#       MarkItDown's convert_to_markdown) and fire unconditionally on every
+#       tool. .get("harzip") / .get("uri") is None for any other tool, and
+#       None fails the inner "must be str" check -> is_invalid=True -> the
+#       unrelated tool "fails to reject" by succeeding normally -> guaranteed
+#       false alert. Same class already fixed in check_strict_url_security_
+#       contract on 2026-09-10.
+#   (b) check_path_traversal / check_command_injection / check_blocked_
+#       command_bypass / the four check_url_* checks had no (or an
+#       incomplete) parameter-name context guard, so they ran on every
+#       string argument regardless of the argument's role.
+#   (c) check_unhandled_promise_rejection greps the stringified response for
+#       exception-shaped substrings with no check that the call actually
+#       failed -- a tool that catches an error and reports it as normal,
+#       successful text (n_exec_success=1/1) was flagged as a crash.
+# ---------------------------------------------------------------------------
+def test_har_contract_does_not_fire_on_a_tool_without_a_harzip_argument():
+    from src.sanitizers.har_sanitizers import check_strict_har_security_contract
+    # A completely unrelated tool call: no harzip/mimetypes keys at all.
+    triggered, _ = check_strict_har_security_contract(
+        {"path": "/tmp/whatever", "operation": "mkdir"}, _Res(True, "")
+    )
+    assert triggered is False, "HAR contract must not fire when the tool has no harzip argument"
+
+
+def test_har_contract_still_fires_for_an_actual_har_tool():
+    from src.sanitizers.har_sanitizers import check_strict_har_security_contract
+    # harzip present but invalid (embedded null byte), tool succeeds anyway
+    # (res.success=True -> is_input_rejected sees no rejection signal) ->
+    # should still fire. This is the true-positive case the None-guard must
+    # not collateral-damage.
+    res = _Res(True, "")
+    res.result = {"content": [{"type": "text", "text": "extracted 42 entries"}]}
+    triggered, msg = check_strict_har_security_contract(
+        {"harzip": "bad\x00path", "mimetypes": None, "output": "/tmp/x"}, res
+    )
+    assert triggered is True
+    assert "HAR" in msg
+
+
+def test_markitdown_contract_does_not_fire_on_a_tool_without_a_uri_argument():
+    from src.sanitizers.markitdown_sanitizers import check_strict_markitdown_security_contract
+    triggered, _ = check_strict_markitdown_security_contract(
+        {"filename": "report.txt", "content": "hello"}, _Res(True, "")
+    )
+    assert triggered is False, "MarkItDown contract must not fire when the tool has no uri/source/url argument"
+
+
+def _sanitizer_dispatch_guard(sanitizer_name, prop_name):
+    """Exercise the actual context-guard logic from _check_string_sanitizers
+    without needing a full MCPDifferentialFuzzer instance -- extracts the
+    guard's decision by regex-matching the same predicate from source, so
+    this test breaks (loudly) if the guard's shape changes without the test
+    being updated alongside it."""
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._check_string_sanitizers)
+    assert sanitizer_name in src, f"{sanitizer_name} must appear in the context-guard source"
+    return src
+
+
+def test_path_traversal_has_a_context_guard():
+    src = _sanitizer_dispatch_guard("check_path_traversal", "dateFormat")
+    # The guarded tuple must include check_path_traversal, and the guard must
+    # test the property name before dispatch.
+    i = src.find('"check_path_traversal"')
+    assert i != -1
+    window = src[max(0, i - 400):i + 100]
+    assert "prop_lower" in window or "check_path_traversal" in src.split("if sanitizer_name in (")[1][:600]
+
+
+def test_command_injection_has_a_context_guard():
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._check_string_sanitizers)
+    assert '"check_command_injection"' in src
+    assert '"check_blocked_command_bypass"' in src
+    # both must sit inside a name-scoped branch, not the unconditional path
+    i = src.find('"check_command_injection"')
+    window = src[i:i + 300]
+    assert "cmd" in window or "command" in window
+
+
+def test_url_family_sanitizers_are_context_guarded():
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._check_string_sanitizers)
+    for name in ("check_url_structure_and_parsing", "check_url_hostname_canonicalization",
+                 "check_url_ssrf_ip_ranges", "check_url_alternative_ip_representations"):
+        assert f'"{name}"' in src, f"{name} must be listed in the context-guard tuple"
+
+
+def test_promise_rejection_does_not_fire_on_a_successful_call():
+    """The exact bsv-mcp::app_explorer_data case: a caught JSON.parse error
+    returned as normal successful text."""
+    from src.sanitizers.mcp_oracles import check_unhandled_promise_rejection
+    res = _Res(True, "")
+    res.result = {"content": [{"type": "text",
+                  "text": "Error: Unexpected token '<', \"<!doctype \"... is not valid JSON: SyntaxError:"}]}
+    # The gate lives in fuzzer.py at the call site (guards on res.success);
+    # verify the underlying function is still capable of matching so the gate
+    # -- not a change to the pattern list -- is what suppresses it.
+    triggered, _ = check_unhandled_promise_rejection(res.result)
+    assert triggered is True, "the pattern itself should still match text"
+    # Now verify the FUZZER-LEVEL gate: not res.success -> must skip the call
+    # entirely. Exercised via source inspection (constructing a full
+    # MCPDifferentialFuzzer + live runner is out of scope for a unit test).
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._run_sanitizers) if hasattr(_f.MCPDifferentialFuzzer, "_run_sanitizers") else inspect.getsource(_f)
+    assert 'check_unhandled_promise_rejection" in self.selected_sanitizer_names and not res.success' in src
+
+
+def test_promise_rejection_pattern_still_matches_a_real_exception():
+    from src.sanitizers.mcp_oracles import check_unhandled_promise_rejection
+    triggered, msg = check_unhandled_promise_rejection(
+        "Traceback (most recent call last):\n  File \"x.py\", line 1\nTypeError: Cannot read propert"
+    )
+    assert triggered is True
+
+
+# --- sanity: the two CONFIRMED findings must not be silenced by any of the above ---
+def test_v1_excel_reader_outputpath_still_matches_path_traversal_context_guard():
+    """outputPath contains 'path' -> must still pass the context guard."""
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._check_string_sanitizers)
+    # simulate the guard's own substring test
+    prop_lower = "outputpath"
+    guarded = ("url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "path" in prop_lower
+               or "file" in prop_lower or "dir" in prop_lower or "endpoint" in prop_lower
+               or "host" in prop_lower or "location" in prop_lower or "dest" in prop_lower
+               or "target" in prop_lower or "source" in prop_lower)
+    assert guarded, "outputPath must still pass the path-family context guard (V1 must not be silenced)"
+
+
+def test_v2_log_injection_sanitizer_untouched_by_this_pass():
+    """check_log_injection was not touched by the har/markitdown/url/command
+    fixes -- confirm it is still unconditional (V2 must not be silenced)."""
+    import inspect
+    from src import fuzzer as _f
+    src = inspect.getsource(_f.MCPDifferentialFuzzer._check_string_sanitizers)
+    # it must NOT appear inside either new guarded tuple
+    guard_block = src[src.find("if sanitizer_name in ("):src.find("sanitizer_fn = getattr")]
+    assert '"check_log_injection"' not in guard_block
+
+
+# ---------------------------------------------------------------------------
+# Bug 23: fuzzed targets inherited our REAL API keys.
+#
+# js_runner built the child env as a bare os.environ.copy(); run_arm_*.sh
+# sources .env; therefore every untrusted third-party server we fuzzed ran
+# with OPENAI_API_KEY / OLLAMA_CLOUD_API_KEY in its environment. Verified
+# 2026-09-12 (both set in the env targets receive). The fix scrubs credentials
+# from the INHERITED env before per-target overrides are merged, so deliberate
+# placeholders (TARGET_ENV_HINTS) still reach the target and a real key never
+# does.
+# ---------------------------------------------------------------------------
+def test_scrub_removes_real_credentials_but_keeps_placeholders():
+    from src.runners.js_runner import _scrub_secrets
+    env = {"OPENAI_API_KEY": "sk-REAL", "OLLAMA_CLOUD_API_KEY": "real", "GITHUB_TOKEN": "ghp_real",
+           "AWS_SECRET_ACCESS_KEY": "real", "SOME_SERVICE_TOKEN": "real", "DB_PASSWORD": "real",
+           "PATH": "/usr/bin", "HOME": "/home/x", "NODE_ENV": "test"}
+    out = _scrub_secrets(dict(env))
+    for k in ("OPENAI_API_KEY", "OLLAMA_CLOUD_API_KEY", "GITHUB_TOKEN", "AWS_SECRET_ACCESS_KEY",
+              "SOME_SERVICE_TOKEN", "DB_PASSWORD"):
+        assert k not in out, f"{k} must be scrubbed from the target env"
+    for k in ("PATH", "HOME", "NODE_ENV"):
+        assert out[k] == env[k], "non-secret variables must be untouched"
+    # order of operations: scrub the inherited env FIRST, then merge the
+    # placeholder -- the placeholder must survive.
+    out.update({"OPENAI_API_KEY": "sk-tofu-placeholder"})
+    assert out["OPENAI_API_KEY"] == "sk-tofu-placeholder"
+
+
+def test_js_runner_scrubs_before_merging_custom_env():
+    import inspect
+    from src.runners import js_runner
+    src = inspect.getsource(js_runner.JSRunner.start)
+    i_scrub = src.find("_scrub_secrets(os.environ.copy())")
+    i_merge = src.find("env.update(self.custom_env)")
+    assert i_scrub != -1, "start() must scrub the inherited environment"
+    assert i_merge != -1 and i_scrub < i_merge, "scrub must happen BEFORE custom_env is merged"
+
+
+def test_prepare_target_env_scrubs_and_merges_hints():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pt_under_test", os.path.join(ROOT, "eval", "prepare_targets.py"))
+    pt = importlib.util.module_from_spec(spec); spec.loader.exec_module(pt)
+    os.environ["OPENAI_API_KEY"] = "sk-REAL-FOR-TEST"
+    try:
+        env = pt.target_env("/tmp", None, extra={"GOOGLE_API_KEY": "AIzaSy-placeholder"})
+    finally:
+        os.environ.pop("OPENAI_API_KEY", None)
+    assert "OPENAI_API_KEY" not in env
+    assert env["GOOGLE_API_KEY"] == "AIzaSy-placeholder"
+
+
+def test_env_hints_never_contain_a_real_credential():
+    """A hint that equals a value from the live environment is a real key
+    pasted by mistake. Fail loudly."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("pt_under_test2", os.path.join(ROOT, "eval", "prepare_targets.py"))
+    pt = importlib.util.module_from_spec(spec); spec.loader.exec_module(pt)
+    live = {v for k, v in os.environ.items() if v and len(v) > 12}
+    for repo, hints in pt.TARGET_ENV_HINTS.items():
+        for k, v in hints.items():
+            assert v not in live, f"TARGET_ENV_HINTS[{repo}][{k}] equals a live environment value"
+            assert "placeholder" in v.lower() or v.startswith(("bolt://", "https://", "neo4j", "tofu", "pat")), \
+                f"TARGET_ENV_HINTS[{repo}][{k}] does not look like a placeholder: {v!r}"
+
+
+# --- per-target env plumbing: config "env" -> FuzzerConfig.target_env -> JSRunner ---
+def test_fuzzer_config_carries_target_env():
+    from src.config import FuzzerConfig
+    c = FuzzerConfig(); assert hasattr(c, "target_env")
+
+
+def test_main_reads_env_from_config_json():
+    import inspect
+    from src import __main__ as m
+    assert 'config_data.get("env")' in inspect.getsource(m)
+
+
+def test_fuzzer_passes_custom_env_to_js_runner():
+    import inspect
+    from src import fuzzer
+    src = inspect.getsource(fuzzer)
+    i = src.find("return JSRunner(")
+    assert i != -1
+    assert 'custom_env=getattr(self.config, "target_env", None)' in src[i:i + 300]

@@ -164,6 +164,20 @@ def check_strict_har_security_contract(generated_arguments: Dict[str, Any], res:
     harzip = generated_arguments.get("harzip")
     mimetypes = generated_arguments.get("mimetypes")
 
+    # This sanitizer was written for one paper target, extract_har.py, whose
+    # argument is literally named "harzip". On any other tool "harzip" is
+    # simply not a parameter, so .get() returns None -- and
+    # check_harzip_integrity(None) fires on EVERY non-HAR tool
+    # ("must be str, got NoneType"), which the unrelated tool then "fails to
+    # reject" by succeeding normally. Result: a guaranteed HAR Validation
+    # Bypass alert on every non-HAR tool call. Measured 2026-09-12: this was
+    # the largest single FP source across the corpus (cursor10x, bsv-mcp,
+    # google-workspace mega-combo alerts). A sanitizer that cannot find the
+    # argument it is about must return False, not fire -- same fix already
+    # applied to check_strict_url_security_contract on 2026-09-10.
+    if harzip is None:
+        return False, ""
+
     is_invalid = False
     violations = []
 

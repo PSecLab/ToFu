@@ -3883,3 +3883,194 @@ js/insecure-temporary-file 33, js/log-injection 18. CROSS-CHECK: excel-reader
 CodeQL=0 but ToFu V1 (arbitrary write) -> ToFu-only; locallama CodeQL=11 but
 different rules than ToFu V2/V3 -> same repo, disjoint issues. Third baseline
 column done. Item 76 -> fold into the comparison table.
+
+================================================================
+2026-09-12  TOFU SANDBOX RUN (gpt41-sandbox) TRIAGE — NO NEW FINDINGS
+================================================================
+506 runs, 10.76h, 72 executable, 330 zero-success, 104 llm=unknown (API tail).
+48,414 raw alerts / 65 signatures BUT only 28 runs executable+alerted. Triaged
+all 28 -> every one FP / documented / network. NO new confirmed, NO new
+potential. Report: findings/sandbox_triage_20260912.md.
+  - DesktopCommander path_traversal = FP: createDirectory calls validatePath,
+    but default allowedDirectories:[] = documented full access (server.ts:346).
+    Dangerous-default worth a discussion note, NOT a finding.
+  - bsv resource_exhaustion = external-API latency (3-4s), not DoS.
+  - cursor10x log_injection = sqlite prepare(?) parameterized, FP.
+  - mcpFirebird/pluggedin invalid_json = type-confusion echoed, no sink, FP.
+  - google-workspace = positive control (path-safe).
+*** SANDBOX did NOT reproduce V1/V2: excel-reader executable=no in Linux
+    (native build), locallama better-sqlite3 ERR_DLOPEN. The confirmed findings
+    stand on HOST reproductions; the Linux sandbox corpus loses exactly those
+    repos. State as a macOS-vs-Linux corpus difference in methodology. ***
+   77. Findings tally unchanged: 2 confirmed (V1 excel-reader arbitrary write,
+       V2 locallama log injection) + 1 potential (V3 locallama update_server).
+       Sandbox run adds coverage/exec-rate evidence, no new bugs.
+
+================================================================
+2026-09-12  RE-CHECK FOR MORE VULNERABILITIES (Ananto: "report as many as possible")
+================================================================
+Widened scope on 3 fronts rather than lower the bar for what counts:
+ 1. 2 sandbox combo signatures named but never individually pulled:
+    bsv-mcp::app_explorer_data check_unhandled_promise_rejection -> FP, and a
+    NEW naive-substring sanitizer bug (3rd instance, same family as bug 22):
+    mcp_oracles.py:12 check_unhandled_promise_rejection does str(result) + regex
+    for SyntaxError:/TypeError:/etc with NO check that anything actually
+    crashed. Here the tool caught a JSON.parse error from upstream HTML and
+    returned it as a normal successful response (n_exec=1 n_success=1). Add to
+    item 56's audit scope.
+ 2. Host run grew 187->423 since last full triage; 18 never-triaged repos.
+    Only krzko/google-cloud-mcp had signal (430 hits, check_invalid_json on
+    gcp-billing-cost-recommendations). FP: tool's own output states "This is a
+    demonstration with mock recommendations" -- disclosed mock endpoint,
+    echoes any string into markdown. gmail-mcp's 4 hits confirmed exec=no
+    (n_exec_success=0), not evidence.
+ 3. check_command_injection triggered exactly once corpus-wide (google-
+    workspace-mcp::manage_workspace). Traced: filename arg containing
+    "&&&&&&&&" matches base.py:12's naive r'&&\s*' pattern; used as a literal
+    directory name via fs.mkdir, never a shell. FP, same bug-22 family --
+    command_injection needs the same context-guard scoping as path_traversal.
+
+RESULT: still 2 confirmed (V1, V2) + 1 potential (V3). No new vulnerability
+survived verification. Told Ananto directly: padding the count with these
+would repeat the paper.bib fabrication failure mode (13/19 fake citations)
+CLAUDE.md exists to prevent -- an unreproducible finding costs more than a
+missed one. Real levers for MORE true findings, given to him: (a) executable-
+repo count is the bottleneck (~72-89 of 530+ configs), not missed triage,
+(b) item 56 (context-guard fix) would surface real signal currently buried
+under ~48k FP alerts/run, (c) Viper Phase I/II uses a different mechanism
+(CodeQL taint + LLM fuzz) and may catch what ToFu's sanitizer set structurally
+cannot.
+   78. item 56 audit scope +check_unhandled_promise_rejection (3rd naive-
+       substring sanitizer, mcp_oracles.py:12) and +check_command_injection
+       (base.py:12, same fix as path_traversal).
+
+================================================================
+2026-09-12  BUG 23 (HARNESS SECURITY): fuzzed targets inherited our REAL API keys
+================================================================
+While wiring per-target env for credential-gated servers, found that
+src/runners/js_runner.py built the child env as a bare os.environ.copy().
+run_arm_*.sh sources .env, so every fuzzed server -- untrusted third-party
+code -- has been running with our real OPENAI_API_KEY and OLLAMA_CLOUD_API_KEY
+in its environment, on the host AND in the sandbox (sandbox.sh passes -e
+OPENAI_API_KEY into the container; the target inherits it). An adversarial
+server could have exfiltrated them. Verified both keys present in the env
+targets receive. FIX: _scrub_secrets() in js_runner (exact-name set + suffix
+pattern _API_KEY/_SECRET/_TOKEN/_PASSWORD/...) applied to the INHERITED env
+before custom_env is merged, so deliberate placeholders still reach the
+target; same scrub in prepare_targets.target_env(). LIMITATION: PythonRunner
+imports the target in-process and shares os.environ with ToFu's own LLM
+client, so python targets (8 of 41) still see the key; fixing that needs the
+key popped after LLM selection/seedgen and before target import -- item 80.
+   79. ROTATE OPENAI_API_KEY and OLLAMA_CLOUD_API_KEY (Ananto; item 46 was
+       already open for the OpenAI key). Every target fuzzed before today saw
+       them. Confirmed-run targets are public repos, low but nonzero risk.
+   80. Python in-process targets: pop scrubbed secrets from os.environ after
+       the LLM stage completes and before PythonRunner.start() imports the
+       target; restore only if a later LLM call is needed.
+
+ENV-GATED UNLOCK, corrected classification: of 28 repos my keyword filter
+called "missing env var", 17 are actually "no node entrypoint (is a build step
+required?)" -- a DIFFERENT and larger unlock class (TypeScript repos whose
+dist/ is absent or whose layout detect_launch does not recognise). True
+env-gated: ~9 with named variables. Added prepare_targets.TARGET_ENV_HINTS
+(placeholder, format-plausible, NEVER real) for google-custom-search, neo4j,
+auto-commit, ntfy, nile, replicate, azure-devops; emitted as "env" in the
+per-tool config; new plumbing __main__ -> FuzzerConfig.target_env -> JSRunner
+custom_env (python: os.environ.update before in-process import). New
+--only-repo flag on prepare_targets. Not yet handled: gmail (needs CLI ARGS
+--creds-file-path/--token-path, not env), google-sheets (needs a
+gcp-oauth.keys.json FILE in ./dist). Honest framing for the paper: with
+placeholders, network calls fail at call time (per-tool environment
+exclusion), but every PRE-network path -- schema validation, path building,
+local file/git ops -- becomes fuzzable, and that is where V1-class bugs live.
+
+2026-09-12  "NO NODE ENTRYPOINT" = 17 repos, mostly OUR toolchain gaps
+Sampled package.json at the pinned commits (raw.githubusercontent):
+  memory-bank-mcp, cal-mcp    build = `bun build src/index.ts ...`  -> no bun on
+                              host or in image -> no dist/ -> skipped.
+  mcp-doc-forge               main = dist/index.cjs -> detect_launch required
+                              c.endswith(".js") and REJECTED .cjs outright.
+  vsc-mcp                     build = `tsc`, bin ./build/index.js -> should have
+                              worked; build stderr was DISCARDED so cause unknown.
+  mysql-mcp-server            main = src/index.js but the file is a 404 at the
+                              pinned commit (stale main) -> legitimate exclusion.
+  mcp-browser-kit             monorepo (workspaces apps/*, packages/*), no root
+                              entrypoint -> legitimate exclusion for v1.
+FIXES (prepare_targets.py): keep the last 3 lines of `npm run build` stderr in
+the install note and append the note to the skip reason when detect_launch
+fails afterwards ("no node entrypoint || install: ...build(FAILED: ...)"); tag
+";needs-bun" when the build script uses bun and bun is absent; accept
+.cjs/.mjs entrypoints; add tsconfig compilerOptions.outDir candidates.
+Dockerfile.sandbox: install bun (/opt/bun, world-readable, late layer).
+   81. After the bun image rebuild: re-prepare the skipped node repos in the
+       sandbox (--only-lang node --retry-skipped) and diff the new reasons
+       against the old 17 -- the exclusion list for the paper changes.
+Tests: undefined-names test widened to any /targets/, /.venv/, /node_modules/,
+/site-packages/ path (now passes); +7 tests for bug 23 scrub and the config
+env -> FuzzerConfig.target_env -> JSRunner plumbing (all pass).
+
+2026-09-13  ENV-HINT UNLOCK WORKED: 6/7 repos READY, +70 tool configs
+Sandbox prepare with TARGET_ENV_HINTS (placeholders): google-custom-search,
+neo4j, auto-commit, ntfy, replicate, azure-devops all now expose tools/list
+(46 + 18 + 3 + 1 + 1 + 1 = 70 configs from repos that were dead before).
+nile skipped: wants NILE_WORKSPACE_SLUG too -> hint extended, re-prepare
+with the next round. bun image layer FAILED silently (curl|bash with output
+suppressed; installer needs unzip on slim) -> fixed: apt unzip + visible
+install, rebuilding. Smoke-fuzzing ONE azure-devops config (60s) to prove the
+config "env" reaches the target at fuzz time through __main__ ->
+FuzzerConfig.target_env -> JSRunner custom_env, applied AFTER the bug-23
+scrub so the placeholder survives and the real key does not.
+   82. If the smoke passes: fuzz the 70 new configs (sandbox `run` is
+       resumable, picks up only new configs). ~70 x 180s / 4 workers ~= 1h ->
+       Ananto's terminal. Then triage the same way: sink first, counts ignored.
+       Honest framing: placeholders mean network calls fail at call time;
+       the fuzzable surface is the PRE-network paths (schema validation, path
+       building, local git/file ops) -- exactly where V1-class bugs live.
+2026-09-13  bun 1.4.2 now in tofu-sandbox (root cause of the silent failure:
+bun's installer needs unzip, absent on python:3.11-slim; output was suppressed
+so the first build "succeeded" with no bun). Launched a sandbox re-prepare of
+ALL previously-skipped node repos in sets A+E (--only-lang node
+--retry-skipped) with the fixed toolchain (bun, .cjs/.mjs, tsconfig outDir,
+build stderr kept). Expect: some of the 17 "no node entrypoint" flip to READY;
+the rest get an actionable reason instead of a blank one. Diff against the
+old exclusion list before it goes in the paper (item 81).
+2026-09-13  TARGET_LAUNCH_HINTS added (prepare_targets.py): servers gated on
+CLI ARGS or a credentials FILE rather than an env var. gmail-mcp-server gets
+--creds-file-path/--token-path pointing at planted placeholder OAuth-client
+JSON under .tofu/; google-sheets-mcp gets dist/gcp-oauth.keys.json planted.
+apply_launch_hints() plants files (only if absent) and appends argv after
+detect_launch, before probe_tools; prepared.jsonl records launch_hints=true.
+Unit-checked. Takes effect on the NEXT prepare round (the running node
+re-prepare already imported the previous file). gmail is PYTHON -> the 21
+introspection tracers apply -> higher-value surface than most node unlocks.
+   83. Next prepare round: --only-repo gmail-mcp-server,google-sheets-mcp
+       (sets a/e, --retry-skipped). Then fold their configs into the fuzz.
+2026-09-13  NODE RETRY, first results + diagnostics now flowing:
+  +2 READY: StevenStavrakis/mcp-starter-template (1 tool), f2c-ai/f2c-mcp (2).
+  cal-mcp: build(FAILED: Could not resolve "@valibot/to-json-schema". Maybe
+    you need to "bun install"?) -> bun-built repos need `bun install` before
+    the build even though npm installed node_modules. FIXED: prepare runs
+    `bun install` when the build script uses bun and bun is present.
+  serverless-mcp-server: package.json has NO main/bin/build -> not a stdio
+    server (Lambda handler); LEGITIMATE exclusion.
+  abap-adt-api, communicator-telegram: `tsc` builds, main dist/build index.js,
+    but the kept stderr was the TAIL of a stack trace ("at node:internal/...")
+    -- useless. FIXED: _err_head() keeps the first Error-bearing lines for
+    install, build AND probe failures. Next round will say what they need
+    (likely SAP / Telegram credentials -> env hints).
+  discogs, wweb-mcp: "npm install failed" now carries stderr head too.
+2026-09-13  SMOKE OF AN ENV-HINTED CONFIG HANGS PRE-FUZZ (azure-devops
+add_pull_request_comment): child at 99% CPU single-threaded for 400s+ on a
+60s budget; metrics header written (fuzzer constructed) but NO node child
+process (target never launched) and zero timeline rows -> hot loop between
+fuzzer construction and runner start = seed/schema stage, CPU-bound, no
+network. py-spy cannot attach (container seccomp, no CAP_SYS_PTRACE even as
+root; not weakening the sandbox for it). run_eval kills at budget+600=660s
+and dumps the captured log -- the last stage marker will name the loop.
+Running a second 30s smoke on ntfy-mcp (different new single-tool config) as
+the discriminator: completes normally => today's fuzzer edits are exonerated
+and the hang is config-specific; hangs too => my edits broke startup.
+   84. Diagnose the azure-devops pre-fuzz hang from the killed run's log;
+       suspect _local_fallback_mapping / seed_generators combinatorics on a
+       rich zod schema (46-tool server). Add a hard cap on generated seeds.
+Node retry: mcp-doc-forge READY (16 tools) -- the .cjs entrypoint fix.

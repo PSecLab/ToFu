@@ -39,6 +39,7 @@ def main():
     predefined_seeds = []
     file_backed_params = {}
     target_cwd = None
+    target_env = None
     
     # 1. Load from config file if specified
     if args.config:
@@ -67,6 +68,8 @@ def main():
             # BUG 21: prepare_targets.py has always written "cwd", and nothing
             # ever read it. Targets therefore ran from ToFu's repo root.
             target_cwd = config_data.get("cwd") or None
+            # Per-target env (placeholder credentials for env-gated servers).
+            target_env = config_data.get("env") or None
             logger.info(f"Loaded configuration from {args.config}")
         except Exception as e:
             logger.error(f"Failed to parse config file: {e}")
@@ -116,6 +119,12 @@ def main():
     fuzzer_config = FuzzerConfig()
     if args.metrics_dir:
         fuzzer_config.metrics_dir = args.metrics_dir
+    if target_env:
+        fuzzer_config.target_env = dict(target_env)
+        # PythonRunner imports the target IN-PROCESS, so its env must already
+        # be in os.environ before the import; JSRunner gets it via custom_env.
+        for k, v in target_env.items():
+            os.environ[str(k)] = str(v)
     if target_cwd:
         fuzzer_config.target_cwd = target_cwd
         # The path-traversal oracle judges escapes relative to this.

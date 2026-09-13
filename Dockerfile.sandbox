@@ -49,6 +49,18 @@ RUN rm -f /usr/local/bin/uv /usr/local/bin/uvx \
     && (cp -L /root/.local/bin/uvx /usr/local/bin/uvx 2>/dev/null || true) \
     && chmod 0755 /usr/local/bin/uv /usr/local/bin/uvx 2>/dev/null; chmod 0755 /usr/local/bin/uv
 
+# bun: several corpus repos build with `bun build src/index.ts` (memory-bank-
+# mcp, cal-mcp, ...). Without it their dist/ never exists and they were skipped
+# as "no node entrypoint". Installed for the non-root user below via a
+# world-readable prefix.
+# bun's installer needs unzip (absent on slim). Do NOT suppress output: the
+# first attempt hid the failure and produced an image with no bun.
+RUN apt-get update && apt-get install -y --no-install-recommends unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://bun.sh/install | BUN_INSTALL=/opt/bun bash \
+    && ln -sf /opt/bun/bin/bun /usr/local/bin/bun && chmod -R a+rX /opt/bun \
+    && bun --version
+
 # The repo is mounted at /work at run time (mounting it at its own
 # /Users/... path collides with Docker Desktop's auto-shared /Users and
 # yields an EMPTY mount). Bake a symlink so the absolute paths in

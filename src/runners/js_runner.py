@@ -90,6 +90,27 @@ def _inband_error(res_data):
     return None
 
 
+
+# Credentials that must never reach a fuzzed target. Exact names plus a
+# suffix pattern; applied to the INHERITED environment only, before any
+# per-target overrides are merged (so deliberate placeholders survive).
+_SECRET_EXACT = {
+    "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OLLAMA_CLOUD_API_KEY",
+    "GITHUB_TOKEN", "GH_TOKEN", "HF_TOKEN", "HUGGINGFACE_TOKEN", "HUGGING_FACE_HUB_TOKEN",
+    "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN",
+    "GOOGLE_APPLICATION_CREDENTIALS", "NPM_TOKEN", "PYPI_TOKEN", "TWINE_PASSWORD",
+    "MCP_SCANNER_LLM_API_KEY", "MCP_SCANNER_API_KEY",
+}
+_SECRET_SUFFIX = ("_API_KEY", "_SECRET", "_SECRET_KEY", "_TOKEN", "_PASSWORD", "_PASSWD", "_PRIVATE_KEY")
+
+
+def _scrub_secrets(env: dict) -> dict:
+    for k in list(env.keys()):
+        ku = k.upper()
+        if ku in _SECRET_EXACT or ku.endswith(_SECRET_SUFFIX):
+            env.pop(k, None)
+    return env
+
 class JSRunner(BaseRunner):
     """
     A runner for Node.js/JavaScript MCP servers that uses a Unix domain socket
@@ -140,7 +161,13 @@ class JSRunner(BaseRunner):
         wrapper_path = os.path.join(os.path.dirname(__file__), "coverage_wrapper.js")
 
         cmd = ["node", wrapper_path, target_script] + target_args
-        env = os.environ.copy()
+        # BUG 23 (2026-09-12): this was a bare os.environ.copy(). run_arm_*.sh
+        # sources .env, so every fuzzed server -- untrusted third-party code --
+        # inherited our real OPENAI_API_KEY / OLLAMA_CLOUD_API_KEY and could
+        # have exfiltrated them. Strip credentials from the inherited env FIRST,
+        # then apply custom_env, so per-target PLACEHOLDER credentials (see
+        # prepare_targets.TARGET_ENV_HINTS) still reach the target.
+        env = _scrub_secrets(os.environ.copy())
         env.update(self.custom_env)
         env["FUZZER_SOCKET_PATH"] = self.sock_path
 
