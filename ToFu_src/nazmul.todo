@@ -4074,3 +4074,55 @@ and the hang is config-specific; hangs too => my edits broke startup.
        suspect _local_fallback_mapping / seed_generators combinatorics on a
        rich zod schema (46-tool server). Add a hard cap on generated seeds.
 Node retry: mcp-doc-forge READY (16 tools) -- the .cjs entrypoint fix.
+
+2026-09-13  CODEQL-GUIDED TOFU SUBSET + CODEQL ON SET E
+Ananto: run updated ToFu on Set A repos CodeQL flagged; also CodeQL on Set E.
+  Set A (50) ∩ CodeQL-flagged (20) = 6: locallama(11), uml-mcp(11), osm(2),
+  vsc-mcp(4), midi(1), text-editor(2). Linux-executable in sandbox: 4
+  (uml, osm, midi, text-editor). locallama+vsc NOT-PREPARED (native addons).
+  Run (fresh arm gpt41-Acodeql, updated de-noised sanitizers):
+    ARM=gpt41-Acodeql TOFU_TIME=180 ./eval/run_sandbox_campaign.sh run \
+      --only-repo uml-mcp,osm-mcp-server,midi-mcp-server,mcp-text-editor
+  NEW: eval/run_codeql_set.py <a|b|d|e> -- stock CodeQL security-extended over
+  a WHOLE set, clone-on-demand for unprepared repos (static, no install/docker),
+  resumable, per-set index eval/state/codeql_runs_<set>.jsonl, DB+clone deleted
+  after each. Smoked on set e (2 repos: seq-thinking 0, oceanbase 3). ~20s/repo
+  -> set E (300) ~= 1.5-2h. Run: python3 eval/run_codeql_set.py e
+  CAVEAT for the paper: CodeQL-guided subset concentrates effort where taint
+  sinks exist, but ToFu vs CodeQL fail on DISJOINT classes -- flagged != ToFu
+  will hit, clean != safe. Report as targeted follow-up, not the comparison.
+   85. After codeql set-E: the flagged Set E repos become the next ToFu subset
+       (same rationale). Intersect codeql_runs_e.jsonl (n_findings>0) with the
+       sandbox-executable set.
+
+================================================================
+2026-09-13  VIPER ON A REMOTE VM (Ubuntu, 40GB RAM, 5 CPU) -- PLAN + FILES
+================================================================
+Ananto will run Viper on his own VM (more CPU/RAM; frees the laptop). The VM
+IS the sandbox -> no Docker layer there. Repo PSecLab/toolfuzzer is PRIVATE
+(HTTP 404 unauthenticated) -> he clones by hand with his own GitHub auth.
+.env is gitignored -> must be scp'd, never committed.
+
+NEW: eval/vm_bootstrap_viper.sh -- one-shot, idempotent, run from the cloned
+repo root. Arch-detects the CodeQL bundle (x86_64->linux64, aarch64->
+linux-arm64; pinned codeql-bundle-v2.27.0 = laptop version); apt (sudo) for
+git/node22/build-essential/python3 only; uv + `uv python install 3.11` (no
+sudo); CodeQL bundle -> ~/codeql; Viper venv at Benchmarks/Viper-MCP/.venv
+(run_viper.py's default VPY); checks .env has OPENAI_API_KEY (prints only the
+length); then `prepare_targets.py --only-set host` RE-PREPARES the 41 targets
+ON THE VM -- mandatory: node native addons + per-target venvs are arch/OS
+specific, mac-built eval/targets will not run on Linux. Prints the tmux run
+command at the end.
+Verified locally: prepare_targets.py and run_viper.py are STDLIB-ONLY (ast
+scan) so the VM's system python3 runs them; only Viper's deps need a venv.
+run_viper_full.sh made portable: PY falls back .venv/bin/python -> python3;
+PATH gains ~/codeql; error message no longer says "brew" on Linux.
+Run on VM (inside tmux, it is hours):
+  python3 eval/run_viper.py --timeout 1800   with .env sourced,
+  VIPER_MODEL=gpt-4.1 VIPER_ROUNDS=10, PATH incl ~/codeql.
+Results back to laptop: rsync eval/viper_runs/ + eval/state/viper_runs.jsonl.
+CAVEAT travels with it: item 75 (node runtime hook not attaching -> Phase II
+degraded to anomaly-only) is a langchain_mcp_adapters env-forwarding issue,
+not laptop-specific. Phase I (CodeQL taint) is solid.
+   77. After the VM run: sync results, fold Viper column into the baseline
+       comparison (findings/baselines/), alongside Cisco + CodeQL + ToFu.

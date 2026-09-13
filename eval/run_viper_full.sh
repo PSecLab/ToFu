@@ -17,7 +17,13 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 set -a; . ./.env; set +a
 [ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set in .env"; exit 1; }
-command -v codeql >/dev/null || { echo "codeql not on PATH (brew install codeql)"; exit 1; }
+# CodeQL: brew on the laptop, or ~/codeql (bundle) on a Linux VM.
+export PATH="$HOME/codeql:$HOME/.local/bin:$PATH"
+command -v codeql >/dev/null || { echo "codeql not on PATH (laptop: brew install codeql; VM: eval/vm_bootstrap_viper.sh)"; exit 1; }
+# Interpreter: run_viper.py is stdlib-only. Use ToFu's .venv when present
+# (laptop), else the system python3 (VM). Viper's own deps live in
+# Benchmarks/Viper-MCP/.venv, which run_viper.py picks up via VPY.
+PY="${PY:-$( [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3 )}"
 
 export VIPER_MODEL="${VIPER_MODEL:-gpt-4.1}"
 export VIPER_ROUNDS="${VIPER_ROUNDS:-10}"
@@ -31,4 +37,4 @@ case "$MODE" in
 esac
 
 echo "model=$VIPER_MODEL rounds=$VIPER_ROUNDS codeql=$(codeql version --format=terse) log=$LOG"
-exec .venv/bin/python eval/run_viper.py --timeout 1800 ${EXTRA} 2>&1 | tee "$LOG"
+exec "$PY" eval/run_viper.py --timeout 1800 ${EXTRA} 2>&1 | tee "$LOG"
