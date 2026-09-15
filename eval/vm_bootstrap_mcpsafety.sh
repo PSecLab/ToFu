@@ -16,6 +16,11 @@ uv python install 3.11 >/dev/null 2>&1 || true
 [ -x "$S/.venv/bin/python" ] || uv venv "$S/.venv" --python 3.11 >/dev/null
 SPY="$S/.venv/bin/python"
 uv pip install --python "$SPY" -q -e "$S"
+# MCPSafetyScanner (stale, Apr-2025) top-level-imports agno modules that newer
+# agno moved (agno.knowledge.website, agno.vectordb.pgvector, agno.team.team)
+# plus optional integration tools. Pin agno to its era + install the deps it
+# imports at module load (KB path unused in our scan, but the imports run).
+uv pip install --python "$SPY" -q "agno<1.3" duckduckgo-search arxiv pgvector sqlalchemy beautifulsoup4
 # MCPSafetyScanner imports MCPError from mcp.shared.exceptions, which exists in
 # mcp 2.x (NOT 1.x -- that has McpError). Pin mcp 2.x. (Separate venv from
 # ToolFuzz's mcp 1.x, so no conflict.)
