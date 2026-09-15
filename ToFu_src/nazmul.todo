@@ -4602,3 +4602,12 @@ does not hammer tools), but still launches servers -> sandbox.
        rsync back, add as baseline #5 in findings/baselines/ + the table.
 BASELINE SET (all same 40-repo corpus): ToFu | Cisco | CodeQL | Viper |
   ToolFuzz | MCPSafetyScanner.
+
+MCPSAFETY VM SETUP -- DEP PINS RESOLVED (2026-09-15):
+  mcp>=2,<3 (scanner imports MCPError, which is mcp 2.x not 1.x), agno<1.3 +
+  duckduckgo-search arxiv pgvector sqlalchemy beautifulsoup4 (stale scanner
+  top-level-imports agno.knowledge.website / vectordb.pgvector / team.team that
+  newer agno moved). All baked into eval/vm_bootstrap_mcpsafety.sh. Smoke OK:
+  minesweeper 33.3s flag_lines=291 (heuristic screening count, NOT findings --
+  read the log verdict). Note VM prepared.jsonl now shows 43 ready (dup prepare
+  entries) -- run dedups by repo via already_done; canonical corpus still 39.
