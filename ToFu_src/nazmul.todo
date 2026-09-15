@@ -4611,3 +4611,120 @@ MCPSAFETY VM SETUP -- DEP PINS RESOLVED (2026-09-15):
   minesweeper 33.3s flag_lines=291 (heuristic screening count, NOT findings --
   read the log verdict). Note VM prepared.jsonl now shows 43 ready (dup prepare
   entries) -- run dedups by repo via already_done; canonical corpus still 39.
+
+MCPSAFETY VM FULL RUN -- RESULTS (2026-09-15, rsync'd to eval/mcpsafety_runs_vm/,
+state eval/state/mcpsafety_runs_vm.jsonl, 40 unique repos, model gpt-4.1):
+  - 29 ok, 11 ERR. The 11 ERR are STALE-ENV, not real: their state rows are
+    timestamped 14:18-14:24 (BEFORE the 14:51 smoke dep-fix). run_mcpsafety.py:114
+    `done = {r["repo"] for r in read_jsonl(RUNS)}` marks ANY prior row done
+    regardless of ok=, so the good 15:00-15:21 run skipped them. 9x
+    agno.knowledge.website, 1x MCPError (appium), 1x Connection closed (gerred).
+    FIX (VM): keep only ok=True rows in eval/state/mcpsafety_runs.jsonl, rerun on
+    the fixed env -> recovers ~9-10. TODO item below.
+  - THE COUNTS ARE NOT FINDINGS (CLAUDE.md failure mode -- healthy-looking big
+    number, empty inside). Verified by reading logs, not by trusting the tool:
+      (a) Never emits "safe" -- every ran server gets a "Vulnerability Analysis
+          Report". 100% flag rate = zero discrimination.
+      (b) Report printed 2-3x per server (agno multi-agent passes). raw
+          "Vulnerability:" entry counts (yzfly 78, seq-thinking 54, bsv 53...)
+          are inflated by repetition.
+      (c) ~half the entries audit the HOST VM, not the server: "Insecure SSH Key
+          Permissions", "Misconfigured Sudo Privileges", "Weak NFS/Samba Exports",
+          "Unrestricted Netcat", "World-Writable Directories". Generic Linux
+          hardening advice about the machine agno runs on.
+      (d) Server-specific entries are LLM speculation from tool METADATA, not
+          execution. Proof: tonypan2/minesweeper (a GAME) got "Command Injection
+          in Tool Prompts", "Unrestricted File Read via Resource Parameters".
+      (e) flag_lines (217-415) is a risk-word screen over the agent's reasoning
+          text. 0 execution-verified.
+  - PLACEMENT: most speculative baseline of the six -- pure LLM audit, no taint
+    graph. Same family as Cisco/CodeQL (static/metadata reasoning), DISJOINT from
+    ToFu (executed semantic bugs). Blind to our confirmed bugs: excel-reader
+    ERR'd (never ran), and metadata speculation never names the write-side
+    semantic bug ToFu executed. For the 6-way table: characterize as "LLM
+    auditor, 100% servers flagged, 0 verified w/o manual triage" -- volume-vs-
+    precision contrast, NOT a leaderboard competitor.
+  - TOOLFUZZ: not yet rsync'd (only mcpsafety synced). local
+    eval/toolfuzz_runs_vm/ + state absent. last-known ~27/537 tools. check VM
+    tmux + rsync before folding into table (item 79).
+
+MCPSAFETY -- WHAT IS REPORTABLE (2026-09-15). Ananto asked "report nothing? how?".
+  Answer: not nothing -- wrong unit. Tool has no oracle (never executes, never
+  says safe) so its output is CLAIMS; we report claim volume + measure precision
+  ourselves. eval/summarize_mcpsafety.py does the counting (dedups the 2-3x
+  repeated report passes; splits host-OS hardening advice from server claims;
+  drops markdown section headers). Numbers, traceable to eval/mcpsafety_runs_vm/
+  + eval/state/mcpsafety_claims.csv:
+    servers ok                  29 (of 40; 11 stale-env ERR, retry pending)
+    distinct server-claims     155  (5.3 per server; 1 server w/ 0 = osm)
+    distinct host-noise claims 161  (51% of everything it emits is about the
+                                     VM: SSH keys, sudo, cron, authorized_keys,
+                                     world-writable dirs, netcat)
+    servers flagged            29/29 (100%; Cisco said SAFE on most of these)
+    template repetition        low -- 152 distinct titles / 155 claims. Not a
+                               canned list; freshly imagined per server.
+  Claim count does NOT track attack surface: DesktopCommanderMCP (26 tools,
+  purpose = run shell cmds) -> 1 server-claim; minesweeper (4 tools, game) -> 6;
+  mindmap (1 tool, markdown->svg) -> 2 incl. "Shell Command Injection" and
+  "Directory Traversal". Report that as the headline observation.
+  Residual parser junk: DesktopCommander has one multi-line "Tools" header
+  counted as a claim (1 of 155). Left as-is; note in triage.
+  NEXT (precision): stratified random 30 of the 155 server-claims, triage each
+  against code: real | by-design | unverifiable-from-metadata | hallucinated.
+  k/30 goes in the table. Overlap w/ ToFu V1-V3 + Viper 12 + CodeQL 309: check
+  by grep of claim text vs. finding sink; expect ~0 (disjoint-set row).
+  DO NOT cite MCPSafetyScanner paper details (server count, numbers) without
+  opening the paper -- rule 1.
+
+================================================================
+2026-09-15  VM CAMPAIGN gpt41-vm STARTED (Python-only) + two start-failures
+================================================================
+VM (x86_64, py3.13.15, commit ccbbf24): bootstrap OK, 156 tests, host set
+prepared 37/39 (locallama: GLIBC_2.38 native sqlite binding -> V2/V3 NOT
+re-verifiable on this VM; gmail-mcp: EADDRINUSE :3000, not stdio). Smoke:
+tumf/mcp-text-editor 4 tools executable (get/create/insert/patch), 2 class (b)
+(append/delete need a pre-existing file). ~60 exec/s on the VM vs ~1344 in the
+M2 sandbox (QEMU + 2 workers) -- still ~50k execs/tool at 900s.
+SCOPE: eval/configs held only PYTHON configs (102 = 1+5+12+26+6+10+18+12+12)
+because the pull's untrack (a8c1de2) / my `rm -rf eval/configs` fallback
+wiped the bootstrap's node configs and `--only-lang python --redo` (my
+command lacked --only-set host) regenerated python only, sweeping in 3 A/B
+extras (replicate 18, rquest 12, supabase 12). Net: a Python-only campaign =
+item 87 exactly. Node was measured on the laptop (gpt41-full). 6.4h est.
+
+mindmap-mcp-server ERR @3.1s -- RUNNER BUG (mine), general:
+  "__main__.py: error: unrecognized arguments: --config ... --time 900 ..."
+  Target calls argparse at module top level; in-process it parsed ToFu's
+  sys.argv and sys.exit(2) -> uncaught SystemExit killed the fuzzer -> ERR
+  (not "Failed to start"). FIX: PythonRunner.start() neutralizes sys.argv
+  ([argv0]) around import+discovery and turns SystemExit into ImportError
+  ("recorded as a start-failure"). Tests: test_import_time_argparse_does_not_
+  see_tofu_argv, test_import_time_sys_exit_is_a_clean_start_failure.
+  Re-run mindmap after pulling: --only-repo mindmap-mcp-server (1 config).
+
+supabase-mcp-server (A/B extra, all 12 @3.2s llm=unknown) -- DROPPED, but it
+exposed a gap: "12 validation errors for SettingsWithConfig ... Extra inputs
+are not permitted: tofu_llm_base_url, ..., openai_api_key='sk-proj-...'".
+  (1) pydantic-settings extra='forbid' rejects ToFu's TOFU_* env vars -> the
+      target refuses to start; its token was never the blocker.
+  (2) *** the real OPENAI_API_KEY (pydantic-truncated, prefix+suffix) landed
+      in eval/runs/gpt41-vm-supa/*.log on the VM. The scrubber DID remove it
+      from os.environ; the target read ToFu's OWN .env FILE, because
+      in-process Python targets run with cwd = ToFu ROOT (run_eval spawns
+      `python -m src` with cwd=ROOT; PythonRunner never chdirs -- leftover
+      (iii) of the item-86 entry). Same class as the /proc/environ leak, via
+      the filesystem. Any Python target calling load_dotenv()/pydantic-settings
+      in the LIVE campaign can read the key. Node is unaffected (JSRunner
+      cwd=target_cwd since bug 21).
+  Ananto told to rm the supa logs+index and the 12 token-bearing configs;
+  Supabase token was a throwaway account (his statement), also in transcript.
+  91. CWD/.env ISOLATION for in-process Python targets: run the target with
+      cwd=target_cwd (make ToFu's corpus/metrics/config paths absolute first
+      -- _resolve_instrumented_modules walks "." too), or at minimum ensure no
+      .env is readable from the fuzzer's cwd (run_eval could chdir to a
+      scratch dir; .env is only needed by run_arm's `set -a; . .env`).
+      Delicate (bugs 12/13/14 history) -> not changed mid-campaign. Decision
+      given to Ananto: let gpt41-vm finish (key already slated for rotation,
+      logs gitignored on the VM) vs. stop and isolate first.
+  DECISION LOG: rotation of OPENAI_API_KEY deferred by Ananto to project
+      end (memory: rotate-openai-key-outstanding). Now 4 exposures.

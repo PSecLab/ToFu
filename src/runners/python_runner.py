@@ -563,16 +563,34 @@ class PythonRunner(BaseRunner):
         from .secrets import scrub_process_env
         self.scrubbed_env_names = list(scrub_process_env(keep=self.custom_env))
         self._activate_target_env()
-        module = self._import_target()
 
-        self.target_func = None
-        self.fastmcp_instance = None
-        self.mcp_server = None
-        self.tool_schema = None
-        self.tool_description = None
+        # Neutralize argv for import + discovery. A target that calls argparse
+        # at module top level (YuChenSSR/mindmap-mcp-server, 2026-09-15) sees
+        # ToFu's own argv (--config/--time/--corpus-dir ...), prints its usage
+        # and sys.exit(2)s -- in-process that SystemExit killed the whole fuzzer
+        # (run recorded as ERR, not as a clean start-failure). A minimal argv
+        # lets all-optional parsers take their defaults; a parser that still
+        # exits becomes an ImportError the harness logs as "Failed to start".
+        saved_argv = sys.argv
+        sys.argv = [saved_argv[0] if saved_argv else "mcp-target"]
+        try:
+            module = self._import_target()
 
-        self._find_server_instance(module)
-        self._lookup_tool(module)
+            self.target_func = None
+            self.fastmcp_instance = None
+            self.mcp_server = None
+            self.tool_schema = None
+            self.tool_description = None
+
+            self._find_server_instance(module)
+            self._lookup_tool(module)
+        except SystemExit as e:
+            raise ImportError(
+                f"target '{self.module_name or self.command}' called sys.exit({e.code}) during "
+                f"import/discovery -- argparse at module top level, or an env/precondition check. "
+                f"Not a ToFu crash; recorded as a start-failure.")
+        finally:
+            sys.argv = saved_argv
 
         if self.target_func is None and self.mcp_server is None:
             known = sorted(_registry_tools(self.fastmcp_instance)) if self.fastmcp_instance is not None else []

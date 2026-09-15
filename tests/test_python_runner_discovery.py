@@ -370,6 +370,44 @@ def test_predict_instrument_packages_covers_thin_entry_scripts(tmp_path):
     assert r2.predict_instrument_packages() == []
 
 
+def test_import_time_argparse_does_not_see_tofu_argv(tmp_path, monkeypatch):
+    """mindmap-mcp-server pattern (VM, 2026-09-15): argparse at module top level
+    consumed ToFu's argv, sys.exit(2), and the uncaught SystemExit killed the
+    fuzzer (ERR). With argv neutralized the all-optional parser takes defaults."""
+    monkeypatch.setattr(sys, "argv", ["python", "-m", "src", "--config", "x.json", "--time", "900"])
+    name = _uniq("argv_mod")
+    _write(str(tmp_path / f"{name}.py"), """\
+        import argparse, sys
+        _p = argparse.ArgumentParser()
+        _p.add_argument("--return-type", choices=["html", "filePath"], default="html")
+        ARGS = _p.parse_args()                       # module top level, like mindmap
+        SEEN_ARGV = list(sys.argv)
+        from mcp.server.mcpserver import MCPServer
+        mcp = MCPServer("argv")
+
+        @mcp.tool()
+        def convert(markdown: str) -> str:
+            return ARGS.return_type + ":" + markdown
+        """)
+    r = PythonRunner(command="python", args=[str(tmp_path / f"{name}.py")], target_tool="convert")
+    r.start()                                        # must not raise / exit
+    assert sys.argv[0:3] == ["python", "-m", "src"]  # restored afterwards
+    res = r.execute({"markdown": "# hi"})
+    assert res.success is True and "html:# hi" in str(res.result)
+
+
+def test_import_time_sys_exit_is_a_clean_start_failure(tmp_path):
+    name = _uniq("exit_mod")
+    _write(str(tmp_path / f"{name}.py"), """\
+        import sys
+        sys.exit(3)                                  # e.g. 'markmap not installed' precondition
+        """)
+    r = PythonRunner(command="python", args=[str(tmp_path / f"{name}.py")], target_tool="t")
+    with pytest.raises(ImportError) as ei:
+        r.start()
+    assert "sys.exit(3)" in str(ei.value) and "start-failure" in str(ei.value)
+
+
 # ------------------------------------------ bug 23, Python twin: process env
 
 def test_in_process_target_cannot_see_tofu_credentials(tmp_path, monkeypatch):
