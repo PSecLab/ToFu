@@ -13,7 +13,7 @@ recorded. Ctrl-C safe.
   VIPER_PY-style: run with ToolFuzz's own py3.10 venv (see
   eval/vm_bootstrap_toolfuzz.sh). gpt-4.1, temperature 0, fuzzer_iters 10.
 """
-import os, sys, json, asyncio, argparse, time, traceback, contextlib
+import os, sys, json, asyncio, argparse, time, traceback, contextlib, signal
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLFUZZ = os.path.join(ROOT, "Benchmarks", "ToolFuzz")
@@ -80,6 +80,7 @@ def main():
     ap.add_argument("--model", default=os.environ.get("TOOLFUZZ_MODEL", "gpt-4.1"))
     ap.add_argument("--only", default=None, help="substring filter on repo")
     ap.add_argument("--max-tools", type=int, default=0, help="cap tools per repo (0=all)")
+    ap.add_argument("--tool-timeout", type=int, default=int(os.environ.get("TOOLFUZZ_TOOL_TIMEOUT","300")), help="per-tool wall-clock cap (s); a hung tool is recorded and skipped")
     a = ap.parse_args()
     modes = [m.strip() for m in a.modes.split(",") if m.strip()]
 
@@ -114,11 +115,17 @@ def main():
                 continue
             t0 = time.time()
             base = os.path.join(outdir, tool.name.replace("/", "_"))
+            def _timeout(signum, frame): raise TimeoutError(f"tool exceeded {a.tool_timeout}s")
+            signal.signal(signal.SIGALRM, _timeout); signal.alarm(a.tool_timeout)
             try:
                 rec = fuzz_tool(tool, llm, a.iters, modes, base)
+            except TimeoutError as e:
+                rec = {"tool": tool.name, "ok": False, "error": str(e)}
             except Exception as e:
                 rec = {"tool": tool.name, "ok": False, "error": str(e)[:200],
                        "trace": traceback.format_exc()[-400:]}
+            finally:
+                signal.alarm(0)
             rec.update(repo=repo, seconds=round(time.time() - t0, 1))
             with open(INDEX, "a") as f: f.write(json.dumps(rec) + "\n")
             flag = "ok" if rec.get("ok") else f"ERR {rec.get('error','')[:60]}"
