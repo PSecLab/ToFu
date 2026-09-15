@@ -94,22 +94,14 @@ def _inband_error(res_data):
 # Credentials that must never reach a fuzzed target. Exact names plus a
 # suffix pattern; applied to the INHERITED environment only, before any
 # per-target overrides are merged (so deliberate placeholders survive).
-_SECRET_EXACT = {
-    "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "OLLAMA_CLOUD_API_KEY",
-    "GITHUB_TOKEN", "GH_TOKEN", "HF_TOKEN", "HUGGINGFACE_TOKEN", "HUGGING_FACE_HUB_TOKEN",
-    "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN",
-    "GOOGLE_APPLICATION_CREDENTIALS", "NPM_TOKEN", "PYPI_TOKEN", "TWINE_PASSWORD",
-    "MCP_SCANNER_LLM_API_KEY", "MCP_SCANNER_API_KEY",
-}
-_SECRET_SUFFIX = ("_API_KEY", "_SECRET", "_SECRET_KEY", "_TOKEN", "_PASSWORD", "_PASSWD", "_PRIVATE_KEY")
-
-
-def _scrub_secrets(env: dict) -> dict:
-    for k in list(env.keys()):
-        ku = k.upper()
-        if ku in _SECRET_EXACT or ku.endswith(_SECRET_SUFFIX):
-            env.pop(k, None)
-    return env
+# Definitions live in runners/secrets.py so PythonRunner (in-process: must
+# scrub os.environ itself) uses the identical name set. Re-exported under the
+# original names; tests import _scrub_secrets from here.
+from .secrets import (  # noqa: E402
+    SECRET_EXACT as _SECRET_EXACT,
+    SECRET_SUFFIX as _SECRET_SUFFIX,
+    scrub_secrets as _scrub_secrets,
+)
 
 class JSRunner(BaseRunner):
     """

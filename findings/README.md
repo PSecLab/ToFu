@@ -17,6 +17,22 @@ alert counts from the run are NOT evidence on their own — see the FP note.
 - **locallama-mcp_update_server_unauthenticated-self-update.md**
   Zero-arg tool runs git pull + npm install + build. Currently inert because
   the hardcoded branch `future-testing` does not exist on origin.
+- **mcp-text-editor_get_text_file_contents_unrestricted-sensitive-file-read.md**
+  (V4, 2026-09-15 — FIRST PYTHON-ARM FINDING, sandbox py3.13, item 86.)
+  `get_text_file_contents` serves any absolute path: `/etc/passwd` 1225x and the
+  server's own `/proc/self/environ` 1105x, as SUCCESS. The code ships a
+  `base_dir` sandbox (`utils.normalize_and_validate_path`) that no caller ever
+  enables. Oracle: LLM-selected `check_introspection_sensitive_file_access`
+  (+ mandatory `check_file_access` for the /proc paths). Evidence is redacted:
+  the served environment contained ToFu's own API key (rotated).
+- **uml-mcp_list_diagram_types_crlf-log-injection.md**
+  (V5, 2026-09-15, Python arm.) `list_diagram_types` logs the raw caller
+  strings with `%s`; `\r`/`\n` in `query` forge log records while the tool
+  returns SUCCESS (9 alerts / 5 inputs in 30 s). CWE-117 like V2 but the sink is
+  `logging`, not a server-owned file -> potential. ATTRIBUTION NOTE: fired by
+  `check_introspection_log_injection`, which was NOT LLM-selected — on the
+  Python arm introspection checks run whenever their tracer has evidence
+  (`_run_sanitizers`: `in selected or <evidence>`); do not credit LLM selection.
 
 ## evidence/
 Raw artifacts kept next to the write-ups so disclosure does not depend on any

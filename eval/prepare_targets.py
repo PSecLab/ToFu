@@ -28,7 +28,14 @@ EXTR   = os.path.join(ROOT, "Benchmarks", "extraction")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
 SKIPPED  = os.path.join(STATE, "skipped.jsonl")
 
-TARGET_PYTHON   = os.environ.get("TOFU_TARGET_PYTHON", "3.11")
+# The interpreter every per-target venv is built with. The invariant is
+# EQUALITY with the interpreter that runs `python -m src`: PythonRunner imports
+# the target in-process, so a venv on another CPython minor cannot be used and
+# the runner refuses it at start() (item 86). Default to the interpreter running
+# this script -- in the sandbox that is ToFu's own venv (3.13; Dockerfile.sandbox
+# also sets TOFU_TARGET_PYTHON explicitly). Override only if you know why.
+TARGET_PYTHON   = os.environ.get("TOFU_TARGET_PYTHON",
+                                 f"{sys.version_info.major}.{sys.version_info.minor}")
 CLONE_TIMEOUT   = 180
 INSTALL_TIMEOUT = 600
 PROBE_TIMEOUT   = 60
@@ -198,6 +205,50 @@ def target_env(dest, interp=None, extra=None):
         env.update({str(k): str(v) for k, v in extra.items()})
     return env
 
+def _venv_pyver(interp):
+    """'3.11' from the venv's pyvenv.cfg next to `interp` (None if unknown)."""
+    try:
+        cfg = os.path.join(os.path.dirname(os.path.dirname(interp)), "pyvenv.cfg")
+        for line in open(cfg, encoding="utf-8", errors="ignore"):
+            k, _, v = line.partition("=")
+            if k.strip() in ("version_info", "version"):
+                parts = v.strip().split(".")
+                if len(parts) >= 2:
+                    return f"{parts[0]}.{parts[1]}"
+    except OSError:
+        pass
+    return None
+
+def _console_entry(dest, command):
+    """'pkg.mod:func' behind a console-script launch, from [project.scripts].
+
+    Recorded in the config as `python_entry` so the in-process PythonRunner can
+    import the MODULE instead of trying to import the bin/ path (item 86 bug A).
+    The runner also parses the shim itself; this is the belt to that suspenders.
+    """
+    script = os.path.basename(command or "")
+    if not script or script.startswith("python"):
+        return None
+    pp = os.path.join(dest, "pyproject.toml")
+    if not os.path.exists(pp):
+        return None
+    try:
+        txt = open(pp, encoding="utf-8", errors="ignore").read()
+        for header in ("[project.scripts]", "[tool.poetry.scripts]"):
+            if header not in txt:
+                continue
+            seg = txt.split(header, 1)[1].split("\n[", 1)[0]
+            for line in seg.strip().splitlines():
+                if "=" not in line:
+                    continue
+                name = line.split("=", 1)[0].strip().strip('"\'')
+                target = line.split("=", 1)[1].strip().strip('"\'')
+                if name == script and target:
+                    return target
+    except Exception:
+        pass
+    return None
+
 def make_venv(dest):
     """Create a per-target virtualenv and return its interpreter.
 
@@ -239,12 +290,23 @@ def install(dest, lang, last_commit=None):
         # uv sync builds its OWN .venv in dest from the repo's lockfile. Best
         # case: exact pinned deps, no resolution at all.
         if os.path.exists(os.path.join(dest, "uv.lock")):
-            p = run(["uv", "sync", "--frozen"], cwd=dest,
+            # PIN THE INTERPRETER HERE TOO (item 86). Without --python, uv sync
+            # picks the newest CPython it can find (3.13/3.14 on this machine),
+            # and the PythonRunner imports the target IN-PROCESS into ToFu's
+            # 3.11 -- a cp313 wheel cannot load there, so every such target
+            # silently produced "0 findings". If the lockfile's requires-python
+            # excludes 3.11 we fall through to make_venv() and the repo becomes
+            # an honest, recorded exclusion instead.
+            p = run(["uv", "sync", "--frozen", "--python", TARGET_PYTHON], cwd=dest,
                     timeout=INSTALL_TIMEOUT, env=env)
             if p.returncode == 0:
                 py = os.path.join(dest, ".venv", "bin", "python")
                 if os.path.exists(py):
                     return "uv:frozen", py
+            else:
+                log(f"    uv sync --frozen --python {TARGET_PYTHON} failed "
+                    f"({_err_head(p.stderr)}); falling back to a pinned venv + pip")
+                shutil.rmtree(os.path.join(dest, ".venv"), ignore_errors=True)
         interp = make_venv(dest)
         env = target_env(dest, interp)
         # RESOLVE DEPENDENCIES AS OF THE COMMIT DATE. Repos pin their own code
@@ -482,7 +544,14 @@ def main():
                          "Needed after item 51: the 75 Python skips were caused "
                          "by the harness, not by the repos, so the exclusion "
                          "list must be recomputed before it is reported.")
+    ap.add_argument("--redo", action="store_true",
+                    help="re-prepare repos even if already READY (requires --only-repo). "
+                         "clone() wipes the target dir, so the venv is rebuilt from "
+                         "scratch -- use after item 86 to move Python venvs onto "
+                         f"TOFU_TARGET_PYTHON={TARGET_PYTHON}.")
     a = ap.parse_args()
+    if a.redo and not (a.only_repo or a.only_lang):
+        log("--redo needs --only-repo or --only-lang (refusing to re-prepare the whole corpus)"); sys.exit(2)
 
     for d in (TGTDIR, CFGDIR, STATE): os.makedirs(d, exist_ok=True)
 
@@ -504,6 +573,16 @@ def main():
     done = load_done()
     if a.retry_skipped:
         done = {k: v for k, v in done.items() if v != "skipped"}
+    if a.redo:
+        # scope: --only-repo substrings and/or --only-lang (lang comes from the
+        # sampling-set rows, which is the same source `todo` is built from).
+        pats = [x.strip().lower() for x in (a.only_repo or "").split(",") if x.strip()]
+        lang_of = {r["repo"]: r["lang"] for r in sel}
+        redo = [k for k in done
+                if (not pats or any(pt in k.lower() for pt in pats))
+                and (not a.only_lang or lang_of.get(k) == a.only_lang)]
+        for k in redo: done.pop(k, None)
+        log(f"--redo: re-preparing {len(redo)} already-recorded repo(s): {redo}")
     todo = [r for r in sel if r["repo"] not in done]
     if a.only_lang:
         todo = [r for r in todo if r["lang"] == a.only_lang]
@@ -525,6 +604,14 @@ def main():
             hints = TARGET_ENV_HINTS.get(repo, {})
             note, interp = install(dest, lang, r.get("last_commit"))
             command, args = detect_launch(dest, lang, interp)
+            # In-process oracle prerequisite (item 86): the venv MUST match
+            # ToFu's interpreter. Record it; the runner refuses loudly otherwise.
+            pyver = _venv_pyver(interp) if lang == "python" else None
+            inprocess_ok = (pyver == TARGET_PYTHON) if lang == "python" else None
+            if lang == "python" and not inprocess_ok:
+                log(f"    WARNING venv python={pyver} != TOFU_TARGET_PYTHON={TARGET_PYTHON}: "
+                    f"stdio probe will work, in-process fuzzing will NOT (recorded inprocess_ok=false)")
+            entry = _console_entry(dest, command) if lang == "python" else None
             command, args = apply_launch_hints(repo, dest, command, args)
             tools = probe_tools(command, args, dest, interp, hints)
             ncfg = 0
@@ -532,6 +619,10 @@ def main():
                 cfg = {"_repo": repo, "_set": r["set"], "_lang": lang,
                        "_commit": commit, "_stars": r.get("stars"),
                        "command": command, "args": args, "cwd": dest,
+                       # item 86: venv interpreter + console-script entry, so the
+                       # in-process runner can import the module and refuse a
+                       # mismatched venv instead of failing silently.
+                       "python": pyver, "python_entry": entry,
                        "target_tool": t["name"],
                        "_tool_description": t.get("description", ""),
                        # override_rules INTENTIONALLY EMPTY -> forces
@@ -548,6 +639,8 @@ def main():
             record(PREPARED, {"repo": repo, "set": r["set"], "lang": lang,
                               "commit": commit, "status": "ready", "install": note,
                               "command": command, "args": args, "cwd": dest,
+                              "python": pyver, "inprocess_ok": inprocess_ok,
+                              "python_entry": entry,
                               "n_tools_probed": len(tools), "n_configs": ncfg,
                               "env_hints": sorted(hints.keys()),
                               "launch_hints": bool(TARGET_LAUNCH_HINTS.get(repo)),

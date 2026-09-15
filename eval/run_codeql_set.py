@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CODEQL = os.environ.get("CODEQL", "codeql")
 THREADS = os.environ.get("CODEQL_THREADS", "2")
 RAM = os.environ.get("CODEQL_RAM", "4096")
-CLONE_TIMEOUT = 120
+CLONE_TIMEOUT = int(os.environ.get("CODEQL_CLONE_TIMEOUT", "300"))
 DB_TIMEOUT = int(os.environ.get("CODEQL_DB_TIMEOUT", "900"))
 
 SUITE = {
@@ -103,20 +103,46 @@ def main():
             # source: prepared target if present, else shallow clone
             src = os.path.join(ROOT, "eval", "targets", slug)
             clone = None
+            head_sha = None          # actual analyzed commit, for traceability
             if not os.path.isdir(src):
                 clone = os.path.join(scratch, slug)
                 env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GIT_ASKPASS="echo")
-                p = subprocess.run(["git", "clone", "--quiet", "--no-tags",
-                                    f"https://github.com/{repo}.git", clone],
-                                   capture_output=True, timeout=CLONE_TIMEOUT, env=env)
-                if p.returncode != 0:
-                    log(f"({i}/{len(todo)}) {repo}  CLONE FAIL")
+                url = f"https://github.com/{repo}.git"
+                try:
+                    # blobless shallow clone: fast even on huge monorepos
+                    # (pollinations etc.). History blobs skipped; HEAD tree
+                    # blobs fetched on the implicit checkout.
+                    p = subprocess.run(["git", "clone", "--quiet", "--no-tags",
+                                        "--single-branch", "--depth", "1",
+                                        "--filter=blob:none", url, clone],
+                                       capture_output=True, timeout=CLONE_TIMEOUT, env=env)
+                    if p.returncode != 0:
+                        raise RuntimeError("clone: " + p.stderr.decode(errors="ignore")[-200:])
+                    if commit:
+                        # pin the exact sha (GitHub allows sha fetch); if the
+                        # server refuses, fall back to cloned HEAD (recorded).
+                        fp = subprocess.run(["git", "-C", clone, "fetch", "--quiet",
+                                             "--depth", "1", "origin", commit],
+                                            capture_output=True, timeout=CLONE_TIMEOUT, env=env)
+                        if fp.returncode == 0:
+                            subprocess.run(["git", "-C", clone, "checkout", "--quiet", commit],
+                                           capture_output=True, timeout=60, env=env)
+                    h = subprocess.run(["git", "-C", clone, "rev-parse", "HEAD"],
+                                       capture_output=True, timeout=30, env=env)
+                    if h.returncode == 0:
+                        head_sha = h.stdout.decode(errors="ignore").strip()
+                except subprocess.TimeoutExpired:
+                    log(f"({i}/{len(todo)}) {repo}  CLONE TIMEOUT ({CLONE_TIMEOUT}s)")
                     with open(index, "a") as f:
-                        f.write(json.dumps({"repo": repo, "lang": lang, "ok": False, "stage": "clone"}) + "\n")
-                    fail += 1; continue
-                if commit:
-                    subprocess.run(["git", "-C", clone, "checkout", "--quiet", commit],
-                                   capture_output=True, timeout=60, env=env)
+                        f.write(json.dumps({"repo": repo, "lang": lang, "ok": False,
+                                            "stage": "clone", "error": "timeout"}) + "\n")
+                    fail += 1; shutil.rmtree(clone, ignore_errors=True); continue
+                except Exception as e:
+                    log(f"({i}/{len(todo)}) {repo}  CLONE FAIL {str(e)[:80]}")
+                    with open(index, "a") as f:
+                        f.write(json.dumps({"repo": repo, "lang": lang, "ok": False,
+                                            "stage": "clone", "error": str(e)[:200]}) + "\n")
+                    fail += 1; shutil.rmtree(clone, ignore_errors=True); continue
                 src = clone
             db = os.path.join(out, slug, "db")
             sarif = os.path.join(out, slug, "results.sarif")
@@ -138,7 +164,9 @@ def main():
                 n, by = parse_sarif(sarif)
                 with open(index, "a") as f:
                     f.write(json.dumps({"repo": repo, "lang": lang, "ok": True, "seconds": int(time.time() - t0),
-                                        "n_findings": n, "by_rule": by, "stars": r.get("stars")}) + "\n")
+                                        "n_findings": n, "by_rule": by, "stars": r.get("stars"),
+                                        "commit": commit, "analyzed_sha": head_sha,
+                                        "source": "prepared" if clone is None else "clone"}) + "\n")
                 ok += 1
                 log(f"({i}/{len(todo)}) {repo}  {n} findings  {int(time.time()-t0)}s")
             except Exception as e:

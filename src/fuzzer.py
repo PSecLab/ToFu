@@ -246,7 +246,11 @@ class MCPDifferentialFuzzer:
                             cwd=getattr(self.config, "target_cwd", None))
         else:
             from .runners import PythonRunner
-            return PythonRunner(self.command, self.args, tool)
+            # BUG 21 for the Python arm too: the target's own directory, so the
+            # runner can find its venv (.venv/) and src/ layout.
+            return PythonRunner(self.command, self.args, tool,
+                                cwd=getattr(self.config, "target_cwd", None),
+                                custom_env=getattr(self.config, "target_env", None))
 
     def test_one_input(self, data: bytes) -> None:
         """The callback executed by Atheris for each input permutation."""
@@ -1210,8 +1214,32 @@ class MCPDifferentialFuzzer:
             if not is_js:
                 # Include target module name from runner if available
                 runner_mod = getattr(self.current_runner, "module_name", None)
-                if runner_mod and runner_mod not in modules_to_instrument:
-                    modules_to_instrument.append(runner_mod)
+                # module_name is only set INSIDE start(), i.e. after this list is
+                # consumed -- so the target package was never in atheris's
+                # include set and libFuzzer fuzzed it blind (item 86). Predict
+                # it without importing; atheris matches on the TOP-LEVEL package.
+                predicted = []
+                if hasattr(self.current_runner, "predict_instrument_packages"):
+                    try:
+                        # module top-level + every package under the target's
+                        # cwd/src: a thin `server.py` entry file must not leave
+                        # the real package (mcp_core) uninstrumented.
+                        predicted = list(self.current_runner.predict_instrument_packages())
+                    except Exception:
+                        predicted = []
+                if not runner_mod and not predicted and hasattr(self.current_runner, "predict_module_name"):
+                    try:
+                        runner_mod = self.current_runner.predict_module_name()
+                    except Exception:
+                        runner_mod = None
+                if runner_mod:
+                    predicted += [runner_mod, runner_mod.split(".")[0]]
+                for m in predicted:
+                    if m and m not in modules_to_instrument:
+                        modules_to_instrument.append(m)
+                if predicted:
+                    logger.info(f"[{tool}] target packages added to the atheris include set: "
+                                f"{sorted(set(p for p in predicted if p))}")
                 # Also include "mcp_target_module"
                 modules_to_instrument.append("mcp_target_module")
                 logger.info(f"[{tool}] Instrumenting local Python modules: {modules_to_instrument}")

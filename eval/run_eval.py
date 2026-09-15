@@ -199,6 +199,23 @@ def parse_log(out: str) -> dict:
         rec["n_exec"] = rec["n_exec_success"] = None
         rec["exec_success_rate"] = None
         rec["executable"] = "unknown"
+    # INSTRUMENT FAILURE, NOT TARGET FAILURE (item 86/89, 2026-09-15). libFuzzer
+    # prints "INFO: seed corpus: files: N" and then "#N INITED cov: C". When the
+    # fuzzed package is not in atheris' include set it sees ZERO coverage
+    # features and calls C exit(1) right after the seeds -- before INITED, and
+    # before its own "no interesting inputs" message can leave the stderr pipe
+    # engine._fuzz_with_interception reads from (the process is gone). The log
+    # then shows one EXEC_SUMMARY n_exec=1 n_success=0 and nothing else, which
+    # the rule above would record as executable=no -- an exclusion the target
+    # never earned. uml-mcp (`python server.py`, code in mcp_core/) hit this.
+    seeds_seen = "seed corpus:" in out
+    inited = " INITED " in out or "INITED cov:" in out
+    if seeds_seen and not inited:
+        rec["libfuzzer_exited_before_inited"] = True
+        rec["executable"] = "unknown"
+        rec["note_instrument"] = ("libFuzzer exited after the seed corpus without INITED: no coverage "
+                                  "features, i.e. the target package was not instrumented. Harness "
+                                  "defect; not evidence about the target.")
     errs = [(int(a), b.strip()) for a, b in _RE_EXEC_ERR.findall(out)]
     if errs:
         rec["exec_errors"] = [{"n": a, "detail": b} for a, b in errs[:3]]
@@ -562,7 +579,9 @@ def main():
         if "dis" in raw and "Positions" in raw:
             log("  DIAGNOSIS: atheris/Python version mismatch. dis.Positions exists")
             log(f"             only in Python 3.11+, but you are on {v.major}.{v.minor}.")
-            log("  Fix: use a Python 3.11/3.12 venv, then pip install -r requirements.txt")
+            log("  Fix: use a Python 3.11-3.13 venv (3.13 preferred: Python targets are "
+                "imported in-process and their venvs must match, item 86), then "
+                "pip install -r requirements.txt")
         elif "ModuleNotFoundError" in raw:
             log("  Fix:  pip install -r requirements.txt")
         sys.exit(1)

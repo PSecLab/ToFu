@@ -104,6 +104,19 @@ correct but is unproven end to end.
   with 6 branch-distinct inputs, driven through the real `JSRunner`, produces
   **6 distinct coverage sets**. Before the 2026-09-10 fixes it produced 1.
 - `exec/s` on JS targets is **100-227** (was 0-33).
+- **The Python arm executes real targets (2026-09-15, item 86).** Before this
+  date every Python row of every campaign was `executable: unknown, n_exec=0`
+  — the runner never imported a real target (console-script path fed to
+  `import_module`, FastMCP registry tools looked up as module attributes, and
+  no dependency isolation: ToFu's mcp 2.x pre-imported vs targets' mcp 1.x on
+  other CPython minors). After the fix, in the py3.13 sandbox:
+  `tumf/mcp-text-editor::get_text_file_contents` ran **80,896 executions in
+  60 s (~1,344 exec/s), cov 60→64, corp 7→11**, 5,885 successes; `uml-mcp`
+  and `osm-mcp-server` import and execute via the in-process JSON-RPC server.
+  First Python-arm finding: V4 (potential), `findings/potential/mcp-text-editor_*`.
+  See nazmul.todo 2026-09-15 for the incident this surfaced (bug 23, Python
+  twin: in-process targets could read ToFu's credentials from `os.environ`;
+  fixed in `src/runners/secrets.py`).
 
 **Not proven / open:**
 - **No credible finding exists.** The only alerts ever recorded came from the
@@ -178,6 +191,10 @@ add one before Set D is scored.
    local mid arm), optionally `granite4.1:8b`. Same seed and temperature. This
    doubles as Pierre's A4 sanitizer-selection ablation.
 5. **Run the real Set A+B campaign**, then Set D, then the Cisco baseline smoke.
+5b. **Run the Python arm for real** (it has never been measured): on the Linux
+   VM, `bash eval/vm_bootstrap_tofu.sh`, the 60 s smoke it prints, then
+   `prepare_targets.py --only-lang python --redo` + the campaign. Every Python
+   number in the paper before 2026-09-15 is non-evidence (item 86).
 6. **Decide on the credential history rewrite** (§8) — prepared, not pushed.
 7. Paper TODOs A3–A7 in `nazmul.todo` unblock once real run data exists.
 
@@ -267,8 +284,15 @@ twice and diff the selected sanitizers. `temperature=0` is necessary but not
 sufficient — llama.cpp/Ollama batching and GPU scheduling can still perturb
 logits.
 
-Python 3.11 is required (`.python-version` → 3.11, venv is 3.11.15): Atheris
-needs `dis.Positions`, which is 3.11+.
+Python **3.11–3.13** (Atheris 3.0.0 supports exactly that range; it needs
+`dis.Positions`, 3.11+). The laptop dev venv is 3.11.15 (tests). **The sandbox
+and the VM run 3.13** (item 86, 2026-09-15): `PythonRunner` imports targets
+in-process, so every target venv must be the same CPython as ToFu's, and 3.13
+is the only version satisfying every corpus lockfile (uml `>=3.12,<3.15`, osm
+and mcp-text-editor `>=3.13`). `prepare_targets.py` pins target venvs to
+`TOFU_TARGET_PYTHON`, which defaults to the interpreter running it — always run
+prepare from ToFu's venv, never the system `python3`. The runner refuses a
+mismatched venv loudly at `start()`.
 
 ---
 

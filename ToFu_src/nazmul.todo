@@ -4374,3 +4374,201 @@ KNOWN LEFTOVERS: (i) fuzzer._resolve_instrumented_modules walks ToFu's cwd
   (iv) 87. after validation: re-prepare ALL python targets in the sandbox
   (--only-lang python --redo needs a repo list; or wipe eval/sandbox/targets
   python dirs + rows) and fuzz them -- the first real Python measurement.
+
+================================================================
+2026-09-15  TOOLFUZZ (eth-sri) BASELINE #4 -- runner + VM bootstrap
+================================================================
+Ananto: run ToolFuzz on the 40 repos. Decisions: iters=10, runtime+correctness,
+on the VM. ToolFuzz fuzzes langchain agent TOOLS (RuntimeErrorTester crash
+prompts; CorrectnessTester wrong-output). Our targets are MCP servers -> bridge
+each server's tools into langchain via langchain_mcp_adapters, hand each tool to
+ToolFuzz.
+NEW: eval/run_toolfuzz.py (bridge runner: prepared.jsonl -> MultiServerMCPClient
+  get_tools() -> per tool ReactAgentNew + RuntimeErrorTester + CorrectnessTester;
+  gpt-4.1 temp 0; resumable eval/state/toolfuzz_runs.jsonl; results
+  eval/toolfuzz_runs/<repo>/<tool>.{runtime,correctness}.{json,html}).
+  eval/vm_bootstrap_toolfuzz.sh (its OWN py3.10 venv at Benchmarks/ToolFuzz/.venv;
+  pip -e ToolFuzz + langchain-mcp-adapters 0.1.x + langgraph; import check; a
+  3-iter 1-tool smoke).
+COST: ~537 tools. iters=10 x ~2-3 gpt-4.1 calls/iter -> ~13-40k calls, plus
+  correctness (prompt_set_iters=iters//2=5) on top. EXECUTES tools -> VM only.
+RISKS (expect 1 VM iteration):
+  1. Namespace: ToolFuzz package is `src`, collides with ToFu `src/`. Runner
+     does sys.path.insert(0, ToolFuzz) + chdir there. If it still grabs ToFu's
+     src, run with cwd=Benchmarks/ToolFuzz.
+  2. react_new.py imports src.eval.buggy_tools.open_street_map at MODULE level
+     -> that submodule + its deps must import cleanly in the toolfuzz venv.
+  3. MCP-adapter tool session lifecycle: get_tools() tools spawn their own
+     stdio session per call (adapters >=0.1); if a version needs a persistent
+     session, invocations fail -> pin/adjust adapter version.
+  4. create_react_agent must accept the MCP StructuredTool schema; ReactAgentNew
+     sets self.agent=None on failure -> runner records "react agent build failed".
+   79. Run ToolFuzz on the VM (bootstrap -> smoke -> tmux full). Then add it as
+       baseline #4 in findings/baselines/ + the comparison table.
+
+================================================================
+2026-09-15  ITEM 86 VALIDATED IN SANDBOX (py3.13) -- PYTHON ARM RUNS
+================================================================
+Image rebuilt python:3.13 (atheris 3.0.0 + mcp 2.2.0 import OK,
+TOFU_TARGET_PYTHON=3.13). prepare --redo osm-mcp-server,uml-mcp,
+mcp-text-editor: all 3 READY on 3.13.15 via uv:frozen (23 configs).
+SINGLE EXECUTION (python -m src --test-input, one call each) -> 3/3 SUCCESS:
+  uml list_diagram_types  -> "Returned 37 supported diagram type(s)"
+     (FastMCP 4 / mcp 2.1.1; found via lazy __getattr__ -> get_mcp_server())
+  osm geocode_address     -> live Nominatim result for Old Main
+     (mcp 1.3.0, console script, Context tool -> in-process JSON-RPC)
+  text-editor get_text_file_contents -> read /work/README.md (0-byte file,
+     empty content is CORRECT; source raises FileNotFoundError for missing)
+  All three: "[PythonRunner] shadowing ToFu's mcp with target's mcp X.Y.Z
+  (107 cached modules dropped)" then "via in-process JSON-RPC server".
+  FIRST TIME any real Python corpus target executed under ToFu.
+60s FUZZ (gpt-4.1 temp0 seed 20260910), eval/sandbox/runs/smoke86/*.fuzz.log:
+  tumf/mcp-text-editor get_text_file_contents:
+     EXEC_SUMMARY n_exec=80896 n_success=5885 success_rate=0.073
+     libFuzzer cov 60->64, corp 7->11, exec/s ~1344  (HANDOFF s4 acceptance
+     signals now hold for PYTHON: cov grows, corp grows, exec/s high)
+     2740 alerts: check_file_access 2732 (MANDATORY layer),
+     check_introspection_sensitive_file_access 1267 (LLM-SELECTED; selection
+     was [check_path_traversal, check_introspection_sensitive_file_access,
+     check_introspection_symlink_following]).
+     /etc/passwd served with content 1225x; /proc/<pid>/environ served 1105x.
+     -> V4 POTENTIAL: findings/potential/mcp-text-editor_get_text_file_contents
+        _unrestricted-sensitive-file-read.md + redacted evidence. Dead base_dir
+        sandbox never wired; server serves its own /proc/self/environ.
+        Attribution: /etc/passwd = LLM-selected introspection tracer (paper's
+        mechanism); /proc/environ = mandatory check_file_access only. SAY BOTH.
+  antoinebou12/uml-mcp list_diagram_types: seeds executed (validator rejects
+     typed-wrong seeds: limit="notanumber", query=123), but only ONE
+     EXEC_SUMMARY (n_exec=1) and no libFuzzer status lines in the log ->
+     fuzz loop outcome unclear; under investigation (next entry). Not
+     evidence either way yet.
+*** SECURITY INCIDENT (bug 23, PYTHON TWIN) -- contained ***
+  In-process target shares os.environ with the fuzzer; sandbox forwards
+  OPENAI_API_KEY; text-editor read /proc/self/environ and the reporter logged
+  the tool output verbatim -> the on-disk fuzz log held the real key 577x.
+  eval/sandbox/ is gitignored (nothing committed/pushed). Scrubbed in place
+  (value read from .env inside the command, never printed; 577 -> 0;
+  corpora/metrics checked clean; dir chmod go-rwx). ROTATE THE KEY (items 46,
+  79 stand; this is a third exposure of the same key).
+  FIX: src/runners/secrets.py (shared SECRET_EXACT/SECRET_SUFFIX,
+  scrub_secrets, scrub_process_env(keep)); js_runner re-exports the old
+  names (its regression test + call-site grep unchanged); PythonRunner.start()
+  scrubs os.environ BEFORE import and re-applies the config's placeholder
+  env (custom_env, passed from fuzzer factory = FuzzerConfig.target_env).
+  Safe because LLMHandler reads the key once in __init__ (client holds it).
+  Test: test_in_process_target_cannot_see_tofu_credentials.
+  Defense in depth still missing: reporter logs tool output verbatim; a
+  target could echo OTHER sensitive process data. Item 88.
+DESIGN CHANGE: PythonRunner now PREFERS the in-process JSON-RPC server over a
+  bare fn(**args) call whenever the target built a server (validation +
+  isError semantics = what the oracle judges; bare call skipped pydantic
+  coercion -> spurious rejections and unreal successes). TOFU_PY_BARE_CALL=1
+  restores the old behaviour for A/B. Plain-function fixtures unchanged.
+TESTS: 17 in tests/test_python_runner_discovery.py; full suite 153 passed
+  before the env-scrub change (re-run pending after it).
+FILES: eval/smoke_python_arm.sh (prepare|single|fuzz|report, bash-3.2 safe),
+  eval/vm_bootstrap_tofu.sh (VM: clang+libFuzzer, uv py3.13, .venv, tests,
+  prepare from .venv/bin/python so TOFU_TARGET_PYTHON matches).
+  prepare_targets --redo now also scopes by --only-lang.
+NEXT (Ananto's Linux VM, per his note): bash eval/vm_bootstrap_tofu.sh, then
+  the 60s smoke it prints, then the campaign. 87. re-prepare ALL python
+  targets (--only-lang python --redo) + fuzz = first real Python measurement.
+  88. reporter: redact credential-shaped values in logged tool output.
+  89. uml: why no periodic EXEC_SUMMARY / libFuzzer lines (rich WARNING
+  panels per invalid input from the target's fastmcp validator suggest very
+  low exec/s; confirm from metrics CSV).
+  90. HANDOFF s2 still says "No credible finding exists" -- stale since V1/V2;
+  needs Ananto's pass (not rewritten unilaterally; env + one bullet updated).
+
+================================================================
+2026-09-15  ITEM 89 RESOLVED (uml silent exit) + two harness fixes
+================================================================
+FALSE ALARM FIRST: a uml re-run showed every LLM call "Error code: 404".
+  Not the key (direct probe: /v1/models 200, gpt-4.1 completion 200) and
+  not the new env scrub: the httpx line showed the URL was
+  https://api.openai.com/v1%20TOFU_LLM_MODEL=gpt-4.1%20... -- my ad-hoc
+  re-run used `env $LLM_ENV` in ZSH, which does not word-split, so env got
+  ONE argument and the whole string became TOFU_LLM_BASE_URL. The bash
+  script was fine. Script hardened anyway: LLM_ENV is now an array
+  expanded "${LLM_ENV[@]}". Lesson: never `env $STRING` in zsh.
+SCRUB ORDER VERIFIED in the real fuzz path (run(): _start_runner BEFORE
+  _initialize_tool_fuzzing): "[secrets] scrubbed ['OPENAI_API_KEY']" then
+  LLM_SELECTION_OK -- the langchain client constructed in LLMHandler.__init__
+  holds the key; nothing re-reads it from env. No regression.
+ROOT CAUSE of uml's silent death (rc=1 after the seed corpus, no INITED, no
+  message, no final EXEC_SUMMARY): uml launches as `python server.py`, a
+  30-line entry file; the code lives in mcp_core/. predict_module_name() gave
+  "server", so atheris instrumented only that; the include list had NO
+  'mcp_core' (checked in the log: 'mcp_core' 0, 'server' 1). libFuzzer saw
+  zero coverage features after the seeds and called C exit(1) ("no
+  interesting inputs") -- and that message was LOST: engine.
+  _fuzz_with_interception dup2's stderr into a pipe read by a daemon thread,
+  and a C exit() kills the process before Python's except SystemExit /
+  finally / the reader thread run. The log ends with the last seed's line.
+  run_eval then saw EXEC_SUMMARY n_exec=1 n_success=0 -> executable=no ->
+  an exclusion the target never earned. Instrument bug in two layers.
+FIX 1: PythonRunner.predict_instrument_packages() = predicted module top-level
+  + every package dir (has __init__.py) and .py module under cwd and cwd/src,
+  minus .venv/venv/node_modules/tests/test/docs/examples/build/dist. fuzzer.
+  _start_runner adds them and LOGS "target packages added to the atheris
+  include set: [...]". Test: test_predict_instrument_packages_covers_thin_
+  entry_scripts.
+FIX 2: run_eval.parse_log: "seed corpus:" present but no " INITED " ->
+  rec.libfuzzer_exited_before_inited=True, executable="unknown" (NOT "no"),
+  note_instrument=... Verified on the real logs: broken uml run -> unknown/
+  before_inited=True; fixed uml run and text-editor -> yes. 13 parse tests OK.
+RESULT uml list_diagram_types, 30s, include set ['app','mcp_core','server',
+  'tools'] (eval/sandbox/runs/smoke86/antoinebou12__uml-mcp__list_diagram_
+  types.fuzz30c.log): rc=0, EXEC_SUMMARY n_exec=14336 n_success=1532
+  success_rate=0.107, cov 55 ft 109 corp 13, exec/s ~470. 9 alerts, all
+  check_introspection_log_injection -- triage in the next entry (was not in
+  the LLM selection of the earlier run nor in the mandatory list).
+STATE: full suite 155 passed after the env-scrub change; re-running after
+  these two fixes. Python arm: 3 real targets import+execute, 2 fuzz with
+  growing coverage. Item 86 closed; 87 (all-python re-prepare + campaign on
+  the VM) is the next measurement.
+
+================================================================
+2026-09-15  uml alert triage -> V5 (potential) + ATTRIBUTION MECHANISM (paper!)
+================================================================
+uml list_diagram_types 30s (fuzz30c.log): 9 alerts, all check_introspection_
+log_injection, 5 distinct inputs with \r \n \x10 \x13 inside `query`/
+`backend`. Sink: mcp_core/tools/diagram_tools.py:80
+  logger.info("Called list_diagram_types: query=%s backend=%s format=%s limit=%s", ...)
+raw caller strings -> a "\n" in query starts a caller-authored log record;
+tool returns SUCCESS "Returned 0 supported diagram type(s)". CWE-117, same
+class as V2 (confirmed) but sink = Python logging (stderr / deployment log
+aggregation), no server-owned file -> POTENTIAL.
+findings/potential/uml-mcp_list_diagram_types_crlf-log-injection.md.
+
+*** ATTRIBUTION MECHANISM, Python arm (RQ2/RQ3, attribution trap) ***
+check_introspection_log_injection was NOT in the LLM selection
+(['check_introspection_type_confusion','check_introspection_prototype_
+pollution','check_introspection_redos']) and NOT in the 10 mandatory. It
+fired anyway because fuzzer._run_sanitizers gates introspection checks as
+   if "<check>" in self.selected_sanitizer_names or <tracer evidence>:
+(seen on type_confusion/format_string/prototype_pollution/external_config/
+fd_leak/deadlock/divide_by_zero/memory_access/unchecked_loop/cross_session
+... -- counts of 'or'-gated vs selection-only gates recorded by grep in the
+same session). CONSEQUENCE: on the Python arm every introspection check whose
+tracer recorded anything runs regardless of selection -> an introspection
+alert is NOT evidence that LLM selection mattered. V4's check_introspection_
+sensitive_file_access was selected but would have fired unselected (its
+tracer recorded /etc/passwd). V4/V5 write-ups say so explicitly.
+FOR THE PAPER: RQ3 (introspection oracle finds bugs) is supported by V4/V5;
+RQ2 (LLM selection precision matters) is NOT supported by them -- the
+selection experiment must compare alert sets with the 'or <evidence>' path
+disabled (or report only the string-sanitizer layer, where selection gates).
+TO DOUBLE-CHECK: is this 'or evidence' behaviour Pierre's intent ("hybrid
+architecture", fuzzer.py ~1117) or an accident? Ask before changing it; do
+NOT flip it mid-campaign.
+  EXACT (grep, 2026-09-15): src/fuzzer.py:743
+    if "check_introspection_sensitive_file_access" in self.selected_sanitizer_names or acc_files:
+  src/fuzzer.py:757
+    if "check_introspection_log_injection" in self.selected_sanitizer_names or logged_msgs:
+  38 introspection gates use `... in selected or <evidence>`; 4 are
+  selection-only. So ~90% of the Python introspection layer is evidence-
+  triggered regardless of the LLM.
+  FINAL: full suite after all item-86/89 changes = 156 passed, 0 failed
+  (tests/test_python_runner_discovery.py 18; undefined-names sweep green).
+  Nothing committed yet -- Ananto decides (branch new_eval).
