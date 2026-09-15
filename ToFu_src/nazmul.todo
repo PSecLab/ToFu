@@ -4126,3 +4126,251 @@ degraded to anomaly-only) is a langchain_mcp_adapters env-forwarding issue,
 not laptop-specific. Phase I (CodeQL taint) is solid.
    77. After the VM run: sync results, fold Viper column into the baseline
        comparison (findings/baselines/), alongside Cisco + CodeQL + ToFu.
+
+================================================================
+2026-09-13  *** PYTHON ARM SILENTLY BROKEN -- PythonRunner tool discovery ***
+================================================================
+gpt41-Acodeql run (Set A ∩ CodeQL-flagged, 4 python repos, 25 configs):
+INVALID. 23/25 never started the runner; 0 findings is NOT evidence.
+  Bug A (18 configs, osm 12 + text-editor 6): prepare's detect_launch prefers
+    the venv CONSOLE SCRIPT (.venv/bin/osm-mcp-server, args=[]). PythonRunner
+    imports IN-PROCESS and has no .py/-m to work with -> falls to
+    `module_name = self.command` -> importlib.import_module("<abs path to bin>")
+    -> "No module named '/Users/.../eval/targets/<slug>/'". The bin path is not
+    importable; the runner needs the MODULE (pyproject [project.scripts]
+    "name = pkg.mod:func" -> import pkg.mod, call func) or must parse the shim.
+  Bug B (5 configs, uml-mcp): loads server.py, then getattr(module,
+    'generate_uml') -- but FastMCP registers tools via @mcp.tool() into the
+    FastMCP instance's registry, NOT as a module-level callable. Runner must
+    find the FastMCP/Server instance in the module and pull the tool fn from
+    its registry (._tool_manager / list_tools) by name.
+  Bug C (midi, 2): runner STARTED (llm=ok) but every input rejected
+    ("Invalid chord name", "Cannot create property 'bpm' on string") -> seed
+    type-quality (class b), midi stays in the denominator.
+SIGNIFICANCE: Python is the ONLY arm where the 21 introspection tracers run
+(Table 3 / RQ3 -- the paper's core contribution). PythonRunner failing to
+start on the two most common FastMCP layouts means the python side has been
+producing 0-findings-that-arent-evidence all along -- which explains why ALL
+3 confirmed findings (V1 excel, V2 log-inj, V3 update) are NODE. Fixing this
+is the single highest-value change left for finding python-side bugs.
+   86. FIX PythonRunner.start() tool discovery: (A) resolve console-script ->
+       module:function via pyproject [project.scripts] (prepare should emit the
+       module, OR the runner should read the shim); (B) FastMCP registry lookup
+       fallback when getattr(module, tool) fails. Validate in-sandbox on
+       uml/osm/text-editor. Delicate (in-process import; bug-12 history) --
+       test each step. This unblocks the entire python arm.
+
+================================================================
+2026-09-13  VM VIPER "ERR on all 41" -- ROOT CAUSE: committed prep state
+================================================================
+Symptom: every VM target ERR'd in ~4s, no fuzzer.log. Real cause (from
+eval/viper_runs/<slug>.log, NOT <slug>/fuzzer.log which never got created):
+  "Repo path not found: /Users/nazmulislamananto/.../eval/targets/graphlit..."
+  "Cannot find module '/Users/.../dist/index.js'"
+eval/state/prepared.jsonl was COMMITTED with the laptop's absolute paths, and
+eval/targets is gitignored. So the VM clone had 41 "ready" targets pointing at
+/Users/... that do not exist there; prepare_targets.py saw them as already_done
+and skipped -> targets never cloned on the VM -> node launch fails instantly.
+NOT a codeql or requirements problem (both verified fine on the VM).
+FIX (repo, pushed 4eb1d5b): git rm --cached prepared.jsonl + skipped.jsonl,
+gitignore them (machine-specific absolute paths, regenerate per host);
+vm_bootstrap_viper.sh now `rm -f`s stale prep state before re-preparing.
+FIX (VM, immediate): rm eval/state/{prepared,skipped,viper_runs}.jsonl +
+eval/viper_runs/*, then prepare_targets.py --only-set host (clones+installs the
+41 on the VM with VM paths), then re-run viper.
+LESSON: absolute paths in committed state break cross-host reproduction. Any
+state file with an abs path must be gitignored, not committed.
+
+================================================================
+2026-09-15  CodeQL Set E COMPLETE (baseline) + clone-crash fix
+================================================================
+run_codeql_set.py e finished. Index: eval/state/codeql_runs_e.jsonl.
+Written up: findings/baselines/codeql_baseline_e_20260915.md.
+RESULT: 299 ok / 300 attempted, 171 repos flagged, 5361 findings
+  (python 3008 | node 2353; ok-lang node 170 / python 129).
+  1 fail = n8n-io/n8n  ->  `database analyze` > 900s CODEQL_DB_TIMEOUT
+  (massive monorepo). Recorded ok:false, run continued. TRACEABLE.
+TOP RULES: py/log-injection 1262, js/insecure-temporary-file 610,
+  py/path-injection 495, py/stack-trace-exposure 444.
+  -> the two dominant families ARE our two confirmed findings:
+     py/log-injection = V2 (CWE-117), py/path-injection = V1 (CWE-73).
+     Paper line: SAST flags the FAMILY tree-wide; cannot decide the
+     semantic silent-bug (tool accepts adversarial input & returns
+     success). 5361 = triage burden, not confirmed MCP-tool bugs.
+
+CRASH FIX (this session): prior run died on git clone of
+pollinations/pollinations (120s timeout raised OUTSIDE the try/except ->
+killed whole run). Fixed in eval/run_codeql_set.py:
+  - blobless shallow clone: --depth 1 --filter=blob:none --single-branch
+    (fast even on huge monorepos; HEAD tree blobs fetched on checkout).
+  - clone wrapped in try/except: TimeoutExpired/err -> record stage:clone,
+    continue (resumable, no whole-run death).
+  - CODEQL_CLONE_TIMEOUT env, default 120->300.
+  - ok-row now records analyzed_sha + source(prepared|clone) for rule-3
+    traceability (clone may land on HEAD if server refuses sha-fetch).
+  Verified: 0 clone failures across the 300-repo Set E run.
+
+DEDUP TO DOUBLE-CHECK before any per-repo paper claim: forks double-listed
+  -- NPC-Worldwide/npcpy & cagostino/npcpy (both 330), upstash/context7 &
+  context7-mcp (both 85), freshtechbro/Vibe-Coder-MCP & vibe-coder-mcp
+  (both 92, case). Corpus fork/case artifacts.
+
+INVERSION vs ToFu: static CodeQL analyzed 129 Python repos fine (no runner);
+  ToFu DYNAMIC Python arm broken (item 86) -> ToFu under-measures exactly
+  where CodeQL finds most (py/log-injection, py/path-injection). Fixing
+  PythonRunner is where ToFu would most directly contest CodeQL Python.
+
+================================================================
+2026-09-13/15  VIPER VM RUN COMPLETE + RESULTS SAVED
+================================================================
+Viper ran to completion on the VM (Ubuntu 40GB/5CPU), gpt-4.1, rounds=10.
+Results rsync'd to eval/viper_runs_vm/ + eval/state/viper_runs_vm.jsonl.
+Saved: findings/baselines/viper_baseline_vm_20260913.md (+ raw index copy).
+
+RESULT (the honest version):
+  38 unique repos, 35 ok, 3 ERR.
+  Phase I CodeQL taint = Viper's real output: 12 vulns / 5 repos
+    (command-injection-from-request 5, file-access-from-request 7).
+    excel-reader 5 (file-access READ), cursor10x 3, DesktopCommander 2,
+    google-workspace 1, knowledge-base 1.
+  "Runtime hits" (boilerplate 38, uml 28, bing-cn 3, ...) are NOT findings --
+    the hook observing benign tool I/O (fs.writeFileSync, https.request);
+    6 of 7 hit-repos have 0 Phase-I vulns. Do not report hit counts as vulns.
+
+*** CORRECTION to item 75 ***: the node runtime hook DID attach on the native-
+  Linux VM (hook_injected 18/35), NOT a code bug -- it failed only in the
+  laptop Docker/venv (0/N). So item 75 is an ENVIRONMENT/repro caveat, not an
+  open bug. langchain_mcp_adapters env-forwarding is host-dependent. Phase I
+  (CodeQL) is host-independent. State this in the writeup.
+
+DISJOINT-SET CROSS-CHECK (the paper's thesis, now with data):
+  excel-reader: Viper flags 5x file-access READ (readExcelFile); ToFu confirmed
+    V1 arbitrary WRITE (outputPath->writeFileSync). SAME REPO, DIFFERENT SINKS,
+    neither found the other's.
+  Viper's 12 findings are ALL taint-style (its 3 modeled classes: cmd-inj,
+    ssrf, path-traversal). ToFu's confirmed findings are semantic/logic
+    (type-correct arbitrary write, unsanitized log write, unauth self-update)
+    -- no corresponding sink. ZERO overlap.
+  3 ERR = target transport (appium stdout banner, gmail HTTP port, DC tool-load)
+    -- exclusions, not tool failures.
+
+BASELINE MATRIX COMPLETE: ToFu | Cisco MCP Scanner | CodeQL security-extended |
+  VIPER-MCP. All four saved under findings/baselines/.
+   77. DONE -- Viper folded in.
+   78. Build the single 4-way comparison table/figure for the paper from the
+       four findings/baselines/*.md (disjoint sets, NOT a leaderboard).
+
+================================================================
+2026-09-15  FOUR-WAY BASELINE COMPARISON (host-39)
+================================================================
+Viper VM run synced (findings/baselines/viper_runs_vm_20260913.jsonl +
+per-repo report.json). Verified Viper = 12 vulns / 5 repos from report.json
+(types: file-access-from-request 7, command-injection-from-request 5; the
+md's '?' types were a bad parse, now fixed to real rule_ids).
+Wrote findings/baselines/baseline_comparison_20260915.md.
+
+TOTALS on host-39 (UNITS DIFFER - do not sum):
+  ToFu confirmed = 3 (V1+V2+V3), 2 repos, 39/39 coverage
+  Viper          = 12 taint flows, 5 repos, 32/39 (7 ERR)
+  CodeQL set-A   = 309 SAST flags (unconfirmed), 20 repos, 39/39
+  Cisco          = 28 heuristic flags (unconfirmed), 8 repos, 39/39
+
+DISJOINTNESS VERIFIED AT BUG LEVEL (not just repo level):
+  excel-reader: ToFu V1 = WRITE (export_to_json->writeFileSync);
+    Viper's 5 = all READ (readExcelFile/WorkbookCache/loadWorkbook). diff sink.
+  locallama: ToFu V2 log-inj + V3 self-update; CodeQL 11 = rate-limit/
+    clear-text-log/fs-race/http-to-file/indirect-cmd; Cisco 4 = YARA on
+    benchmark_model/reload_config/route_task. NONE = V2 or V3. update_server
+    flagged by nobody but ToFu.
+  => every ToFu confirmed bug invisible to other 3 at sink level, and vice
+     versa. Paper complementarity thesis, with data.
+
+CAVEAT for paper: headline must be "confirmed semantic (3) vs taint (12) vs
+  unconfirmed SAST (309/28)", NOT "3 vs 309". Python arm broken skews ToFu
+  Node-only exactly where CodeQL finds most (Python). item 86 still the gap.
+
+================================================================
+2026-09-15  ITEM 86 FIX: PythonRunner tool discovery + in-process isolation
+================================================================
+GROUND TRUTH before the fix (eval/state/runs.gpt41-full.jsonl): ALL 44 python
+rows are `executable: unknown`, n_exec=0. Not ONE input ever executed on a real
+Python target in any campaign. Every Python "0 findings" was non-evidence
+(CLAUDE.md failure mode, at full scale). Per-run logs:
+  39x "Failed to start runner: No module named '/Users/.../eval/targets/<slug>/'"
+   5x "Could not find callable tool/function '<tool>' in module 'server'"
+Item 86 named two causes; there were THREE:
+  A. console-script PATH fed to importlib.import_module()  (osm, meilisearch,
+     mindmap, text-editor: prepare emits .venv/bin/<script>, args=[]).
+  B. FastMCP tools live in the server instance registry; uml-mcp resolves
+     `mcp` lazily via module __getattr__ so dir(module) never lists it.
+  C. (NEW) dependency isolation was impossible: ToFu = py3.11 + mcp 2.2.0 and
+     src/fuzzer.py:13 `from .client import MCPInspector` pre-imports 107 mcp
+     2.x modules; target venvs were py3.10-3.14 (uv honours each repo's
+     .python-version / lock) with mcp 1.x. A cp313 pydantic_core cannot load
+     into cp311, and `from mcp.server.fastmcp import FastMCP` (1.x API) can
+     never resolve against the already-imported 2.x package.
+
+FIX (src/runners/python_runner.py, rewritten start(); execute() unchanged but
+for two compat lines):
+  - console script -> parse the shim (`from X import Y`) or pyproject
+    [project.scripts] -> import MODULE X, never call Y (it runs the server).
+  - discovery: module globals -> explicit getattr for mcp/server/app/...
+    (fires __getattr__) -> zero-arg factories (get_mcp_server, create_server,
+    build_server...) -> walk sys.modules under the package prefix
+    (osm_mcp_server.server.mcp). Matches class MRO names {FastMCP, MCPServer}
+    so mcp 1.x FastMCP, mcp 2.x MCPServer, fastmcp 2-4, and subclasses
+    (GeminiCompatibleFastMCP) all count; low-level handle = ._mcp_server OR
+    ._lowlevel_server (2.x).
+  - tool lookup from the registry (_tool_manager._tools / get_tools()); tools
+    taking an MCP Context (osm's `ctx: Context`) are routed through the
+    in-process JSON-RPC server instead of a bare call that could never
+    supply ctx (would have been 100% rejects, class b).
+  - target venv activation: site.addsitedir(<venv>/lib/pyX.Y/site-packages)
+    (honours editable .pth) moved to the FRONT of sys.path + cwd + cwd/src;
+    if the target ships its own `mcp`, purge mcp/mcp.* from sys.modules so
+    ITS SDK version resolves (ToFu's already-bound MCPInspector objects are
+    unaffected). Version mismatch -> RuntimeError naming both versions and the
+    re-prepare command. LOUD, never silent.
+  - predict_module_name(): fuzzer._start_runner consumed runner.module_name
+    BEFORE start() set it -> the target package was never in atheris'
+    instrument_imports(include=...) -> libFuzzer fuzzed every Python target
+    blind. Now predicted without importing and added (top-level package).
+  - mcp 2.x compat in the in-process JSON-RPC path: types.JSONRPCMessage is a
+    bare Union alias there (no model_validate); build JSONRPCRequest /
+    JSONRPCNotification directly. SessionMessage optional (mcp<1.8, osm 1.3).
+  - get_tool_metadata() prefers the registry's own JSON schema.
+  - src/fuzzer.py: PythonRunner gets cwd=target_cwd (bug 21, python side).
+INTERPRETER DECISION: in-process => target venv MUST equal ToFu's CPython.
+  atheris 3.0.0 supports 3.11-3.13 (atheris/version_dependent.py:37). Lock
+  requires-python of the 8 sandbox python targets: uml >=3.12,<3.15; osm and
+  mcp-text-editor >=3.13; replicate/markdownify >=3.11; mindmap/meilisearch/
+  python-interpreter >=3.10. => 3.13 covers 8/8, 3.11 only 5/8.
+  Dockerfile.sandbox: FROM python:3.13 + uv venv --python 3.13 +
+  ENV TOFU_TARGET_PYTHON=3.13. Host dev venv stays 3.11 (tests only).
+  eval/prepare_targets.py: TARGET_PYTHON defaults to the RUNNING interpreter
+  (invariant is equality, not a constant); `uv sync --frozen --python
+  $TARGET_PYTHON` (was unpinned -> picked 3.13/3.14 per repo); records
+  "python" + "inprocess_ok" + "python_entry" in configs/prepared rows; new
+  `--redo` (with --only-repo) re-prepares READY repos from scratch.
+TESTS: tests/test_python_runner_discovery.py, 15 tests (shim/pyproject parse,
+  venv helpers, mismatch raises loudly, interpreter-with-no-target is a clear
+  error, registry/lazy-__getattr__/factory/subclass discovery, Context
+  routing through the in-process server, console-script end-to-end with a
+  fake venv + .pth, pyproject fallback for an opaque launcher). 61 pass with
+  the two pre-existing PythonRunner test files.
+VALIDATION (sandbox, Linux, 3.13): PENDING at time of writing -- image rebuild
+  running; then `sandbox.sh prepare --only-set host --only-lang python
+  --only-repo osm-mcp-server,uml-mcp,mcp-text-editor --redo`, then a 60s
+  `python -m src` smoke per repo. Results appended below when done. Until a
+  smoke shows exec_success>0 on a REAL target, treat the python arm as still
+  unmeasured.
+KNOWN LEFTOVERS: (i) fuzzer._resolve_instrumented_modules walks ToFu's cwd
+  and includes ~600 generic names (server, main, app, config) -- noisy
+  include list, pre-existing; (ii) nest_asyncio is imported but not in
+  requirements (only reached if a loop is already running -- not the case
+  under atheris); (iii) in-process Python targets still run with ToFu's cwd,
+  not target_cwd (chdir would break ToFu's relative corpus paths) -- the
+  path-traversal oracle uses allowed_workspace_dir=target_cwd regardless;
+  (iv) 87. after validation: re-prepare ALL python targets in the sandbox
+  (--only-lang python --redo needs a repo list; or wipe eval/sandbox/targets
+  python dirs + rows) and fuzz them -- the first real Python measurement.
