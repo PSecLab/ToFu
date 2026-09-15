@@ -16,8 +16,10 @@ uv python install 3.11 >/dev/null 2>&1 || true
 [ -x "$S/.venv/bin/python" ] || uv venv "$S/.venv" --python 3.11 >/dev/null
 SPY="$S/.venv/bin/python"
 uv pip install --python "$SPY" -q -e "$S"
-# adapter/client parity: the scanner's mcp client must match modern servers.
-uv pip install --python "$SPY" -q "mcp>=1.9,<2" || true
+# MCPSafetyScanner imports MCPError from mcp.shared.exceptions, which exists in
+# mcp 2.x (NOT 1.x -- that has McpError). Pin mcp 2.x. (Separate venv from
+# ToolFuzz's mcp 1.x, so no conflict.)
+uv pip install --python "$SPY" -q "mcp>=2,<3"
 "$SPY" -c "import agno, mcp, openai; print('mcpsafety deps OK')"
 
 echo "== .env / key =="; [ -f "$REPO/.env" ] || { echo "scp .env first"; exit 1; }
