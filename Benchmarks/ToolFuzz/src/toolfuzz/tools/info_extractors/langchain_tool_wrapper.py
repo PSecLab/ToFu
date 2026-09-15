@@ -24,7 +24,17 @@ class LangchainToolWrapper(ToolWrapper):
     def get_tool_args(self):
         tool_args = []
         if 'args_schema' in dir(self.tool) and self.tool.args_schema is not None:
-            schema = self.tool.args_schema.schema()
+            # PATCH (ToFu): args_schema may be a JSON-schema dict (langchain_mcp_
+            # adapters MCP tools), a pydantic v1 model (.schema()), or a pydantic
+            # v2 model (.model_json_schema()). The original assumed v1 -> a dict
+            # schema raised "'dict' object has no attribute 'schema'".
+            a = self.tool.args_schema
+            if isinstance(a, dict):
+                schema = a
+            elif hasattr(a, 'schema'):
+                schema = a.schema()
+            else:
+                schema = a.model_json_schema()
             assert 'properties' in schema
             schema = schema['properties']
             for key, value in schema.items():
