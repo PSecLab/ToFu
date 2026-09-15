@@ -4759,3 +4759,17 @@ are not permitted: tofu_llm_base_url, ..., openai_api_key='sk-proj-...'".
       logs gitignored on the VM) vs. stop and isolate first.
   DECISION LOG: rotation of OPENAI_API_KEY deferred by Ananto to project
       end (memory: rotate-openai-key-outstanding). Now 4 exposures.
+
+TOOLFUZZ SMOKE #2 (2026-09-15 16:28 VM): sync bridge works (server up, prompt
+  set ran). New escape: `MCP error -32600: File not found: file path` -- a
+  JSON-RPC error from excel-reader for a fuzzed path, raised as mcp McpError.
+  ToolFuzz correctness.run_prompt catches ToolException ONLY -> whole tool ERR.
+  FIX: make_sync() wraps every adapter exception as langchain ToolException.
+  ORACLE CAVEAT FOR THE PAPER: ToolFuzz's runtime oracle = "tool raised". For
+  MCP servers an error RESPONSE (isError / JSON-RPC error) is graceful input
+  validation, not a crash. So ToolFuzz "runtime failures" on our corpus will
+  mix (a) proper validation errors with (b) real breakage (server process
+  died / transport closed / unhandled traceback in server stderr). At analysis
+  time split by the recorded exception text: "MCP error -326xx" or isError =
+  (a); "Connection closed" / BrokenPipe / timeout = (b). Only (b) is
+  comparable to a ToFu crash-class alert. Do not report raw n_runtime_fail.

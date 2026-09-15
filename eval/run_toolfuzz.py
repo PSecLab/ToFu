@@ -61,12 +61,24 @@ def make_sync(tool):
     (and its ReAct agent) call tools synchronously -> "StructuredTool does not
     support sync invocation." (113/131 tools in the first VM run). Re-wrap
     with a sync func that drives the coroutine on a private event loop."""
-    from langchain_core.tools import StructuredTool
+    from langchain_core.tools import StructuredTool, ToolException
     async_tool = tool
+    async def _call(kwargs):
+        # A server-side JSON-RPC error (mcp McpError, e.g. "-32600: File not
+        # found") is not a ToolException, so it escaped ToolFuzz's
+        # correctness.run_prompt (which catches ToolException only) and killed
+        # the whole tool. Normalise every failure to ToolException: fuzz() keys
+        # on the type, run_test/run_prompt/ToolNode all catch it.
+        try:
+            return _to_text(await async_tool.ainvoke(kwargs))
+        except ToolException:
+            raise
+        except Exception as e:
+            raise ToolException(f"{type(e).__name__}: {e}") from e
     def _sync(**kwargs):
-        return _to_text(asyncio.run(async_tool.ainvoke(kwargs)))
+        return asyncio.run(_call(kwargs))
     async def _async(**kwargs):
-        return _to_text(await async_tool.ainvoke(kwargs))
+        return await _call(kwargs)
     return StructuredTool(name=tool.name, description=tool.description or tool.name,
                           args_schema=tool.args_schema, func=_sync, coroutine=_async,
                           metadata=getattr(tool, "metadata", None), response_format="content")
