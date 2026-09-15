@@ -19,7 +19,9 @@ TFPY="$TF/.venv/bin/python"
 # ToolFuzz itself + the MCP->langchain bridge. langchain_mcp_adapters must match
 # ToolFuzz's langchain-core (0.3.x); pin a 0.1.x adapter that supports it.
 uv pip install --python "$TFPY" -q -e "$TF"
-uv pip install --python "$TFPY" -q "langchain-mcp-adapters>=0.1,<0.2" "langgraph>=0.2.74" "langchain-openai>=0.3.6"
+# langchain-mcp-adapters 0.1.x imports mcp.shared.session.ProgressFnT, which
+# exists in mcp 1.9+ (NOT mcp 2.x, which restructured the package). Pin mcp 1.x.
+uv pip install --python "$TFPY" -q "langchain-mcp-adapters>=0.1,<0.2" "mcp>=1.9,<2" "langgraph>=0.2.74" "langchain-openai>=0.3.6"
 echo "== import check =="
 cd "$TF" && "$TFPY" - <<'PY'
 import sys; sys.path.insert(0, ".")
