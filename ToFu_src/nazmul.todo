@@ -4572,3 +4572,33 @@ NOT flip it mid-campaign.
   FINAL: full suite after all item-86/89 changes = 156 passed, 0 failed
   (tests/test_python_runner_discovery.py 18; undefined-names sweep green).
   Nothing committed yet -- Ananto decides (branch new_eval).
+
+================================================================
+2026-09-15  MCPSAFETYSCANNER (VIPER's 2nd baseline) -- VENDORED + VM PATH
+================================================================
+Ananto: is MCPSafetyScanner comparable, how to run. YES -- native MCP auditor
+(no bridge), one of VIPER's own two baselines -> sits next to a published
+competitor's numbers. It is an agno multi-agent LLM CAPABILITY auditor
+(connects stdio, reads tool list, LLM reasons about dangerous capability +
+remediation). Cisco-class (metadata/reasoning, NOT a fuzzer) -> disjoint from
+ToFu; report complementary. CAVEAT: writes NO structured report -> our runner
+captures stdout + a heuristic risk-line count (SCREENING signal only; the smoke
+log's "risk" lines are mostly the agent PROMPT). Real findings = read each
+log's final verdict.
+STATE: runner eval/run_mcpsafety.py already existed + smoked OK on the laptop
+(findings/baselines/mcpsafety_excel-reader_example_report.log, 1993 lines,
+"Completed multi-server analysis"). NOT run on the full 40 yet.
+FIX: it was an untracked submodule (gitlink) AND .gitignore:64 explicitly
+ignored Benchmarks/MCPSafetyScanner/ -> empty on any clone. Removed the ignore
+line, vendored 18 files. NEW eval/vm_bootstrap_mcpsafety.sh (own py3.11 venv:
+agno+mcp+openai, mcp pinned >=1.9,<2 like the others; preflight + 1-server
+smoke). run_mcpsafety.py is stdlib-only -> system python3 runs it; only the
+scanner needs its venv.
+WHERE TO RUN: VM (it launches untrusted servers). But the VM is currently
+running ToolFuzz -> QUEUE mcpsafety AFTER ToolFuzz (both LLM-heavy; avoid
+contention + cost spike). Lower exec risk than the fuzzers (reads tool list,
+does not hammer tools), but still launches servers -> sandbox.
+   80. After ToolFuzz: bootstrap + run MCPSafetyScanner on the 40 (VM, gpt-4.1),
+       rsync back, add as baseline #5 in findings/baselines/ + the table.
+BASELINE SET (all same 40-repo corpus): ToFu | Cisco | CodeQL | Viper |
+  ToolFuzz | MCPSafetyScanner.
