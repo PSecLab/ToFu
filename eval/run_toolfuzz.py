@@ -33,7 +33,11 @@ def load_done():
     if os.path.exists(INDEX):
         for l in open(INDEX):
             try:
-                d = json.loads(l); done.add((d["repo"], d["tool"]))
+                d = json.loads(l)
+                # Only a successful row counts as done; an ERR row is retried
+                # on the next launch (the first VM run recorded 127 harness
+                # errors that would otherwise have been frozen in as results).
+                if d.get("ok"): done.add((d["repo"], d["tool"]))
             except Exception: pass
     return done
 
@@ -43,12 +47,36 @@ def server_cfg(t):
             "transport": "stdio", "cwd": t.get("cwd"),
             "env": {**os.environ, **(t.get("env") or {})}}
 
+def _to_text(res):
+    # adapters return str, a list of content blocks, or (content, artifact).
+    # ToolFuzz string-concatenates tool output, so flatten to one str.
+    if isinstance(res, tuple) and len(res) == 2:
+        res = res[0]
+    if isinstance(res, list):
+        return "\n".join(x if isinstance(x, str) else json.dumps(x, default=str) for x in res)
+    return res if isinstance(res, str) else json.dumps(res, default=str)
+
+def make_sync(tool):
+    """langchain_mcp_adapters builds coroutine-only StructuredTools; ToolFuzz
+    (and its ReAct agent) call tools synchronously -> "StructuredTool does not
+    support sync invocation." (113/131 tools in the first VM run). Re-wrap
+    with a sync func that drives the coroutine on a private event loop."""
+    from langchain_core.tools import StructuredTool
+    async_tool = tool
+    def _sync(**kwargs):
+        return _to_text(asyncio.run(async_tool.ainvoke(kwargs)))
+    async def _async(**kwargs):
+        return _to_text(await async_tool.ainvoke(kwargs))
+    return StructuredTool(name=tool.name, description=tool.description or tool.name,
+                          args_schema=tool.args_schema, func=_sync, coroutine=_async,
+                          metadata=getattr(tool, "metadata", None), response_format="content")
+
 async def load_tools(name, t):
     from langchain_mcp_adapters.client import MultiServerMCPClient
     client = MultiServerMCPClient({name: server_cfg(t)})
     # get_tools() returns langchain BaseTools that manage their own stdio
     # session per invocation (adapters >=0.1); no persistent session needed.
-    return await client.get_tools()
+    return [make_sync(x) for x in await client.get_tools()]
 
 def fuzz_tool(tool, llm, iters, modes, base):
     from src.toolfuzz.agent_executors.langchain.react_new import ReactAgentNew

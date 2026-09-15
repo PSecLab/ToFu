@@ -164,7 +164,12 @@ class ListGenerator(TypeGenerator):
             if gen().can_gen(arg_type.sub_types[0]):  # Lists have one subtype
                 generator = gen()
                 break
-        assert generator is not None, f'No generator found for {arg_type}'
+        if generator is None:
+            # PATCH (ToFu): no generator for array-of-object / array-of-union
+            # (common in MCP schemas). Fuzz with strings instead of aborting the
+            # tool -- a wrongly-typed element is still a legitimate fuzz input.
+            generator = StringGenerator()
+            arg_type = ArgumentType(name='array', sub_types=[ArgumentType(name='string')], has_subtype=True)
         length = random.randint(0, self.upper_bound)
         generated_list = []
         for _ in range(length):

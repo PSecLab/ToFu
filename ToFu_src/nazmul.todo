@@ -4676,6 +4676,37 @@ MCPSAFETY -- WHAT IS REPORTABLE (2026-09-15). Ananto asked "report nothing? how?
   DO NOT cite MCPSafetyScanner paper details (server count, numbers) without
   opening the paper -- rule 1.
 
+TOOLFUZZ VM RUN #1 -- INSTRUMENT BROKEN, NOT TARGETS (2026-09-15, partial rsync
+to eval/toolfuzz_runs_vm/ + eval/state/toolfuzz_runs_vm.jsonl, 1.9 h of gpt-4.1):
+  131 (repo,tool) rows over 9 repos; ok=4, ERR=127. The CLAUDE.md failure mode
+  again -- would have looked like "ToolFuzz found nothing". Error classes:
+    113  "StructuredTool does not support sync invocation."  langchain_mcp_
+         adapters builds coroutine-only tools; ToolFuzz + its ReAct agent call
+         tools sync. BRIDGE BUG (mine). FIX: run_toolfuzz.py make_sync() re-
+         wraps each tool as StructuredTool(func=sync-driver over ainvoke,
+         coroutine=..., response_format="content") and flattens list/tuple
+         output to str (_to_text).
+      9  "can only concatenate str (not list) to str"  JSON-schema
+         "type": ["string","null"] used verbatim as the type name. ToolFuzz
+         __get_type patched: pick first non-null; description coerced to str.
+      3  "No generator found for array-of-object"  ToolFuzz ListGenerator has
+         no dict generator. Patched: fall back to StringGenerator instead of
+         asserting (wrongly-typed elements are legitimate fuzz input).
+      1  "'dict' object has no attribute 'schema'"  maoxiaoke row at 13:39
+         predates the 5104d0d patch reaching the VM; not a new bug.
+      1  appium load_tools TaskGroup -- chatty stdout, transport exclusion as
+         everywhere.
+  Also fixed: load_done() counted ERR rows as done (same bug as
+  run_mcpsafety.py:114) -> now ok=True only, so relaunch retries all 127.
+  The 4 ok rows (read_excel, create_ssl, create_secret, ingestNotionPages) are
+  genuine ToolFuzz output; keep. read_excel n_runtime=0 is odd -- check after
+  rerun. NOTE: rerun cost ~ same 1.9 h was mostly correctness prompts on the 4
+  ok tools; expect the full 537-tool run to take many hours. Budget check
+  before launch.
+  Local test: py_compile OK; __get_type unit (list type + list description)
+  OK; _to_text OK. NOT run end-to-end locally (no ToolFuzz venv on laptop) --
+  VM smoke on excel-reader first (--only excel --max-tools 2).
+
 ================================================================
 2026-09-15  VM CAMPAIGN gpt41-vm STARTED (Python-only) + two start-failures
 ================================================================

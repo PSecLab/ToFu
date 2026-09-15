@@ -38,8 +38,11 @@ class LangchainToolWrapper(ToolWrapper):
             assert 'properties' in schema
             schema = schema['properties']
             for key, value in schema.items():
+                desc = value.get('description', None)
+                if desc is not None and not isinstance(desc, str):
+                    desc = str(desc)  # PATCH (ToFu): __str__ concatenates it
                 tool_args.append(ToolArgument(name=key, type=self.__get_type(value), default=None, has_default=False,
-                                              description=value.get('description', None)))
+                                              description=desc))
         elif 'func' in self.tool.__dict__:
             schema = inspect.signature(self.tool.func).parameters
             for _, value in schema.items():
@@ -105,6 +108,12 @@ class LangchainToolWrapper(ToolWrapper):
             # Any types so we can't infer the type - default is string
             return ArgumentType(name='string')
         if 'type' in value:
+            # PATCH (ToFu): JSON-schema allows "type": ["string", "null"]. The
+            # original used the list as the type name and later crashed in
+            # ToolArgument.__str__ ("can only concatenate str (not list)").
+            if isinstance(value['type'], list):
+                non_null = [x for x in value['type'] if x != 'null'] or ['string']
+                value = {**value, 'type': non_null[0]}
             if value['type'] == 'object':
                 # Dict value is referred to object in schema
                 return ArgumentType(name='dict')
