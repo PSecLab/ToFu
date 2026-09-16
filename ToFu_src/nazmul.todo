@@ -4778,3 +4778,173 @@ TOOLFUZZ SMOKE #3 OK (2026-09-15 16:34 VM): list_sheets ok 113.0s after the
   Projection: ~537 tools x ~2 min = ~18 h wall at iters=10, runtime+correctness.
   Full run launched from Ananto's tmux with the ToolFuzz venv python; ERR rows
   are retried on relaunch (load_done ok-only).
+
+================================================================
+2026-09-15  mindmap argv fix VERIFIED on the VM; gpt41-vm at 44/102
+================================================================
+ARM=gpt41-vm-mindmap (separate arm; the ERR row stays in gpt41-vm's index),
+provenance commit=787a906 (contains ee1bb64 argv fix):
+  HIT YuChenSSR/mindmap-mcp-server::convert_markdown_to_mindmap 936.7s
+  alerts=677 sigs=1 llm=ok executability=yes  (was ERR @2.9s on ccbbf24)
+  LLM seed generation: FALLBACK=1 (deterministic seeds; harness flags it in
+  the index -- keep the flag when reporting; selection itself was ok).
+  677 alerts / 1 signature -> dedup + triage after the campaign, not before.
+PROVENANCE NOTE: Ananto pulled 787a906 on the VM while gpt41-vm was running
+  (~44/102). gpt41-vm's header says ccbbf24; workers spawned after the pull
+  ran 787a906. Behavioural delta between the two for NON-crashing targets is
+  nil (argv neutralization only changes outcomes for targets that would have
+  sys.exit'ed at import; 787a906's other changes are toolfuzz/mcpsafety-side).
+  Report gpt41-vm as "ccbbf24..787a906 (mixed after config ~44)"; the row's
+  own `tofu_commit` field is authoritative per run.
+NEXT (when 102/102): python3 eval/run_eval.py --arm gpt41-vm --status; then
+  triage: dedup raw alerts by signature, executable per row (class a/b for
+  0-success rows), FP filters (url_*/har/markitdown context guard), and
+  candidates: tumf create_text_file (6 sigs, write primitive -> V1 class),
+  mindmap (1 sig, 677). Item 91 (cwd/.env isolation) BEFORE any Python re-run.
+  CORRECTION (2026-09-15, after sync): every gpt41-vm row carries
+  tofu_commit=ccbbf24 -- run_eval stamps provenance ONCE at campaign start,
+  so the per-row field is NOT authoritative about which code a late worker
+  ran. Rows for configs started after the VM pull (~#44 onward) actually ran
+  787a906. Report gpt41-vm as commit ccbbf24 with the argv-fix caveat; the
+  only behavioural delta is for targets that would have sys.exit'ed at import.
+
+================================================================
+2026-09-15  gpt41-vm TRIAGE (102 configs, Python arm) -> V6 CONFIRMED
+================================================================
+Synced to laptop (rsync, macOS rsync needs --progress not --info=progress2);
+KEY SCRUB: OPENAI_API_KEY appeared full in text-editor logs (/proc/environ,
+V4 path) + pydantic-truncated prefix/suffix in the (now-deleted) supabase
+logs -> scrubbed all gpt41-vm* logs to 0 occurrences (full key + every >=16
+char prefix fragment + suffix), chmod go-rwx. eval/runs gitignored. ROTATE.
+
+DEDUP: raw 290513 alerts -> 74 distinct (tool,signature) pairs over the 28
+executable=yes runs. Dominant families are NOISE: incomplete_cleanup (30
+pairs, MANDATORY), temp_file_leak (30, evidence-gated), resource_exhaustion
+(17), all fire on nearly every tool.
+
+EXECUTABILITY (102): yes=28, no=22, unknown=52.
+  unknown=52: meilisearch 26 + supabase 12 + rquest 11 + mindmap 1 (mindmap
+    later HIT under 787a906; supabase dropped). These are DISCOVERY/creds
+    fails, see below -- NOT ToFu results.
+  no=22: replicate 12 (class a, no REPLICATE_API_TOKEN -> "Unauthorized"),
+    text-editor append/delete (class b, need existing file), osm
+    suggest_meeting_point (class b, "need >=2 locations" / POI 406), a few
+    OOM/failfast. Per-row, not the heuristic.
+
+FINDINGS:
+  V6 CONFIRMED (NEW): tumf/mcp-text-editor create_text_file arbitrary WRITE to
+    absolute paths (result:ok + hash for /tmp,/var/tmp; /etc denied by OS
+    only). base_dir jail dead (same as V4). findings/confirmed/CWE-73_mcp-
+    text-editor_create_text_file_arbitrary-file-write.md. Directed on-disk
+    test pending (VM-side) before disclosure, like V1.
+  V4 reproduced on the VM (get_text_file_contents -> /etc/passwd, /proc/environ).
+  V5-class reproduced: uml log_injection; also text-editor create/delete/patch
+    log_injection but on the tool's OWN traceback (empty/nullbyte input) = weak.
+
+FALSE POSITIVES confirmed by source (paper's precision story):
+  - python-interpreter install_package "command_injection" = the tool's own
+    `subprocess.Popen(shell=False, ['conda','info','--envs','--json'])` and
+    `[env,'-m','pip','install',...]` arg-lists. No shell. FP.
+  - uml generate_uml_image "code_injection" = stdlib exec in @wraps/dataclasses. FP.
+  - python-interpreter read_file/write_file "path_traversal/silent-bug" = the
+    tool CORRECTLY denies (WORKING_DIR jail); in-band "Access denied" string
+    returned with success=True tripped the silent-bug oracle. FP + POSITIVE
+    CONTROL (jailed read+write; the contrast to V4/V6's missing jail).
+  - write_file "insecure_file_permissions 0o664" = default umask. Weak/FP.
+  - */incomplete_cleanup,temp_file_leak,resource_exhaustion = always-on noise.
+
+RUNNER DISCOVERY GAP (item 92): meilisearch (26) + rquest (11) failed at
+  start -- "server instance: none found; registered tools: []". Both build
+  the server inside a WRAPPER object: create_server() -> MeilisearchMCPServer,
+  whose MCPServer is at self.mcp (rquest: mcp_rquest.server similar). My
+  _find_server_instance step 4 calls the factory but _consider() rejects the
+  wrapper (not FastMCP-like) and never checks its attributes. FIX: after a
+  factory/instance that isn't server-like, scan its attrs (.mcp/.server/.app/
+  ._mcp/_mcp_server) for a FastMCP/MCPServer/lowlevel Server. meilisearch
+  still needs a live backend (localhost:7700 -> class a even if discovered);
+  rquest's 11 http_* tools are standalone HTTP and WOULD unlock. ~10 lines +
+  test. NOT implemented mid-triage -- Ananto decides (rquest is a non-host
+  A/B extra; meilisearch needs a backend).
+
+OOM: python-interpreter run_python_code/write_file + text-editor
+  get_text_file_contents hit libFuzzer rss OOM (2-3.4GB > 2048M cap) because
+  the target executes memory-heavy work by design; harness cap, not a target
+  bug. Consider raising -rss_limit_mb for the Python arm or excluding
+  code-executor tools. (item 93)
+
+TOOLFUZZ VM RUN #2 -- INTERIM RESULTS AT 236/~537 TOOLS (2026-09-15, rsync'd;
+eval/state/toolfuzz_runs_vm.jsonl, eval/toolfuzz_runs_vm/, summarizer
+eval/summarize_toolfuzz.py -> eval/state/toolfuzz_runtime_exceptions.csv):
+  progress: 236 tools ok over 18 repos; 2 tools still ERR (1 ToolFuzz can't
+  parse a description-only schema prop; 3 load_tools TaskGroup = servers that
+  won't start under the adapter). 19 repos pending; google-workspace-mcp
+  excluded via --skip (OAuth-gated: every call blocks on an interactive
+  browser flow -- add to the exclusion list with that reason). Run #2 died
+  silently ~21:08 (tmux server gone; VM logout suspected), relaunched with
+  --skip google-workspace; `tmux ls` confirmed alive after relaunch.
+
+  ToolFuzz's OWN numbers are unusable raw (verified by reading the JSON):
+    - successful_trigger == True on all 1833 rows -> meaningless flag.
+    - save() APPENDS to an existing .runtime.json, so relaunch merged run-#1
+      rows (expected_exception NotImplementedError, sync-era) into 117 tools'
+      files. Summarizer drops them by default (--include-stale to see).
+    - 525 of 1139 fresh rows are ToolFuzz-internal: react_new.extract_error
+      does json.loads(tool_output)['error'] -> KeyError when the server returns
+      JSON w/o an "error" key; plus its TestFailureResult pydantic reporter
+      crash. Classified `internal`, excluded.
+  Fresh runtime rows after filtering: 604 graceful, 10 transport, 0 other.
+    graceful = server answered with an error. Top messages: "Graphlit
+    organization identifier is required" (248), apisix ECONNREFUSED :9180
+    (59), knowledge-base "No model registered" (19), GCP auth not configured
+    (44 across msgs), Firebird :3050 refused (~29). I.e. NOT input-validation
+    bugs -- "backend/credentials absent in the sandbox". Environmental. Same
+    wall every dynamic baseline hits. Not findings.
+  Correctness (121 prompts, 25 sets): tool_failure 16 (all excel list_sheets
+    "file not found" -> graceful), agent_out_concern(<5) 79, not_relevant 48.
+    Agent-behaviour metrics, not security. Report only with that label.
+
+  THE ONE REAL FINDING SO FAR (transport, 2 tools, 1 repo) -- TF-1:
+    graphlit/graphlit-mcp-server (node, commit 1b94b88): sendTwitterNotification
+    and sendEmailNotification kill the MCP SERVER PROCESS on any call when the
+    provider env vars are unset. src/tools.ts: handler does
+    `if (!consumerKey) { console.error(...); process.exit(1); }` -- 64
+    process.exit(1) calls across ~34 tool handlers (all ingest*/list*/send*
+    provider tools). A single tool call from any client = availability loss for
+    the whole server (every other tool, every other session on that process).
+    ToolFuzz saw it as ToolException(McpError: Connection closed) 5/5 on both
+    tools. Why only 2 of the 34: 29 of the others hit the shared "Graphlit
+    organization identifier is required" pre-check FIRST and return a graceful
+    error; only the two notification tools check their own env before the
+    org-id check. The other 32 kill-switches are reachable once an org id is
+    configured -- i.e. in every real deployment. Confirmed by source, not by
+    ToolFuzz's report.
+    Cross-baseline on graphlit: Cisco 71 tools scanned, 0 findings. CodeQL 0.
+    Viper: ok, rounds 10, n_anomalies 0, hook_injected False. MCPSafety: ERR
+    (stale env, retry pending). ToFu: see next item.
+
+  TO DOUBLE-CHECK -- INSTRUMENT GAP IN TOFU EXPOSED BY TF-1 (item 81):
+    ToFu's sandbox run (findings/evidence/sandbox_triage_20260912, tofu_commit
+    e14a363 -- PREDATES the Bug-20 fix 704f7fd) on the same two tools:
+    n_exec=1, n_exec_success=0, exec_errors "Did not receive a matching
+    response from JS process", then check_resource_exhaustion fired (10 and 54
+    hits) and was triaged as FP under Bug 20. So ToFu OBSERVED the server die
+    on the first call, did not restart it (1 exec, then 300-526 s of nothing),
+    and MISCLASSIFIED the death as resource exhaustion. Post-Bug-20 ToFu would
+    suppress the alert entirely -> silent miss of a real availability bug.
+    Also: "Did not receive a matching response" is not in _TRANSPORT_FAILURES
+    (src/fuzzer.py:896) -- check how _is_transport_failure catches it (res None?
+    success flag?). ACTION (not done, needs Ananto's call):
+      (1) new sanitizer class `server_terminated`: target process exits (or
+          transport dies) DURING a tool call -> alert of its own class, with
+          the call's args as witness. Distinct from resource_exhaustion.
+      (2) JSRunner/PyRunner restart-on-death so fuzzing continues past the
+          killing input instead of stalling to budget.
+      (3) Re-run ToFu on graphlit after (1)+(2) -> expect 34 tools flagged
+          once an org id is faked in env, 2 without.
+    This is the disjoint-set thesis running the OTHER way: a baseline's oracle
+    (tool raised -> "Connection closed") caught a class ToFu's oracle set does
+    not model. Say so in the paper; it is the honest version of the comparison.
+    Do NOT cite process.exit counts for other repos yet -- the corpus-wide grep
+    (locallama 15, google-workspace 6, pluggedin 6, ...) counts ALL
+    process.exit, mostly startup main(); only graphlit's are confirmed
+    in-handler.
