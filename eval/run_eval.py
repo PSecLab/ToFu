@@ -285,14 +285,15 @@ def one(cfgfile, budget, prov):
              "--corpus-dir", corpus, "--metrics-dir", metrics],
             cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
+        # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz budget
+        # before the whole subprocess is SIGKILLed. atheris caps the fuzz loop at
+        # -max_total_time already; the grace only covers LLM + startup + cleanup
+        # (~15s). 600 let a HUNG per-exec network call (node tools run ~1 exec/s
+        # and block on the target's outbound API) sit for 11 min. The corpus
+        # campaign sets 60; keep 600 default for other arms.
+        _grace = int(os.environ.get("TOFU_KILL_GRACE", "600"))
         try:
-            so, se = p.communicate(timeout=budget + int(os.environ.get("TOFU_KILL_GRACE", "600")))
-        # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz
-        # budget before the whole subprocess is SIGKILLed. atheris caps the
-        # fuzz loop at -max_total_time already; the grace only covers LLM +
-        # startup + cleanup (~15s). 600 let a HUNG per-exec network call (node
-        # tools run ~1 exec/s and block on the target's outbound API) sit for
-        # 11 min. The corpus campaign sets ~60-90; keep 600 default for others.
+            so, se = p.communicate(timeout=budget + _grace)
             rc = p.returncode
         except subprocess.TimeoutExpired:
             timed_out = True
@@ -330,7 +331,7 @@ def one(cfgfile, budget, prov):
     if harness_err:
         rec["harness_error"] = harness_err
     if timed_out:
-        rec["error"] = f"timeout after {budget + int(os.environ.get(chr(34)+"TOFU_KILL_GRACE"+chr(34), "600"))}s"
+        rec["error"] = f"timeout after {budget + _grace}s"
     elif stopped_early:
         rec["error"] = None
         rec["note"] = (f"stopped early: {rec.get('n_exec')} executions, none succeeded "
