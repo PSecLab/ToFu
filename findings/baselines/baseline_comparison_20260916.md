@@ -20,8 +20,7 @@ IN PROGRESS — not reflected here. gpt-4.1 for all LLM roles, temp 0, fixed see
 ## Totals on host-39
 | tool | findings | repos | coverage |
 |---|---|---|---|
-| **ToFu confirmed** | **4** (V1, V2, V4, V6) | 3 | 39/39 |
-| **ToFu potential** | **3** (V3, V5, V7) | 3 | 39/39 |
+| **ToFu** | **7** (4 + 3 potential) | 5 | 39/39 |
 | Viper-MCP | 12 (taint) | 5 | 32/39 (7 ERR) |
 | CodeQL set-A | 309 (unconfirmed) | 20 | 39/39 |
 | Cisco | 28 (unconfirmed) | 8 | 39/39 |
