@@ -22,6 +22,13 @@ ARM="${ARM:-gpt41-corpus}"
 TIME="${TOFU_TIME:-60}"
 WORKERS="${WORKERS:-4}"
 export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-4096}"   # item 93: code-exec tools OOM at 2048
+# Fail-fast threshold for 0-success tools. ~60% of the corpus is creds/backend-
+# gated; at the default 2000 execs a dead tool still burns most of its 60s
+# (needs ~2000 execs at ~60 exec/s). 500 kills it in ~8s and roughly halves the
+# campaign (~100h -> ~45-50h on 4 workers). LLM seeds run first, so a tool that
+# only the LLM seeds can drive still gets its chance; re-run the executable=no
+# rows at 2000 afterwards if time allows (nazmul.todo 2026-09-15).
+export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-500}"
 
 phase_prepare() {
   local tier="${1:-1}" n="${2:-4}"
@@ -53,7 +60,7 @@ PYEOF
 }
 
 phase_fuzz() {
-  echo "== fuzz: arm=$ARM time=${TIME}s workers=$WORKERS rss=${TOFU_RSS_LIMIT_MB}MB =="
+  echo "== fuzz: arm=$ARM time=${TIME}s workers=$WORKERS rss=${TOFU_RSS_LIMIT_MB}MB failfast=${TOFU_FAILFAST_EXECS} execs =="
   echo "   (run_arm_gpt41.sh sources .env, hides it for the run, restores on exit -- item 91)"
   # run_eval builds its config list at start: after a later prepare phase adds
   # configs, just re-run this; done tools are skipped from the index.
