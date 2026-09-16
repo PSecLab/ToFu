@@ -181,13 +181,40 @@ class JSRunner(BaseRunner):
             env=env
         )
         
-        # Wait for socket ready signal on stdout
+        # Wait for socket ready signal on stdout, BOUNDED. Many corpus node
+        # servers hang on startup (wait on a backend/API) and never print
+        # SOCKET_READY; this readline loop would then block until the run_eval
+        # hard kill (~120s). A watchdog SIGKILLs the server after
+        # TOFU_STARTUP_TIMEOUT so readline() returns EOF and we fail fast.
+        import threading
+        _deadline = float(os.environ.get("TOFU_STARTUP_TIMEOUT", "25"))
+        _ready = {"seen": False}
+
+        def _watchdog():
+            end = time.time() + _deadline
+            while time.time() < end:
+                if _ready["seen"]:
+                    return
+                time.sleep(0.2)
+            if not _ready["seen"] and self.process and self.process.poll() is None:
+                try:
+                    self.process.kill()
+                except Exception:
+                    pass
+
+        threading.Thread(target=_watchdog, daemon=True).start()
         while True:
             line = self.process.stdout.readline()
             if not line:
                 break
             if "SOCKET_READY:" in line:
+                _ready["seen"] = True
                 break
+        if not _ready["seen"]:
+            self.stop()
+            raise ConnectionError(
+                f"JS server did not signal SOCKET_READY within {_deadline}s "
+                f"(startup hang; command={self.command} {self.args})")
 
         # Connect socket with retries
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
