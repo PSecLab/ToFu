@@ -162,11 +162,16 @@ def main():
                 continue
             t0 = time.time()
             base = os.path.join(outdir, tool.name.replace("/", "_"))
-            def _timeout(signum, frame): raise TimeoutError(f"tool exceeded {a.tool_timeout}s")
+            # BaseException on purpose: ToolFuzz's fuzz() wraps every tool call
+            # in `except Exception`, which swallowed the old TimeoutError -- a
+            # google-cloud-mcp tool ran 355 s past a 300 s cap and was recorded
+            # ok. A BaseException subclass cannot be caught by that clause.
+            class ToolTimeout(BaseException): pass
+            def _timeout(signum, frame): raise ToolTimeout(f"tool exceeded {a.tool_timeout}s")
             signal.signal(signal.SIGALRM, _timeout); signal.alarm(a.tool_timeout)
             try:
                 rec = fuzz_tool(tool, llm, a.iters, modes, base)
-            except TimeoutError as e:
+            except ToolTimeout as e:
                 rec = {"tool": tool.name, "ok": False, "error": str(e)}
             except Exception as e:
                 rec = {"tool": tool.name, "ok": False, "error": str(e)[:200],

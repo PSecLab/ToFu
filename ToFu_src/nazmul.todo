@@ -4968,3 +4968,53 @@ POSITIVE CONTROLS (paper): google-workspace manage_scratchpad (jailed),
 findings/README.md rewritten as the canonical index. Committing + pushing.
 NOTE: report deduplicated alert counts; subtract mandatory/evidence-gated
 sanitizer layer before crediting LLM selection (V5/V6 fired unselected).
+
+VM HOUSEKEEPING (2026-09-15 evening): key auth laptop->VM works now
+  (mza6485@172.31.126.75); Claude can rsync/inspect the VM directly.
+  tmux sessions on VM: mcpsafety, tofu, toolfuzz, viper.
+
+  ToolFuzz run #2 (relaunched 21:21 w/ --skip google-workspace) is on (19/45)
+  krzko/google-cloud-mcp and NOT advancing: each fuzz iteration spawns a fresh
+  server that blocks ~150 s on GCP ADC/metadata lookup ("Lazy authentication
+  enabled" line every 150 s). The 300 s per-tool alarm did not cut it:
+  gcp-iam-test-resource-permissions recorded ok at 355.6 s. Cause: ToolFuzz
+  fuzz() has `except Exception` around every call -> swallowed my TimeoutError.
+  FIX: raise a BaseException subclass (ToolTimeout). Needs Ctrl-C + pull +
+  relaunch to take effect (loses only the in-flight tool). Optional speed-up
+  for GCP targets: env NO_GCE_CHECK=true / GCE_METADATA_HOST=127.0.0.1 so ADC
+  fails fast instead of timing out -- NOT applied, would change target env.
+  45 "ready" rows in VM prepared.jsonl (dup prepare entries) -> the (N/45)
+  counter; canonical corpus still 39/40 unique.
+
+  UNEXPECTED: a ToFu campaign ran on the VM natively (NOT sandboxed), tmux
+  `tofu`, index eval/state/runs.gpt41-vm.jsonl, logs eval/runs/gpt41-vm/,
+  finished 17:40:32. 102 rows, 89 ok, 9 repos, 44 rows with hits. Top
+  sanitizers by rows: introspection_incomplete_cleanup 29, temp_file_leak 29,
+  log_injection 21, resource_exhaustion 12, path_traversal 7. Hit counts of
+  40k+ on yzfly install_package / list_installed_packages = a tracer firing on
+  every exec -> attribution-trap noise, triage before believing. Ananto ran
+  this; fold into item 72 discussion (host-VM run vs sandbox numbers).
+
+  JUNK FILES IN VM REPO ROOT -- ATTRIBUTED (~/toolfuzzer/: `12345`,
+  `..\..\..\..\windows\win.ini`, `"file_path": "/` (4096 B), `"file_path":
+  "12345", "content": "type confusie": fals`, `test.py`, a unicode-garbage
+  name; all mtime 17:31). Contents are ToFu seeds verbatim ("type confusion on
+  file_path", "test windows traversal", test.py = traversal read). Written by
+  yzfly/mcp-python-interpreter write_file / run_python_file under the ToFu
+  gpt41-vm run (their logs mtime 17:31). NOT ToolFuzz, NOT graphlit.
+  Two instrument notes, both TO DOUBLE-CHECK (item 82):
+    (a) Python targets run IN-PROCESS under Atheris; the eval config carries
+        cwd=<target dir> but the in-process path does not chdir, so the
+        server's relative writes land in ToFu's own cwd (here ~/toolfuzzer,
+        the tmux shell dir). Bug 21 fixed the subprocess (JSRunner) cwd only.
+        On a bare host this is exactly the V1-style spill Bug 21 was about;
+        in the sandbox it is contained. Fix: os.chdir(target_cwd) in the
+        Python in-process runner before import, or run python targets as a
+        subprocess. Not a finding against yzfly -- write_file writing files is
+        its purpose (by-design; no allowed-dir enforcement found in its src).
+    (b) yzfly write_file / read_file / run_python_code / run_python_file:
+        ok=False, n_exec=1, "libFuzzer: out-of-memory" after ONE execution.
+        Interpreter server + Atheris rss limit. The 7-11 "hits" on those rows
+        come from a single exec and OOM -- not evidence. Check -rss_limit_mb
+        and whether the seed dir (eval/seeds/... has docx/pptx/heapsnapshot)
+        is being read whole into memory by the server.
