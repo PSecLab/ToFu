@@ -21,7 +21,7 @@ IN PROGRESS — not reflected here. gpt-4.1 for all LLM roles, temp 0, fixed see
 | tool | findings | repos | coverage |
 |---|---|---|---|
 | **ToFu** | **7** (4 + 3 potential) | 5 | 39/39 |
-| Viper-MCP | 12 (taint) | 5 | 32/39 (7 ERR) |
+| Viper-MCP | 12 (taint, **node-only**) | 5 | 32/39 orchestrated; **python taint errored** (pyql exit 2) |
 | CodeQL set-A | 309 (unconfirmed) | 20 | 39/39 |
 | Cisco | 28 (unconfirmed) | 8 | 39/39 |
 
@@ -35,9 +35,9 @@ even execute.)
 |---|---|---|---|---|---|
 | excel-reader-mcp | V1 arbitrary **WRITE** | 5× file-access (all **READ**) | 0 | 0 | **no** (write vs read) |
 | locallama-mcp | V2 log-inj + V3 self-update | ERR (not run) | 11 (rate-limit/fs-race/http-to-file/…) | 4 (YARA on 3 tools) | **no** |
-| **mcp-text-editor** | V4 arbitrary **READ** + V6 arbitrary **WRITE** | not run | 2 (`py/overly-permissive-file` only) | 0 | **no** — CodeQL flagged file *perms*, missed the traversal/absolute-path R/W |
-| **uml-mcp** | V5 CRLF log-injection | not run | **11 incl. `py/log-injection` ×4** | 0 | **YES (partial)** — CodeQL flags the same family; ToFu confirms it at runtime |
-| **mcp-python-interpreter** | V7 unsandboxed code exec | not run | 0 | 0 | **no** |
+| **mcp-text-editor** | V4 arbitrary **READ** + V6 arbitrary **WRITE** | pyql errored (exit 2) | 2 (`py/overly-permissive-file` only) | 0 | **no** — CodeQL flagged file *perms*, missed the traversal/absolute-path R/W |
+| **uml-mcp** | V5 CRLF log-injection | pyql errored (exit 2) | **11 incl. `py/log-injection` ×4** | 0 | **YES (partial)** — CodeQL flags the same family; ToFu confirms it at runtime |
+| **mcp-python-interpreter** | V7 unsandboxed code exec | pyql errored (exit 2) | 0 | 0 | **no** |
 
 ## Read (the complementarity thesis, now with the Python arm)
 - **6 of ToFu's 7 findings are ToFu-unique** — no baseline reports the same bug,
@@ -52,11 +52,15 @@ even execute.)
   CodeQL flags that are unconfirmed.
 - **Conversely**, CodeQL's 309 and Cisco's 28 sit almost entirely on repos/classes
   ToFu did not confirm (SAST family noise; heuristic tool-description matches).
-- **Viper has no data on ToFu's Python findings** (locallama ERR'd; text-editor,
-  uml, python-interpreter have no report.json — among its 7 non-completions), so
-  the Python comparison is effectively **ToFu vs CodeQL**, and there ToFu wins on
-  4/5 python-repo findings (text-editor R/W and python-interpreter exec unique;
-  uml log-inj shared).
+- **Viper produced no valid Python data.** Its node (jsql) taint works, but on
+  all 6 host-Python repos its **python (pyql) queries fail** — `codeql database
+  analyze` exits 2 ("Anchor enrichment skipped: report not found"), so the runs
+  record ok:true with 0 vulns but that is an **analysis error, not a clean
+  result** (see viper_vs_tofu_analysis_20260916.md). Viper's 12 findings are
+  therefore node-only. The Python comparison is effectively **ToFu vs CodeQL**,
+  where ToFu wins 4/5 python-repo findings (text-editor R/W and python-interpreter
+  exec unique; uml log-inj shared with CodeQL). Do NOT read Viper's Python column
+  as "ran and found nothing"; it did not successfully run.
 
 ## Caveats (state these)
 - Units differ (top table). Headline = "4 confirmed semantic + 3 potential" vs
