@@ -5092,3 +5092,29 @@ ERRORED, not clean. Viper's 12 are node-only.
       otherwise report "Viper python analysis errored" as a baseline limitation.
 ToFu blind-spot fixes (paper TODO): seed valid-format carrier files with
   traversal names (defeats format gate); per-tool setup so more tools execute.
+
+================================================================
+2026-09-16  CORPUS FUZZ SPEED: root cause = fake_coverage instrument cost
+================================================================
+Symptom: corpus configs took median 518s, many "hung" at 120s, llm=unknown.
+Chased via faulthandler (kill -ABRT + PYTHONFAULTHANDLER=1): the stack showed
+the block was js_runner.py:134 `from . import fake_coverage` INSIDE
+atheris.instrument_imports. atheris instrumentation of the generated
+fake_coverage bridge is SUPERLINEAR in TOFU_JS_COV_SLOTS:
+   512=1.4s  1024=4.7s  2000=17.2s  10000=minutes (>120s under 5-worker load)
+Every NODE config paid the 10000-slot cost once. THIS, not network hangs, was
+the dominant per-config time. FIX: run_full_campaign sets TOFU_JS_COV_SLOTS=1024
+(ab3eee4). Silent-bug oracle is independent of coverage granularity -> findings
+unaffected; only libFuzzer's mutation guidance is slightly coarser. Verified
+win-cli execute_command: 90s+ -> 39s (--time 20), LLM_SELECTION_OK + EXEC_SUMMARY.
+Provenance note: gpt41-full/host arms used js_cov_slots=10000; gpt41-corpus uses
+1024 -- record per-arm, don't compare fine coverage across them.
+
+Secondary startup-hang bounds added same day (all default-on, env-tunable):
+  - src/client.py: MCPInspector handshake in a worker thread, join(TOFU_STARTUP
+    _TIMEOUT=25); SIGKILL server group on timeout (10e82de).
+  - src/runners/js_runner.py: SOCKET_READY readline watchdog + killpg GROUP
+    (start_new_session) so child shells (win-cli spawns cmd/ssh) don't hold the
+    pipe (8932a6d); bounded the socket-connect retry loop too (9aba8eb).
+  - eval/run_eval.py: TOFU_KILL_GRACE (default 600; corpus 60) caps per-config
+    wall = TIME+grace; was budget+600 (~660s) (9863801).
