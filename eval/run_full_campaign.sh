@@ -31,7 +31,7 @@ export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-4096}"   # item 93: code-exec too
 export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-500}"
 
 phase_prepare() {
-  local tier="${1:-1}" n="${2:-4}"
+  local tier="${1:-1}" n="${2:-6}"
   # regenerate the manifest for the requested tier ONLY; prepare skips
   # anything already recorded, so re-running with tier 2 later just adds.
   "$PY" Benchmarks/extraction/build_set_full.py --tier "$tier" || exit 1
