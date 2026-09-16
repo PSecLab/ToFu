@@ -37,6 +37,12 @@ export TOFU_KILL_GRACE="${TOFU_KILL_GRACE:-60}"
 # backend/daemon); the inspector's tools/list readline would otherwise block to
 # TOFU_KILL_GRACE. 25s -> a non-handshaking server is a fast start-failure.
 export TOFU_STARTUP_TIMEOUT="${TOFU_STARTUP_TIMEOUT:-25}"
+# THE node speed fix: atheris-instrumenting the fake_coverage bridge is
+# superlinear in slot count (512=1.4s, 1024=4.7s, 2000=17s, 10000=minutes), and
+# every node config paid it. 10000 was silently costing minutes/config. 1024
+# keeps useful coverage guidance at 4.7s. The silent-bug oracle is independent
+# of coverage granularity, so findings are unaffected.
+export TOFU_JS_COV_SLOTS="${TOFU_JS_COV_SLOTS:-1024}"
 
 phase_prepare() {
   local tier="${1:-1}" n="${2:-6}"
