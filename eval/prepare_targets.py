@@ -36,9 +36,9 @@ SKIPPED  = os.path.join(STATE, "skipped.jsonl")
 # also sets TOFU_TARGET_PYTHON explicitly). Override only if you know why.
 TARGET_PYTHON   = os.environ.get("TOFU_TARGET_PYTHON",
                                  f"{sys.version_info.major}.{sys.version_info.minor}")
-CLONE_TIMEOUT   = 180
-INSTALL_TIMEOUT = 600
-PROBE_TIMEOUT   = 60
+CLONE_TIMEOUT   = int(os.environ.get("TOFU_CLONE_TIMEOUT", "180"))
+INSTALL_TIMEOUT = int(os.environ.get("TOFU_INSTALL_TIMEOUT", "240"))  # was 600; build-from-source stragglers now skip sooner
+PROBE_TIMEOUT   = int(os.environ.get("TOFU_PROBE_TIMEOUT", "60"))
 
 
 def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)

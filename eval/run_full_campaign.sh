@@ -20,7 +20,7 @@ PY="${TOFU_PY:-$PWD/.venv/bin/python}"
 export TOFU_TARGET_PYTHON="${TOFU_TARGET_PYTHON:-3.13}"   # must equal the venv python (item 86)
 ARM="${ARM:-gpt41-corpus}"
 TIME="${TOFU_TIME:-60}"
-WORKERS="${WORKERS:-4}"
+WORKERS="${WORKERS:-$(nproc 2>/dev/null || echo 4)}"   # fuzz is CPU-bound: one worker per core
 export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-4096}"   # item 93: code-exec tools OOM at 2048
 # Fail-fast threshold for 0-success tools. ~60% of the corpus is creds/backend-
 # gated; at the default 2000 execs a dead tool still burns most of its 60s
