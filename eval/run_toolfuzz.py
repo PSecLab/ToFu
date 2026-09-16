@@ -142,7 +142,8 @@ def main():
         for r in dropped: log(f"SKIP (--skip) {r}")
     done = load_done()
     os.makedirs(OUT, exist_ok=True); os.makedirs(os.path.dirname(INDEX), exist_ok=True)
-    log(f"model={a.model} iters={a.iters} modes={modes} servers={len(ready)}")
+    log(f"model={a.model} iters={a.iters} modes={modes} servers={len(ready)} already_done={len(done)}")
+    n_done, n_err = len(done), 0
 
     for i, t in enumerate(ready, 1):
         repo = t["repo"]; slug = repo.replace("/", "__")
@@ -156,8 +157,12 @@ def main():
                                     "error": f"load_tools: {str(e)[:200]}"}) + "\n")
             continue
         if a.max_tools: tools = tools[:a.max_tools]
+        n_skip = sum(1 for x in tools if (repo, x.name) in done)
+        n_todo = len(tools) - n_skip
+        if n_skip:
+            log(f"    {n_skip} already done, {n_todo} remaining")
         outdir = os.path.join(OUT, slug); os.makedirs(outdir, exist_ok=True)
-        for tool in tools:
+        for j, tool in enumerate(tools, 1):
             if (repo, tool.name) in done:
                 continue
             t0 = time.time()
@@ -180,9 +185,13 @@ def main():
                 signal.alarm(0)
             rec.update(repo=repo, seconds=round(time.time() - t0, 1))
             with open(INDEX, "a") as f: f.write(json.dumps(rec) + "\n")
+            if rec.get("ok"):
+                n_done += 1
+            else:
+                n_err += 1
             flag = "ok" if rec.get("ok") else f"ERR {rec.get('error','')[:60]}"
-            log(f"    {tool.name:28s} {flag}  ({rec['seconds']}s)")
-    log(f"DONE. index -> {INDEX}  results -> {OUT}")
+            log(f"    [{n_done}ok/{n_err}err] {tool.name:28s} {flag}  ({rec['seconds']}s)")
+    log(f"DONE. {n_done} ok, {n_err} err. index -> {INDEX}  results -> {OUT}")
 
 if __name__ == "__main__":
     main()
