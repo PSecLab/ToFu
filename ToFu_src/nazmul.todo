@@ -5018,3 +5018,77 @@ VM HOUSEKEEPING (2026-09-15 evening): key auth laptop->VM works now
         come from a single exec and OOM -- not evidence. Check -rss_limit_mb
         and whether the seed dir (eval/seeds/... has docx/pptx/heapsnapshot)
         is being read whole into memory by the server.
+
+================================================================
+2026-09-15  ITEM 92 VERIFIED ON VM (meilisearch) + ITEM 94 (rquest pattern)
+================================================================
+item 92 wrapper-unwrap, on the VM's real targets (--test-input, .env hidden):
+  meilisearch get-version: "module=meilisearch_mcp.server via in-process
+    JSON-RPC server" -> discovery FIXED (was "none found"); execution fails
+    "Error executing tool get-version" = no Meilisearch on :7700 -> class (a)
+    exclusion, correctly recorded now instead of a discovery failure.
+    26 configs move from unknown -> executable=no (a).
+  rquest http_get: STILL "server instance: none found". Different pattern:
+    mcp_rquest/server.py:326 def main(port, transport): app = Server(...)
+    with @app.call_tool()/@app.list_tools() INSIDE main, which needs args and
+    then runs stdio/SSE (Starlette). No module-level instance, no zero-arg
+    factory; calling main() would start the transport. NOT reachable by any
+    in-process discovery. get_model_state worked only because it is a
+    module-level function.
+  94. PythonStdioRunner fallback: when no server instance is discoverable,
+    spawn the target over stdio (like JSRunner) and fuzz via JSON-RPC --
+    keeps the silent-bug oracle + string sanitizers, LOSES the 21
+    introspection tracers (document per-run which path was used). Recovers
+    the "server built inside main()" family. Size unknown across the 597
+    python repos -- measure from the full-corpus prepare skip reasons
+    ("Could not find callable tool") before building. Not built today.
+run_full_campaign.sh + prepare --shard/--only-set full committed (04cf680),
+  pulled on the VM. VM: 5 CPU, 38G RAM, 491G disk (397G free) -> NO
+  streaming/delete cycle needed (earlier 40G figure was the Viper VM).
+  Fuzz residue in the VM repo root (12345, ..\..\windows\win.ini, "file_path"
+  junk) = targets writing to cwd=ROOT (item 91 cwd isolation still the real
+  fix); removed by hand.
+
+================================================================
+2026-09-16  VIPER vs ToFu ANALYSIS + Viper pyql BROKEN (reference)
+================================================================
+Full writeup: findings/baselines/viper_vs_tofu_analysis_20260916.md.
+Q: "we built ToFu to catch ANY vuln, why did it miss Viper's 12?"
+A: Viper's 12 are NODE-only (jsql). Breakdown (source-verified):
+  - 5 command-injection-from-request = ALL FALSE POSITIVES. Viper's query
+    matches the method name ".exec(" and cannot tell RegExp.exec from
+    child_process.exec:
+      google-workspace gmail/patch.ts:100  /(\d\d?)…/.exec(dateHeader)  regex
+      cursor10x index.js:3890              codeBlockRegex.exec(text)     regex
+      knowledge-base mcp-resources.ts:107  /^kb:\/\/…/.exec(uri)          regex
+      DesktopCommander open-browser.ts:29  execFile('open',[url]) /
+                                           spawn('cmd',[..],{shell:false}) argv,no shell
+    ToFu correctly stayed silent -> NOT misses.
+  - 7 file-access-from-request = real path->read flows, ToFu blind spot:
+      excel-reader x5 (readExcelFile/WorkbookCache/loadWorkbook): FORMAT-GATED.
+        loadWorkbook parses xlsx; /etc/passwd -> throws -> no success -> silent-
+        bug oracle can't fire. Also low-sev (can't exfil non-xlsx content).
+        Contrast text-editor V4 (plaintext reader) which ToFu DID catch.
+      cursor10x indexCodeFile x2: NON-EXECUTABLE in ToFu (13/18 tools need a
+        project/DB context) -> no runtime data.
+3 reasons ToFu misses a static-taint hit: (1) it's a Viper FP; (2) format/
+  semantics gate blocks runtime success; (3) tool/repo not executable.
+ToFu = dynamic, runtime-confirmed, high precision (bounded to reachable+
+  success+modeled-sink BY DESIGN). Viper Phase-I = static taint, low precision
+  here (5/12 FP). Complementary, neither subsumes.
+
+*** Viper PYTHON taint is BROKEN in our setup ***
+viper_runs.jsonl says the 6 host-python repos ran ok:true, but they produced
+NO report.json. fuzzer.log: "Running CodeQL analyze with queries
+['pyql/src/CommandInjectionFromRequest.ql', FileAccessFromRequest, Request
+ForgeryFromRequest]" -> "CodeQL analyze failed with exit code 2" -> "Anchor
+enrichment skipped: report not found". So the 6 python "0 vulns" = ANALYSIS
+ERRORED, not clean. Viper's 12 are node-only.
+  => comparison doc's "Viper: not run" on python is understated; precise
+     reason = pyql analyze exit 2. DO NOT claim "Viper ran & missed V4/V6".
+  95. (optional) fix Viper pyql exit-2 (query-pack / CodeQL-version), delete
+      the 6 rows from eval/state/viper_runs.jsonl, re-run --only <repo> to get
+      real python taint numbers. Only if we want a python Viper column;
+      otherwise report "Viper python analysis errored" as a baseline limitation.
+ToFu blind-spot fixes (paper TODO): seed valid-format carrier files with
+  traversal names (defeats format gate); per-tool setup so more tools execute.
