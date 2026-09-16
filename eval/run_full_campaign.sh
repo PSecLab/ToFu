@@ -33,6 +33,10 @@ export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-500}"
 # hang on the target's outbound API; without a tight grace a dead config sits at
 # the 60+600s kill. 60s grace -> every config bounded to ~120s (was ~660s).
 export TOFU_KILL_GRACE="${TOFU_KILL_GRACE:-60}"
+# item: cap the MCP handshake. Many corpus servers hang on startup (wait on a
+# backend/daemon); the inspector's tools/list readline would otherwise block to
+# TOFU_KILL_GRACE. 25s -> a non-handshaking server is a fast start-failure.
+export TOFU_STARTUP_TIMEOUT="${TOFU_STARTUP_TIMEOUT:-25}"
 
 phase_prepare() {
   local tier="${1:-1}" n="${2:-6}"
