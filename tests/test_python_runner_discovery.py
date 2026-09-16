@@ -247,6 +247,31 @@ def test_subclass_named_differently_is_found(tmp_path):
     assert r.execute({"path": "x"}).result == "X"
 
 
+def test_wrapper_object_holding_server_on_attribute(tmp_path):
+    """item 92: meilisearch/rquest build the server inside a wrapper object
+    (create_server() -> MeilisearchMCPServer, whose MCPServer is at .mcp).
+    Discovery must unwrap one level instead of "server instance: none found"."""
+    name = _uniq("wrap_mod")
+    _write(str(tmp_path / f"{name}.py"), """\
+        from mcp.server.mcpserver import MCPServer
+
+        class MyMCPServerWrapper:
+            def __init__(self):
+                self.mcp = MCPServer("wrapped")
+                @self.mcp.tool()
+                def get_stats(index: str) -> str:
+                    return "stats:" + index
+
+        def create_server(url: str = "http://localhost:7700", api_key=None):
+            return MyMCPServerWrapper()
+        """)
+    r = PythonRunner(command="python", args=[str(tmp_path / f"{name}.py")], target_tool="get_stats")
+    r.start()
+    assert r.mcp_server is not None                       # unwrapped from .mcp
+    res = r.execute({"index": "movies"})
+    assert res.success is True and "stats:movies" in str(res.result)
+
+
 def test_unknown_tool_error_lists_registered_tools(tmp_path):
     name = _uniq("srv_mod")
     _write(str(tmp_path / f"{name}.py"), """\

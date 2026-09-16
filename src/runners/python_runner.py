@@ -434,6 +434,13 @@ class PythonRunner(BaseRunner):
             f"cannot locate a target module: command={self.command!r} args={self.args!r}")
 
     # ----------------------------------------------------------- discovery
+    # item 92 (2026-09-15): many servers live on a WRAPPER object, not at module
+    # scope -- meilisearch's create_server() returns a MeilisearchMCPServer whose
+    # MCPServer is at .mcp (rquest similar). Old discovery rejected the wrapper
+    # ("server instance: none found") and lost 26+11 configs. Unwrap one level.
+    _WRAPPER_ATTRS = ("mcp", "server", "app", "_mcp", "_server", "mcp_server",
+                      "_mcp_server", "fastmcp", "_fastmcp", "srv")
+
     def _consider(self, obj) -> bool:
         if _is_fastmcp_like(obj):
             self.fastmcp_instance = obj
@@ -442,6 +449,26 @@ class PythonRunner(BaseRunner):
         if _is_lowlevel_server(obj):
             self.mcp_server = obj
             return True
+        # wrapper: a plain object holding the server on a conventional attribute.
+        # Skip builtins/modules/types to avoid pointless getattr on every global.
+        if obj is None or isinstance(obj, (type, str, bytes, int, float, bool, list, dict, tuple, set)):
+            return False
+        if (type(obj).__module__ or "") == "builtins":
+            return False
+        for a in self._WRAPPER_ATTRS:
+            try:
+                inner = getattr(obj, a, None)
+            except Exception:
+                inner = None
+            if inner is None or inner is obj:
+                continue
+            if _is_fastmcp_like(inner):
+                self.fastmcp_instance = inner
+                self.mcp_server = _lowlevel_of(inner) or self.mcp_server
+                return True
+            if _is_lowlevel_server(inner):
+                self.mcp_server = inner
+                return True
         return False
 
     def _find_server_instance(self, module):
