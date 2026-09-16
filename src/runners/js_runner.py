@@ -227,21 +227,26 @@ class JSRunner(BaseRunner):
                 f"JS server did not signal SOCKET_READY within {_deadline}s "
                 f"(startup hang; command={self.command} {self.args})")
 
-        # Connect socket with retries
+        # Connect socket, BOUNDED by TOFU_STARTUP_TIMEOUT total. Some servers
+        # print SOCKET_READY (so the watchdog above passes) but never accept() on
+        # the socket -- the old settimeout(5.0) x 20 retries could block ~100s
+        # here (win-cli-mcp-server). Cap the whole retry window and fail fast.
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.settimeout(5.0)
-        
+        self.sock.settimeout(2.0)
         connected = False
-        for _ in range(20):
+        _connect_deadline = time.time() + float(os.environ.get("TOFU_STARTUP_TIMEOUT", "25"))
+        while time.time() < _connect_deadline:
             try:
                 self.sock.connect(self.sock_path)
                 connected = True
                 break
             except Exception:
-                time.sleep(0.1)
-                
+                time.sleep(0.2)
         if not connected:
-            raise ConnectionError(f"Failed to connect to JS runner Unix socket at {self.sock_path}")
+            self.stop()
+            raise ConnectionError(
+                f"JS server signalled ready but did not accept on {self.sock_path} "
+                f"within TOFU_STARTUP_TIMEOUT (startup hang; command={self.command} {self.args})")
             
         self.sock_file = self.sock.makefile('r')
 
