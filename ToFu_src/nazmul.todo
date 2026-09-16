@@ -4948,3 +4948,23 @@ eval/summarize_toolfuzz.py -> eval/state/toolfuzz_runtime_exceptions.csv):
     (locallama 15, google-workspace 6, pluggedin 6, ...) counts ALL
     process.exit, mostly startup main(); only graphlit's are confirmed
     in-handler.
+
+================================================================
+2026-09-15  FINDINGS CONSOLIDATED: 4 confirmed + 3 potential (report all)
+================================================================
+Re-scanned BOTH arms. Node (gpt41-full) re-triage: the big-alert repos are FP
+cascades (cursor10x stores/echoes strings; google-workspace lists own
+workspace + HAR-contract FP; bsv echoes; locallama preemptive_route_task
+invalid_json FP). NO new node findings -> stays V1/V2/V3.
+CONFIRMED (4): V1 excel-reader export write; V2 locallama subtask log-inj;
+  V4 mcp-text-editor get_text_file_contents arbitrary READ (ELEVATED from
+  potential -- actual /etc/passwd + /proc/environ content returned);
+  V6 mcp-text-editor create_text_file arbitrary WRITE.
+POTENTIAL (3): V3 locallama update_server self-update; V5 uml CRLF log-inj;
+  V7 mcp-python-interpreter inline unsandboxed exec (NEW; RCE-equivalent,
+  read /etc/passwd via submitted code; exec(code,self.locals) in-process).
+POSITIVE CONTROLS (paper): google-workspace manage_scratchpad (jailed),
+  yzfly read_file/write_file (jailed) -- the jail tumf ships but never enables.
+findings/README.md rewritten as the canonical index. Committing + pushing.
+NOTE: report deduplicated alert counts; subtract mandatory/evidence-gated
+sanitizer layer before crediting LLM selection (V5/V6 fired unselected).

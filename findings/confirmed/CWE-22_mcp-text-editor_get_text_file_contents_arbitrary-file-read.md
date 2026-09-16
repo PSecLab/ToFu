@@ -1,6 +1,9 @@
 # V4 (potential) — tumf/mcp-text-editor `get_text_file_contents`: unrestricted absolute-path read serves `/etc/passwd` and the server's own `/proc/self/environ`
 
-**Status: POTENTIAL.** First finding from the Python arm (item 86 fix, 2026-09-15).
+**Status: CONFIRMED (elevated 2026-09-15).**
+
+<!-- CONFIRMED-EVIDENCE -->
+Elevated because the tool returned the ACTUAL CONTENT of files outside any workspace: `/etc/passwd` (`root:x:0:0:...`) and the server's own `/proc/self/environ`. That is a demonstrated arbitrary read, not a conditional one; paired with V6 (arbitrary write, same repo, same dead `base_dir`) the repo has full unsandboxed filesystem R/W. The earlier "reading is arguably the tool's purpose" hedge does not survive: a text editor returning `/proc/self/environ` is outside any reasonable purpose, and the repo ships a jail it never enables. First finding from the Python arm (item 86 fix, 2026-09-15).
 Classification is argued below; the maintainers may consider "reads any file" by
 design. What is NOT by design: the code ships a `base_dir` sandbox that no code
 path ever enables, and the tool will read the MCP server process's own
@@ -56,7 +59,7 @@ Evidence (redacted excerpt): `findings/evidence/mcp-text-editor-get_text_file_co
    these paths. This is the class ToFu's oracle is built for; a static scanner
    sees a `read_file(path)` sink with a validated path and stops.
 
-## Why it is only POTENTIAL
+## Scope notes (was filed potential; elevated)
 - Reading arbitrary files is the tool's advertised purpose; a maintainer may reply
   "run it with restricted OS permissions". The concrete, non-obvious harm is the
   self-environment disclosure (item 3) and the dead `base_dir` sandbox (item 1).
