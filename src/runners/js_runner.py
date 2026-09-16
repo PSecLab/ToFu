@@ -2,6 +2,7 @@ import json
 import subprocess
 import time
 import os
+import signal
 import sys
 from .base import BaseRunner, RunnerResult
 
@@ -178,7 +179,12 @@ class JSRunner(BaseRunner):
             stderr=subprocess.DEVNULL,
             text=True,
             bufsize=1,
-            env=env
+            env=env,
+            # Own process group so the watchdog can SIGKILL the WHOLE tree. Some
+            # servers spawn child shells (win-cli spawns cmd/ssh) that inherit
+            # stdout; killing only the node parent leaves the pipe open and the
+            # SOCKET_READY readline never gets EOF.
+            start_new_session=True,
         )
         
         # Wait for socket ready signal on stdout, BOUNDED. Many corpus node
@@ -197,10 +203,15 @@ class JSRunner(BaseRunner):
                     return
                 time.sleep(0.2)
             if not _ready["seen"] and self.process and self.process.poll() is None:
+                # Kill the whole group (node + any child shells holding stdout),
+                # so the readline below hits EOF. Fall back to killing the parent.
                 try:
-                    self.process.kill()
+                    os.killpg(os.getpgid(self.process.pid), signal.SIGKILL)
                 except Exception:
-                    pass
+                    try:
+                        self.process.kill()
+                    except Exception:
+                        pass
 
         threading.Thread(target=_watchdog, daemon=True).start()
         while True:
@@ -242,11 +253,24 @@ class JSRunner(BaseRunner):
                 pass
             self.sock = None
         if self.process:
-            self.process.terminate()
+            # The server runs in its own session (start_new_session=True), so
+            # reap the WHOLE group -- some servers spawn child shells that would
+            # otherwise orphan when only the node parent is killed.
+            def _killpg(sig):
+                try:
+                    os.killpg(os.getpgid(self.process.pid), sig)
+                    return True
+                except Exception:
+                    return False
+            if not _killpg(signal.SIGTERM):
+                try: self.process.terminate()
+                except Exception: pass
             try:
                 self.process.wait(timeout=2.0)
             except subprocess.TimeoutExpired:
-                self.process.kill()
+                if not _killpg(signal.SIGKILL):
+                    try: self.process.kill()
+                    except Exception: pass
         if os.path.exists(self.sock_path):
             try:
                 os.unlink(self.sock_path)
