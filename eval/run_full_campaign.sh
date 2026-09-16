@@ -29,6 +29,10 @@ export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-4096}"   # item 93: code-exec too
 # only the LLM seeds can drive still gets its chance; re-run the executable=no
 # rows at 2000 afterwards if time allows (nazmul.todo 2026-09-15).
 export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-500}"
+# Hard cap per config = TIME + TOFU_KILL_GRACE. Node tools run ~1 exec/s and
+# hang on the target's outbound API; without a tight grace a dead config sits at
+# the 60+600s kill. 60s grace -> every config bounded to ~120s (was ~660s).
+export TOFU_KILL_GRACE="${TOFU_KILL_GRACE:-60}"
 
 phase_prepare() {
   local tier="${1:-1}" n="${2:-6}"
