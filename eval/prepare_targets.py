@@ -532,7 +532,7 @@ def probe_tools(command, args, cwd, interp=None, extra_env=None):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only-set", choices=["a","b","d","e","host"], default=None,
+    ap.add_argument("--only-set", choices=["a","b","d","e","host","full"], default=None,
                     help="host = the 41 repos that prepared READY on the host (set_host.json); reproduces the host executable corpus in the sandbox")
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--only-repo", default=None,
@@ -544,6 +544,11 @@ def main():
                          "Needed after item 51: the 75 Python skips were caused "
                          "by the harness, not by the repos, so the exclusion "
                          "list must be recomputed before it is reported.")
+    ap.add_argument("--shard", default=None, metavar="K/N",
+                    help="deterministic K-of-N split of the todo list (K in 0..N-1) so N "
+                         "prepare processes can run in parallel on disjoint repos; e.g. "
+                         "0/4 .. 3/4. All shards share prepared.jsonl/skipped.jsonl "
+                         "(append-only) and never touch the same repo.")
     ap.add_argument("--redo", action="store_true",
                     help="re-prepare repos even if already READY (requires --only-repo). "
                          "clone() wipes the target dir, so the venv is rebuilt from "
@@ -589,6 +594,11 @@ def main():
     if a.only_repo:
         pats = [x.strip().lower() for x in a.only_repo.split(",") if x.strip()]
         todo = [r for r in todo if any(pt in r["repo"].lower() for pt in pats)]
+    if a.shard:
+        k, n = (int(x) for x in a.shard.split("/"))
+        assert 0 <= k < n, "--shard K/N needs 0 <= K < N"
+        todo = [r for i, r in enumerate(todo) if i % n == k]
+        log(f"--shard {k}/{n}: this process takes {len(todo)} repo(s)")
     if a.limit: todo = todo[:a.limit]
     log(f"selected={len(sel)} already_done={len(done)} todo={len(todo)}")
 
