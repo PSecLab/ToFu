@@ -24,6 +24,19 @@ PY="${TOFU_PY:-$PWD/.venv/bin/python}"   # TOFU_PY overrides (sandbox: /opt/tofu
 set -a; . ./.env; set +a
 [ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set in .env"; exit 1; }
 
+# item 91: run_eval spawns `python -m src` with cwd = repo root, and in-process
+# Python targets can read `.env` off disk (V4/V7 read /etc/passwd and
+# /proc/self/environ; a target calling load_dotenv()/pydantic-settings would
+# read OUR .env and echo the key into its output/log). The os.environ scrubber
+# (runners/secrets.py) does NOT cover the file. So: the LLM key is already
+# exported into this process above; hide .env for the duration of the run and
+# restore it on ANY exit (normal, error, Ctrl-C). Set TOFU_KEEP_ENV=1 to skip.
+_ENV_HIDDEN=""
+if [ -z "${TOFU_KEEP_ENV:-}" ] && [ -f .env ]; then
+  mv .env .env.campaign-hidden && _ENV_HIDDEN=1
+  trap '[ -n "$_ENV_HIDDEN" ] && mv -f .env.campaign-hidden .env 2>/dev/null || true' EXIT INT TERM
+fi
+
 export TOFU_LLM_BASE_URL=https://api.openai.com/v1
 export TOFU_LLM_MODEL="${TOFU_LLM_MODEL_OVERRIDE:-gpt-4.1}"
 export TOFU_LLM_TEMPERATURE=0
@@ -44,4 +57,6 @@ echo "arm=$ARM  model=$TOFU_LLM_MODEL  endpoint=$TOFU_LLM_BASE_URL"
 echo "index -> eval/state/runs.$ARM.jsonl   logs -> eval/runs/$ARM/"
 echo
 
-exec "$PY" eval/run_eval.py --arm "$ARM" --time "$TIME" --workers "$WORKERS" "$@"
+# NOT exec: the EXIT trap above must run afterwards to restore .env.
+"$PY" eval/run_eval.py --arm "$ARM" --time "$TIME" --workers "$WORKERS" "$@"
+exit $?
