@@ -127,7 +127,9 @@ class LangchainToolWrapper(ToolWrapper):
             for item in value['anyOf']:
                 subtypes.append(self.__get_type(item))
             return ArgumentType(name='Union', sub_types=subtypes, has_subtype=True)
-        raise ValueError(f"Couldn't parse argument type for {value}")
+        # PATCH (ToFu): a property with only a description (no type/anyOf) is
+        # legal JSON schema (= any). Treat as string like the empty-dict case.
+        return ArgumentType(name='string')
 
     @staticmethod
     def __type_to_str(type_annotation):

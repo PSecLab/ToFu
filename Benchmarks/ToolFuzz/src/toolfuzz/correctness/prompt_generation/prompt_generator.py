@@ -46,7 +46,7 @@ class CorrectnessPromptGenerator(PromptGenerator, LoggingMixin):
                                                    LLMExpectedAnswers)
             llm_expectation = self._generate_from_template(self.llm_expectations, ['sentences'],
                                                            {'sentences': '\n'.join(
-                                                               answers['expected_answers'])},
+                                                               str(x) for x in answers['expected_answers'])},  # PATCH (ToFu): LLM may return dicts
                                                            LLMExpectedAnswer)
             if isinstance(llm_expectation, dict) and 'expected_answer' in llm_expectation:
                 yield template, prompts, llm_expectation['expected_answer']
@@ -78,7 +78,11 @@ class CorrectnessPromptGenerator(PromptGenerator, LoggingMixin):
         str_template = re.sub('\[.*?\]', '{}', template)
         arguments = prompt_args['template_arguments']
         str_args_sets = []
-        for i in range(len(arguments[0]['argument_values'])):
+        # PATCH (ToFu): the LLM returns ragged argument_values lists (or none);
+        # original indexed arguments[0] and [i] blindly -> IndexError.
+        arguments = [a for a in arguments if a.get('argument_values')]
+        n_sets = min((len(a['argument_values']) for a in arguments), default=0)
+        for i in range(n_sets):
             str_args = []
             for argument in arguments:
                 str_args.append(argument['argument_values'][i])

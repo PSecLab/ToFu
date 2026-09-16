@@ -43,7 +43,12 @@ class ReactAgentNew(TestingAgentExecutor):
             if item['role'] == 'tool':
                 try:
                     content = json.loads(item['content'])
-                    error = content['error']
+                    # PATCH (ToFu): MCP tools return JSON lists/scalars too, and
+                    # dicts without an "error" key. Original indexed ['error']
+                    # blindly -> KeyError / TypeError killed the whole tool.
+                    if not isinstance(content, dict):
+                        return False, ''
+                    error = content.get('error')
                     return error is not None, '' if not error else error
                 except ValueError:
                     if 'Error: ' in item['content']:
