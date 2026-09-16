@@ -119,6 +119,8 @@ def main():
     ap.add_argument("--modes", default="runtime,correctness")
     ap.add_argument("--model", default=os.environ.get("TOOLFUZZ_MODEL", "gpt-4.1"))
     ap.add_argument("--only", default=None, help="substring filter on repo")
+    ap.add_argument("--skip", default=os.environ.get("TOOLFUZZ_SKIP", ""),
+                    help="comma-separated repo substrings to skip (e.g. servers that block on OAuth)")
     ap.add_argument("--max-tools", type=int, default=0, help="cap tools per repo (0=all)")
     ap.add_argument("--tool-timeout", type=int, default=int(os.environ.get("TOOLFUZZ_TOOL_TIMEOUT","300")), help="per-tool wall-clock cap (s); a hung tool is recorded and skipped")
     a = ap.parse_args()
@@ -133,6 +135,11 @@ def main():
     ready = [t for t in targets if t.get("status") == "ready"]
     if a.only:
         ready = [t for t in ready if a.only.lower() in t["repo"].lower()]
+    skips = [x.strip().lower() for x in a.skip.split(",") if x.strip()]
+    if skips:
+        dropped = [t["repo"] for t in ready if any(k in t["repo"].lower() for k in skips)]
+        ready = [t for t in ready if t["repo"] not in dropped]
+        for r in dropped: log(f"SKIP (--skip) {r}")
     done = load_done()
     os.makedirs(OUT, exist_ok=True); os.makedirs(os.path.dirname(INDEX), exist_ok=True)
     log(f"model={a.model} iters={a.iters} modes={modes} servers={len(ready)}")
