@@ -14,7 +14,16 @@ from .base import BaseRunner, RunnerResult
 # be 2000 branches against a `% 10000` assignment, so every JS coverage item
 # past the 2000th fell through the whole chain to the same `return -1` and
 # became indistinguishable from every other one.
-COV_SLOTS = int(os.environ.get("TOFU_JS_COV_SLOTS", "10000"))
+#
+# COST WARNING: fake_coverage.py is a generated if-chain of COV_SLOTS branches
+# and Atheris instruments EVERY branch, once per fuzzer process. The cost is
+# superlinear: 512->1.4s, 1024->4.7s, 2000->17s, 10000->465s. At 10000 a whole
+# corpus config spends >120s just instrumenting and gets SIGKILLed before it
+# fuzzes anything (silent all-ERR campaign, 2026-09-17). Default is therefore
+# 1024 -- a coverage item past the 1024th aliases (under-reports coverage, see
+# the warning at the assignment below) but never crashes. Raise TOFU_JS_COV_SLOTS
+# only for a single-target run where precise JS coverage matters.
+COV_SLOTS = int(os.environ.get("TOFU_JS_COV_SLOTS", "1024"))
 
 fake_cov_path = os.path.join(os.path.dirname(__file__), "fake_coverage.py")
 
