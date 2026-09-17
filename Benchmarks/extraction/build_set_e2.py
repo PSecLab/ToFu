@@ -29,6 +29,7 @@ RESULTS = os.path.join(HERE, "results.jsonl")
 PREPARED = os.path.join(ROOT, "eval", "state", "prepared.jsonl")
 OUT = os.path.join(HERE, "set_e2.json")
 REPOS_TXT = os.path.join(HERE, "set_e2_repos.txt")
+TIER1_TXT = os.path.join(HERE, "set_e2_tier1_repos.txt")
 
 # Same high-value families as build_set_full.py -- every confirmed/potential
 # ToFu finding (V1/V4/V6/V7) lives in one of these.
@@ -127,6 +128,8 @@ def main():
     json.dump({"set_e2": chosen}, open(a.out, "w"), indent=1)
     with open(REPOS_TXT, "w") as f:
         f.write(",".join(p["repo"] for p in chosen))
+    with open(TIER1_TXT, "w") as f:
+        f.write(",".join(p["repo"] for p in chosen if p["_tier"] == 1))
 
     # 6. report
     byt = collections.Counter(p["_tier"] for p in chosen)
@@ -134,7 +137,8 @@ def main():
     print(f"POOL (ready repos): {len(pool)}   lang={dict(langs)}")
     print(f"CHOSEN: {len(chosen)} repos  tier={dict(byt)}  configs={ncfg}")
     print(f"  est wall @60s/cfg, 5 workers: {ncfg*60/5/3600:.1f} h")
-    print(f"wrote {a.out} + {REPOS_TXT}")
+    print(f"wrote {a.out} + {REPOS_TXT} + {TIER1_TXT} "
+          f"({sum(1 for p in chosen if p['_tier']==1)} tier-1 repos)")
     print("\nlang x sink-family coverage (repo counts), * = priority sink:")
     print(f"  {'family':28} {'node':>6} {'python':>7}")
     for fam in sorted(fam_lang, key=lambda k: (-sum(fam_lang[k].values()), k)):

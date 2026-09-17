@@ -475,6 +475,11 @@ def main():
                     help="comma-separated substrings; skip configs whose _repo matches one")
     ap.add_argument("--set", default=None,
                     help="restrict to one set: A, B or D (Set D is opt-in)")
+    ap.add_argument("--priority-repos-file", default=None,
+                    help="file with a repo list (comma/newline separated); configs whose "
+                         "_repo matches one run FIRST. Ordering only -- nothing is dropped. "
+                         "Use with Benchmarks/extraction/set_e2_repos.txt to fuzz the "
+                         "bug-bearing (tier-1) repos before the log/network-only tail.")
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--reparse", action="store_true",
                     help="rebuild runs.jsonl from eval/runs/*.log and exit")
@@ -521,6 +526,17 @@ def main():
         before = len(all_cfg)
         all_cfg = [f for f in all_cfg if not any(p in _repo_of(f).lower() for p in pats)]
         log(f"--skip-repo {pats}: dropped {before - len(all_cfg)}, {len(all_cfg)} remain")
+
+    if a.priority_repos_file:
+        raw = open(a.priority_repos_file).read()
+        prio = {p.strip().lower() for p in raw.replace("\n", ",").split(",") if p.strip()}
+        # stable partition: priority configs keep their (alphabetical) order and
+        # move to the front; everything else follows. Ordering only -- the set of
+        # configs is unchanged, so the run stays resumable and complete.
+        head = [f for f in all_cfg if _repo_of(f).lower() in prio]
+        tail = [f for f in all_cfg if _repo_of(f).lower() not in prio]
+        all_cfg = head + tail
+        log(f"--priority-repos-file: {len(head)} configs first, then {len(tail)}")
 
     done = done_set()
     todo = [f for f in all_cfg if f not in done]
