@@ -11,11 +11,11 @@ scale; host-39 stays the 4-tool apples-to-apples micro-comparison.
   ran. Results for the 196 are intact and backed up; the rest await the
   item-91 fix + re-run. Treat every ToFu number here as **196-repo partial**.
 - **CodeQL is complete** (static, no execution → unaffected): 480/482 analyzed.
-- **Cisco YARA is pending**: a FRESH scanner clone (newer HEAD) regressed and
-  throws `UnboundLocalError: os` on every target that fails to start (0/8 on
-  set_e2). Root-caused as a version regression -- run_cisco_scanner.py now pins
-  the known-good v4.8.4 (16e684d8bd8f, the 2026-09-11 baseline build) in setup.
-  Re-run after `--setup` re-pins + rebuilds the venv. Column open until then.
+- **Cisco YARA is COMPLETE** (2026-09-18): 476/490 scanned, **50 repos flagged,
+  125 YARA metadata hits**; only 14 err (unstartable targets, handled gracefully).
+  Root cause of the earlier 0/8 was a scanner bug (a local `import os` in cli.py
+  main() shadowing the module, crashing on the always-passed --stdio-timeout, NOT
+  a version issue) -- run_cisco_scanner.py setup() now strips it (+ pins v4.8.4).
 - Units differ (unchanged): ToFu = oracle silent-bug **candidates** (adversarial
   input tripped a sanitizer AND the tool returned success), auto-triaged, NOT
   hand-verified, mandatory layer not subtracted (CLAUDE.md §2). CodeQL = static
@@ -26,16 +26,19 @@ scale; host-39 stays the 4-tool apples-to-apples micro-comparison.
 |---|---|---|---|
 | **ToFu** | **102** | 459 finding-configs (candidates) | 196/196 covered |
 | CodeQL (restricted to those 196) | 71 | 370 rule-matches | 194/196 analyzed |
-| Cisco YARA | — | — | scanner erroring (pending) |
+| Cisco YARA (restricted to those 196) | 28 | YARA metadata hits | ~196 scanned |
 
-**Repo-level overlap on the 196:** both **37**, **ToFu-only 65**, CodeQL-only 34.
-→ ToFu flags more repos (102 vs 71) and has ~2× the unique repos (65 vs 34).
+**Repo-level overlap on the 196:** ToFu∩CodeQL both **37** (ToFu-only 65, CodeQL-only
+34); ToFu∩Cisco both **14** (ToFu-only 88, Cisco-only 36). → ToFu flags the most
+repos and the most unique ones; the three tools are largely disjoint.
 
 ## For reference — full scope (different denominators, NOT apples-to-apples)
 | tool | repos flagged | findings | analyzed |
 |---|---|---|---|
 | ToFu | 102 | 459 finding-configs | 196 repos (partial) |
 | CodeQL | 154 | 1037 rule-matches | 480 repos |
+| Cisco YARA | 50 | 125 metadata hits | 476/490 repos |
+| ToolFuzz | 43 | 2030 correctness discrepancies | 56 repos (diff axis) |
 
 CodeQL's extra reach (154 vs 102) is mostly the 286 repos ToFu never ran +
 static-only classes; not evidence ToFu missed them (it never fuzzed them).
