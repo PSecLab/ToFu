@@ -11,10 +11,11 @@ scale; host-39 stays the 4-tool apples-to-apples micro-comparison.
   ran. Results for the 196 are intact and backed up; the rest await the
   item-91 fix + re-run. Treat every ToFu number here as **196-repo partial**.
 - **CodeQL is complete** (static, no execution → unaffected): 480/482 analyzed.
-- **Cisco YARA is pending**: the scanner CLI throws its own `UnboundLocalError`
-  on targets that fail to start (need creds), so 0/8 attempted succeeded before
-  it was stopped. Needs the scanner-side failure path handled (or restrict to
-  startable servers). Column left open below.
+- **Cisco YARA is pending**: a FRESH scanner clone (newer HEAD) regressed and
+  throws `UnboundLocalError: os` on every target that fails to start (0/8 on
+  set_e2). Root-caused as a version regression -- run_cisco_scanner.py now pins
+  the known-good v4.8.4 (16e684d8bd8f, the 2026-09-11 baseline build) in setup.
+  Re-run after `--setup` re-pins + rebuilds the venv. Column open until then.
 - Units differ (unchanged): ToFu = oracle silent-bug **candidates** (adversarial
   input tripped a sanitizer AND the tool returned success), auto-triaged, NOT
   hand-verified, mandatory layer not subtracted (CLAUDE.md §2). CodeQL = static
@@ -38,6 +39,18 @@ scale; host-39 stays the 4-tool apples-to-apples micro-comparison.
 
 CodeQL's extra reach (154 vs 102) is mostly the 286 repos ToFu never ran +
 static-only classes; not evidence ToFu missed them (it never fuzzed them).
+
+## ToolFuzz — separate axis (correctness, NOT security)
+ToolFuzz (prior work) ran on the VM: **56 repos covered, 2030 correctness
+discrepancies across 43 repos** (0 runtime failures; its own summarizer labels
+these "behaviour observations, not security findings"). It measures whether a
+tool behaves as its *description* says — a different question than ToFu/CodeQL/
+Cisco ask — so it is NOT merged into the security table. Overlap with ToFu's 196:
+only **11 repos**. Reported as a complementary correctness baseline, its own unit.
+
+| tool | axis | count | repos | scope |
+|---|---|---|---|---|
+| ToolFuzz | correctness/description-conformance | 2030 discrepancies | 43 | 56 covered |
 
 ## ToFu candidates by class (harvest, 450 across the 196 — findings/potential/corpus_20260917/)
 security-relevant: log-injection 76, insecure-temp-file 72, ssrf 52,
