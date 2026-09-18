@@ -311,6 +311,15 @@ def one(cfgfile, budget, prov):
         os.makedirs(scratch, exist_ok=True)
         env["PYTHONPATH"] = ROOT + (os.pathsep + env["PYTHONPATH"]
                                     if env.get("PYTHONPATH") else "")
+        # item 91 (env isolation): a fuzzed session/terminal-manager target
+        # inherits $TMUX and drives the HARNESS's OWN tmux server --
+        # nickgnd/tmux-mcp's kill-session/execute-command killed the campaign's
+        # tmux session mid-run (2026-09-18). Detach the child from any tmux and
+        # point tmux at the throwaway scratch, so a target's tmux ops land on an
+        # isolated socket instead of the operator's sessions.
+        env.pop("TMUX", None)
+        env.pop("TMUX_PANE", None)
+        env["TMUX_TMPDIR"] = scratch
 
         p = subprocess.Popen(
             [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
