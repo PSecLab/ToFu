@@ -33,6 +33,18 @@ STATE = os.path.join(EVAL, "state")
 OUT   = os.path.join(EVAL, "runs")
 RUNS  = os.path.join(STATE, "runs.jsonl")
 
+# item 91 -- cwd ISOLATION. In-process Python targets run inside the fuzzer
+# process, so their filesystem ops resolve against the fuzzer's cwd. That cwd
+# used to be ROOT, so a target with a delete/write tool (e.g.
+# UltimateCoderMCP::tool_delete_path, 2026-09-18) fed a traversal/`.` path
+# deleted the HARNESS repo -- it wiped eval/configs, .venv and 116 tracked
+# files mid-run. Each config now runs in a throwaway per-config scratch dir
+# OUTSIDE the repo, so relative-path damage stays in scratch (absolute-path
+# damage still needs a real sandbox -- see nazmul.todo). Kept off the repo tree
+# on purpose; override with TOFU_SCRATCH_ROOT.
+SCRATCH_ROOT = os.environ.get("TOFU_SCRATCH_ROOT") or os.path.join(
+    os.path.expanduser("~"), ".tofu_scratch")
+
 # ARM SCOPING. A model comparison is worthless if two arms write to one index:
 # done_set() would make arm B skip every config arm A already ran, and the
 # summary would average two different models together. --arm NAME (or
@@ -259,6 +271,7 @@ def one(cfgfile, budget, prov):
     rec = {"config": os.path.basename(cfgfile), "started": time.time()}
     rec.update(prov)
     out, rc, timed_out, harness_err = "", None, False, None
+    scratch = None
     try:
         cfg = json.load(open(cfgpath))
         rec.update(repo=cfg.get("_repo"), set=cfg.get("_set"),
@@ -288,10 +301,21 @@ def one(cfgfile, budget, prov):
                            os.path.join(ROOT, "eval", "state", "llm_cache"))
             env["TOFU_LLM_CACHE_KEY"] = os.path.splitext(os.path.basename(cfgfile))[0]
 
+        # item 91: run the fuzzer (and thus any in-process Python target) in a
+        # throwaway per-config scratch dir OUTSIDE the repo, so a target's
+        # relative-path filesystem writes/deletes land in scratch, not the harness
+        # tree. PYTHONPATH carries ROOT so `-m src` still imports; every path the
+        # fuzzer is given (config/corpus/metrics/seeds) is already absolute.
+        scratch = os.path.join(SCRATCH_ROOT, name)
+        shutil.rmtree(scratch, ignore_errors=True)
+        os.makedirs(scratch, exist_ok=True)
+        env["PYTHONPATH"] = ROOT + (os.pathsep + env["PYTHONPATH"]
+                                    if env.get("PYTHONPATH") else "")
+
         p = subprocess.Popen(
             [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
              "--corpus-dir", corpus, "--metrics-dir", metrics],
-            cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
         # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz budget
         # before the whole subprocess is SIGKILLed. atheris caps the fuzz loop at
@@ -314,6 +338,11 @@ def one(cfgfile, budget, prov):
         # A failure HERE is our bug, not the target's. Keep it in its own
         # field so a harness bug can never masquerade as a target result.
         harness_err = f"{type(e).__name__}: {e}"[:300]
+
+    # item 91: drop the throwaway scratch cwd (disposable; whatever the target
+    # wrote/deleted in it goes with it, keeping the harness tree clean).
+    if scratch:
+        shutil.rmtree(scratch, ignore_errors=True)
 
     # The log is written BEFORE parsing, unconditionally -- including on
     # timeout, which the previous version discarded entirely along with any
