@@ -353,6 +353,16 @@ class LLMHandler:
         # stage runs at all on a small local model.
         self.max_json_attempts = int(os.environ.get("TOFU_LLM_JSON_ATTEMPTS", "3"))
         self.json_mode = os.environ.get("TOFU_LLM_JSON_MODE", "1").lower() not in ("0", "false", "no")
+        # Optional replay cache. When TOFU_LLM_CACHE_DIR is set, select_sanitizers
+        # and generate_seeds return the recorded response for TOFU_LLM_CACHE_KEY
+        # (one file per config) instead of calling the model, and write-through on
+        # a miss. A re-run of an already-fuzzed tool then costs ZERO LLM calls; a
+        # tool with no cache entry still calls the model and records it. The cache
+        # is populated live during a run, or retroactively from run logs + corpus
+        # seeds by eval/gen_llm_cache.py. Determinism is unaffected: the cached
+        # response is exactly what temperature=0/seed produced.
+        self.cache_dir = os.environ.get("TOFU_LLM_CACHE_DIR") or None
+        self.cache_key = os.environ.get("TOFU_LLM_CACHE_KEY") or None
         if ChatOpenAI is None:
             raise RuntimeError(
                 "langchain_openai is not importable, so no LLM backend can be "
@@ -624,9 +634,47 @@ class LLMHandler:
                 
         return unique_seeds
 
+    # ------------------------------------------------------------------ cache
+    def _cache_path(self):
+        if not (self.cache_dir and self.cache_key):
+            return None
+        safe = re.sub(r"[^A-Za-z0-9_.-]", "_", self.cache_key)
+        return os.path.join(self.cache_dir, safe + ".json")
+
+    def _cache_load(self):
+        p = self._cache_path()
+        if p and os.path.exists(p):
+            try:
+                with open(p) as f:
+                    return json.load(f)
+            except Exception:
+                return None
+        return None
+
+    def _cache_update(self, **kv):
+        """Merge keys into this config's cache file, atomically. Best-effort."""
+        p = self._cache_path()
+        if not p:
+            return
+        try:
+            os.makedirs(os.path.dirname(p), exist_ok=True)
+            cur = self._cache_load() or {}
+            cur.update(kv)
+            tmp = p + ".tmp"
+            with open(tmp, "w") as f:
+                json.dump(cur, f)
+            os.replace(tmp, p)
+        except Exception as e:
+            logger.debug(f"llm cache write failed for {p}: {e}")
+
     def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict,
                        selected_sanitizers: list = None) -> list:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
+        cached = self._cache_load()
+        if cached is not None and cached.get("seeds") is not None:
+            logging.info(f"LLM_SEEDGEN_CACHE_HIT tool={tool_name} "
+                         f"n_seeds={len(cached['seeds'])} key={self.cache_key}")
+            return cached["seeds"]
         logging.info(f"[LLM] Generation of smart seed corpus for '{tool_name}' using Seed Bank...")
         
         seed_bank = self._load_seed_bank()
@@ -775,6 +823,7 @@ Strict Instructions:
                     f"LLM_SEEDGEN_OK tool={tool_name} attempt={attempt} "
                     f"n_seeds={len(kept)} n_rejected={len(rejected)} "
                     f"validated={int(checked)}")
+                self._cache_update(seeds=kept)
                 return kept
                 
             except Exception as e:
@@ -792,7 +841,15 @@ Strict Instructions:
     def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> tuple:
         """Selects sanitizing functions and their behavioral rules based on docstrings/schemas."""
         logging.info(f"Selecting relevant sanitizers for '{tool_name}'...")
-        
+
+        cached = self._cache_load()
+        if cached is not None and cached.get("selected_sanitizers") is not None:
+            sel = [x for x in cached["selected_sanitizers"] if x in available_sanitizers]
+            rules = {k: v for k, v in (cached.get("rules") or {}).items() if k in sel}
+            logger.info(f"LLM_SELECTION_CACHE_HIT tool={tool_name} "
+                        f"n_selected={len(sel)} key={self.cache_key}")
+            return sel, rules
+
         sanitizers_format = "\n".join([f"- {name}: {desc}" for name, desc in available_sanitizers.items()])
 
         prompt = f"""
@@ -874,6 +931,7 @@ Strict Instructions:
                 )
                 logging.info(f"Sanitizers selected: {valid_selection}")
                 logging.info(f"Sanitizer rules: {valid_rules}")
+                self._cache_update(selected_sanitizers=valid_selection, rules=valid_rules)
                 return valid_selection, valid_rules
             except Exception as e:
                 last_err = e

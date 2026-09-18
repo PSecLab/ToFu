@@ -279,6 +279,14 @@ def one(cfgfile, budget, prov):
             if os.path.isfile(_src) and not os.path.exists(_dst):
                 shutil.copy(_src, _dst)
         env = dict(os.environ, TOFU_SEED_DIR=seeds)
+        # LLM replay cache: one file per config keyed by its name. On a re-run an
+        # already-cached tool costs ZERO LLM calls; a new/uncached tool calls the
+        # model and records it. Default dir under eval/state; opt out by exporting
+        # TOFU_LLM_CACHE_DISABLE=1. See src/llm.py + eval/gen_llm_cache.py.
+        if not os.environ.get("TOFU_LLM_CACHE_DISABLE"):
+            env.setdefault("TOFU_LLM_CACHE_DIR",
+                           os.path.join(ROOT, "eval", "state", "llm_cache"))
+            env["TOFU_LLM_CACHE_KEY"] = os.path.splitext(os.path.basename(cfgfile))[0]
 
         p = subprocess.Popen(
             [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
