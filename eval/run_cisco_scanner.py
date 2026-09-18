@@ -131,6 +131,26 @@ def setup():
         if co.returncode != 0:
             sys.exit(f"could not checkout {CISCO_SCANNER_COMMIT} in {SCANNER}: "
                      f"{co.stderr.strip()[:200]}")
+    # Patch a crash in the scanner itself: cli.py main() has a local `import os`
+    # in the vulnerable-package branch that shadows the module-level os, so under
+    # Python's function scoping EVERY os use earlier in main() -- including
+    # `os.environ["MCP_SCANNER_STDIO_TIMEOUT"] = ...` on the --stdio-timeout path
+    # we always take -- raises UnboundLocalError before a single target is
+    # scanned (0/N every run). Removing the redundant local import fixes it; the
+    # global `import os` covers that branch. Pure crash-fix, no analyzer change.
+    cli = os.path.join(SCANNER, "mcpscanner", "cli.py")
+    try:
+        src = open(cli).read()
+        patched = src.replace(
+            '        elif args.cmd == "vulnerable-package":\n            import os\n',
+            '        elif args.cmd == "vulnerable-package":\n')
+        if patched != src:
+            open(cli, "w").write(patched)
+            log("patched cli.py: removed shadowing local 'import os' (UnboundLocalError)")
+        else:
+            log("cli.py patch: no shadowing 'import os' found (already fixed or moved)")
+    except Exception as e:
+        log(f"WARN: could not patch cli.py ({e})")
     log(f"building scanner venv at {VENV}")
     if shutil.which("uv"):
         cmds = [["uv", "venv", "--python", "3.11", VENV],
