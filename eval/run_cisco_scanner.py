@@ -68,6 +68,10 @@ SCANNER = os.path.join(ROOT, "Benchmarks", "Cisco-MCP-Scanner")
 VENV = os.path.join(SCANNER, ".venv")
 VBIN = os.path.join(VENV, "bin")
 CLI = os.path.join(VBIN, "mcp-scanner")
+# Pin the scanner to the build that produced the 2026-09-11 baseline. HEAD
+# regressed: newer commits throw `UnboundLocalError: os` whenever a target fails
+# to start, so a fresh clone errors every run. Override with CISCO_SCANNER_COMMIT.
+CISCO_SCANNER_COMMIT = os.environ.get("CISCO_SCANNER_COMMIT", "16e684d8bd8f")  # v4.8.4
 
 STATE = os.path.join(ROOT, "eval", "state")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
@@ -114,10 +118,19 @@ def setup():
     quietly change the versions the ToFu campaign runs under -- i.e.
     corrupt the very results this is meant to compare against.
     """
-    if not os.path.isdir(SCANNER):
+    if not os.path.isdir(os.path.join(SCANNER, ".git")):
         sys.exit(f"scanner checkout not found at {SCANNER}\n"
                  "  git clone https://github.com/cisco-ai-defense/mcp-scanner "
                  f"{SCANNER}")
+    # Pin to the known-good commit before building -- HEAD regressed (see above).
+    if CISCO_SCANNER_COMMIT:
+        log(f"pinning scanner to {CISCO_SCANNER_COMMIT} (known-good build)")
+        subprocess.run(["git", "-C", SCANNER, "fetch", "--quiet", "--all"], check=False)
+        co = subprocess.run(["git", "-C", SCANNER, "checkout", "--quiet",
+                             CISCO_SCANNER_COMMIT], capture_output=True, text=True)
+        if co.returncode != 0:
+            sys.exit(f"could not checkout {CISCO_SCANNER_COMMIT} in {SCANNER}: "
+                     f"{co.stderr.strip()[:200]}")
     log(f"building scanner venv at {VENV}")
     if shutil.which("uv"):
         cmds = [["uv", "venv", "--python", "3.11", VENV],
