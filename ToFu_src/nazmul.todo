@@ -44,8 +44,20 @@ finished ones into the archive.
    scratch cwd; keep .env out of any target-reachable cwd.
 
 3. [OPEN] item 94 — PythonStdioRunner fallback. In-process PythonRunner cannot
-   reach servers that build the MCP object inside `if __name__=="__main__"`
-   (e.g. rquest). Add a subprocess/stdio fallback for those.
+   reach servers that build the MCP object inside `main()`/a factory/`__main__`,
+   so importing the module leaves the FastMCP registry empty. Log signature:
+   "Failed to start runner: Could not find callable tool ... (server instance:
+   none found; registered tools: [])" -> the config bails BEFORE LLM selection,
+   so it shows as fast (~3s) llm=unknown in the run summary.
+   IMPACT (measured 2026-09-18, gpt41-corpus run): **592 of 1980 python configs
+   (~30%) fail this way** -- blender-mcp, aliyun/hologres, jvm-mcp-server, ~40
+   repos. Those python targets are NOT fuzzed at all. Not a regression, not a
+   silent-0 (each logs the ERROR honestly), but 30% of python coverage is lost.
+   FIX: when in-process discovery returns registered tools:[], spawn the server
+   as a subprocess + fuzz over MCP stdio (like the node path). Coverage-blind but
+   the oracle still fires. Deferred by Ananto 2026-09-18 (let the current run
+   finish first). ALSO: copy the "Failed to start runner" reason into the index
+   `error` field so these read as in-process-discovery-failed, not bare llm=unknown.
 
 4. [OPEN] item 95 — Viper pyql is broken. `codeql database analyze` exits 2 on
    ALL python repos ("Anchor enrichment skipped: report not found"), so Viper's
