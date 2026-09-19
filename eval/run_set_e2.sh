@@ -38,9 +38,16 @@ python3 Benchmarks/extraction/build_set_e2.py || {
     echo "build_set_e2.py failed -- fix the manifest before spawning"; exit 1; }
 
 PRIO="Benchmarks/extraction/set_e2_tier1_repos.txt"
+UNSAFE="Benchmarks/extraction/set_e2_unsafe_repos.txt"
 echo "== Set E (recalculated) corpus fuzz =="
 echo "   arm=$ARM time=${TOFU_TIME}s workers=$WORKERS slots=$TOFU_JS_COV_SLOTS"
 echo "   priority (tier-1 first): $PRIO"
+echo "   skip (unsafe host-control targets): $UNSAFE"
 echo
 
-exec ./eval/run_arm_gpt41.sh --priority-repos-file "$PRIO" "$@"
+# Skip host-control targets (process spawn/kill, tmux, FS) that crash the harness
+# without a sandbox -- they are recorded as findings, not fuzzed. Set
+# TOFU_FUZZ_UNSAFE=1 to include them (only under a sandbox).
+SKIP_ARG=""
+[ -z "${TOFU_FUZZ_UNSAFE:-}" ] && [ -f "$UNSAFE" ] && SKIP_ARG="--skip-repos-file $UNSAFE"
+exec ./eval/run_arm_gpt41.sh --priority-repos-file "$PRIO" $SKIP_ARG "$@"

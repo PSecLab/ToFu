@@ -30,6 +30,20 @@ PREPARED = os.path.join(ROOT, "eval", "state", "prepared.jsonl")
 OUT = os.path.join(HERE, "set_e2.json")
 REPOS_TXT = os.path.join(HERE, "set_e2_repos.txt")
 TIER1_TXT = os.path.join(HERE, "set_e2_tier1_repos.txt")
+UNSAFE_TXT = os.path.join(HERE, "set_e2_unsafe_repos.txt")
+
+# Host-control targets that CRASH the harness when fuzzed without a sandbox:
+# they spawn/kill processes or drive the host's session, which cwd (item 91) and
+# $TMUX isolation do not contain. Confirmed crashers: UltimateCoderMCP (FS wipe),
+# tmux-mcp (killed the campaign's tmux), ClaudeComputerCommander (start_process/
+# kill_process -> load 26-30 -> Terminated). Any tool name containing one of
+# these marks the repo unsafe-to-fuzz-without-sandbox; skipped via
+# --skip-repos-file until a per-target sandbox lands.
+DANGER_TOOL_SUBSTR = (
+    "kill_process", "force_terminate", "start_process", "kill-session",
+    "kill-server", "kill-window", "kill-pane", "execute_command",
+    "execute-command", "run_command", "spawn", "terminate",
+)
 
 # Same high-value families as build_set_full.py -- every confirmed/potential
 # ToFu finding (V1/V4/V6/V7) lives in one of these.
@@ -82,6 +96,7 @@ def main():
         lang = d.get("lang") or info.get("lang") or ("python" if d.get("python") else "node")
         sinks = info.get("sinks", [])
         tools = d.get("tools") or []
+        unsafe = any(sub in t.lower() for t in tools for sub in DANGER_TOOL_SUBSTR)
         pool.append({
             "repo": repo,
             "lang": lang,
@@ -90,6 +105,7 @@ def main():
             "n_configs": d.get("n_configs") or (len(tools) if tools else 0),
             "commit": d.get("commit"),
             "_tier": 1 if (set(sinks) & PRIORITY_SINKS) else 2,
+            "_unsafe": unsafe,
         })
 
     # 3. coverage matrix (repos per lang x family)
@@ -130,6 +146,8 @@ def main():
         f.write(",".join(p["repo"] for p in chosen))
     with open(TIER1_TXT, "w") as f:
         f.write(",".join(p["repo"] for p in chosen if p["_tier"] == 1))
+    with open(UNSAFE_TXT, "w") as f:
+        f.write(",".join(p["repo"] for p in pool if p.get("_unsafe")))
 
     # 6. report
     byt = collections.Counter(p["_tier"] for p in chosen)

@@ -526,6 +526,11 @@ def main():
                          "_repo matches one run FIRST. Ordering only -- nothing is dropped. "
                          "Use with Benchmarks/extraction/set_e2_repos.txt to fuzz the "
                          "bug-bearing (tier-1) repos before the log/network-only tail.")
+    ap.add_argument("--skip-repos-file", default=None,
+                    help="file with a repo list (comma/newline separated); configs whose "
+                         "_repo matches one are SKIPPED. Use with set_e2_unsafe_repos.txt to "
+                         "exclude host-control targets (process kill/spawn, tmux, FS delete) "
+                         "that crash the harness when fuzzed without a sandbox.")
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--reparse", action="store_true",
                     help="rebuild runs.jsonl from eval/runs/*.log and exit")
@@ -572,6 +577,14 @@ def main():
         before = len(all_cfg)
         all_cfg = [f for f in all_cfg if not any(p in _repo_of(f).lower() for p in pats)]
         log(f"--skip-repo {pats}: dropped {before - len(all_cfg)}, {len(all_cfg)} remain")
+
+    if a.skip_repos_file and os.path.exists(a.skip_repos_file):
+        raw = open(a.skip_repos_file).read()
+        unsafe = {p.strip().lower() for p in raw.replace("\n", ",").split(",") if p.strip()}
+        before = len(all_cfg)
+        all_cfg = [f for f in all_cfg if _repo_of(f).lower() not in unsafe]
+        log(f"--skip-repos-file: dropped {before - len(all_cfg)} unsafe-target configs, "
+            f"{len(all_cfg)} remain")
 
     if a.priority_repos_file:
         raw = open(a.priority_repos_file).read()
