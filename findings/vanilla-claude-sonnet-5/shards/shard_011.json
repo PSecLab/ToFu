@@ -1,0 +1,274 @@
+{
+ "shard_id": "011",
+ "n_repos": 1,
+ "n_configs": 8,
+ "surface_loc": 23230,
+ "repos": [
+  {
+   "repo": "debugg-ai/debugg-ai-mcp",
+   "slug": "debugg-ai__debugg-ai-mcp",
+   "lang": "node",
+   "commit": "db1a130fed99fe86b2f4f0d46db14129266e6cb4",
+   "path": "eval/targets/debugg-ai__debugg-ai-mcp",
+   "surface_loc": 23230,
+   "tools": [
+    {
+     "name": "check_app_in_browser",
+     "description": "Give an AI agent eyes on a live website or app. The agent browses it, interacts with it, and tells you whether a given task or check passed. Works on localhost or any URL. Use for visual QA, flow validation, regression checks, or anything that needs a real browser to verify.\n\nLOCALHOST SUPPORT: Pass any localhost URL (e.g. http://localhost:3000) and it Just Works. A secure tunnel is automatically created so the remote browser can reach your local dev server \u2014 no manual ngrok setup, no port forwarding, no config.\n\nSCOPE PER CALL: Keep each call to ONE focused check \u2014 a single page or a short interaction on a single screen (login, submit a form, verify a heading). For anything spanning multiple pages or long multi-step flows, split into SEPARATE calls \u2014 the remote browser agent has a ~25-step internal budget per call, and long single calls risk client-side timeouts. Example: instead of \"log in, then go to settings, then update profile, then verify,\" make three calls: (1) log in & verify dashboard, (2) update settings, (3) verify profile change.\n\nCREDENTIALS: pass them as PARAMETERS, not only in the description. Naming an account in `description` alone does not make the agent use it \u2014 it falls back to the environment's stored credential. Use `username`/`password` (or `credentialId`) for the run's identity, `auth.username`/`auth.password` to pin the precondition login, and `loginCredentials` for accounts the agent must use at a login form it hits PART-WAY through the task (e.g. set a password \u2192 bounced to sign-in \u2192 log in as the account you just created). Anything you specify beats the environment's default for every login in the run; the result reports the identity actually used under `logins`.",
+     "config": "debugg-ai__debugg-ai-mcp__check_app_in_browser.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 278,
+       "text": "// invocation (list_environments / list_credentials / check_app_in_browser)."
+      },
+      {
+       "file": "tools/environment.ts",
+       "line": 24,
+       "text": "SESSIONS: runs reuse a warm authenticated session per account instead of logging in every time. That is why a check can report \"no login form\" \u2014 it was already signed in. Use \"sessions\" to see whose s"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 6,
+       "text": "const DESCRIPTION = `Look up workflow executions (history of check_app_in_browser, trigger_crawl, and test-suite runs). Pass an \"action\":"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 10,
+       "text": "Tip: after a fresh check_app_in_browser run, poll action:\"get\" with the returned executionId until artifact URLs are available.`;"
+      },
+      {
+       "file": "tools/triggerCrawl.ts",
+       "line": 17,
+       "text": "WHEN TO USE: after a significant new feature, a new environment, or when onboarding a project. NOT for per-change verification \u2014 use check_app_in_browser for that."
+      }
+     ]
+    },
+    {
+     "name": "environment",
+     "description": "Manage environments (and their login credentials) under a project. Pass an \"action\":\n  - \"get\"    {uuid, projectUuid?} \u2192 one environment with credentials inline (passwords never returned).\n  - \"list\"   {projectUuid?, q?, page?, pageSize?} \u2192 paginated environments. projectUuid auto-resolves from the git repo if omitted.\n  - \"create\" {name, url, description?, projectUuid?, credentials?} \u2192 create an env, optionally seeding credentials.\n  - \"update\" {uuid, name?, url?, description?, addCredentials?, updateCredentials?, removeCredentialIds?} \u2192 patch env + manage credentials.\n  - \"delete\" {uuid, projectUuid?, confirm?} \u2192 delete env (DESTRUCTIVE; requires confirmation).\n  - \"sessions\" {uuid, username?, credentialId?} \u2192 captured login sessions this env is holding, and whether each would be reused.\n  - \"clearSessions\" {uuid, username?, credentialId?, confirm?} \u2192 invalidate them so the next run logs in for real.\n\nSESSIONS: runs reuse a warm authenticated session per account instead of logging in every time. That is why a check can report \"no login form\" \u2014 it was already signed in. Use \"sessions\" to see whose session is held, \"clearSessions\" to drop it, or pass freshSession:true on a single check_app_in_browser call to bypass reuse without clearing anything.",
+     "config": "debugg-ai__debugg-ai-mcp__environment.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 204,
+       "text": "// Resources (epic pglam): browse projects/environments/executions as"
+      },
+      {
+       "file": "index.ts",
+       "line": 248,
+       "text": "// stdio is single-user: the API key comes from the environment and is"
+      },
+      {
+       "file": "index.ts",
+       "line": 278,
+       "text": "// invocation (list_environments / list_credentials / check_app_in_browser)."
+      },
+      {
+       "file": "tools/environment.ts",
+       "line": 3,
+       "text": "import { environmentHandler } from '../handlers/environmentHandler.js';"
+      },
+      {
+       "file": "tools/environment.ts",
+       "line": 15,
+       "text": "const DESCRIPTION = `Manage environments (and their login credentials) under a project. Pass an \"action\":"
+      }
+     ]
+    },
+    {
+     "name": "executions",
+     "description": "Look up workflow executions (history of check_app_in_browser, trigger_crawl, and test-suite runs). Pass an \"action\":\n  - \"get\"  {uuid} \u2192 one execution with FULL detail (nodeExecutions, state, errorInfo) + any screenshot/gif artifacts.\n  - \"list\" {projectUuid?, status?, page?, pageSize?} \u2192 paginated execution summaries. status \u2208 completed|running|failed|cancelled|pending.\n\nTip: after a fresh check_app_in_browser run, poll action:\"get\" with the returned executionId until artifact URLs are available.",
+     "config": "debugg-ai__debugg-ai-mcp__executions.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 204,
+       "text": "// Resources (epic pglam): browse projects/environments/executions as"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 3,
+       "text": "import { executionsHandler } from '../handlers/executionsHandler.js';"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 6,
+       "text": "const DESCRIPTION = `Look up workflow executions (history of check_app_in_browser, trigger_crawl, and test-suite runs). Pass an \"action\":"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 14,
+       "text": "name: 'executions',"
+      },
+      {
+       "file": "tools/executions.ts",
+       "line": 39,
+       "text": "return { ...buildExecutionsTool(), inputSchema: ExecutionsInputSchema, handler: executionsHandler };"
+      }
+     ]
+    },
+    {
+     "name": "probe_page",
+     "description": "Probe one or more URLs and return their rendered state \u2014 screenshot, page metadata (title/finalUrl/statusCode/loadTimeMs), structured console errors, and per-URL network summary (refetch loops collapse into one row by origin+pathname).\n\nWHEN TO USE: \"did I just break /settings?\" / \"smoke-test these 5 routes after my refactor\" / \"what's actually rendering at /dashboard?\" \u2014 fast (<10s for 1 URL, <25s for 20), no LLM cost, no agent loop.\n\nNOT FOR: scenario verification (sign in \u2192 click X \u2192 assert Y), interaction (clicks, form fills, scrolls), or anything requiring agent decisions. Use check_app_in_browser for those.\n\nLOCALHOST SUPPORT: any localhost URL is auto-tunneled. Pre-flight TCP probe fails fast (<2s) if the dev server isn't listening.\n\nBATCH MODE: pass up to 20 targets in one call to share browser session + tunnel \u2014 dramatically faster than firing parallel single-URL probes (one execution unit, not N). Per-URL waitForSelector / waitForLoadState / timeoutMs override defaults.\n\nREADINESS: navigation settles on CONTENT (the page's DOM going quiet), bounded \u2014 not on network silence, which never arrives on a live app, and not on 'load', which blocks on third-party embeds. The default is right for SPAs; reach for waitForSelector, not waitForLoadState, when you need to wait for something specific.\n\nA single failed target's error appears in result.error without failing the whole batch \u2014 the other results stay valid.",
+     "config": "debugg-ai__debugg-ai-mcp__probe_page.json",
+     "hints": [
+      {
+       "file": "tools/probePage.ts",
+       "line": 58,
+       "text": "name: 'probe_page',"
+      },
+      {
+       "file": "scripts/evals/flows/01-protocol.mjs",
+       "line": 12,
+       "text": "'probe_page',"
+      },
+      {
+       "file": "scripts/evals/flows/62-probe-page.mjs",
+       "line": 2,
+       "text": "* probe_page integration tests \u2014 Phase 2.2 of /feature-lifecycle probe-page."
+      },
+      {
+       "file": "scripts/evals/flows/62-probe-page.mjs",
+       "line": 16,
+       "text": "* 'Unknown tool' error since probe_page isn't in the roster yet."
+      },
+      {
+       "file": "scripts/evals/flows/62-probe-page.mjs",
+       "line": 87,
+       "text": "description: 'probe_page surface coverage: tool registered + single URL + rich-content aggregation + batch + pre-flight failure',"
+      }
+     ]
+    },
+    {
+     "name": "project",
+     "description": "Manage DebuggAI projects. Pass an \"action\":\n  - \"get\"    {uuid} \u2192 one project with full detail.\n  - \"list\"   {q?, page?, pageSize?} \u2192 paginated project summaries.\n  - \"create\" {name, platform, (teamUuid|teamName), (repoUuid|repoName)} \u2192 create a project. The repo must be GitHub-linked; names resolve by case-insensitive exact match.\n\nNote: there is no update/delete here \u2014 rename/delete a project from the DebuggAI web app.",
+     "config": "debugg-ai__debugg-ai-mcp__project.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 204,
+       "text": "// Resources (epic pglam): browse projects/environments/executions as"
+      },
+      {
+       "file": "index.ts",
+       "line": 257,
+       "text": "// Initialize telemetry: PostHog by default (public project key embedded"
+      },
+      {
+       "file": "index.ts",
+       "line": 270,
+       "text": "? 'Telemetry enabled (PostHog, DebuggAI default project). Set DEBUGGAI_TELEMETRY_DISABLED=1 to opt out.'"
+      },
+      {
+       "file": "config/index.ts",
+       "line": 28,
+       "text": "* Public PostHog project key (write-only). Embedded so every MCP install"
+      },
+      {
+       "file": "config/index.ts",
+       "line": 33,
+       "text": "* Safe to embed: this is a `phc_*` project key (PostHog's client-side"
+      }
+     ]
+    },
+    {
+     "name": "test_case",
+     "description": "Manage individual test cases within a suite. Pass an \"action\":\n  - \"create\" {name, description, agentTaskDescription, suiteUuid|(suiteName+project), relativeUrl?, maxSteps?} \u2192 add a test case (NOT auto-run).\n  - \"update\" {testUuid, name?, description?, agentTaskDescription?} \u2192 patch a test case.\n  - \"delete\" {testUuid, confirm?} \u2192 soft-delete (DESTRUCTIVE; requires confirmation).",
+     "config": "debugg-ai__debugg-ai-mcp__test_case.json",
+     "hints": [
+      {
+       "file": "tools/testCase.ts",
+       "line": 13,
+       "text": "name: 'test_case',"
+      },
+      {
+       "file": "tools/index.ts",
+       "line": 47,
+       "text": "* tool per managed entity (project/environment/test_suite/test_case/executions),"
+      },
+      {
+       "file": "handlers/createTestCaseHandler.ts",
+       "line": 19,
+       "text": "logger.toolStart('create_test_case', input);"
+      },
+      {
+       "file": "handlers/createTestCaseHandler.ts",
+       "line": 48,
+       "text": "logger.toolComplete('create_test_case', Date.now() - start);"
+      },
+      {
+       "file": "handlers/createTestCaseHandler.ts",
+       "line": 51,
+       "text": "logger.toolError('create_test_case', error as Error, Date.now() - start);"
+      }
+     ]
+    },
+    {
+     "name": "test_suite",
+     "description": "Manage and run test suites. Identify a suite by suiteUuid, or suiteName + a project identifier (projectUuid|projectName). Pass an \"action\":\n  - \"list\"    {projectUuid|projectName, search?, page?, pageSize?} \u2192 paginated suites with status/pass-rate.\n  - \"create\"  {name, description, projectUuid|projectName} \u2192 create a suite.\n  - \"run\"     {suiteUuid|(suiteName+project), targetUrl?} \u2192 run all tests async. Poll with action:\"results\".\n  - \"results\" {suiteUuid|(suiteName+project)} \u2192 suite + per-test outcomes.\n  - \"delete\"  {suiteUuid|(suiteName+project), confirm?} \u2192 soft-delete (DESTRUCTIVE; requires confirmation).",
+     "config": "debugg-ai__debugg-ai-mcp__test_suite.json",
+     "hints": [
+      {
+       "file": "tools/index.ts",
+       "line": 47,
+       "text": "* tool per managed entity (project/environment/test_suite/test_case/executions),"
+      },
+      {
+       "file": "tools/testSuite.ts",
+       "line": 24,
+       "text": "name: 'test_suite',"
+      },
+      {
+       "file": "utils/tunnelDisposition.ts",
+       "line": 97,
+       "text": "* them (run_test_suite had already drifted: it evicted on every failure and never"
+      },
+      {
+       "file": "handlers/testSuiteHandler.ts",
+       "line": 2,
+       "text": "* test_suite tool dispatcher (epic yg7o6, C3)."
+      },
+      {
+       "file": "handlers/triggerCrawlHandler.ts",
+       "line": 165,
+       "text": "// fire-and-forget exception \u2014 only run_test_suite is, \u00a72.3)."
+      }
+     ]
+    },
+    {
+     "name": "trigger_crawl",
+     "description": "Trigger a browser-agent crawl of a web app to build the project's knowledge graph. The crawl systematically explores pages, UI states, and navigation flows, then populates the backend's knowledge graph so future evaluations and tests have context about the app.\n\nLOCALHOST SUPPORT: Pass any localhost URL (e.g. http://localhost:3000) and it Just Works. A secure tunnel is automatically created so the remote browser can reach your local dev server.\n\nWHEN TO USE: after a significant new feature, a new environment, or when onboarding a project. NOT for per-change verification \u2014 use check_app_in_browser for that.\n\nSCOPE: one crawl per call against one URL. The crawl is long-running (minutes to tens of minutes depending on app size) and populates backend state asynchronously; the tool returns the execution status once the workflow completes. This does NOT return pass/fail \u2014 it returns executionId + status + outcome.",
+     "config": "debugg-ai__debugg-ai-mcp__trigger_crawl.json",
+     "hints": [
+      {
+       "file": "tools/executions.ts",
+       "line": 6,
+       "text": "const DESCRIPTION = `Look up workflow executions (history of check_app_in_browser, trigger_crawl, and test-suite runs). Pass an \"action\":"
+      },
+      {
+       "file": "tools/triggerCrawl.ts",
+       "line": 3,
+       "text": "* Defines the trigger_crawl tool with proper validation."
+      },
+      {
+       "file": "tools/triggerCrawl.ts",
+       "line": 48,
+       "text": "name: 'trigger_crawl',"
+      },
+      {
+       "file": "scripts/evals/flows/23-crawl-trigger.mjs",
+       "line": 2,
+       "text": "* End-to-end proof for trigger_crawl against a public URL."
+      },
+      {
+       "file": "scripts/evals/flows/23-crawl-trigger.mjs",
+       "line": 21,
+       "text": "description: 'trigger_crawl happy path against a public URL; full backend execute+poll',"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2713 @@
+{
+ "shard_id": "059",
+ "n_repos": 10,
+ "n_configs": 145,
+ "surface_loc": 18121,
+ "repos": [
+  {
+   "repo": "aptro/superset-mcp",
+   "slug": "aptro__superset-mcp",
+   "lang": "python",
+   "commit": "b3dd4250b5313203aa1a23928e1e28a40e4fd9c5",
+   "path": "eval/targets/aptro__superset-mcp",
+   "surface_loc": 1844,
+   "tools": [
+    {
+     "name": "superset_activity_get_recent",
+     "description": "\nGet recent activity data for the current user\n\nMakes a request to the /api/v1/log/recent_activity/ endpoint to retrieve\na history of actions performed by the current user.\n\nReturns:\n    A dictionary with recent user activities including viewed charts and dashboards\n",
+     "config": "aptro__superset-mcp__superset_activity_get_recent.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1456,
+       "text": "async def superset_activity_get_recent(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_advanced_data_type_convert",
+     "description": "\nConvert a value to an advanced data type\n\nMakes a request to the /api/v1/advanced_data_type/convert endpoint to transform\na value into the specified advanced data type format.\n\nArgs:\n    type_name: Name of the advanced data type\n    value: Value to convert\n\nReturns:\n    A dictionary with the converted value\n",
+     "config": "aptro__superset-mcp__superset_advanced_data_type_convert.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1800,
+       "text": "async def superset_advanced_data_type_convert("
+      }
+     ]
+    },
+    {
+     "name": "superset_advanced_data_type_list",
+     "description": "\nGet list of available advanced data types\n\nMakes a request to the /api/v1/advanced_data_type/types endpoint to retrieve\nall advanced data types supported by this Superset instance.\n\nReturns:\n    A dictionary with available advanced data types and their configurations\n",
+     "config": "aptro__superset-mcp__superset_advanced_data_type_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1829,
+       "text": "async def superset_advanced_data_type_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_auth_authenticate_user",
+     "description": "\nAuthenticate with Superset and get access token\n\nMakes a request to the /api/v1/security/login endpoint to authenticate and obtain an access token.\nIf there's an existing token, will first try to check its validity.\nIf invalid, will attempt to refresh token before falling back to re-authentication.\n\nArgs:\n    username: Superset username (falls back to environment variable if not provided)\n    password: Superset password (falls back to environment variable if not provided)\n    refresh: Whether to refresh the token if invalid (defaults to True)\n\nReturns:\n    A dictionary with authentication status and access token or error information\n",
+     "config": "aptro__superset-mcp__superset_auth_authenticate_user.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 232,
+       "text": "auth_result = await superset_auth_authenticate_user(ctx)"
+      },
+      {
+       "file": "main.py",
+       "line": 415,
+       "text": "async def superset_auth_authenticate_user("
+      }
+     ]
+    },
+    {
+     "name": "superset_auth_check_token_validity",
+     "description": "\nCheck if the current access token is still valid\n\nMakes a request to the /api/v1/me/ endpoint to test if the current token is valid.\nUse this to verify authentication status before making other API calls.\n\nReturns:\n    A dictionary with token validity status and any error information\n",
+     "config": "aptro__superset-mcp__superset_auth_check_token_validity.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 337,
+       "text": "async def superset_auth_check_token_validity(ctx: Context) -> Dict[str, Any]:"
+      },
+      {
+       "file": "main.py",
+       "line": 440,
+       "text": "validity = await superset_auth_check_token_validity(ctx)"
+      }
+     ]
+    },
+    {
+     "name": "superset_auth_refresh_token",
+     "description": "\nRefresh the access token using the refresh endpoint\n\nMakes a request to the /api/v1/security/refresh endpoint to get a new access token\nwithout requiring re-authentication with username/password.\n\nReturns:\n    A dictionary with the new access token or error information\n",
+     "config": "aptro__superset-mcp__superset_auth_refresh_token.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 225,
+       "text": "refresh_result = await superset_auth_refresh_token(ctx)"
+      },
+      {
+       "file": "main.py",
+       "line": 370,
+       "text": "async def superset_auth_refresh_token(ctx: Context) -> Dict[str, Any]:"
+      },
+      {
+       "file": "main.py",
+       "line": 450,
+       "text": "refresh_result = await superset_auth_refresh_token(ctx)"
+      }
+     ]
+    },
+    {
+     "name": "superset_chart_create",
+     "description": "\nCreate a new chart in Superset\n\nMakes a request to the /api/v1/chart/ POST endpoint to create a new visualization.\n\nArgs:\n    slice_name: Name/title of the chart\n    datasource_id: ID of the dataset or SQL table\n    datasource_type: Type of datasource ('table' for datasets, 'query' for SQL)\n    viz_type: Visualization type (e.g., 'bar', 'line', 'pie', 'big_number', etc.)\n    params: Visualization parameters including metrics, groupby, time_range, etc.\n\nReturns:\n    A dictionary with the created chart information including its ID\n",
+     "config": "aptro__superset-mcp__superset_chart_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 662,
+       "text": "async def superset_chart_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_chart_delete",
+     "description": "\nDelete a chart\n\nMakes a request to the /api/v1/chart/{id} DELETE endpoint to remove a chart.\nThis operation is permanent and cannot be undone.\n\nArgs:\n    chart_id: ID of the chart to delete\n\nReturns:\n    A dictionary with deletion confirmation message\n",
+     "config": "aptro__superset-mcp__superset_chart_delete.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 721,
+       "text": "async def superset_chart_delete(ctx: Context, chart_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_chart_get_by_id",
+     "description": "\nGet details for a specific chart\n\nMakes a request to the /api/v1/chart/{id} endpoint to retrieve detailed\ninformation about a specific chart/slice.\n\nArgs:\n    chart_id: ID of the chart to retrieve\n\nReturns:\n    A dictionary with complete chart information including visualization configuration\n",
+     "config": "aptro__superset-mcp__superset_chart_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 643,
+       "text": "async def superset_chart_get_by_id(ctx: Context, chart_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_chart_list",
+     "description": "\nGet a list of charts from Superset\n\nMakes a request to the /api/v1/chart/ endpoint to retrieve all charts\nthe current user has access to view. Results are paginated.\n\nReturns:\n    A dictionary containing chart data including id, slice_name, viz_type, and datasource info\n",
+     "config": "aptro__superset-mcp__superset_chart_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 627,
+       "text": "async def superset_chart_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_chart_update",
+     "description": "\nUpdate an existing chart\n\nMakes a request to the /api/v1/chart/{id} PUT endpoint to update\nchart properties and visualization settings.\n\nArgs:\n    chart_id: ID of the chart to update\n    data: Data to update, can include slice_name, description, viz_type, params, etc.\n\nReturns:\n    A dictionary with the updated chart information\n",
+     "config": "aptro__superset-mcp__superset_chart_update.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 699,
+       "text": "async def superset_chart_update("
+      }
+     ]
+    },
+    {
+     "name": "superset_config_get_base_url",
+     "description": "\nGet the base URL of the Superset instance\n\nReturns the configured Superset base URL that this MCP server is connecting to.\nThis can be useful for constructing full URLs to Superset resources or for\ndisplaying information about the connected instance.\n\nThis tool does not require authentication as it only returns configuration information.\n\nReturns:\n    A dictionary with the Superset base URL\n",
+     "config": "aptro__superset-mcp__superset_config_get_base_url.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1773,
+       "text": "async def superset_config_get_base_url(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_dashboard_create",
+     "description": "\nCreate a new dashboard in Superset\n\nMakes a request to the /api/v1/dashboard/ POST endpoint to create a new dashboard.\n\nArgs:\n    dashboard_title: Title of the dashboard\n    json_metadata: Optional JSON metadata for dashboard configuration,\n                   can include layout, color scheme, and filter configuration\n\nReturns:\n    A dictionary with the created dashboard information including its ID\n",
+     "config": "aptro__superset-mcp__superset_dashboard_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 547,
+       "text": "async def superset_dashboard_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_dashboard_delete",
+     "description": "\nDelete a dashboard\n\nMakes a request to the /api/v1/dashboard/{id} DELETE endpoint to remove a dashboard.\nThis operation is permanent and cannot be undone.\n\nArgs:\n    dashboard_id: ID of the dashboard to delete\n\nReturns:\n    A dictionary with deletion confirmation message\n",
+     "config": "aptro__superset-mcp__superset_dashboard_delete.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 597,
+       "text": "async def superset_dashboard_delete(ctx: Context, dashboard_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_dashboard_get_by_id",
+     "description": "\nGet details for a specific dashboard\n\nMakes a request to the /api/v1/dashboard/{id} endpoint to retrieve detailed\ninformation about a specific dashboard.\n\nArgs:\n    dashboard_id: ID of the dashboard to retrieve\n\nReturns:\n    A dictionary with complete dashboard information including components and layout\n",
+     "config": "aptro__superset-mcp__superset_dashboard_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 526,
+       "text": "async def superset_dashboard_get_by_id("
+      }
+     ]
+    },
+    {
+     "name": "superset_dashboard_list",
+     "description": "\nGet a list of dashboards from Superset\n\nMakes a request to the /api/v1/dashboard/ endpoint to retrieve all dashboards\nthe current user has access to view. Results are paginated.\n\nReturns:\n    A dictionary containing dashboard data including id, title, url, and metadata\n",
+     "config": "aptro__superset-mcp__superset_dashboard_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 510,
+       "text": "async def superset_dashboard_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_dashboard_update",
+     "description": "\nUpdate an existing dashboard\n\nMakes a request to the /api/v1/dashboard/{id} PUT endpoint to update\ndashboard properties.\n\nArgs:\n    dashboard_id: ID of the dashboard to update\n    data: Data to update, can include dashboard_title, slug, owners, position, and metadata\n\nReturns:\n    A dictionary with the updated dashboard information\n",
+     "config": "aptro__superset-mcp__superset_dashboard_update.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 573,
+       "text": "async def superset_dashboard_update("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_create",
+     "description": "\nCreate a new database connection in Superset\n\nIMPORTANT: Don't call this tool, unless user have given connection details. This function will only create database connections with explicit user consent and input.\nNo default values or assumptions will be made without user confirmation. All connection parameters,\nincluding sensitive credentials, must be explicitly provided by the user.\n\nMakes a POST request to /api/v1/database/ to create a new database connection in Superset.\nThe endpoint requires a valid SQLAlchemy URI and database configuration parameters.\nThe engine parameter will be automatically determined from the SQLAlchemy URI prefix if not specified:\n- 'postgresql://' -> engine='postgresql'\n- 'mysql://' -> engine='mysql'\n- 'mssql://' -> engine='mssql'\n- 'oracle://' -> engine='oracle'\n- 'sqlite://' -> engine='sqlite'\n\nThe SQLAlchemy URI must follow the format: dialect+driver://username:password@host:port/database\nIf the URI is not provided, the function will prompt for individual connection parameters to construct it.\n\nAll required parameters must be provided and validated before creating the connection.\nThe configuration_method parameter should typically be set to 'sqlalchemy_form'.\n\nArgs:\n    engine: Database engine (e.g., 'postgresql', 'mysql', etc.)\n    configuration_method: Method used for configuration (typically 'sqlalchemy_form')\n    database_name: Name for the database connection\n    sqlalchemy_uri: SQLAlchemy URI for the connection (e.g., 'postgresql://user:pass@host/db')\n\nReturns:\n    A dictionary with the created database connection information including its ID\n",
+     "config": "aptro__superset-mcp__superset_database_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 783,
+       "text": "async def superset_database_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_delete",
+     "description": "\nDelete a database connection\n\nMakes a request to the /api/v1/database/{id} DELETE endpoint to remove a database connection.\nThis operation is permanent and cannot be undone. This will also remove associated datasets.\n\nArgs:\n    database_id: ID of the database to delete\n\nReturns:\n    A dictionary with deletion confirmation message\n",
+     "config": "aptro__superset-mcp__superset_database_delete.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 927,
+       "text": "async def superset_database_delete(ctx: Context, database_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_by_id",
+     "description": "\nGet details for a specific database\n\nMakes a request to the /api/v1/database/{id} endpoint to retrieve detailed\ninformation about a specific database connection.\n\nArgs:\n    database_id: ID of the database to retrieve\n\nReturns:\n    A dictionary with complete database configuration information\n",
+     "config": "aptro__superset-mcp__superset_database_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 764,
+       "text": "async def superset_database_get_by_id(ctx: Context, database_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_catalogs",
+     "description": "\nGet all catalogs from a database\n\nMakes a request to the /api/v1/database/{id}/catalogs/ endpoint to retrieve\nall catalogs available in the database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with list of catalog names for databases that support catalogs\n",
+     "config": "aptro__superset-mcp__superset_database_get_catalogs.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 951,
+       "text": "async def superset_database_get_catalogs("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_connection",
+     "description": "\nGet database connection information\n\nMakes a request to the /api/v1/database/{id}/connection endpoint to retrieve\nconnection details for a specific database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with detailed connection information\n",
+     "config": "aptro__superset-mcp__superset_database_get_connection.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 974,
+       "text": "async def superset_database_get_connection("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_function_names",
+     "description": "\nGet function names supported by a database\n\nMakes a request to the /api/v1/database/{id}/function_names/ endpoint to retrieve\nall SQL functions supported by the database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with list of supported function names\n",
+     "config": "aptro__superset-mcp__superset_database_get_function_names.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 997,
+       "text": "async def superset_database_get_function_names("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_related_objects",
+     "description": "\nGet charts and dashboards associated with a database\n\nMakes a request to the /api/v1/database/{id}/related_objects/ endpoint to retrieve\ncounts and references of charts and dashboards that depend on this database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with counts and lists of related charts and dashboards\n",
+     "config": "aptro__superset-mcp__superset_database_get_related_objects.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1020,
+       "text": "async def superset_database_get_related_objects("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_get_tables",
+     "description": "\nGet a list of tables for a given database\n\nMakes a request to the /api/v1/database/{id}/tables/ endpoint to retrieve\nall tables available in the database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with list of tables including schema and table name information\n",
+     "config": "aptro__superset-mcp__superset_database_get_tables.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 838,
+       "text": "async def superset_database_get_tables("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_list",
+     "description": "\nGet a list of databases from Superset\n\nMakes a request to the /api/v1/database/ endpoint to retrieve all database\nconnections the current user has access to. Results are paginated.\n\nReturns:\n    A dictionary containing database connection information including id, name, and configuration\n",
+     "config": "aptro__superset-mcp__superset_database_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 748,
+       "text": "async def superset_database_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_database_schemas",
+     "description": "\nGet schemas for a specific database\n\nMakes a request to the /api/v1/database/{id}/schemas/ endpoint to retrieve\nall schemas available in the database.\n\nArgs:\n    database_id: ID of the database\n\nReturns:\n    A dictionary with list of schema names\n",
+     "config": "aptro__superset-mcp__superset_database_schemas.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 859,
+       "text": "async def superset_database_schemas(ctx: Context, database_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_database_test_connection",
+     "description": "\nTest a database connection\n\nMakes a request to the /api/v1/database/test_connection endpoint to verify if\nthe provided connection details can successfully connect to the database.\n\nArgs:\n    database_data: Database connection details including sqlalchemy_uri and other parameters\n\nReturns:\n    A dictionary with connection test results\n",
+     "config": "aptro__superset-mcp__superset_database_test_connection.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 880,
+       "text": "async def superset_database_test_connection("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_update",
+     "description": "\nUpdate an existing database connection\n\nMakes a request to the /api/v1/database/{id} PUT endpoint to update\ndatabase connection properties.\n\nArgs:\n    database_id: ID of the database to update\n    data: Data to update, can include database_name, sqlalchemy_uri, password, and extra configs\n\nReturns:\n    A dictionary with the updated database information\n",
+     "config": "aptro__superset-mcp__superset_database_update.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 903,
+       "text": "async def superset_database_update("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_validate_parameters",
+     "description": "\nValidate database connection parameters\n\nMakes a request to the /api/v1/database/validate_parameters/ endpoint to verify\nif the provided connection parameters are valid without creating a connection.\n\nArgs:\n    parameters: Connection parameters to validate\n\nReturns:\n    A dictionary with validation results\n",
+     "config": "aptro__superset-mcp__superset_database_validate_parameters.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1068,
+       "text": "async def superset_database_validate_parameters("
+      }
+     ]
+    },
+    {
+     "name": "superset_database_validate_sql",
+     "description": "\nValidate arbitrary SQL against a database\n\nMakes a request to the /api/v1/database/{id}/validate_sql/ endpoint to check\nif the provided SQL is valid for the specified database.\n\nArgs:\n    database_id: ID of the database\n    sql: SQL query to validate\n\nReturns:\n    A dictionary with validation results\n",
+     "config": "aptro__superset-mcp__superset_database_validate_sql.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1043,
+       "text": "async def superset_database_validate_sql("
+      }
+     ]
+    },
+    {
+     "name": "superset_dataset_create",
+     "description": "\nCreate a new dataset in Superset\n\nMakes a request to the /api/v1/dataset/ POST endpoint to create a new dataset\nfrom an existing database table or view.\n\nArgs:\n    table_name: Name of the physical table in the database\n    database_id: ID of the database where the table exists\n    schema: Optional database schema name where the table is located\n    owners: Optional list of user IDs who should own this dataset\n\nReturns:\n    A dictionary with the created dataset information including its ID\n",
+     "config": "aptro__superset-mcp__superset_dataset_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1129,
+       "text": "async def superset_dataset_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_dataset_get_by_id",
+     "description": "\nGet details for a specific dataset\n\nMakes a request to the /api/v1/dataset/{id} endpoint to retrieve detailed\ninformation about a specific dataset including columns and metrics.\n\nArgs:\n    dataset_id: ID of the dataset to retrieve\n\nReturns:\n    A dictionary with complete dataset information\n",
+     "config": "aptro__superset-mcp__superset_dataset_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1110,
+       "text": "async def superset_dataset_get_by_id(ctx: Context, dataset_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_dataset_list",
+     "description": "\nGet a list of datasets from Superset\n\nMakes a request to the /api/v1/dataset/ endpoint to retrieve all datasets\nthe current user has access to view. Results are paginated.\n\nReturns:\n    A dictionary containing dataset information including id, table_name, and database\n",
+     "config": "aptro__superset-mcp__superset_dataset_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1094,
+       "text": "async def superset_dataset_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_explore_form_data_create",
+     "description": "\nCreate form data for chart exploration\n\nMakes a request to the /api/v1/explore/form_data POST endpoint to store\nchart configuration data temporarily.\n\nArgs:\n    form_data: Chart configuration including datasource, metrics, and visualization settings\n\nReturns:\n    A dictionary with a key that can be used to retrieve the form data\n",
+     "config": "aptro__superset-mcp__superset_explore_form_data_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1670,
+       "text": "async def superset_explore_form_data_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_explore_form_data_get",
+     "description": "\nGet form data for chart exploration\n\nMakes a request to the /api/v1/explore/form_data/{key} endpoint to retrieve\npreviously stored chart configuration.\n\nArgs:\n    key: Key of the form data to retrieve\n\nReturns:\n    A dictionary with the stored chart configuration\n",
+     "config": "aptro__superset-mcp__superset_explore_form_data_get.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1693,
+       "text": "async def superset_explore_form_data_get(ctx: Context, key: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_explore_permalink_create",
+     "description": "\nCreate a permalink for chart exploration\n\nMakes a request to the /api/v1/explore/permalink POST endpoint to generate\na shareable link to a specific chart exploration state.\n\nArgs:\n    state: State data for the permalink including form_data\n\nReturns:\n    A dictionary with a key that can be used to access the permalink\n",
+     "config": "aptro__superset-mcp__superset_explore_permalink_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1712,
+       "text": "async def superset_explore_permalink_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_explore_permalink_get",
+     "description": "\nGet a permalink for chart exploration\n\nMakes a request to the /api/v1/explore/permalink/{key} endpoint to retrieve\na previously saved exploration state.\n\nArgs:\n    key: Key of the permalink to retrieve\n\nReturns:\n    A dictionary with the stored exploration state\n",
+     "config": "aptro__superset-mcp__superset_explore_permalink_get.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1733,
+       "text": "async def superset_explore_permalink_get(ctx: Context, key: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_menu_get",
+     "description": "\nGet the Superset menu data\n\nMakes a request to the /api/v1/menu/ endpoint to retrieve the navigation\nmenu structure based on user permissions.\n\nReturns:\n    A dictionary with menu items and their configurations\n",
+     "config": "aptro__superset-mcp__superset_menu_get.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1755,
+       "text": "async def superset_menu_get(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_query_get_by_id",
+     "description": "\nGet details for a specific query\n\nMakes a request to the /api/v1/query/{id} endpoint to retrieve detailed\ninformation about a specific query execution.\n\nArgs:\n    query_id: ID of the query to retrieve\n\nReturns:\n    A dictionary with complete query execution information\n",
+     "config": "aptro__superset-mcp__superset_query_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1434,
+       "text": "async def superset_query_get_by_id(ctx: Context, query_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_query_list",
+     "description": "\nGet a list of queries from Superset\n\nMakes a request to the /api/v1/query/ endpoint to retrieve query history.\nResults are paginated and include both finished and running queries.\n\nReturns:\n    A dictionary containing query information including status, duration, and SQL\n",
+     "config": "aptro__superset-mcp__superset_query_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1418,
+       "text": "async def superset_query_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_query_stop",
+     "description": "\nStop a running query\n\nMakes a request to the /api/v1/query/stop endpoint to terminate a query that\nis currently running.\n\nArgs:\n    client_id: Client ID of the query to stop\n\nReturns:\n    A dictionary with confirmation of query termination\n",
+     "config": "aptro__superset-mcp__superset_query_stop.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1398,
+       "text": "async def superset_query_stop(ctx: Context, client_id: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_saved_query_create",
+     "description": "\nCreate a new saved query\n\nMakes a request to the /api/v1/saved_query/ POST endpoint to save a SQL query\nfor later reuse.\n\nArgs:\n    query_data: Dictionary containing the query information including:\n               - db_id: Database ID\n               - schema: Schema name (optional)\n               - sql: SQL query text\n               - label: Display name for the saved query\n               - description: Optional description of the query\n\nReturns:\n    A dictionary with the created saved query information including its ID\n",
+     "config": "aptro__superset-mcp__superset_saved_query_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1369,
+       "text": "async def superset_saved_query_create("
+      }
+     ]
+    },
+    {
+     "name": "superset_saved_query_get_by_id",
+     "description": "\nGet details for a specific saved query\n\nMakes a request to the /api/v1/saved_query/{id} endpoint to retrieve information\nabout a saved SQL query.\n\nArgs:\n    query_id: ID of the saved query to retrieve\n\nReturns:\n    A dictionary with the saved query details including SQL text and database\n",
+     "config": "aptro__superset-mcp__superset_saved_query_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1350,
+       "text": "async def superset_saved_query_get_by_id(ctx: Context, query_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_estimate_query_cost",
+     "description": "\nEstimate the cost of executing a SQL query\n\nMakes a request to the /api/v1/sqllab/estimate endpoint to get approximate cost\ninformation for a query before executing it.\n\nArgs:\n    database_id: ID of the database\n    sql: SQL query to estimate\n    schema: Optional schema name\n\nReturns:\n    A dictionary with estimated query cost metrics\n",
+     "config": "aptro__superset-mcp__superset_sqllab_estimate_query_cost.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1266,
+       "text": "async def superset_sqllab_estimate_query_cost("
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_execute_query",
+     "description": "\nExecute a SQL query in SQL Lab\n\nMakes a request to the /api/v1/sqllab/execute/ endpoint to run a SQL query\nagainst the specified database.\n\nArgs:\n    database_id: ID of the database to query\n    sql: SQL query to execute\n\nReturns:\n    A dictionary with query results or execution status for async queries\n",
+     "config": "aptro__superset-mcp__superset_sqllab_execute_query.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1171,
+       "text": "async def superset_sqllab_execute_query("
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_export_query_results",
+     "description": "\nExport the results of a SQL query to CSV\n\nMakes a request to the /api/v1/sqllab/export/{client_id} endpoint to download\nquery results in CSV format.\n\nArgs:\n    client_id: Client ID of the query\n\nReturns:\n    A dictionary with the exported data or error information\n",
+     "config": "aptro__superset-mcp__superset_sqllab_export_query_results.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1297,
+       "text": "async def superset_sqllab_export_query_results("
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_format_sql",
+     "description": "\nFormat a SQL query for better readability\n\nMakes a request to the /api/v1/sqllab/format_sql endpoint to apply standard\nformatting rules to the provided SQL query.\n\nArgs:\n    sql: SQL query to format\n\nReturns:\n    A dictionary with the formatted SQL\n",
+     "config": "aptro__superset-mcp__superset_sqllab_format_sql.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1223,
+       "text": "async def superset_sqllab_format_sql(ctx: Context, sql: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_get_bootstrap_data",
+     "description": "\nGet the bootstrap data for SQL Lab\n\nMakes a request to the /api/v1/sqllab/ endpoint to retrieve configuration data\nneeded for the SQL Lab interface.\n\nReturns:\n    A dictionary with SQL Lab configuration including allowed databases and settings\n",
+     "config": "aptro__superset-mcp__superset_sqllab_get_bootstrap_data.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1331,
+       "text": "async def superset_sqllab_get_bootstrap_data(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_get_results",
+     "description": "\nGet results of a previously executed SQL query\n\nMakes a request to the /api/v1/sqllab/results/ endpoint to retrieve results\nfor an asynchronous query using its result key.\n\nArgs:\n    key: Result key to retrieve\n\nReturns:\n    A dictionary with query results including column information and data rows\n",
+     "config": "aptro__superset-mcp__superset_sqllab_get_results.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1245,
+       "text": "async def superset_sqllab_get_results(ctx: Context, key: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_sqllab_get_saved_queries",
+     "description": "\nGet a list of saved queries from SQL Lab\n\nMakes a request to the /api/v1/saved_query/ endpoint to retrieve all saved queries\nthe current user has access to. Results are paginated.\n\nReturns:\n    A dictionary containing saved query information including id, label, and database\n",
+     "config": "aptro__superset-mcp__superset_sqllab_get_saved_queries.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1207,
+       "text": "async def superset_sqllab_get_saved_queries(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_create",
+     "description": "\nCreate a new tag in Superset\n\nMakes a request to the /api/v1/tag/ POST endpoint to create a new tag\nthat can be applied to objects like charts and dashboards.\n\nArgs:\n    name: Name for the tag\n\nReturns:\n    A dictionary with the created tag information\n",
+     "config": "aptro__superset-mcp__superset_tag_create.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1523,
+       "text": "async def superset_tag_create(ctx: Context, name: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_delete",
+     "description": "\nDelete a tag\n\nMakes a request to the /api/v1/tag/{id} DELETE endpoint to remove a tag.\nThis operation is permanent and cannot be undone.\n\nArgs:\n    tag_id: ID of the tag to delete\n\nReturns:\n    A dictionary with deletion confirmation message\n",
+     "config": "aptro__superset-mcp__superset_tag_delete.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1578,
+       "text": "async def superset_tag_delete(ctx: Context, tag_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_get_by_id",
+     "description": "\nGet details for a specific tag\n\nMakes a request to the /api/v1/tag/{id} endpoint to retrieve information\nabout a specific tag.\n\nArgs:\n    tag_id: ID of the tag to retrieve\n\nReturns:\n    A dictionary with tag details\n",
+     "config": "aptro__superset-mcp__superset_tag_get_by_id.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1543,
+       "text": "async def superset_tag_get_by_id(ctx: Context, tag_id: int) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_list",
+     "description": "\nGet a list of tags from Superset\n\nMakes a request to the /api/v1/tag/ endpoint to retrieve all tags\ndefined in the Superset instance.\n\nReturns:\n    A dictionary containing tag information including id and name\n",
+     "config": "aptro__superset-mcp__superset_tag_list.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1507,
+       "text": "async def superset_tag_list(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_object_add",
+     "description": "\nAdd a tag to an object\n\nMakes a request to tag an object with a specific tag. This creates an association\nbetween the tag and the specified object (chart, dashboard, etc.)\n\nArgs:\n    object_type: Type of the object ('chart', 'dashboard', etc.)\n    object_id: ID of the object to tag\n    tag_name: Name of the tag to apply\n\nReturns:\n    A dictionary with the tagging confirmation\n",
+     "config": "aptro__superset-mcp__superset_tag_object_add.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1602,
+       "text": "async def superset_tag_object_add("
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_object_remove",
+     "description": "\nRemove a tag from an object\n\nMakes a request to remove a tag association from a specific object.\n\nArgs:\n    object_type: Type of the object ('chart', 'dashboard', etc.)\n    object_id: ID of the object to untag\n    tag_name: Name of the tag to remove\n\nReturns:\n    A dictionary with the untagging confirmation message\n",
+     "config": "aptro__superset-mcp__superset_tag_object_remove.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1633,
+       "text": "async def superset_tag_object_remove("
+      }
+     ]
+    },
+    {
+     "name": "superset_tag_objects",
+     "description": "\nGet objects associated with tags\n\nMakes a request to the /api/v1/tag/get_objects/ endpoint to retrieve\nall objects that have tags assigned to them.\n\nReturns:\n    A dictionary with tagged objects grouped by tag\n",
+     "config": "aptro__superset-mcp__superset_tag_objects.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1562,
+       "text": "async def superset_tag_objects(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_user_get_current",
+     "description": "\nGet information about the currently authenticated user\n\nMakes a request to the /api/v1/me/ endpoint to retrieve the user's profile\ninformation including permissions and preferences.\n\nReturns:\n    A dictionary with user profile data\n",
+     "config": "aptro__superset-mcp__superset_user_get_current.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1472,
+       "text": "async def superset_user_get_current(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "superset_user_get_roles",
+     "description": "\nGet roles for the current user\n\nMakes a request to the /api/v1/me/roles/ endpoint to retrieve all roles\nassigned to the current user.\n\nReturns:\n    A dictionary with user role information\n",
+     "config": "aptro__superset-mcp__superset_user_get_roles.json",
+     "hints": [
+      {
+       "file": "main.py",
+       "line": 1488,
+       "text": "async def superset_user_get_roles(ctx: Context) -> Dict[str, Any]:"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "alexarevalo9/ticktick-mcp-server",
+   "slug": "alexarevalo9__ticktick-mcp-server",
+   "lang": "node",
+   "commit": "79f1624b110cd29f63fc10c02d352661a4f40ec2",
+   "path": "eval/targets/alexarevalo9__ticktick-mcp-server",
+   "surface_loc": 1835,
+   "tools": [
+    {
+     "name": "batch_update_tasks",
+     "description": "Batch create, update, and/or delete multiple tasks in a single request",
+     "config": "alexarevalo9__ticktick-mcp-server__batch_update_tasks.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 103,
+       "text": "name: 'batch_update_tasks',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 283,
+       "text": "case 'batch_update_tasks': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 238,
+       "text": "// --- batch_update_tasks ---"
+      }
+     ]
+    },
+    {
+     "name": "complete_task",
+     "description": "Complete a task",
+     "config": "alexarevalo9__ticktick-mcp-server__complete_task.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 87,
+       "text": "name: 'complete_task',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 247,
+       "text": "case 'complete_task': {"
+      }
+     ]
+    },
+    {
+     "name": "create_project",
+     "description": "Create a new project",
+     "config": "alexarevalo9__ticktick-mcp-server__create_project.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 57,
+       "text": "name: 'create_project',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 175,
+       "text": "case 'create_project': {"
+      }
+     ]
+    },
+    {
+     "name": "create_task",
+     "description": "Create a new task",
+     "config": "alexarevalo9__ticktick-mcp-server__create_task.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 77,
+       "text": "name: 'create_task',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 223,
+       "text": "case 'create_task': {"
+      }
+     ]
+    },
+    {
+     "name": "delete_project",
+     "description": "Delete a project",
+     "config": "alexarevalo9__ticktick-mcp-server__delete_project.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 67,
+       "text": "name: 'delete_project',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 199,
+       "text": "case 'delete_project': {"
+      }
+     ]
+    },
+    {
+     "name": "delete_task",
+     "description": "Delete a task",
+     "config": "alexarevalo9__ticktick-mcp-server__delete_task.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 92,
+       "text": "name: 'delete_task',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 259,
+       "text": "case 'delete_task': {"
+      }
+     ]
+    },
+    {
+     "name": "get_completed_tasks",
+     "description": "Get completed tasks across all projects within a date range",
+     "config": "alexarevalo9__ticktick-mcp-server__get_completed_tasks.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 97,
+       "text": "name: 'get_completed_tasks',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 271,
+       "text": "case 'get_completed_tasks': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 192,
+       "text": "// --- get_completed_tasks ---"
+      }
+     ]
+    },
+    {
+     "name": "get_current_user",
+     "description": "Get the current authenticated user profile",
+     "config": "alexarevalo9__ticktick-mcp-server__get_current_user.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 117,
+       "text": "name: 'get_current_user',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 133,
+       "text": "const toolsWithoutArguments = ['get_user_projects', 'get_current_user'];"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 307,
+       "text": "case 'get_current_user': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 310,
+       "text": "// --- get_current_user ---"
+      }
+     ]
+    },
+    {
+     "name": "get_inbox_tasks",
+     "description": "Get tasks from the inbox (resolves inbox project ID automatically from user profile)",
+     "config": "alexarevalo9__ticktick-mcp-server__get_inbox_tasks.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 122,
+       "text": "name: 'get_inbox_tasks',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 315,
+       "text": "case 'get_inbox_tasks': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 320,
+       "text": "// --- get_inbox_tasks ---"
+      }
+     ]
+    },
+    {
+     "name": "get_project_by_id",
+     "description": "Get a project by ID",
+     "config": "alexarevalo9__ticktick-mcp-server__get_project_by_id.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 47,
+       "text": "name: 'get_project_by_id',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 151,
+       "text": "case 'get_project_by_id': {"
+      }
+     ]
+    },
+    {
+     "name": "get_project_with_data",
+     "description": "Get a project with its tasks and columns",
+     "config": "alexarevalo9__ticktick-mcp-server__get_project_with_data.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 52,
+       "text": "name: 'get_project_with_data',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 163,
+       "text": "case 'get_project_with_data': {"
+      }
+     ]
+    },
+    {
+     "name": "get_subtasks",
+     "description": "Get all subtasks of a parent task by fetching project data and filtering by parentId",
+     "config": "alexarevalo9__ticktick-mcp-server__get_subtasks.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 111,
+       "text": "name: 'get_subtasks',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 295,
+       "text": "case 'get_subtasks': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 283,
+       "text": "// --- get_subtasks ---"
+      }
+     ]
+    },
+    {
+     "name": "get_task_by_ids",
+     "description": "Get a task by ProjectId and TaskId",
+     "config": "alexarevalo9__ticktick-mcp-server__get_task_by_ids.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 72,
+       "text": "name: 'get_task_by_ids',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 211,
+       "text": "case 'get_task_by_ids': {"
+      }
+     ]
+    },
+    {
+     "name": "get_user_projects",
+     "description": "Get all user projects",
+     "config": "alexarevalo9__ticktick-mcp-server__get_user_projects.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 42,
+       "text": "name: 'get_user_projects',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 133,
+       "text": "const toolsWithoutArguments = ['get_user_projects', 'get_current_user'];"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 143,
+       "text": "case 'get_user_projects': {"
+      }
+     ]
+    },
+    {
+     "name": "update_project",
+     "description": "Update an existing project",
+     "config": "alexarevalo9__ticktick-mcp-server__update_project.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 62,
+       "text": "name: 'update_project',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 187,
+       "text": "case 'update_project': {"
+      }
+     ]
+    },
+    {
+     "name": "update_task",
+     "description": "Update an existing task",
+     "config": "alexarevalo9__ticktick-mcp-server__update_task.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 82,
+       "text": "name: 'update_task',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 103,
+       "text": "name: 'batch_update_tasks',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 235,
+       "text": "case 'update_task': {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 283,
+       "text": "case 'batch_update_tasks': {"
+      },
+      {
+       "file": "src/operations/tasks.ts",
+       "line": 238,
+       "text": "// --- batch_update_tasks ---"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "yuniko-software/minecraft-mcp-server",
+   "slug": "yuniko-software__minecraft-mcp-server",
+   "lang": "node",
+   "commit": "240c8cec337ce152cc9e058ebdef511055808406",
+   "path": "eval/targets/yuniko-software__minecraft-mcp-server",
+   "surface_loc": 1825,
+   "tools": [
+    {
+     "name": "can-craft",
+     "description": "Check if the bot can craft a specific item with current inventory",
+     "config": "yuniko-software__minecraft-mcp-server__can-craft.json",
+     "hints": [
+      {
+       "file": "src/tools/crafting-tools.ts",
+       "line": 543,
+       "text": "\"can-craft\","
+      }
+     ]
+    },
+    {
+     "name": "craft-item",
+     "description": "Craft an item using a crafting recipe",
+     "config": "yuniko-software__minecraft-mcp-server__craft-item.json",
+     "hints": [
+      {
+       "file": "src/tools/crafting-tools.ts",
+       "line": 400,
+       "text": "\"craft-item\","
+      }
+     ]
+    },
+    {
+     "name": "detect-gamemode",
+     "description": "Detect the gamemode on game",
+     "config": "yuniko-software__minecraft-mcp-server__detect-gamemode.json",
+     "hints": [
+      {
+       "file": "src/tools/gamestate-tools.ts",
+       "line": 6,
+       "text": "\"detect-gamemode\","
+      }
+     ]
+    },
+    {
+     "name": "dig-block",
+     "description": "Dig a block at the specified position",
+     "config": "yuniko-software__minecraft-mcp-server__dig-block.json",
+     "hints": [
+      {
+       "file": "src/tools/block-tools.ts",
+       "line": 90,
+       "text": "\"dig-block\","
+      }
+     ]
+    },
+    {
+     "name": "equip-item",
+     "description": "Equip a specific item",
+     "config": "yuniko-software__minecraft-mcp-server__equip-item.json",
+     "hints": [
+      {
+       "file": "src/tools/inventory-tools.ts",
+       "line": 60,
+       "text": "\"equip-item\","
+      }
+     ]
+    },
+    {
+     "name": "find-blocks",
+     "description": "Find one or more nearby blocks of a specific type",
+     "config": "yuniko-software__minecraft-mcp-server__find-blocks.json",
+     "hints": [
+      {
+       "file": "src/tools/block-tools.ts",
+       "line": 142,
+       "text": "\"find-blocks\","
+      }
+     ]
+    },
+    {
+     "name": "find-entity",
+     "description": "Find the nearest entity of a specific type",
+     "config": "yuniko-software__minecraft-mcp-server__find-entity.json",
+     "hints": [
+      {
+       "file": "src/tools/entity-tools.ts",
+       "line": 9,
+       "text": "\"find-entity\","
+      }
+     ]
+    },
+    {
+     "name": "find-item",
+     "description": "Find a specific item in the bot's inventory",
+     "config": "yuniko-software__minecraft-mcp-server__find-item.json",
+     "hints": [
+      {
+       "file": "src/tools/inventory-tools.ts",
+       "line": 39,
+       "text": "\"find-item\","
+      }
+     ]
+    },
+    {
+     "name": "fly-to",
+     "description": "Make the bot fly to a specific position",
+     "config": "yuniko-software__minecraft-mcp-server__fly-to.json",
+     "hints": [
+      {
+       "file": "src/tools/flight-tools.ts",
+       "line": 37,
+       "text": "\"fly-to\","
+      }
+     ]
+    },
+    {
+     "name": "get-block-info",
+     "description": "Get information about a block at the specified position",
+     "config": "yuniko-software__minecraft-mcp-server__get-block-info.json",
+     "hints": [
+      {
+       "file": "src/tools/block-tools.ts",
+       "line": 119,
+       "text": "\"get-block-info\","
+      }
+     ]
+    },
+    {
+     "name": "get-position",
+     "description": "Get the current position of the bot",
+     "config": "yuniko-software__minecraft-mcp-server__get-position.json",
+     "hints": [
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 13,
+       "text": "\"get-position\","
+      }
+     ]
+    },
+    {
+     "name": "get-recipe",
+     "description": "Get detailed information about a specific recipe",
+     "config": "yuniko-software__minecraft-mcp-server__get-recipe.json",
+     "hints": [
+      {
+       "file": "src/tools/crafting-tools.ts",
+       "line": 483,
+       "text": "\"get-recipe\","
+      }
+     ]
+    },
+    {
+     "name": "jump",
+     "description": "Make the bot jump",
+     "config": "yuniko-software__minecraft-mcp-server__jump.json",
+     "hints": [
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 100,
+       "text": "\"jump\","
+      },
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 101,
+       "text": "\"Make the bot jump\","
+      },
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 105,
+       "text": "bot.setControlState('jump', true);"
+      },
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 106,
+       "text": "setTimeout(() => bot.setControlState('jump', false), 250);"
+      },
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 107,
+       "text": "return factory.createResponse(\"Successfully jumped\");"
+      }
+     ]
+    },
+    {
+     "name": "list-inventory",
+     "description": "List all items in the bot's inventory",
+     "config": "yuniko-software__minecraft-mcp-server__list-inventory.json",
+     "hints": [
+      {
+       "file": "src/tools/inventory-tools.ts",
+       "line": 13,
+       "text": "\"list-inventory\","
+      }
+     ]
+    },
+    {
+     "name": "list-recipes",
+     "description": "List all available crafting recipes the bot can make with current inventory",
+     "config": "yuniko-software__minecraft-mcp-server__list-recipes.json",
+     "hints": [
+      {
+       "file": "src/tools/crafting-tools.ts",
+       "line": 340,
+       "text": "\"list-recipes\","
+      }
+     ]
+    },
+    {
+     "name": "look-at",
+     "description": "Make the bot look at a specific position",
+     "config": "yuniko-software__minecraft-mcp-server__look-at.json",
+     "hints": [
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 83,
+       "text": "\"look-at\","
+      }
+     ]
+    },
+    {
+     "name": "move-in-direction",
+     "description": "Move the bot in a specific direction for a duration",
+     "config": "yuniko-software__minecraft-mcp-server__move-in-direction.json",
+     "hints": [
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 112,
+       "text": "\"move-in-direction\","
+      }
+     ]
+    },
+    {
+     "name": "move-to-position",
+     "description": "Move the bot to a specific position",
+     "config": "yuniko-software__minecraft-mcp-server__move-to-position.json",
+     "hints": [
+      {
+       "file": "src/tools/position-tools.ts",
+       "line": 29,
+       "text": "\"move-to-position\","
+      }
+     ]
+    },
+    {
+     "name": "place-block",
+     "description": "Place a block at the specified position",
+     "config": "yuniko-software__minecraft-mcp-server__place-block.json",
+     "hints": [
+      {
+       "file": "src/tools/block-tools.ts",
+       "line": 21,
+       "text": "\"place-block\","
+      }
+     ]
+    },
+    {
+     "name": "read-chat",
+     "description": "Get recent chat messages from players",
+     "config": "yuniko-software__minecraft-mcp-server__read-chat.json",
+     "hints": [
+      {
+       "file": "src/tools/chat-tools.ts",
+       "line": 21,
+       "text": "\"read-chat\","
+      }
+     ]
+    },
+    {
+     "name": "send-chat",
+     "description": "Send a chat message in-game",
+     "config": "yuniko-software__minecraft-mcp-server__send-chat.json",
+     "hints": [
+      {
+       "file": "src/tools/chat-tools.ts",
+       "line": 8,
+       "text": "\"send-chat\","
+      }
+     ]
+    },
+    {
+     "name": "smelt-item",
+     "description": "Smelt items using a furnace-like block",
+     "config": "yuniko-software__minecraft-mcp-server__smelt-item.json",
+     "hints": [
+      {
+       "file": "src/tools/furnace-tools.ts",
+       "line": 12,
+       "text": "\"smelt-item\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "jae-jae/fetch-mcp",
+   "slug": "jae-jae__fetch-mcp",
+   "lang": "node",
+   "commit": "8754aff66e3d9207502207bf82a493f45f556bb8",
+   "path": "eval/targets/jae-jae__fetch-mcp",
+   "surface_loc": 1822,
+   "tools": [
+    {
+     "name": "browser_install",
+     "description": "Install Playwright Chromium browser binary. Call this if you get an error about the browser not being installed.",
+     "config": "jae-jae__fetch-mcp__browser_install.json",
+     "hints": [
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 10,
+       "text": "* Tool definition for browser_install"
+      },
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 13,
+       "text": "name: \"browser_install\","
+      },
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 38,
+       "text": "* Implementation of the browser_install tool"
+      },
+      {
+       "file": "src/services/browserService.ts",
+       "line": 156,
+       "text": "`\ud83d\udca1 To fix this issue, please call the 'browser_install' tool to install the required browser binaries.`"
+      }
+     ]
+    },
+    {
+     "name": "fetch_url",
+     "description": "Retrieve web page content from a specified URL",
+     "config": "jae-jae__fetch-mcp__fetch_url.json",
+     "hints": [
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_url"
+      },
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 12,
+       "text": "name: \"fetch_url\","
+      },
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 77,
+       "text": "* Implementation of the fetch_url tool"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_urls"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 12,
+       "text": "name: \"fetch_urls\","
+      }
+     ]
+    },
+    {
+     "name": "fetch_urls",
+     "description": "Retrieve web page content from multiple specified URLs",
+     "config": "jae-jae__fetch-mcp__fetch_urls.json",
+     "hints": [
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_urls"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 12,
+       "text": "name: \"fetch_urls\","
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 79,
+       "text": "* Implementation of the fetch_urls tool"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "jae-jae/fetcher-mcp",
+   "slug": "jae-jae__fetcher-mcp",
+   "lang": "node",
+   "commit": "8754aff66e3d9207502207bf82a493f45f556bb8",
+   "path": "eval/targets/jae-jae__fetcher-mcp",
+   "surface_loc": 1822,
+   "tools": [
+    {
+     "name": "browser_install",
+     "description": "Install Playwright Chromium browser binary. Call this if you get an error about the browser not being installed.",
+     "config": "jae-jae__fetcher-mcp__browser_install.json",
+     "hints": [
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 10,
+       "text": "* Tool definition for browser_install"
+      },
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 13,
+       "text": "name: \"browser_install\","
+      },
+      {
+       "file": "src/tools/browserInstall.ts",
+       "line": 38,
+       "text": "* Implementation of the browser_install tool"
+      },
+      {
+       "file": "src/services/browserService.ts",
+       "line": 156,
+       "text": "`\ud83d\udca1 To fix this issue, please call the 'browser_install' tool to install the required browser binaries.`"
+      }
+     ]
+    },
+    {
+     "name": "fetch_url",
+     "description": "Retrieve web page content from a specified URL",
+     "config": "jae-jae__fetcher-mcp__fetch_url.json",
+     "hints": [
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_url"
+      },
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 12,
+       "text": "name: \"fetch_url\","
+      },
+      {
+       "file": "src/tools/fetchUrl.ts",
+       "line": 77,
+       "text": "* Implementation of the fetch_url tool"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_urls"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 12,
+       "text": "name: \"fetch_urls\","
+      }
+     ]
+    },
+    {
+     "name": "fetch_urls",
+     "description": "Retrieve web page content from multiple specified URLs",
+     "config": "jae-jae__fetcher-mcp__fetch_urls.json",
+     "hints": [
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 9,
+       "text": "* Tool definition for fetch_urls"
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 12,
+       "text": "name: \"fetch_urls\","
+      },
+      {
+       "file": "src/tools/fetchUrls.ts",
+       "line": 79,
+       "text": "* Implementation of the fetch_urls tool"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "misterboe/strapi-mcp-server",
+   "slug": "misterboe__strapi-mcp-server",
+   "lang": "node",
+   "commit": "9a872451e60b4a11c61ec89e1492727569962c66",
+   "path": "eval/targets/misterboe__strapi-mcp-server",
+   "surface_loc": 1809,
+   "tools": [
+    {
+     "name": "strapi_get_components",
+     "description": "Get all components from Strapi with pagination support. Returns both component data and pagination metadata (page, pageSize, total, pageCount).",
+     "config": "misterboe__strapi-mcp-server__strapi_get_components.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 465,
+       "text": "// Schema for strapi_get_components tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 619,
+       "text": "strapi_get_components: GetComponentsSchema,"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1209,
+       "text": "name: \"strapi_get_components\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1212,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_get_components),"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1214,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_get_components).properties,"
+      }
+     ]
+    },
+    {
+     "name": "strapi_get_content_types",
+     "description": "Get all content types from Strapi. Returns the complete schema of all content types.\n\n## Initialization Steps (ALWAYS DO FIRST)\n1. Get schema and analyze with this tool\n2. Capture Content Types and structures\n3. Remember endpoint names (pluralName/singularName)\n4. Document fields and types\n5. Identify relations\n6. Consider required fields and validations\n\n## Schema Conventions\n- singularName: Used for single item queries (e.g., \"article\")\n- pluralName: Used for collection endpoints (e.g., \"articles\")\n- collectionName: Database collection name\n\n## Endpoint Patterns\n- Collection: GET /api/{pluralName}\n- Single: GET /api/{pluralName}/{id}\n- Create: POST /api/{pluralName}\n- Update: PUT /api/{pluralName}/{id}\n- Delete: DELETE /api/{pluralName}/{id}",
+     "config": "misterboe__strapi-mcp-server__strapi_get_content_types.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 460,
+       "text": "// Schema for strapi_get_content_types tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 618,
+       "text": "strapi_get_content_types: GetContentTypesSchema,"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1167,
+       "text": "1. Always check schema first with strapi_get_content_types"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1175,
+       "text": "name: \"strapi_get_content_types\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1198,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_get_content_types),"
+      }
+     ]
+    },
+    {
+     "name": "strapi_list_servers",
+     "description": "List all available Strapi servers from the configuration.\n\n## Security Policy\nSTRICT_USER_AUTHORIZATION_REQUIRED: No write operations without explicit user authorization.\nProtected operations: POST (Create), PUT (Update), DELETE (Delete), Media Upload.\nAll write operations require userAuthorized: true parameter.\n\n## Strapi Version Support\nSupports both Strapi v4 and v5 with automatic version detection.\n\n### Version Differences\n- v4: Numeric IDs, nested attributes under 'attributes', data wrapper in responses\n- v5: Document-based IDs (documentId), flat structure, direct attribute access\n\n### Common Errors\n- 404: Using numeric ID instead of documentId, wrong plural/singular form\n- 405: Incorrect endpoint (/article instead of /articles)\n- 400: Missing data wrapper in request body\n\n### Best Practices\n1. Always check schema first with strapi_get_content_types\n2. Use documentId (not numeric id) for Strapi v5\n3. Always use data wrapper for updates: { data: { field: value } }\n4. Use pluralName for collection endpoints (api/articles)\n5. Validate URLs with webtools before using them",
+     "config": "misterboe__strapi-mcp-server__strapi_list_servers.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 457,
+       "text": "// Schema for strapi_list_servers tool (no parameters)"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 617,
+       "text": "strapi_list_servers: ListServersSchema,"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1146,
+       "text": "name: \"strapi_list_servers\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1172,
+       "text": "inputSchema: zodToJsonSchema(ToolSchemas.strapi_list_servers),"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1380,
+       "text": "if (name === \"strapi_list_servers\") {"
+      }
+     ]
+    },
+    {
+     "name": "strapi_rest",
+     "description": "Execute REST API requests against Strapi endpoints. IMPORTANT: All write operations (POST, PUT, DELETE) require explicit user authorization via the userAuthorized parameter.\n\n## Reading Data\nparams: { populate: ['SEO'] } // Populate a component\nparams: { populate: { SEO: { fields: ['Title', 'seoDescription'] } } } // With field selection\nparams: { filters: { title: { $contains: 'search' } } } // Filter results\nparams: { sort: ['createdAt:desc'] } // Sort results\nparams: { pagination: { page: 1, pageSize: 10 } } // Pagination\n\n## Writing Data (REQUIRES userAuthorized: true)\nbody: {\n  data: {\n    componentName: { Title: 'value' }, // Single component\n    componentName: [{ field: 'value' }] // Repeatable component\n  }\n}\n\n## Debugging Guide\n- 404 Error: Check plural/singular form, use documentId not numeric id\n- 400 Error: Check if data wrapper is present in body\n- 405 Error: Check endpoint format (/articles not /article)\n- URL Errors: Validate URLs with webtools first\n- ID Problems: Use documentId for Strapi v5\n\n## Strapi v5 Specifics\n- Use documentId instead of numeric id\n- Direct attribute access (no nested attributes)\n- No data wrapper in GET responses",
+     "config": "misterboe__strapi-mcp-server__strapi_rest.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 498,
+       "text": "// Schema for strapi_rest tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 620,
+       "text": "strapi_rest: RestSchema,"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1233,
+       "text": "name: \"strapi_rest\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1263,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_rest),"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1265,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_rest).properties,"
+      }
+     ]
+    },
+    {
+     "name": "strapi_upload_media",
+     "description": "Upload media to Strapi's media library from a URL with format conversion, quality control, and metadata options. IMPORTANT: This is a write operation that REQUIRES explicit user authorization via the userAuthorized parameter.\n\n## Upload Steps\n1. Upload via strapi_upload_media with URL and metadata\n2. Get image ID from response\n3. Link to content using strapi_rest PUT request\n\n## Linking Images to Content (Strapi v5)\nAfter upload, use PUT request to link:\n{\n  \"method\": \"PUT\",\n  \"endpoint\": \"api/articles/{documentId}\",\n  \"body\": { \"data\": { \"images\": [\"imageId\"] } },\n  \"userAuthorized\": true\n}",
+     "config": "misterboe__strapi-mcp-server__strapi_upload_media.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 567,
+       "text": "// Schema for strapi_upload_media tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 621,
+       "text": "strapi_upload_media: UploadMediaSchema"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1296,
+       "text": "name: \"strapi_upload_media\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1300,
+       "text": "1. Upload via strapi_upload_media with URL and metadata"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1313,
+       "text": "...zodToJsonSchema(ToolSchemas.strapi_upload_media),"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "andybrandt/mcp-simple-arxiv",
+   "slug": "andybrandt__mcp-simple-arxiv",
+   "lang": "python",
+   "commit": "fc9262eaa45089d9149db8e81a49081162f3bf8d",
+   "path": "eval/targets/andybrandt__mcp-simple-arxiv",
+   "surface_loc": 1803,
+   "tools": [
+    {
+     "name": "get_full_paper_text",
+     "description": "Get the full paper text as Markdown\n\nDownloads and converts the paper PDF to Markdown format using Docling.\nThis operation takes 30-90 seconds depending on paper length.\n\nImportant considerations:\n- Papers can be very large (even 10k-50k+ tokens) and may overwhelm your context window\n- Complex equations and figures will most likely not convert correctly to Markdown\n- Use get_paper_data first to review abstract before fetching full text",
+     "config": "andybrandt__mcp-simple-arxiv__get_full_paper_text.json",
+     "hints": [
+      {
+       "file": "test_client.py",
+       "line": 219,
+       "text": "# 4. Test get_full_paper_text (this takes 30-90 seconds)"
+      },
+      {
+       "file": "test_client.py",
+       "line": 220,
+       "text": "test_name = \"get_full_paper_text\""
+      },
+      {
+       "file": "test_client.py",
+       "line": 224,
+       "text": "logging.info(f\"Calling get_full_paper_text with paper_id: '{paper_id}'\")"
+      },
+      {
+       "file": "test_client.py",
+       "line": 226,
+       "text": "result = await client.call_tool(\"get_full_paper_text\", {\"paper_id\": paper_id})"
+      },
+      {
+       "file": "test_web_client.py",
+       "line": 387,
+       "text": "# 4. Test get_full_paper_text (background task - takes 30-90 seconds)"
+      }
+     ]
+    },
+    {
+     "name": "get_paper_data",
+     "description": "Get detailed information about a specific paper including abstract and available formats.",
+     "config": "andybrandt__mcp-simple-arxiv__get_paper_data.json",
+     "hints": [
+      {
+       "file": "test_client.py",
+       "line": 204,
+       "text": "# 3. Test get_paper_data"
+      },
+      {
+       "file": "test_client.py",
+       "line": 205,
+       "text": "test_name = \"get_paper_data\""
+      },
+      {
+       "file": "test_client.py",
+       "line": 209,
+       "text": "logging.info(f\"Calling get_paper_data with paper_id: '{paper_id}'\")"
+      },
+      {
+       "file": "test_client.py",
+       "line": 210,
+       "text": "result = await client.call_tool(\"get_paper_data\", {\"paper_id\": paper_id})"
+      },
+      {
+       "file": "test_web_client.py",
+       "line": 372,
+       "text": "# 3. Test get_paper_data"
+      }
+     ]
+    },
+    {
+     "name": "list_categories",
+     "description": "List all available arXiv categories for use with cat: filter in search_papers.\n\nCALL THIS FIRST before using cat: in search queries to find valid category codes.\n\nCommon categories:\n- cs.AI (Artificial Intelligence)\n- cs.LG (Machine Learning)\n- cs.CL (Computation and Language / NLP)\n- stat.ML (Statistics - Machine Learning)\n- quant-ph (Quantum Physics)\n- q-bio.NC (Quantitative Biology - Neurons and Cognition)\n\nArgs:\n    primary_category: Optional filter to show only subcategories of a specific\n        primary category (e.g., \"cs\", \"physics\", \"q-bio\").",
+     "config": "andybrandt__mcp-simple-arxiv__list_categories.json",
+     "hints": [
+      {
+       "file": "check_mcp_http.py",
+       "line": 5,
+       "text": "lists available tools, and calls list_categories to verify functionality."
+      },
+      {
+       "file": "check_mcp_http.py",
+       "line": 18,
+       "text": "Connect to the MCP server, initialize, list tools, and call list_categories."
+      },
+      {
+       "file": "check_mcp_http.py",
+       "line": 41,
+       "text": "# 3) Call list_categories to verify a tool works"
+      },
+      {
+       "file": "check_mcp_http.py",
+       "line": 42,
+       "text": "categories_result = await session.call_tool(\"list_categories\", {})"
+      },
+      {
+       "file": "check_mcp_http.py",
+       "line": 44,
+       "text": "print(\"\\n=== list_categories() ===\")"
+      }
+     ]
+    },
+    {
+     "name": "search_papers",
+     "description": "Search for papers on arXiv.\n\nIMPORTANT - DEFAULT BEHAVIOR WARNING:\nArXiv treats space-separated words as OR by default, returning papers matching\nANY word. This often returns thousands of irrelevant results. Use field\nprefixes (especially ti:) for precise searches.\n\nSEARCH STRATEGY (in order of precision):\n1. Start with ti: (title) searches - fastest and most relevant results\n2. Add cat: (category) to filter by field - use list_categories tool first!\n3. Use au: (author) when you know specific researchers\n4. Combine multiple terms with AND for best results\n5. Avoid plain keyword searches without field prefixes\n\nQUERY OPERATORS:\n- ti:\"text\"   - Search in title only (RECOMMENDED FOR PRECISION)\n- abs:\"text\"  - Search in abstract\n- au:\"name\"   - Search by author\n- cat:CODE    - Filter by category (e.g., cat:cs.AI, cat:quant-ph)\n- Combine with: AND, OR, ANDNOT\n\nEXAMPLES (from most to least precise):\n- ti:\"neural networks\" AND cat:cs.AI     - Title phrase + category (BEST)\n- ti:\"deep learning\" AND au:bengio       - Title + author\n- cat:cs.AI AND ti:transformer           - Category + title keyword\n- ti:\"machine learning\"                  - Title phrase only\n- \"machine learning\"                     - All fields (broad, use sparingly)\n\nTROUBLESHOOTING - Too many irrelevant results?\n1. Use ti:\"exact phrase\" instead of bare keywords\n2. Add cat:CATEGORY to filter by field (run list_categories first)\n3. Use AND to combine multiple specific terms\n4. Avoid generic terms without ti: or cat: prefixes\n\nDATE FILTERING:\nFilter papers by submission date using date_from and/or date_to parameters.\n- Papers from 2024: date_from=\"2024-01-01\", date_to=\"2024-12-31\"\n- Recent papers (2025 onwards): date_from=\"2025-01-01\"\n- Historical papers (before 2020): date_to=\"2019-12-31\"\n\nArgs:\n    query: Search query string (use field prefixes for precision).\n    max_results: Maximum results to return (1-100, default 10).\n    sort_by: Sort field - \"submitted_date\", \"updated_date\", or \"relevance\".\n    sort_order: Sort direction - \"descending\" or \"ascending\".\n    date_from: Filter papers submitted on or after this date (YYYY-MM-DD format).\n    date_to: Filter papers submitted on or before this date (YYYY-MM-DD format).\n        ",
+     "config": "andybrandt__mcp-simple-arxiv__search_papers.json",
+     "hints": [
+      {
+       "file": "test_client.py",
+       "line": 101,
+       "text": "# 2. Test search_papers"
+      },
+      {
+       "file": "test_client.py",
+       "line": 102,
+       "text": "test_name = \"search_papers\""
+      },
+      {
+       "file": "test_client.py",
+       "line": 106,
+       "text": "logging.info(f\"Calling search_papers with query: '{query}'\")"
+      },
+      {
+       "file": "test_client.py",
+       "line": 107,
+       "text": "result = await client.call_tool(\"search_papers\", {\"query\": query, \"max_results\": 2})"
+      },
+      {
+       "file": "test_client.py",
+       "line": 116,
+       "text": "# Test search_papers sorting options"
+      }
+     ]
+    },
+    {
+     "name": "update_categories",
+     "description": "Update the stored category taxonomy by fetching the latest version from arxiv.org",
+     "config": "andybrandt__mcp-simple-arxiv__update_categories.json",
+     "hints": [
+      {
+       "file": "test_client.py",
+       "line": 265,
+       "text": "# 6. Test update_categories"
+      },
+      {
+       "file": "test_client.py",
+       "line": 266,
+       "text": "test_name = \"update_categories\""
+      },
+      {
+       "file": "test_client.py",
+       "line": 269,
+       "text": "logging.info(\"Calling update_categories...\")"
+      },
+      {
+       "file": "test_client.py",
+       "line": 270,
+       "text": "result = await client.call_tool(\"update_categories\")"
+      },
+      {
+       "file": "test_web_client.py",
+       "line": 425,
+       "text": "# 6. Test update_categories"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "Jacck/mcp-reasoner",
+   "slug": "Jacck__mcp-reasoner",
+   "lang": "node",
+   "commit": "ee93c70d31a1611d0db9ac4f93592d6e15a98be2",
+   "path": "eval/targets/Jacck__mcp-reasoner",
+   "surface_loc": 1791,
+   "tools": [
+    {
+     "name": "mcp-reasoner",
+     "description": "Advanced reasoning tool with multiple strategies including Beam Search and Monte Carlo Tree Search",
+     "config": "Jacck__mcp-reasoner__mcp-reasoner.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 11,
+       "text": "name: \"mcp-reasoner\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 59,
+       "text": "name: \"mcp-reasoner\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 107,
+       "text": "if (request.params.name !== \"mcp-reasoner\") {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "coinpaprika/dexpaprika-mcp",
+   "slug": "coinpaprika__dexpaprika-mcp",
+   "lang": "node",
+   "commit": "9ef4a9f6f9993e55612ca56de0f7f8e69934945b",
+   "path": "eval/targets/coinpaprika__dexpaprika-mcp",
+   "surface_loc": 1787,
+   "tools": [
+    {
+     "name": "filterNetworkTokens",
+     "description": "Get tokens on one network matching numeric thresholds, returned under 'results' with has_next_page and next_cursor. Read-only and keyless. Choose this over getTopTokens when the user gives numeric constraints or a time window. Use for 'tokens with FDV over $10M on Base', 'newly created tokens today', or 'low-liquidity high-volume tokens'. Optional filters (AND-combined): volume_24h_min/max, liquidity_usd_min/max, fdv_min/max, txns_24h_min, price_change_percentage_24h_min/max, created_after/created_before (Unix timestamps). Also network (required); limit (default 50, max 100); cursor to page; sort_by (default 'volume_usd_24h', alias order_by); sort_dir asc/desc (default 'desc', alias sort).",
+     "config": "coinpaprika__dexpaprika-mcp__filterNetworkTokens.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 58,
+       "text": "await testEndpoint('filterNetworkTokens', '/networks/ethereum/tokens/search?volume_usd_24h_min=10000000&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 562,
+       "text": "// filterNetworkTokens proxy the /pools/search and /tokens/search endpoints:"
+      },
+      {
+       "file": "src/index.js",
+       "line": 578,
+       "text": "filterNetworkTokens: { results: z.array(TokenSummary).optional(), has_next_page: z.boolean().optional(), next_cursor: z.string().nullable().optional(), query: z.record(z.string(), z.unknown()).optiona"
+      },
+      {
+       "file": "src/index.js",
+       "line": 674,
+       "text": "filter_tokens_by_metrics: ['filterNetworkTokens'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 1162,
+       "text": "// \u2500\u2500\u2500 filterNetworkTokens \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      }
+     ]
+    },
+    {
+     "name": "getCapabilities",
+     "description": "Get the static agent onboarding guide for this server: supported workflows, network name synonyms (mapping words like 'eth' to the canonical slug 'ethereum'), recommended call sequences, and common pitfalls. Read-only and keyless. Read it once at the start of a session before your first query, or when asked 'how do I use this API?', 'what order should I call things in?', or 'which slug maps to eth?'. This returns onboarding docs, not live market data; for the actual list of network slugs use getNetworks, and for coverage totals use getStats. Takes no parameters beyond a short rationale.",
+     "config": "coinpaprika__dexpaprika-mcp__getCapabilities.json",
+     "hints": [
+      {
+       "file": "src/index.js",
+       "line": 66,
+       "text": "// getCapabilities advertises common alternate names agents might try"
+      },
+      {
+       "file": "src/index.js",
+       "line": 207,
+       "text": "'Use normalized network ID from getNetworks. Call getCapabilities for network_synonyms.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 409,
+       "text": "'Start with `getNetworks` (discover supported chains) or `getCapabilities` (agent-onboarding doc: network synonyms, workflow patterns, common pitfalls). Both are free and have no parameters beyond rat"
+      },
+      {
+       "file": "src/index.js",
+       "line": 533,
+       "text": "getCapabilities: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 632,
+       "text": "// getCapabilities document (ported verbatim from src/tools/meta.ts). Local-only,"
+      }
+     ]
+    },
+    {
+     "name": "getDexPools",
+     "description": "Get the pools belonging to one specific DEX on one network, e.g. all Uniswap v3 pools on ethereum. Proxies /networks/{network}/pools/search with a dex_name filter (the old /networks/{network}/dexes/{dex}/pools endpoint was removed): rows come back under 'results' with cursor pagination (has_next_page + next_cursor), and the 24h volume field is volume_usd_24h. Read-only and keyless. Narrower than getNetworkPools (a single exchange, not the whole chain). Use for 'show me Raydium pools', 'top pairs on PancakeSwap', or 'liquidity on Orca'. Get the dex id from getNetworkDexes or search first, and pass that response's dex_id field ('uniswap_v3'), matched case-insensitively. Do not pass its dex_name field ('Uniswap V3'): a human display name returns HTTP 200 with an empty results[] rather than an error, so an empty answer here usually means the wrong form of the name was sent. Params: network (required slug); dex (required id, e.g. 'uniswap_v3'; the REST API calls this query parameter dex_name); limit (default 10, max 100); cursor (pass previous next_cursor to page); sort_by (default 'volume_usd_24h', canonical *_24h fields, short legacy names still accepted, alias order_by); sort_dir 'asc'/'desc' (default 'desc', alias sort). The old page number is gone: page 2 and above return an error pointing at cursor.",
+     "config": "coinpaprika__dexpaprika-mcp__getDexPools.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 53,
+       "text": "await testEndpoint('getDexPools', '/networks/ethereum/pools/search?dex_name=uniswap_v3&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/search-mapping.js",
+       "line": 33,
+       "text": "* a path segment to a dex_name query param, so getDexPools routes through"
+      },
+      {
+       "file": "src/search-mapping.js",
+       "line": 158,
+       "text": "// dex_name restricts results to one exchange (used by getDexPools). The tool"
+      },
+      {
+       "file": "src/index.js",
+       "line": 421,
+       "text": "'`getDexPools` kept its name and its `dex` argument, but the endpoint underneath changed on 2026-08-05:',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 561,
+       "text": "// getNetworkPoolsFilter, getDexPools, getTokenPools, getTopTokens, and"
+      }
+     ]
+    },
+    {
+     "name": "getKeyStatus",
+     "description": "Report whether this server is sending an API key and which plan the API sees. Use when calls are being rate limited or refused, or when the user asks whether their DexPaprika key is working. Takes no arguments and reads no market data.",
+     "config": "coinpaprika__dexpaprika-mcp__getKeyStatus.json",
+     "hints": [
+      {
+       "file": "src/index.js",
+       "line": 712,
+       "text": "// \u2500\u2500\u2500 getKeyStatus \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      },
+      {
+       "file": "src/index.js",
+       "line": 718,
+       "text": "'getKeyStatus',"
+      }
+     ]
+    },
+    {
+     "name": "getNetworkDexes",
+     "description": "List the DEXes (exchanges) operating on one network, such as Uniswap on ethereum or Raydium on solana, returned under 'dexes' with page_info (page, total_pages). Read-only and keyless. Use for 'which DEXes are on Base?', 'does Solana have Orca?', or to get a dex id to feed into getDexPools. Scope is a single network; call getNetworks first for the slug. Params: network (required slug); limit (default 10, max 100); page (default 1, 1-indexed); sort_by (only 'pool'; legacy alias order_by); sort_dir 'asc' or 'desc' (default 'desc'; legacy alias sort).",
+     "config": "coinpaprika__dexpaprika-mcp__getNetworkDexes.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 49,
+       "text": "await testEndpoint('getNetworkDexes', '/networks/ethereum/dexes');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 572,
+       "text": "getNetworkDexes: { dexes: z.array(DexSummary).optional(), page_info: PageInfo.optional() },"
+      },
+      {
+       "file": "src/index.js",
+       "line": 805,
+       "text": "// \u2500\u2500\u2500 getNetworkDexes \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      },
+      {
+       "file": "src/index.js",
+       "line": 807,
+       "text": "'getNetworkDexes',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 891,
+       "text": "'Get the pools belonging to one specific DEX on one network, e.g. all Uniswap v3 pools on ethereum. Proxies /networks/{network}/pools/search with a dex_name filter (the old /networks/{network}/dexes/{"
+      }
+     ]
+    },
+    {
+     "name": "getNetworkPools",
+     "description": "Get the top liquidity pools across a whole network, ranked by 24h volume by default, returned under 'results' with has_next_page and next_cursor. Read-only and keyless. This is the primary chain-wide pool discovery tool. Use for 'biggest pools on ethereum', 'top trading pairs on Base', or 'most active pools on Solana'. Narrow to one exchange with getDexPools, or apply numeric/time filters with getNetworkPoolsFilter. Params: network (required slug); limit (default 10, max 100); cursor (pass previous next_cursor to page); sort_by (default 'volume_usd_24h', canonical *_24h fields, alias order_by); sort_dir 'asc' or 'desc' (default 'desc', alias sort).",
+     "config": "coinpaprika__dexpaprika-mcp__getNetworkPools.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 50,
+       "text": "await testEndpoint('getNetworkPools (Ethereum)', '/networks/ethereum/pools/search?order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 51,
+       "text": "await testEndpoint('getNetworkPools (Solana)', '/networks/solana/pools/search?order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 52,
+       "text": "await testEndpoint('getNetworkPoolsFilter', '/networks/ethereum/pools/search?liquidity_usd_min=1000000&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 208,
+       "text": "`getNetworkPools('ethereum', 10)`,"
+      },
+      {
+       "file": "src/index.js",
+       "line": 560,
+       "text": "// while alternate upstream keys still validate. getNetworkPools,"
+      }
+     ]
+    },
+    {
+     "name": "getNetworkPoolsFilter",
+     "description": "Get pools on one network filtered by numeric thresholds, returned under 'results' with has_next_page and next_cursor. Read-only and keyless. Choose this over getNetworkPools when the user gives numeric constraints or a time window. Use for 'pools over $1M liquidity on Base', 'pools created in the last 24h', or 'high-volume low-liquidity pairs'. Optional filters (AND-combined): volume_24h_min/max, volume_7d_min/max, liquidity_usd_min/max, txns_24h_min, created_after/created_before (Unix timestamps). Also network (required); limit (default 50, max 100); cursor to page; sort_by (default 'volume_usd_24h', alias order_by); sort_dir asc/desc (default 'desc', alias sort).",
+     "config": "coinpaprika__dexpaprika-mcp__getNetworkPoolsFilter.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 52,
+       "text": "await testEndpoint('getNetworkPoolsFilter', '/networks/ethereum/pools/search?liquidity_usd_min=1000000&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 561,
+       "text": "// getNetworkPoolsFilter, getDexPools, getTokenPools, getTopTokens, and"
+      },
+      {
+       "file": "src/index.js",
+       "line": 576,
+       "text": "getNetworkPoolsFilter: { results: z.array(PoolSummary).optional(), has_next_page: z.boolean().optional(), next_cursor: z.string().nullable().optional(), query: z.record(z.string(), z.unknown()).option"
+      },
+      {
+       "file": "src/index.js",
+       "line": 666,
+       "text": "filter_pools_by_volume: ['getNetworks', 'getNetworkPoolsFilter'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 668,
+       "text": "'getNetworkPoolsFilter with created_after',"
+      }
+     ]
+    },
+    {
+     "name": "getNetworks",
+     "description": "List every blockchain network DexPaprika indexes, each row carrying its network id (slug), 24h volume, transaction count, and pool count. Read-only and keyless. Start here (or getCapabilities) to get the exact network slug that nearly every other tool requires as its 'network' argument. Use for 'which chains do you support?', 'is Base/Solana/Arbitrum covered?', or 'what is the slug for Polygon?'. Returns the full array with no pagination or sorting; takes no parameters beyond a short rationale. For platform-wide totals rather than a per-network list use getStats.",
+     "config": "coinpaprika__dexpaprika-mcp__getNetworks.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 48,
+       "text": "await testEndpoint('getNetworks', '/networks');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 207,
+       "text": "'Use normalized network ID from getNetworks. Call getCapabilities for network_synonyms.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 399,
+       "text": "'Every read tool (`getNetworks`, `getPoolDetails`, etc.) requires a `rationale` string of 20-500 chars.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 409,
+       "text": "'Start with `getNetworks` (discover supported chains) or `getCapabilities` (agent-onboarding doc: network synonyms, workflow patterns, common pitfalls). Both are free and have no parameters beyond rat"
+      },
+      {
+       "file": "src/index.js",
+       "line": 436,
+       "text": "'Array-returning tools wrap the array under a named key in structuredContent: `getNetworks` gives `{ networks: [...] }`, `getPoolOHLCV` gives `{ ohlcv: [...] }`, `getTokenMultiPrices` gives `{ prices:"
+      }
+     ]
+    },
+    {
+     "name": "getPoolDetails",
+     "description": "Get the full current snapshot for one pool by address: its two tokens, current price, liquidity/TVL, 24h volume, and transaction counts, returned as a single pool object (not a list). Read-only and keyless. Use after search or getNetworkPools surfaces a pool, or for 'price/TVL of this pool?' or 'details for pool 0x...'. Returns live values only; for historical candles use getPoolOHLCV, and for the raw swap feed use getPoolTransactions. Params: network (required slug); pool_address (required, e.g. '0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640'); inversed (optional bool, default false, flips the token price ratio to token1/token0).",
+     "config": "coinpaprika__dexpaprika-mcp__getPoolDetails.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 54,
+       "text": "await testEndpoint('getPoolDetails', '/networks/ethereum/pools/0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 399,
+       "text": "'Every read tool (`getNetworks`, `getPoolDetails`, etc.) requires a `rationale` string of 20-500 chars.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 580,
+       "text": "getPoolDetails: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 974,
+       "text": "// \u2500\u2500\u2500 getPoolDetails \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      },
+      {
+       "file": "src/index.js",
+       "line": 976,
+       "text": "'getPoolDetails',"
+      }
+     ]
+    },
+    {
+     "name": "getPoolOHLCV",
+     "description": "Get historical OHLCV candles (open, high, low, close, volume) for one pool over a time range, returned as a time-series array. Read-only and keyless. Use for 'price history of this pair', 'hourly chart for the last week', 'candles since Jan 1', or backtesting; for the single current price use getPoolDetails instead. Params: network (required); pool_address (required); start (required; Unix timestamp, RFC3339, or yyyy-mm-dd); end (optional, capped to 1 year after start); interval one of '1m','5m','10m','15m','30m','1h','6h','12h','24h' (default '24h'); limit (default 100, max 366 candles); inversed (optional bool, default false).",
+     "config": "coinpaprika__dexpaprika-mcp__getPoolOHLCV.json",
+     "hints": [
+      {
+       "file": "src/index.js",
+       "line": 430,
+       "text": "'- `getPoolOHLCV.start` / `.end`: RFC3339 recommended (`2024-01-01T00:00:00Z`). Also accepts Unix epoch seconds and `YYYY-MM-DD` (treated as 00:00:00 UTC).',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 436,
+       "text": "'Array-returning tools wrap the array under a named key in structuredContent: `getNetworks` gives `{ networks: [...] }`, `getPoolOHLCV` gives `{ ohlcv: [...] }`, `getTokenMultiPrices` gives `{ prices:"
+      },
+      {
+       "file": "src/index.js",
+       "line": 611,
+       "text": "getPoolOHLCV: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 675,
+       "text": "historical_price_chart: ['getPoolOHLCV with start + interval'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 977,
+       "text": "'Get the full current snapshot for one pool by address: its two tokens, current price, liquidity/TVL, 24h volume, and transaction counts, returned as a single pool object (not a list). Read-only and k"
+      }
+     ]
+    },
+    {
+     "name": "getPoolTransactions",
+     "description": "Get one pool's recent individual swap transactions, newest first, returned under 'transactions' (paginate with page, or a cursor). Read-only and keyless. These are per-trade records, not aggregated candles (use getPoolOHLCV) or a summary snapshot (use getPoolDetails). Use for 'recent trades on this pool', 'who swapped in the last hour', or 'raw transaction feed'. Params: network (required); pool_address (required); limit (default 10, max 100); page (default 1, up to 100 pages) or cursor (a transaction id); from (optional Unix seconds, inclusive, capped to the last 7 days); to (optional Unix seconds, exclusive, must be after from).",
+     "config": "coinpaprika__dexpaprika-mcp__getPoolTransactions.json",
+     "hints": [
+      {
+       "file": "src/index.js",
+       "line": 431,
+       "text": "'- `getPoolTransactions.from` / `.to`: Unix epoch SECONDS only. Window capped to last 7 days.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 614,
+       "text": "getPoolTransactions: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 676,
+       "text": "recent_swaps: ['getPoolTransactions with from/to UNIX timestamps'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 684,
+       "text": "'getPoolTransactions from/to are UNIX timestamps; results always capped to last 7 days',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 977,
+       "text": "'Get the full current snapshot for one pool by address: its two tokens, current price, liquidity/TVL, 24h volume, and transaction counts, returned as a single pool object (not a list). Read-only and k"
+      }
+     ]
+    },
+    {
+     "name": "getStats",
+     "description": "Get platform-wide totals for DexPaprika: the number of networks, DEXes, pools, and tokens indexed, returned as a single summary object. Read-only and keyless. Use for 'how much data do you cover?', 'how many chains or pools total?', or a one-line coverage summary. These are ecosystem-wide counts, not per-network figures; use getNetworks for the per-chain breakdown, or getCapabilities for onboarding docs. Takes no parameters beyond a short rationale.",
+     "config": "coinpaprika__dexpaprika-mcp__getStats.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 61,
+       "text": "await testEndpoint('getStats', '/stats');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 527,
+       "text": "getStats: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 780,
+       "text": "'List every blockchain network DexPaprika indexes, each row carrying its network id (slug), 24h volume, transaction count, and pool count. Read-only and keyless. Start here (or getCapabilities) to get"
+      },
+      {
+       "file": "src/index.js",
+       "line": 794,
+       "text": "'Get the static agent onboarding guide for this server: supported workflows, network name synonyms (mapping words like \\'eth\\' to the canonical slug \\'ethereum\\'), recommended call sequences, and comm"
+      },
+      {
+       "file": "src/index.js",
+       "line": 1256,
+       "text": "// \u2500\u2500\u2500 getStats \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      }
+     ]
+    },
+    {
+     "name": "getTokenDetails",
+     "description": "Get one token's data and metadata by contract address on one network: multi-timeframe price and volume metrics, plus name, website, Twitter, and Telegram links, returned as a single token object. Read-only and keyless. Use for 'price and volume for 0x... on Base' or 'tell me about this token'. If you only have a symbol like WETH, call search first to resolve the address and network. For many tokens' prices at once use getTokenMultiPrices; for the pools holding this token use getTokenPools. Params: network (required slug); token_address (required contract address, e.g. 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN' on solana).",
+     "config": "coinpaprika__dexpaprika-mcp__getTokenDetails.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 55,
+       "text": "await testEndpoint('getTokenDetails', '/networks/ethereum/tokens/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 404,
+       "text": "'- \"User asked for SOL price; calling getTokenDetails to fetch current USD value.\"',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 596,
+       "text": "getTokenDetails: {"
+      },
+      {
+       "file": "src/index.js",
+       "line": 671,
+       "text": "token_details_and_pools: ['getTokenDetails', 'getTokenPools'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 1046,
+       "text": "// \u2500\u2500\u2500 getTokenDetails \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500"
+      }
+     ]
+    },
+    {
+     "name": "getTokenMultiPrices",
+     "description": "Get current USD prices for up to 10 tokens on the same network in one batched call, returned as a prices array plus a missing_tokens list. Read-only and keyless. Tokens that cannot be priced come back in missing_tokens rather than being dropped, so check that list for partial failures. Use for 'prices for these tokens', 'compare the price of X, Y and Z', or building a portfolio/dashboard snapshot. For one token with full metadata and multi-timeframe stats use getTokenDetails. Params: network (required slug, all tokens must share it); tokens (required array of 1 to 10 contract addresses).",
+     "config": "coinpaprika__dexpaprika-mcp__getTokenMultiPrices.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 59,
+       "text": "await testEndpoint('getTokenMultiPrices', '/networks/ethereum/multi/prices?tokens=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&tokens=0xdac17f958d2ee523a2206206994597c13d831ec7');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 241,
+       "text": "'getTokenMultiPrices({ network, tokens: [a, b, c] })  // up to 10 per request',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 253,
+       "text": "reduce_request_count: 'Batch up to 10 tokens per call with getTokenMultiPrices, or stream instead of polling.',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 436,
+       "text": "'Array-returning tools wrap the array under a named key in structuredContent: `getNetworks` gives `{ networks: [...] }`, `getPoolOHLCV` gives `{ ohlcv: [...] }`, `getTokenMultiPrices` gives `{ prices:"
+      },
+      {
+       "file": "src/index.js",
+       "line": 618,
+       "text": "getTokenMultiPrices: {"
+      }
+     ]
+    },
+    {
+     "name": "getTokenPools",
+     "description": "Get the liquidity pools that contain a specific token on one network, returned under 'results' with has_next_page and next_cursor. Read-only and keyless. Use for 'which pools hold WETH on ethereum?' or 'liquidity venues for 0x...'. Network-scoped, so run search first if unsure of the network; unknown addresses return empty results, not an error. For the token's own price use getTokenDetails. Params: network (required); token_address (required); limit (default 10, max 100); cursor to page; sort_by (default 'volume_usd_24h', alias order_by); sort_dir asc/desc (default 'desc', alias sort). Extra params such as inversed or paired_token_address are unsupported and error.",
+     "config": "coinpaprika__dexpaprika-mcp__getTokenPools.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 56,
+       "text": "await testEndpoint('getTokenPools', '/networks/ethereum/pools/search?token_address=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/search-mapping.js",
+       "line": 24,
+       "text": "* pools containing that token, so getTokenPools routes through"
+      },
+      {
+       "file": "src/search-mapping.js",
+       "line": 156,
+       "text": "// getTokenPools). Network-scoped /pools/search only; see the header comment."
+      },
+      {
+       "file": "src/index.js",
+       "line": 416,
+       "text": "'`getTokenPools` no longer accepts `inversed`/`reorder` or `paired_token_address`/`address`: the endpoint it',"
+      },
+      {
+       "file": "src/index.js",
+       "line": 561,
+       "text": "// getNetworkPoolsFilter, getDexPools, getTokenPools, getTopTokens, and"
+      }
+     ]
+    },
+    {
+     "name": "getTopTokens",
+     "description": "Get the top tokens on one network ranked by volume, liquidity, transactions, FDV, or 24h price change, returned under 'results' with has_next_page and next_cursor. Read-only and keyless. Use for 'top gainers on Solana', 'highest-volume tokens on Base', or 'biggest tokens by FDV on ethereum'. For arbitrary numeric filters or a time window use filterNetworkTokens instead. Params: network (required slug); limit (default 50, max 100); cursor (pass previous next_cursor to page); sort_by (default 'volume_usd_24h', alias order_by), noting that ranking by raw price is unsupported and silently falls back to volume; sort_dir asc/desc (default 'desc', alias sort).",
+     "config": "coinpaprika__dexpaprika-mcp__getTopTokens.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 57,
+       "text": "await testEndpoint('getTopTokens', '/networks/ethereum/tokens/search?order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/index.js",
+       "line": 561,
+       "text": "// getNetworkPoolsFilter, getDexPools, getTokenPools, getTopTokens, and"
+      },
+      {
+       "file": "src/index.js",
+       "line": 577,
+       "text": "getTopTokens: { results: z.array(TokenSummary).optional(), has_next_page: z.boolean().optional(), next_cursor: z.string().nullable().optional(), query: z.record(z.string(), z.unknown()).optional() },"
+      },
+      {
+       "file": "src/index.js",
+       "line": 673,
+       "text": "top_tokens_on_network: ['getTopTokens'],"
+      },
+      {
+       "file": "src/index.js",
+       "line": 1165,
+       "text": "'Get tokens on one network matching numeric thresholds, returned under \\'results\\' with has_next_page and next_cursor. Read-only and keyless. Choose this over getTopTokens when the user gives numeric "
+      }
+     ]
+    },
+    {
+     "name": "search",
+     "description": "Search across ALL networks at once for tokens, pools, and DEXes by name, symbol, or address, returning three arrays: 'tokens', 'pools', and 'dexes'. Read-only and keyless. This is the cross-chain entry point when you do not yet know which network something lives on; once you have a network slug from the results, switch to the network-scoped tools. Use for 'find PEPE', 'what is the address for USDC', or 'which chain is this token on?'. No matches returns empty arrays, not an error. Params: query (required; a name, symbol, or contract address, e.g. 'uniswap', 'bitcoin', or '0x...'); limit (optional, caps results per category, applied client-side).",
+     "config": "coinpaprika__dexpaprika-mcp__search.json",
+     "hints": [
+      {
+       "file": "src/test_methods.js",
+       "line": 45,
+       "text": "console.log('Note: the pool/token list and filter endpoints were removed; pool and token discovery now uses /pools/search and /tokens/search.');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 50,
+       "text": "await testEndpoint('getNetworkPools (Ethereum)', '/networks/ethereum/pools/search?order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 51,
+       "text": "await testEndpoint('getNetworkPools (Solana)', '/networks/solana/pools/search?order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 52,
+       "text": "await testEndpoint('getNetworkPoolsFilter', '/networks/ethereum/pools/search?liquidity_usd_min=1000000&order_by=volume_usd_24h&limit=5');"
+      },
+      {
+       "file": "src/test_methods.js",
+       "line": 53,
+       "text": "await testEndpoint('getDexPools', '/networks/ethereum/pools/search?dex_name=uniswap_v3&order_by=volume_usd_24h&limit=5');"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "rawveg/ollama-mcp",
+   "slug": "rawveg__ollama-mcp",
+   "lang": "node",
+   "commit": "c11354c24d68f9e8bd0eb6e36d76ecc77597d392",
+   "path": "eval/targets/rawveg__ollama-mcp",
+   "surface_loc": 1783,
+   "tools": [
+    {
+     "name": "ollama_chat",
+     "description": "Chat with a model using conversation messages. Supports system messages, multi-turn conversations, tool calling, and generation options.",
+     "config": "rawveg__ollama-mcp__ollama_chat.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 89,
+       "text": "* Schema for ollama_chat tool"
+      },
+      {
+       "file": "src/tools/chat.ts",
+       "line": 62,
+       "text": "name: 'ollama_chat',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_copy",
+     "description": "Copy a model. Creates a duplicate of an existing model with a new name.",
+     "config": "rawveg__ollama-mcp__ollama_copy.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 185,
+       "text": "* Schema for ollama_copy tool"
+      },
+      {
+       "file": "src/tools/copy.ts",
+       "line": 25,
+       "text": "name: 'ollama_copy',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_create",
+     "description": "Create a new model with structured parameters. Allows customization of model behavior, system prompts, and templates.",
+     "config": "rawveg__ollama-mcp__ollama_create.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 165,
+       "text": "* Schema for ollama_create tool"
+      },
+      {
+       "file": "src/tools/create.ts",
+       "line": 36,
+       "text": "name: 'ollama_create',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_delete",
+     "description": "Delete a model from local storage. Removes the model and frees up disk space.",
+     "config": "rawveg__ollama-mcp__ollama_delete.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 177,
+       "text": "* Schema for ollama_delete tool"
+      },
+      {
+       "file": "src/tools/delete.ts",
+       "line": 23,
+       "text": "name: 'ollama_delete',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_embed",
+     "description": "Generate embeddings for text input. Returns numerical vector representations.",
+     "config": "rawveg__ollama-mcp__ollama_embed.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 112,
+       "text": "* Schema for ollama_embed tool"
+      },
+      {
+       "file": "src/tools/embed.ts",
+       "line": 25,
+       "text": "name: 'ollama_embed',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_generate",
+     "description": "Generate completion from a prompt. Simpler than chat, useful for single-turn completions.",
+     "config": "rawveg__ollama-mcp__ollama_generate.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 101,
+       "text": "* Schema for ollama_generate tool"
+      },
+      {
+       "file": "src/tools/generate.ts",
+       "line": 30,
+       "text": "name: 'ollama_generate',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_list",
+     "description": "List all available Ollama models installed locally. Returns model names, sizes, and modification dates.",
+     "config": "rawveg__ollama-mcp__ollama_list.json",
+     "hints": [
+      {
+       "file": "src/types.ts",
+       "line": 108,
+       "text": "`Model not found: ${modelName}. Use ollama_list to see available models.`"
+      },
+      {
+       "file": "src/schemas.ts",
+       "line": 55,
+       "text": "* Schema for ollama_list tool"
+      },
+      {
+       "file": "src/tools/list.ts",
+       "line": 22,
+       "text": "name: 'ollama_list',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_ps",
+     "description": "List running models. Shows which models are currently loaded in memory.",
+     "config": "rawveg__ollama-mcp__ollama_ps.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 194,
+       "text": "* Schema for ollama_ps tool (list running models)"
+      },
+      {
+       "file": "src/tools/ps.ts",
+       "line": 20,
+       "text": "name: 'ollama_ps',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_pull",
+     "description": "Pull a model from the Ollama registry. Downloads the model to make it available locally.",
+     "config": "rawveg__ollama-mcp__ollama_pull.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 147,
+       "text": "* Schema for ollama_pull tool"
+      },
+      {
+       "file": "src/tools/pull.ts",
+       "line": 26,
+       "text": "name: 'ollama_pull',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_push",
+     "description": "Push a model to the Ollama registry. Uploads a local model to make it available remotely.",
+     "config": "rawveg__ollama-mcp__ollama_push.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 156,
+       "text": "* Schema for ollama_push tool"
+      },
+      {
+       "file": "src/tools/push.ts",
+       "line": 26,
+       "text": "name: 'ollama_push',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_show",
+     "description": "Show detailed information about a specific model including modelfile, parameters, and architecture details.",
+     "config": "rawveg__ollama-mcp__ollama_show.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 62,
+       "text": "* Schema for ollama_show tool"
+      },
+      {
+       "file": "src/tools/show.ts",
+       "line": 21,
+       "text": "name: 'ollama_show',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_web_fetch",
+     "description": "Fetch a web page by URL using Ollama's web fetch API. Returns the page title, content, and links. Requires OLLAMA_API_KEY environment variable.",
+     "config": "rawveg__ollama-mcp__ollama_web_fetch.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 217,
+       "text": "* Schema for ollama_web_fetch tool"
+      },
+      {
+       "file": "src/tools/web-fetch.ts",
+       "line": 60,
+       "text": "name: 'ollama_web_fetch',"
+      }
+     ]
+    },
+    {
+     "name": "ollama_web_search",
+     "description": "Perform a web search using Ollama's web search API. Augments models with latest information to reduce hallucinations. Requires OLLAMA_API_KEY environment variable.",
+     "config": "rawveg__ollama-mcp__ollama_web_search.json",
+     "hints": [
+      {
+       "file": "src/schemas.ts",
+       "line": 208,
+       "text": "* Schema for ollama_web_search tool"
+      },
+      {
+       "file": "src/tools/web-search.ts",
+       "line": 62,
+       "text": "name: 'ollama_web_search',"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

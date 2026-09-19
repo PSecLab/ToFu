@@ -1,0 +1,2874 @@
+{
+ "shard_id": "054",
+ "n_repos": 7,
+ "n_configs": 143,
+ "surface_loc": 18204,
+ "repos": [
+  {
+   "repo": "qiniu/qiniu-mcp-server",
+   "slug": "qiniu__qiniu-mcp-server",
+   "lang": "python",
+   "commit": "52dd33532655721816b3efb61285522ec94c485a",
+   "path": "eval/targets/qiniu__qiniu-mcp-server",
+   "surface_loc": 2703,
+   "tools": [
+    {
+     "name": "cdn_prefetch_urls",
+     "description": "Newly added resources are proactively retrieved by the CDN and stored on its cache nodes in advance. Users simply submit the resource URLs, and the CDN automatically triggers the prefetch process.",
+     "config": "qiniu__qiniu-mcp-server__cdn_prefetch_urls.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/cdn/tools.py",
+       "line": 32,
+       "text": "name=\"cdn_prefetch_urls\","
+      }
+     ]
+    },
+    {
+     "name": "cdn_refresh",
+     "description": "This function marks resources cached on CDN nodes as expired. When users access these resources again, the CDN nodes will fetch the latest version from the origin server and store them anew.",
+     "config": "qiniu__qiniu-mcp-server__cdn_refresh.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/cdn/tools.py",
+       "line": 79,
+       "text": "name=\"cdn_refresh\","
+      }
+     ]
+    },
+    {
+     "name": "get_object",
+     "description": "Get an object contents from Qiniu Cloud bucket. In the GetObject request, specify the full key name for the object.",
+     "config": "qiniu__qiniu-mcp-server__get_object.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 28,
+       "text": "def get_object_url("
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 137,
+       "text": "async def get_object(self, bucket: str, key: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 151,
+       "text": "response = await s3.get_object(Bucket=bucket, Key=key)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 177,
+       "text": "return self.get_object_url(bucket, key)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 193,
+       "text": "return self.get_object_url(bucket, key)"
+      }
+     ]
+    },
+    {
+     "name": "get_object_url",
+     "description": "Get the file download URL, and note that the Bucket where the file is located must be bound to a domain name. If using Qiniu Cloud test domain, HTTPS access will not be available, and users need to make adjustments for this themselves.",
+     "config": "qiniu__qiniu-mcp-server__get_object_url.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 28,
+       "text": "def get_object_url("
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 177,
+       "text": "return self.get_object_url(bucket, key)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 193,
+       "text": "return self.get_object_url(bucket, key)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 200,
+       "text": "return self.get_object_url(bucket, key)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 205,
+       "text": "name=\"get_object_url\","
+      }
+     ]
+    },
+    {
+     "name": "image_info",
+     "description": "Retrieves basic image information, including image format, size, and color model.",
+     "config": "qiniu__qiniu-mcp-server__image_info.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 202,
+       "text": "name=\"image_info\","
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 216,
+       "text": "def image_info(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 265,
+       "text": "tool_impl.image_info,"
+      }
+     ]
+    },
+    {
+     "name": "image_round_corner",
+     "description": "Image rounded corner tool that processes images based on width, height, and corner radius, returning information about the processed image.\n            If only radius_x or radius_y is set, the other parameter will be assigned the same value, meaning horizontal and vertical parameters will be identical.\n            The information includes the object_url of the processed image, which users can directly use for HTTP GET requests to retrieve the image content or open in a browser to view the file.\n            The image must be stored in a Qiniu Cloud Bucket.\n            Supported original image formats: psd, jpeg, png, gif, webp, tiff, bmp, avif, heic. Image width and height cannot exceed 30,000 pixels, and total pixels cannot exceed 150 million.\n            Corner radius supports pixels and percentages, but cannot be negative. Pixels are represented by numbers, e.g., 200 means 200px; percentages use !xp, e.g., !25p means 25%.",
+     "config": "qiniu__qiniu-mcp-server__image_round_corner.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 137,
+       "text": "name=\"image_round_corner\","
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 164,
+       "text": "def image_round_corner(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 264,
+       "text": "tool_impl.image_round_corner,"
+      }
+     ]
+    },
+    {
+     "name": "image_scale_by_percent",
+     "description": "Image scaling tool that resizes images based on a percentage and returns information about the scaled image.\n            The information includes the object_url of the scaled image, which users can directly use for HTTP GET requests to retrieve the image content or open in a browser to view the file.\n            The image must be stored in a Qiniu Cloud Bucket.\n            Supported original image formats: psd, jpeg, png, gif, webp, tiff, bmp, avif, heic. Image width and height cannot exceed 30,000 pixels, and total pixels cannot exceed 150 million.\n            ",
+     "config": "qiniu__qiniu-mcp-server__image_scale_by_percent.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 24,
+       "text": "name=\"image_scale_by_percent\","
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 48,
+       "text": "def image_scale_by_percent("
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 262,
+       "text": "tool_impl.image_scale_by_percent,"
+      }
+     ]
+    },
+    {
+     "name": "image_scale_by_size",
+     "description": "Image scaling tool that resizes images based on a specified width or height and returns information about the scaled image.\n            The information includes the object_url of the scaled image, which users can directly use for HTTP GET requests to retrieve the image content or open in a browser to view the file.\n            The image must be stored in a Qiniu Cloud Bucket.\n            Supported original image formats: psd, jpeg, png, gif, webp, tiff, bmp, avif, heic. Image width and height cannot exceed 30,000 pixels, and total pixels cannot exceed 150 million.\n            ",
+     "config": "qiniu__qiniu-mcp-server__image_scale_by_size.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 77,
+       "text": "name=\"image_scale_by_size\","
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 105,
+       "text": "def image_scale_by_size("
+      },
+      {
+       "file": "src/mcp_server/core/media_processing/tools.py",
+       "line": 263,
+       "text": "tool_impl.image_scale_by_size,"
+      }
+     ]
+    },
+    {
+     "name": "list_buckets",
+     "description": "Return the Bucket you configured based on the conditions.",
+     "config": "qiniu__qiniu-mcp-server__list_buckets.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/live_streaming.py",
+       "line": 483,
+       "text": "async def list_buckets(self) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 208,
+       "text": "name=\"live_streaming_list_buckets\","
+      },
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 217,
+       "text": "async def list_buckets(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 218,
+       "text": "result = await self.live_streaming.list_buckets(**kwargs)"
+      },
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 253,
+       "text": "tool_impl.list_buckets,"
+      }
+     ]
+    },
+    {
+     "name": "list_objects",
+     "description": "List objects in Qiniu Cloud, list a part each time, you can set start_after to continue listing, when the number of listed objects is less than max_keys, it means that all files are listed. start_after can be the key of the last file in the previous listing.",
+     "config": "qiniu__qiniu-mcp-server__list_objects.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 109,
+       "text": "async def list_objects("
+      },
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 129,
+       "text": "response = await s3.list_objects_v2("
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 41,
+       "text": "name=\"list_objects\","
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 67,
+       "text": "async def list_objects(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 68,
+       "text": "objects = await self.storage.list_objects(**kwargs)"
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_bind_play_domain",
+     "description": "Bind a playback domain to a LiveStreaming bucket for live streaming. This allows you to configure the domain for playing back streams via FLV/M3U8/WHEP.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_bind_play_domain.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 94,
+       "text": "name=\"live_streaming_bind_play_domain\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_bind_push_domain",
+     "description": "Bind a push domain to a LiveStreaming bucket for live streaming. This allows you to configure the domain for pushing RTMP/WHIP streams.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_bind_push_domain.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 65,
+       "text": "name=\"live_streaming_bind_push_domain\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_create_bucket",
+     "description": "Create a new bucket in LiveStreaming using S3-style API. The bucket will be created at https://<bucket>.<endpoint_url>",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_create_bucket.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 21,
+       "text": "name=\"live_streaming_create_bucket\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_create_stream",
+     "description": "Create a new stream in LiveStreaming using S3-style API. The stream will be created at https://<bucket>.<endpoint_url>/<stream>",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_create_stream.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 41,
+       "text": "name=\"live_streaming_create_stream\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_get_play_urls",
+     "description": "Get playback URLs for a stream. Returns FLV, M3U8, and WHEP playback URLs that can be used to play live streams.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_get_play_urls.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 151,
+       "text": "name=\"live_streaming_get_play_urls\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_get_push_urls",
+     "description": "Get push URLs for a stream. Returns RTMP and WHIP push URLs that can be used to push live streams.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_get_push_urls.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 123,
+       "text": "name=\"live_streaming_get_push_urls\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_list_buckets",
+     "description": "List all live streaming spaces/buckets. Returns information about all available live streaming buckets.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_list_buckets.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 208,
+       "text": "name=\"live_streaming_list_buckets\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_list_streams",
+     "description": "List all streams in a specific live streaming bucket. Returns the list of streams for the given bucket ID.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_list_streams.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 223,
+       "text": "name=\"live_streaming_list_streams\","
+      }
+     ]
+    },
+    {
+     "name": "live_streaming_query_live_traffic_stats",
+     "description": "Query live streaming traffic statistics for a time range. Returns total traffic (bytes), average bandwidth (bps), peak bandwidth (bps), and optionally raw data for download.",
+     "config": "qiniu__qiniu-mcp-server__live_streaming_query_live_traffic_stats.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/live_streaming/tools.py",
+       "line": 179,
+       "text": "name=\"live_streaming_query_live_traffic_stats\","
+      }
+     ]
+    },
+    {
+     "name": "upload_local_file",
+     "description": "Upload a local file to Qiniu bucket.",
+     "config": "qiniu__qiniu-mcp-server__upload_local_file.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 179,
+       "text": "def upload_local_file(self, bucket: str, key: str, file_path: str, overwrite: bool = False) -> list[dict[str:Any]]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 145,
+       "text": "name=\"upload_local_file\","
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 171,
+       "text": "def upload_local_file(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 172,
+       "text": "urls = self.storage.upload_local_file(**kwargs)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 244,
+       "text": "tool_impl.upload_local_file,"
+      }
+     ]
+    },
+    {
+     "name": "upload_text_data",
+     "description": "Upload text data to Qiniu bucket.",
+     "config": "qiniu__qiniu-mcp-server__upload_text_data.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/storage/storage.py",
+       "line": 163,
+       "text": "def upload_text_data(self, bucket: str, key: str, data: str, overwrite: bool = False) -> list[dict[str:Any]]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 113,
+       "text": "name=\"upload_text_data\","
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 139,
+       "text": "def upload_text_data(self, **kwargs) -> list[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 140,
+       "text": "urls = self.storage.upload_text_data(**kwargs)"
+      },
+      {
+       "file": "src/mcp_server/core/storage/tools.py",
+       "line": 243,
+       "text": "tool_impl.upload_text_data,"
+      }
+     ]
+    },
+    {
+     "name": "version",
+     "description": "qiniu mcp server version info.",
+     "config": "qiniu__qiniu-mcp-server__version.json",
+     "hints": [
+      {
+       "file": "src/mcp_server/core/__init__.py",
+       "line": 5,
+       "text": "from .version import load as load_version"
+      },
+      {
+       "file": "src/mcp_server/core/__init__.py",
+       "line": 14,
+       "text": "load_version(cfg)"
+      },
+      {
+       "file": "src/mcp_server/core/cdn/tools.py",
+       "line": 80,
+       "text": "description=\"This function marks resources cached on CDN nodes as expired. When users access these resources again, the CDN nodes will fetch the latest version from the origin server and store them an"
+      },
+      {
+       "file": "src/mcp_server/core/version/tools.py",
+       "line": 4,
+       "text": "from . import version"
+      },
+      {
+       "file": "src/mcp_server/core/version/tools.py",
+       "line": 14,
+       "text": "name=\"version\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "antvis/mcp-server-chart",
+   "slug": "antvis__mcp-server-chart",
+   "lang": "node",
+   "commit": "e2a8fb7c185e17c75c067817ff1a2acfddf49aa1",
+   "path": "eval/targets/antvis__mcp-server-chart",
+   "surface_loc": 2687,
+   "tools": [
+    {
+     "name": "generate_area_chart",
+     "description": "Generate a area chart to show data trends under continuous independent variables and observe the overall data trend, such as, displacement = velocity (average or instantaneous) \u00d7 time: s = v \u00d7 t. If the x-axis is time (t) and the y-axis is velocity (v) at each moment, an area chart allows you to observe the trend of velocity over time and infer the distance traveled by the area's size.",
+     "config": "antvis__mcp-server-chart__generate_area_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 10,
+       "text": "generate_area_chart: \"area\","
+      },
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 51,
+       "text": "* @param tool The name of the tool to call, e.g., \"generate_area_chart\"."
+      },
+      {
+       "file": "src/charts/area.ts",
+       "line": 62,
+       "text": "name: \"generate_area_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_bar_chart",
+     "description": "Generate a horizontal bar chart to show data for numerical comparisons among different categories, such as, comparing categorical data and for horizontal comparisons.",
+     "config": "antvis__mcp-server-chart__generate_bar_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 11,
+       "text": "generate_bar_chart: \"bar\","
+      },
+      {
+       "file": "src/charts/bar.ts",
+       "line": 64,
+       "text": "name: \"generate_bar_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_boxplot_chart",
+     "description": "Generate a boxplot chart to show data for statistical summaries among different categories, such as, comparing the distribution of data points across categories.",
+     "config": "antvis__mcp-server-chart__generate_boxplot_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 12,
+       "text": "generate_boxplot_chart: \"boxplot\","
+      },
+      {
+       "file": "src/charts/boxplot.ts",
+       "line": 56,
+       "text": "name: \"generate_boxplot_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_column_chart",
+     "description": "Generate a column chart, which are best for comparing categorical data, such as, when values are close, column charts are preferable because our eyes are better at judging height than other visual elements like area or angles.",
+     "config": "antvis__mcp-server-chart__generate_column_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 13,
+       "text": "generate_column_chart: \"column\","
+      },
+      {
+       "file": "src/charts/column.ts",
+       "line": 64,
+       "text": "name: \"generate_column_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_district_map",
+     "description": "Generates regional distribution maps, which are usually used to show the administrative divisions and coverage of a dataset. It is not suitable for showing the distribution of specific locations, such as urban administrative divisions, GDP distribution maps of provinces and cities across the country, etc. This tool is limited to generating data maps within China.",
+     "config": "antvis__mcp-server-chart__generate_district_map.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 14,
+       "text": "generate_district_map: \"district-map\","
+      },
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 82,
+       "text": "\"generate_district_map\","
+      },
+      {
+       "file": "src/charts/district-map.ts",
+       "line": 86,
+       "text": "name: \"generate_district_map\","
+      }
+     ]
+    },
+    {
+     "name": "generate_dual_axes_chart",
+     "description": "Generate a dual axes chart which is a combination chart that integrates two different chart types, typically combining a bar chart with a line chart to display both the trend and comparison of data, such as, the trend of sales and profit over time.",
+     "config": "antvis__mcp-server-chart__generate_dual_axes_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 15,
+       "text": "generate_dual_axes_chart: \"dual-axes\","
+      },
+      {
+       "file": "src/charts/dual-axes.ts",
+       "line": 68,
+       "text": "name: \"generate_dual_axes_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_fishbone_diagram",
+     "description": "Generate a fishbone diagram chart to uses a fish skeleton, like structure to display the causes or effects of a core problem, with the problem as the fish head and the causes/effects as the fish bones. It suits problems that can be split into multiple related factors.",
+     "config": "antvis__mcp-server-chart__generate_fishbone_diagram.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 16,
+       "text": "generate_fishbone_diagram: \"fishbone-diagram\","
+      },
+      {
+       "file": "src/charts/fishbone-diagram.ts",
+       "line": 58,
+       "text": "name: \"generate_fishbone_diagram\","
+      }
+     ]
+    },
+    {
+     "name": "generate_flow_diagram",
+     "description": "Generate a flow diagram chart to show the steps and decision points of a process or system, such as, scenarios requiring linear process presentation.",
+     "config": "antvis__mcp-server-chart__generate_flow_diagram.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 17,
+       "text": "generate_flow_diagram: \"flow-diagram\","
+      },
+      {
+       "file": "src/charts/flow-diagram.ts",
+       "line": 44,
+       "text": "name: \"generate_flow_diagram\","
+      }
+     ]
+    },
+    {
+     "name": "generate_funnel_chart",
+     "description": "Generate a funnel chart to visualize the progressive reduction of data as it passes through stages, such as, the conversion rates of users from visiting a website to completing a purchase.",
+     "config": "antvis__mcp-server-chart__generate_funnel_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 18,
+       "text": "generate_funnel_chart: \"funnel\","
+      },
+      {
+       "file": "src/charts/funnel.ts",
+       "line": 42,
+       "text": "name: \"generate_funnel_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_histogram_chart",
+     "description": "Generate a histogram chart to show the frequency of data points within a certain range. It can observe data distribution, such as, normal and skewed distributions, and identify data concentration areas and extreme points.",
+     "config": "antvis__mcp-server-chart__generate_histogram_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 19,
+       "text": "generate_histogram_chart: \"histogram\","
+      },
+      {
+       "file": "src/charts/histogram.ts",
+       "line": 49,
+       "text": "name: \"generate_histogram_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_line_chart",
+     "description": "Generate a line chart to show trends over time, such as, the ratio of Apple computer sales to Apple's profits changed from 2000 to 2016.",
+     "config": "antvis__mcp-server-chart__generate_line_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 20,
+       "text": "generate_line_chart: \"line\","
+      },
+      {
+       "file": "src/charts/line.ts",
+       "line": 56,
+       "text": "name: \"generate_line_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_liquid_chart",
+     "description": "Generate a liquid chart to visualize a single value as a percentage, such as, the current occupancy rate of a reservoir or the completion percentage of a project.",
+     "config": "antvis__mcp-server-chart__generate_liquid_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 21,
+       "text": "generate_liquid_chart: \"liquid\","
+      },
+      {
+       "file": "src/charts/liquid.ts",
+       "line": 49,
+       "text": "name: \"generate_liquid_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_mind_map",
+     "description": "Generate a mind map chart to organizes and presents information in a hierarchical structure with branches radiating from a central topic, such as, a diagram showing the relationship between a main topic and its subtopics.",
+     "config": "antvis__mcp-server-chart__generate_mind_map.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 22,
+       "text": "generate_mind_map: \"mind-map\","
+      },
+      {
+       "file": "src/charts/mind-map.ts",
+       "line": 36,
+       "text": "name: \"generate_mind_map\","
+      }
+     ]
+    },
+    {
+     "name": "generate_network_graph",
+     "description": "Generate a network graph chart to show relationships (edges) between entities (nodes), such as, relationships between people in social networks.",
+     "config": "antvis__mcp-server-chart__generate_network_graph.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 23,
+       "text": "generate_network_graph: \"network-graph\","
+      },
+      {
+       "file": "src/charts/network-graph.ts",
+       "line": 44,
+       "text": "name: \"generate_network_graph\","
+      }
+     ]
+    },
+    {
+     "name": "generate_organization_chart",
+     "description": "Generate an organization chart to visualize the hierarchical structure of an organization, such as, a diagram showing the relationship between a CEO and their direct reports.",
+     "config": "antvis__mcp-server-chart__generate_organization_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 24,
+       "text": "generate_organization_chart: \"organization-chart\","
+      },
+      {
+       "file": "src/charts/organization-chart.ts",
+       "line": 61,
+       "text": "name: \"generate_organization_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_path_map",
+     "description": "Generate a route map to display the user's planned route, such as travel guide routes.",
+     "config": "antvis__mcp-server-chart__generate_path_map.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 25,
+       "text": "generate_path_map: \"path-map\","
+      },
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 83,
+       "text": "\"generate_path_map\","
+      },
+      {
+       "file": "src/charts/path-map.ts",
+       "line": 26,
+       "text": "name: \"generate_path_map\","
+      }
+     ]
+    },
+    {
+     "name": "generate_pie_chart",
+     "description": "Generate a pie chart to show the proportion of parts, such as, market share and budget allocation.",
+     "config": "antvis__mcp-server-chart__generate_pie_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 26,
+       "text": "generate_pie_chart: \"pie\","
+      },
+      {
+       "file": "src/charts/pie.ts",
+       "line": 51,
+       "text": "name: \"generate_pie_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_pin_map",
+     "description": "Generate a point map to display the location and distribution of point data on the map, such as the location distribution of attractions, hospitals, supermarkets, etc.",
+     "config": "antvis__mcp-server-chart__generate_pin_map.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 27,
+       "text": "generate_pin_map: \"pin-map\","
+      },
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 84,
+       "text": "\"generate_pin_map\","
+      },
+      {
+       "file": "src/charts/pin-map.ts",
+       "line": 33,
+       "text": "name: \"generate_pin_map\","
+      }
+     ]
+    },
+    {
+     "name": "generate_radar_chart",
+     "description": "Generate a radar chart to display multidimensional data (four dimensions or more), such as, evaluate Huawei and Apple phones in terms of five dimensions: ease of use, functionality, camera, benchmark scores, and battery life.",
+     "config": "antvis__mcp-server-chart__generate_radar_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 28,
+       "text": "generate_radar_chart: \"radar\","
+      },
+      {
+       "file": "src/charts/radar.ts",
+       "line": 57,
+       "text": "name: \"generate_radar_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_sankey_chart",
+     "description": "Generate a sankey chart to visualize the flow of data between different stages or categories, such as, the user journey from landing on a page to completing a purchase.",
+     "config": "antvis__mcp-server-chart__generate_sankey_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 29,
+       "text": "generate_sankey_chart: \"sankey\","
+      },
+      {
+       "file": "src/charts/sankey.ts",
+       "line": 50,
+       "text": "name: \"generate_sankey_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_scatter_chart",
+     "description": "Generate a scatter chart to show the relationship between two variables, helps discover their relationship or trends, such as, the strength of correlation, data distribution patterns.",
+     "config": "antvis__mcp-server-chart__generate_scatter_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 30,
+       "text": "generate_scatter_chart: \"scatter\","
+      },
+      {
+       "file": "src/charts/scatter.ts",
+       "line": 50,
+       "text": "name: \"generate_scatter_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_spreadsheet",
+     "description": "Generate a spreadsheet or pivot table for displaying tabular data. When 'rows' or 'values' fields are provided, it renders as a pivot table (cross-tabulation); otherwise, it renders as a regular table. Useful for displaying structured data, comparing values across categories, and creating data summaries.",
+     "config": "antvis__mcp-server-chart__generate_spreadsheet.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 36,
+       "text": "generate_spreadsheet: \"spreadsheet\","
+      },
+      {
+       "file": "src/charts/spreadsheet.ts",
+       "line": 50,
+       "text": "name: \"generate_spreadsheet\","
+      }
+     ]
+    },
+    {
+     "name": "generate_treemap_chart",
+     "description": "Generate a treemap chart to display hierarchical data and can intuitively show comparisons between items at the same level, such as, show disk space usage with treemap.",
+     "config": "antvis__mcp-server-chart__generate_treemap_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 31,
+       "text": "generate_treemap_chart: \"treemap\","
+      },
+      {
+       "file": "src/charts/treemap.ts",
+       "line": 64,
+       "text": "name: \"generate_treemap_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_venn_chart",
+     "description": "Generate a Venn diagram to visualize the relationships between different sets, showing how they intersect and overlap, such as the commonalities and differences between various groups.",
+     "config": "antvis__mcp-server-chart__generate_venn_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 32,
+       "text": "generate_venn_chart: \"venn\","
+      },
+      {
+       "file": "src/charts/venn.ts",
+       "line": 52,
+       "text": "name: \"generate_venn_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_violin_chart",
+     "description": "Generate a violin chart to show data for statistical summaries among different categories, such as, comparing the distribution of data points across categories.",
+     "config": "antvis__mcp-server-chart__generate_violin_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 33,
+       "text": "generate_violin_chart: \"violin\","
+      },
+      {
+       "file": "src/charts/violin.ts",
+       "line": 56,
+       "text": "name: \"generate_violin_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_waterfall_chart",
+     "description": "Generate a waterfall chart to visualize the cumulative effect of sequentially introduced positive or negative values, such as showing how an initial value is affected by a series of intermediate positive or negative values leading to a final result. Waterfall charts are ideal for financial analysis, budget tracking, profit and loss statements, and understanding the composition of changes over time or categories.",
+     "config": "antvis__mcp-server-chart__generate_waterfall_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 34,
+       "text": "generate_waterfall_chart: \"waterfall\","
+      },
+      {
+       "file": "src/charts/waterfall.ts",
+       "line": 84,
+       "text": "name: \"generate_waterfall_chart\","
+      }
+     ]
+    },
+    {
+     "name": "generate_word_cloud_chart",
+     "description": "Generate a word cloud chart to show word frequency or weight through text size variation, such as, analyzing common words in social media, reviews, or feedback.",
+     "config": "antvis__mcp-server-chart__generate_word_cloud_chart.json",
+     "hints": [
+      {
+       "file": "src/utils/callTool.ts",
+       "line": 35,
+       "text": "generate_word_cloud_chart: \"word-cloud\","
+      },
+      {
+       "file": "src/charts/word-cloud.ts",
+       "line": 45,
+       "text": "name: \"generate_word_cloud_chart\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "benborla/mcp-server-mysql",
+   "slug": "benborla__mcp-server-mysql",
+   "lang": "node",
+   "commit": "b9c714e182422b9f18437242b80cf003adf1c7ea",
+   "path": "eval/targets/benborla__mcp-server-mysql",
+   "surface_loc": 2643,
+   "tools": [
+    {
+     "name": "mysql_query",
+     "description": "",
+     "config": "benborla__mcp-server-mysql__mysql_query.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 160,
+       "text": "mysql_query: {"
+      },
+      {
+       "file": "index.ts",
+       "line": 314,
+       "text": "if (request.params.name !== \"mysql_query\") {"
+      },
+      {
+       "file": "index.ts",
+       "line": 340,
+       "text": "name: \"mysql_query\","
+      },
+      {
+       "file": "evals.ts",
+       "line": 8,
+       "text": "name: 'mysql_query Tool Evaluation',"
+      },
+      {
+       "file": "evals.ts",
+       "line": 17,
+       "text": "name: 'mysql_query Tool Generation Evaluation',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "redis/mcp-redis",
+   "slug": "redis__mcp-redis",
+   "lang": "python",
+   "commit": "7611e229f847ae51d4c17dc0e552340cecc42d08",
+   "path": "eval/targets/redis__mcp-redis",
+   "surface_loc": 2589,
+   "tools": [
+    {
+     "name": "client_list",
+     "description": "Get a list of connected clients to the Redis server.",
+     "config": "redis__mcp-redis__client_list.json",
+     "hints": [
+      {
+       "file": "src/tools/server_management.py",
+       "line": 36,
+       "text": "async def client_list() -> list:"
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 40,
+       "text": "clients = r.client_list()"
+      }
+     ]
+    },
+    {
+     "name": "create_vector_index_hash",
+     "description": "\nCreate a Redis 8 vector similarity index using HNSW on a Redis hash.\n\nThis function sets up a Redis index for approximate nearest neighbor (ANN)\nsearch using the HNSW algorithm and float32 vector embeddings.\n\nArgs:\n    index_name: The name of the Redis index to create. Unless specifically required, use the default name for the index.\n    prefix: The key prefix used to identify documents to index (e.g., 'doc:'). Unless specifically required, use the default prefix.\n    vector_field: The name of the vector field to be indexed for similarity search. Unless specifically required, use the default field name\n    dim: The dimensionality of the vectors stored under the vector_field.\n    distance_metric: The distance function to use (e.g., 'COSINE', 'L2', 'IP').\n\nReturns:\n    A string indicating whether the index was created successfully or an error message.\n",
+     "config": "redis__mcp-redis__create_vector_index_hash.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 65,
+       "text": "async def create_vector_index_hash("
+      }
+     ]
+    },
+    {
+     "name": "dbsize",
+     "description": "Get the number of keys stored in the Redis database",
+     "config": "redis__mcp-redis__dbsize.json",
+     "hints": [
+      {
+       "file": "src/tools/server_management.py",
+       "line": 8,
+       "text": "async def dbsize() -> int:"
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 12,
+       "text": "return r.dbsize()"
+      }
+     ]
+    },
+    {
+     "name": "delete",
+     "description": "Delete a Redis key.\n\nArgs:\n    key (str): The key to delete.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__delete.json",
+     "hints": [
+      {
+       "file": "src/tools/json.py",
+       "line": 76,
+       "text": "path: The JSON path to delete (default: root '$')."
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 83,
+       "text": "deleted = r.json().delete(name, path)"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 86,
+       "text": "if deleted"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 71,
+       "text": "deleted = r.hdel(name, key)"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 73,
+       "text": "f\"Field '{key}' deleted from hash '{name}'.\""
+      }
+     ]
+    },
+    {
+     "name": "expire",
+     "description": "Set an expiration time for a Redis key.\n\nArgs:\n    name: The Redis key.\n    expire_seconds: Time in seconds after which the key should expire.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__expire.json",
+     "hints": [
+      {
+       "file": "src/tools/json.py",
+       "line": 14,
+       "text": "expire_seconds: Optional[int] = None,"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 22,
+       "text": "expire_seconds: Optional; time in seconds after which the key should expire."
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 37,
+       "text": "if expire_seconds is not None:"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 38,
+       "text": "r.expire(name, expire_seconds)"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 41,
+       "text": "f\" Expires in {expire_seconds} seconds.\" if expire_seconds else \"\""
+      }
+     ]
+    },
+    {
+     "name": "get",
+     "description": "Get a Redis string value.\n\nArgs:\n    key (str): The key to retrieve.\n\nReturns:\n    str, bytes: The stored value or an error message.\n",
+     "config": "redis__mcp-redis__get.json",
+     "hints": [
+      {
+       "file": "src/main.py",
+       "line": 19,
+       "text": "self._logger = logging.getLogger(__name__)"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 34,
+       "text": "r = RedisConnectionManager.get_connection()"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 48,
+       "text": "async def json_get(name: str, path: str = \"$\") -> str:"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 59,
+       "text": "r = RedisConnectionManager.get_connection()"
+      },
+      {
+       "file": "src/tools/json.py",
+       "line": 60,
+       "text": "value = r.json().get(name, path)"
+      }
+     ]
+    },
+    {
+     "name": "get_index_info",
+     "description": "Retrieve schema and information about a specific Redis index using FT.INFO.\n\nArgs:\n    index_name (str): The name of the index to retrieve information about.\n\nReturns:\n    str: Information about the specified index or an error message.\n",
+     "config": "redis__mcp-redis__get_index_info.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 29,
+       "text": "async def get_index_info(index_name: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_indexed_keys_number",
+     "description": "Retrieve the number of indexed keys by the index\n\nArgs:\n    index_name (str): The name of the index to retrieve information about.\n\nReturns:\n    str: Number of indexed keys as a string\n",
+     "config": "redis__mcp-redis__get_indexed_keys_number.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 47,
+       "text": "async def get_indexed_keys_number(index_name: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_indexes",
+     "description": "List of indexes in the Redis database\n\nReturns:\n    str: A JSON string containing the list of indexes or an error message.\n",
+     "config": "redis__mcp-redis__get_indexes.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 15,
+       "text": "async def get_indexes() -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_vector_from_hash",
+     "description": "Retrieve a vector from a Redis hash and convert it back from binary blob.\n\nArgs:\n    name: The Redis hash key.\n    vector_field: The field name inside the hash. Unless specifically required, use the default field name\n\nReturns:\n    The vector as a list of floats, or an error message if retrieval fails.\n",
+     "config": "redis__mcp-redis__get_vector_from_hash.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 149,
+       "text": "async def get_vector_from_hash(name: str, vector_field: str = \"vector\"):"
+      }
+     ]
+    },
+    {
+     "name": "hdel",
+     "description": "Delete a field from a Redis hash.\n\nArgs:\n    name: The Redis hash key.\n    key: The field name inside the hash.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__hdel.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 59,
+       "text": "async def hdel(name: str, key: str) -> str:"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 71,
+       "text": "deleted = r.hdel(name, key)"
+      }
+     ]
+    },
+    {
+     "name": "hexists",
+     "description": "Check if a field exists in a Redis hash.\n\nArgs:\n    name: The Redis hash key.\n    key: The field name inside the hash.\n\nReturns:\n    True if the field exists, False otherwise.\n",
+     "config": "redis__mcp-redis__hexists.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 104,
+       "text": "async def hexists(name: str, key: str) -> bool:"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 116,
+       "text": "return r.hexists(name, key)"
+      }
+     ]
+    },
+    {
+     "name": "hget",
+     "description": "Get the value of a field in a Redis hash.\n\nArgs:\n    name: The Redis hash key.\n    key: The field name inside the hash.\n\nReturns:\n    The field value or an error message.\n",
+     "config": "redis__mcp-redis__hget.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 40,
+       "text": "async def hget(name: str, key: str) -> str:"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 52,
+       "text": "value = r.hget(name, key)"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 82,
+       "text": "async def hgetall(name: str) -> dict:"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 93,
+       "text": "hash_data = r.hgetall(name)"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 163,
+       "text": "binary_blob = r.hget(name, vector_field)"
+      }
+     ]
+    },
+    {
+     "name": "hgetall",
+     "description": "Get all fields and values from a Redis hash.\n\nArgs:\n    name: The Redis hash key.\n\nReturns:\n    A dictionary of field-value pairs or an error message.\n",
+     "config": "redis__mcp-redis__hgetall.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 82,
+       "text": "async def hgetall(name: str) -> dict:"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 93,
+       "text": "hash_data = r.hgetall(name)"
+      }
+     ]
+    },
+    {
+     "name": "hset",
+     "description": "Set a field in a hash stored at key with an optional expiration time.\n\nArgs:\n    name: The Redis hash key.\n    key: The field name inside the hash.\n    value: The value to set.\n    expire_seconds: Optional; time in seconds after which the key should expire.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__hset.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 11,
+       "text": "async def hset("
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 27,
+       "text": "r.hset(name, key, str(value))"
+      },
+      {
+       "file": "src/tools/hash.py",
+       "line": 142,
+       "text": "r.hset(name, vector_field, binary_blob)"
+      }
+     ]
+    },
+    {
+     "name": "hybrid_search",
+     "description": "\nPerform a hybrid search combining a Redis filter expression with KNN vector similarity.\n\nHybrid search pre-filters documents by metadata before ranking by vector similarity \u2014\nthe standard pattern for production RAG and semantic search pipelines.\n\nFilter expression examples:\n    \"*\"                              \u2192 no filter, pure vector search (same as vector_search_hash)\n    \"@category:{news}\"              \u2192 tag filter\n    \"@year:[2020 2024]\"             \u2192 numeric range\n    \"@lang:{en} @year:[2022 +inf]\"  \u2192 combined tag + range\n    \"@title:redis\"                  \u2192 full-text match on a text field\n\nFull filter syntax: https://redis.io/docs/latest/develop/interact/search-and-query/query/\n\nArgs:\n    query_vector:       List of floats to use as the query vector.\n    filter_expression:  Redis filter expression to restrict candidates before KNN ranking.\n                        Defaults to '*' (no filter).\n    index_name:         Name of the Redis index (default: 'vector_index').\n    vector_field:       Name of the indexed vector field (default: 'vector').\n    k:                  Number of nearest neighbors to return.\n    return_fields:      Additional fields to include in results (optional).\n\nReturns:\n    A list of matched documents with their similarity score, or an error message.\n",
+     "config": "redis__mcp-redis__hybrid_search.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 153,
+       "text": "async def hybrid_search("
+      }
+     ]
+    },
+    {
+     "name": "info",
+     "description": "Get Redis server information and statistics.\n\nArgs:\n    section: The section of the info command (default, memory, cpu, etc.).\n\nReturns:\n    A dictionary of server information or an error message.\n",
+     "config": "redis__mcp-redis__info.json",
+     "hints": [
+      {
+       "file": "src/main.py",
+       "line": 20,
+       "text": "self._logger.info(\"Starting the Redis MCP Server\")"
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 18,
+       "text": "async def info(section: str = \"default\") -> dict:"
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 19,
+       "text": "\"\"\"Get Redis server information and statistics."
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 22,
+       "text": "section: The section of the info command (default, memory, cpu, etc.)."
+      },
+      {
+       "file": "src/tools/server_management.py",
+       "line": 25,
+       "text": "A dictionary of server information or an error message."
+      }
+     ]
+    },
+    {
+     "name": "json_del",
+     "description": "Delete a JSON value from Redis at a given path.\n\nArgs:\n    name: The Redis key where the JSON document is stored.\n    path: The JSON path to delete (default: root '$').\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__json_del.json",
+     "hints": [
+      {
+       "file": "src/tools/json.py",
+       "line": 71,
+       "text": "async def json_del(name: str, path: str = \"$\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "json_get",
+     "description": "Retrieve a JSON value from Redis at a given path.\n\nArgs:\n    name: The Redis key where the JSON document is stored.\n    path: The JSON path to retrieve (default: root '$').\n\nReturns:\n    The retrieved JSON value or an error message.\n",
+     "config": "redis__mcp-redis__json_get.json",
+     "hints": [
+      {
+       "file": "src/tools/json.py",
+       "line": 48,
+       "text": "async def json_get(name: str, path: str = \"$\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "json_set",
+     "description": "Set a JSON value in Redis at a given path with an optional expiration time.\n\nArgs:\n    name: The Redis key where the JSON document is stored.\n    path: The JSON path where the value should be set.\n    value: The JSON value to store (as JSON string, or will be auto-converted).\n    expire_seconds: Optional; time in seconds after which the key should expire.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__json_set.json",
+     "hints": [
+      {
+       "file": "src/tools/json.py",
+       "line": 10,
+       "text": "async def json_set("
+      }
+     ]
+    },
+    {
+     "name": "llen",
+     "description": "Get the length of a Redis list.",
+     "config": "redis__mcp-redis__llen.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 78,
+       "text": "async def llen(name: str) -> int:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 82,
+       "text": "return r.llen(name)"
+      }
+     ]
+    },
+    {
+     "name": "lpop",
+     "description": "Remove and return the first element from a Redis list.",
+     "config": "redis__mcp-redis__lpop.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 38,
+       "text": "async def lpop(name: str) -> str:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 42,
+       "text": "value = r.lpop(name)"
+      }
+     ]
+    },
+    {
+     "name": "lpush",
+     "description": "Push a value onto the left of a Redis list and optionally set an expiration time.",
+     "config": "redis__mcp-redis__lpush.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 12,
+       "text": "async def lpush(name: str, value: FieldT, expire: Optional[int] = None) -> str:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 16,
+       "text": "r.lpush(name, value)"
+      }
+     ]
+    },
+    {
+     "name": "lrange",
+     "description": "Get elements from a Redis list within a specific range.\n\nReturns:\nstr: A JSON string containing the list of elements or an error message.\n",
+     "config": "redis__mcp-redis__lrange.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 60,
+       "text": "async def lrange(name: str, start: int, stop: int) -> Union[str, List[str]]:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 68,
+       "text": "values = r.lrange(name, start, stop)"
+      }
+     ]
+    },
+    {
+     "name": "lrem",
+     "description": "Remove elements from a Redis list.\n\nArgs:\n    name: The name of the list\n    count: Number of elements to remove (0 = all, positive = from head, negative = from tail)\n    element: The element value to remove\n\nReturns:\n    A string indicating the number of elements removed.\n",
+     "config": "redis__mcp-redis__lrem.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 88,
+       "text": "async def lrem(name: str, count: int, element: FieldT) -> str:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 101,
+       "text": "removed_count = r.lrem(name, count, element)"
+      }
+     ]
+    },
+    {
+     "name": "psubscribe",
+     "description": "Subscribe to Redis channels using a pattern.\n\nArgs:\n    pattern: The Redis channel pattern to subscribe to.\n\nReturns:\n    A dictionary containing the subscription ID or an error message.\n",
+     "config": "redis__mcp-redis__psubscribe.json",
+     "hints": [
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 58,
+       "text": "async def psubscribe(pattern: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 70,
+       "text": "SubscriptionManager.psubscribe,"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 90,
+       "text": "subscription_id: The ID returned by subscribe() or psubscribe()."
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 128,
+       "text": "subscription_id: The ID returned by subscribe() or psubscribe()."
+      },
+      {
+       "file": "src/common/subscription_manager.py",
+       "line": 64,
+       "text": "def psubscribe(cls, redis_client: Redis, pattern: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "publish",
+     "description": "Publish a message to a Redis channel.\n\nArgs:\n    channel: The Redis channel to publish to.\n    message: The message to send.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__publish.json",
+     "hints": [
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 15,
+       "text": "async def publish(channel: str, message: str) -> str:"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 19,
+       "text": "channel: The Redis channel to publish to."
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 27,
+       "text": "r.publish(channel, message)"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 28,
+       "text": "return f\"Message published to channel '{channel}'.\""
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 30,
+       "text": "return f\"Error publishing message to channel '{channel}': {str(e)}\""
+      }
+     ]
+    },
+    {
+     "name": "read_messages",
+     "description": "Read pending pub/sub messages for an existing subscription.\n\nArgs:\n    subscription_id: The ID returned by subscribe() or psubscribe().\n    timeout_ms: Time to wait for messages in milliseconds. Use 0 for non-blocking.\n    max_messages: Maximum number of messages to return in one call.\n\nReturns:\n    A dictionary containing the collected messages or an error message.\n",
+     "config": "redis__mcp-redis__read_messages.json",
+     "hints": [
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 84,
+       "text": "async def read_messages("
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 108,
+       "text": "SubscriptionManager.read_messages,"
+      },
+      {
+       "file": "src/common/subscription_manager.py",
+       "line": 74,
+       "text": "def read_messages("
+      }
+     ]
+    },
+    {
+     "name": "rename",
+     "description": "\nRenames a Redis key from old_key to new_key.\n\nArgs:\n    old_key (str): The current name of the Redis key to rename.\n    new_key (str): The new name to assign to the key.\n\nReturns:\n    Dict[str, Any]: A dictionary containing the result of the operation.\n        On success: {\"status\": \"success\", \"message\": \"...\"}\n        On error: {\"error\": \"...\"}\n",
+     "config": "redis__mcp-redis__rename.json",
+     "hints": [
+      {
+       "file": "src/tools/misc.py",
+       "line": 77,
+       "text": "async def rename(old_key: str, new_key: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 82,
+       "text": "old_key (str): The current name of the Redis key to rename."
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 98,
+       "text": "r.rename(old_key, new_key)"
+      }
+     ]
+    },
+    {
+     "name": "rpop",
+     "description": "Remove and return the last element from a Redis list.",
+     "config": "redis__mcp-redis__rpop.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 49,
+       "text": "async def rpop(name: str) -> str:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 53,
+       "text": "value = r.rpop(name)"
+      }
+     ]
+    },
+    {
+     "name": "rpush",
+     "description": "Push a value onto the right of a Redis list and optionally set an expiration time.",
+     "config": "redis__mcp-redis__rpush.json",
+     "hints": [
+      {
+       "file": "src/tools/list.py",
+       "line": 25,
+       "text": "async def rpush(name: str, value: FieldT, expire: Optional[int] = None) -> str:"
+      },
+      {
+       "file": "src/tools/list.py",
+       "line": 29,
+       "text": "r.rpush(name, value)"
+      }
+     ]
+    },
+    {
+     "name": "sadd",
+     "description": "Add a value to a Redis set with an optional expiration time.\n\nArgs:\n    name: The Redis set key.\n    value: The value to add to the set.\n    expire_seconds: Optional; time in seconds after which the set should expire.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__sadd.json",
+     "hints": [
+      {
+       "file": "src/tools/set.py",
+       "line": 10,
+       "text": "async def sadd(name: str, value: str, expire_seconds: Optional[int] = None) -> str:"
+      },
+      {
+       "file": "src/tools/set.py",
+       "line": 23,
+       "text": "r.sadd(name, value)"
+      }
+     ]
+    },
+    {
+     "name": "scan_all_keys",
+     "description": "\nScan and return ALL keys matching a pattern using multiple SCAN iterations.\n\nThis function automatically handles the SCAN cursor iteration to collect all matching keys.\nIt's safer than KEYS * for large databases but will still collect all results in memory.\n\n\u26a0\ufe0f  WARNING: With very large datasets (millions of keys), this may consume significant memory.\nFor large-scale operations, consider using scan_keys() with manual iteration instead.\n\nArgs:\n    pattern: Pattern to match keys against (default is \"*\" for all keys).\n    batch_size: Number of keys to scan per iteration (default 100).\n\nReturns:\n    A list of all keys matching the pattern or an error message.\n",
+     "config": "redis__mcp-redis__scan_all_keys.json",
+     "hints": [
+      {
+       "file": "src/tools/misc.py",
+       "line": 115,
+       "text": "\u26a0\ufe0f  IMPORTANT: This returns PARTIAL results from one iteration. Use scan_all_keys()"
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 163,
+       "text": "async def scan_all_keys("
+      }
+     ]
+    },
+    {
+     "name": "scan_keys",
+     "description": "\nScan keys in the Redis database using the SCAN command (non-blocking, production-safe).\n\n\u26a0\ufe0f  IMPORTANT: This returns PARTIAL results from one iteration. Use scan_all_keys()\nto get ALL matching keys, or call this function multiple times with the returned cursor\nuntil cursor becomes 0.\n\nThe SCAN command iterates through the keyspace in small chunks, making it safe to use\non large databases without blocking other operations.\n\nArgs:\n    pattern: Pattern to match keys against (default is \"*\" for all keys).\n            Common patterns: \"user:*\", \"cache:*\", \"*:123\", etc.\n    count: Hint for the number of keys to return per iteration (default 100).\n           Redis may return more or fewer keys than this hint.\n    cursor: The cursor position to start scanning from (0 to start from beginning).\n            To continue scanning, use the cursor value returned from previous call.\n\nReturns:\n    A dictionary containing:\n    - 'cursor': Next cursor position (0 means scan is complete)\n    - 'keys': List of keys found in this iteration (PARTIAL RESULTS)\n    - 'total_scanned': Number of keys returned in this batch\n    - 'scan_complete': Boolean indicating if scan is finished\n    Or an error message if something goes wrong.\n\nExample usage:\n    First call: scan_keys(\"user:*\") -> returns cursor=1234, keys=[...], scan_complete=False\n    Next call: scan_keys(\"user:*\", cursor=1234) -> continues from where it left off\n    Final call: returns cursor=0, scan_complete=True when done\n",
+     "config": "redis__mcp-redis__scan_keys.json",
+     "hints": [
+      {
+       "file": "src/tools/misc.py",
+       "line": 109,
+       "text": "async def scan_keys("
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 139,
+       "text": "First call: scan_keys(\"user:*\") -> returns cursor=1234, keys=[...], scan_complete=False"
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 140,
+       "text": "Next call: scan_keys(\"user:*\", cursor=1234) -> continues from where it left off"
+      },
+      {
+       "file": "src/tools/misc.py",
+       "line": 173,
+       "text": "For large-scale operations, consider using scan_keys() with manual iteration instead."
+      }
+     ]
+    },
+    {
+     "name": "search_redis_documents",
+     "description": "Search Redis documentation and knowledge base to learn about Redis concepts and use cases.\n\nThis tool exposes updated and curated documentation, and must be invoked every time the user wants to learn more in areas including:\n\n**Common Use Cases:**\n- Session Management: User session storage and management\n- Caching: Application-level and database query caching\n- Rate Limiting: API throttling and request limiting\n- Leaderboards: Gaming and ranking systems\n- Semantic Search: AI-powered similarity search\n- Agentic Workflows: AI agent state and memory management\n- RAG (Retrieval-Augmented Generation): Vector storage for AI applications\n- Real-time Analytics: Counters, metrics, and time-series data\n- Message Queues: Task queues and job processing\n- Geospatial: Location-based queries and proximity search\n\nArgs:\n    question: The question about Redis concepts, data structures, features, or use cases\n\nReturns:\n    Union[List[Dict[str, Any]], Dict[str, Any]]: A list of documentation results from the API, or a dict with an error message.\n",
+     "config": "redis__mcp-redis__search_redis_documents.json",
+     "hints": [
+      {
+       "file": "src/tools/misc.py",
+       "line": 206,
+       "text": "async def search_redis_documents("
+      }
+     ]
+    },
+    {
+     "name": "set",
+     "description": "Set a Redis string value with an optional expiration time.\n\nArgs:\n    key (str): The key to set.\n    value (str, bytes, int, float, dict): The value to store.\n    expiration (int, optional): Expiration time in seconds.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__set.json",
+     "hints": [
+      {
+       "file": "src/main.py",
+       "line": 8,
+       "text": "set_redis_config_from_cli,"
+      },
+      {
+       "file": "src/main.py",
+       "line": 9,
+       "text": "set_entraid_config_from_cli,"
+      },
+      {
+       "file": "src/main.py",
+       "line": 119,
+       "text": "# Note: gemini-cli passes the raw \"${REDIS_URL}\" string when the env var is not set"
+      },
+      {
+       "file": "src/main.py",
+       "line": 124,
+       "text": "set_redis_config_from_cli(uri_config)"
+      },
+      {
+       "file": "src/main.py",
+       "line": 153,
+       "text": "set_redis_config_from_cli(config)"
+      }
+     ]
+    },
+    {
+     "name": "set_vector_in_hash",
+     "description": "Store a vector as a field in a Redis hash.\n\nArgs:\n    name: The Redis hash key.\n    vector_field: The field name inside the hash. Unless specifically required, use the default field name\n    vector: The vector (list of numbers) to store in the hash.\n\nReturns:\n    True if the vector was successfully stored, False otherwise.\n",
+     "config": "redis__mcp-redis__set_vector_in_hash.json",
+     "hints": [
+      {
+       "file": "src/tools/hash.py",
+       "line": 122,
+       "text": "async def set_vector_in_hash("
+      }
+     ]
+    },
+    {
+     "name": "smembers",
+     "description": "Get all members of a Redis set.\n\nArgs:\n    name: The Redis set key.\n\nReturns:\n    A list of values in the set or an error message.\n",
+     "config": "redis__mcp-redis__smembers.json",
+     "hints": [
+      {
+       "file": "src/tools/set.py",
+       "line": 59,
+       "text": "async def smembers(name: str) -> Union[str, List[str]]:"
+      },
+      {
+       "file": "src/tools/set.py",
+       "line": 70,
+       "text": "members = r.smembers(name)"
+      }
+     ]
+    },
+    {
+     "name": "srem",
+     "description": "Remove a value from a Redis set.\n\nArgs:\n    name: The Redis set key.\n    value: The value to remove from the set.\n\nReturns:\n    A success message or an error message.\n",
+     "config": "redis__mcp-redis__srem.json",
+     "hints": [
+      {
+       "file": "src/tools/set.py",
+       "line": 36,
+       "text": "async def srem(name: str, value: str) -> str:"
+      },
+      {
+       "file": "src/tools/set.py",
+       "line": 48,
+       "text": "removed = r.srem(name, value)"
+      }
+     ]
+    },
+    {
+     "name": "subscribe",
+     "description": "Subscribe to a Redis channel and return a reusable subscription handle.\n\nArgs:\n    channel: The Redis channel to subscribe to.\n\nReturns:\n    A dictionary containing the subscription ID or an error message.\n",
+     "config": "redis__mcp-redis__subscribe.json",
+     "hints": [
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 34,
+       "text": "async def subscribe(channel: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 38,
+       "text": "channel: The Redis channel to subscribe to."
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 46,
+       "text": "SubscriptionManager.subscribe,"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 58,
+       "text": "async def psubscribe(pattern: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 62,
+       "text": "pattern: The Redis channel pattern to subscribe to."
+      }
+     ]
+    },
+    {
+     "name": "type",
+     "description": "Returns the string representation of the type of the value stored at key\n\nArgs:\n    key (str): The key to check.\n\nReturns:\n    str: The type of key, or none when key doesn't exist\n",
+     "config": "redis__mcp-redis__type.json",
+     "hints": [
+      {
+       "file": "src/main.py",
+       "line": 32,
+       "text": "@click.option(\"--port\", default=6379, type=int, help=\"Redis port\")"
+      },
+      {
+       "file": "src/main.py",
+       "line": 33,
+       "text": "@click.option(\"--db\", default=0, type=int, help=\"Redis database number\")"
+      },
+      {
+       "file": "src/main.py",
+       "line": 48,
+       "text": "type=click.Choice([\"service_principal\", \"managed_identity\", \"default_credential\"]),"
+      },
+      {
+       "file": "src/main.py",
+       "line": 60,
+       "text": "\"--entraid-identity-type\","
+      },
+      {
+       "file": "src/main.py",
+       "line": 61,
+       "text": "type=click.Choice([\"system_assigned\", \"user_assigned\"]),"
+      }
+     ]
+    },
+    {
+     "name": "unsubscribe",
+     "description": "Unsubscribe and close an existing pub/sub subscription.\n\nArgs:\n    subscription_id: The ID returned by subscribe() or psubscribe().\n\nReturns:\n    A dictionary describing the closed subscription or an error message.\n",
+     "config": "redis__mcp-redis__unsubscribe.json",
+     "hints": [
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 124,
+       "text": "async def unsubscribe(subscription_id: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/tools/pub_sub.py",
+       "line": 135,
+       "text": "SubscriptionManager.unsubscribe,"
+      },
+      {
+       "file": "src/common/subscription_manager.py",
+       "line": 103,
+       "text": "def unsubscribe(cls, subscription_id: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/common/subscription_manager.py",
+       "line": 109,
+       "text": "subscription.pubsub.punsubscribe(*subscription.targets)"
+      },
+      {
+       "file": "src/common/subscription_manager.py",
+       "line": 111,
+       "text": "subscription.pubsub.unsubscribe(*subscription.targets)"
+      }
+     ]
+    },
+    {
+     "name": "vector_search_hash",
+     "description": "\nPerform a KNN vector similarity search using Redis 8 or later version on vectors stored in hash data structures.\n\nArgs:\n    query_vector: List of floats to use as the query vector.\n    index_name: Name of the Redis index. Unless specifically specified, use the default index name.\n    vector_field: Name of the indexed vector field. Unless specifically required, use the default field name\n    k: Number of nearest neighbors to return.\n    return_fields: List of fields to return (optional).\n\nReturns:\n    A list of matched documents or an error message.\n",
+     "config": "redis__mcp-redis__vector_search_hash.json",
+     "hints": [
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 105,
+       "text": "async def vector_search_hash("
+      },
+      {
+       "file": "src/tools/redis_query_engine.py",
+       "line": 168,
+       "text": "\"*\"                              \u2192 no filter, pure vector search (same as vector_search_hash)"
+      }
+     ]
+    },
+    {
+     "name": "xack",
+     "description": "Acknowledge entries that were processed by a consumer group.\n\nArgs:\n    key (str): The stream key.\n    group_name (str): The consumer group name.\n    entry_ids (List[str]): Entry IDs to acknowledge.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__xack.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 186,
+       "text": "async def xack(key: str, group_name: str, entry_ids: List[str]) -> str:"
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 202,
+       "text": "acknowledged = r.xack(key, group_name, *entry_ids)"
+      }
+     ]
+    },
+    {
+     "name": "xadd",
+     "description": "Add an entry to a Redis stream with an optional expiration time.\n\nArgs:\n    key (str): The stream key.\n    fields (dict): The fields and values for the stream entry.\n    expiration (int, optional): Expiration time in seconds.\n\nReturns:\n    str: The ID of the added entry or an error message.\n",
+     "config": "redis__mcp-redis__xadd.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 10,
+       "text": "async def xadd("
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 25,
+       "text": "entry_id = r.xadd(key, fields)"
+      }
+     ]
+    },
+    {
+     "name": "xdel",
+     "description": "Delete an entry from a Redis stream.\n\nArgs:\n    key (str): The stream key.\n    entry_id (str): The ID of the entry to delete.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__xdel.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 55,
+       "text": "async def xdel(key: str, entry_id: str) -> str:"
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 67,
+       "text": "result = r.xdel(key, entry_id)"
+      }
+     ]
+    },
+    {
+     "name": "xgroup_create",
+     "description": "Create a consumer group for a Redis stream.\n\nArgs:\n    key (str): The stream key.\n    group_name (str): The consumer group name.\n    start_id (str, optional): Stream ID from which the group starts consuming.\n    mkstream (bool, optional): Create the stream if it does not exist.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__xgroup_create.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 78,
+       "text": "async def xgroup_create("
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 97,
+       "text": "r.xgroup_create(key, group_name, id=start_id, mkstream=mkstream)"
+      }
+     ]
+    },
+    {
+     "name": "xgroup_destroy",
+     "description": "Destroy a consumer group for a Redis stream.\n\nArgs:\n    key (str): The stream key.\n    group_name (str): The consumer group name.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__xgroup_destroy.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 106,
+       "text": "async def xgroup_destroy(key: str, group_name: str) -> str:"
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 118,
+       "text": "result = r.xgroup_destroy(key, group_name)"
+      }
+     ]
+    },
+    {
+     "name": "xrange",
+     "description": "Read entries from a Redis stream.\n\nArgs:\n    key (str): The stream key.\n    count (int, optional): Number of entries to retrieve.\n\nReturns:\n    str: The retrieved stream entries or an error message.\n",
+     "config": "redis__mcp-redis__xrange.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 36,
+       "text": "async def xrange(key: str, count: int = 1) -> str:"
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 48,
+       "text": "entries = r.xrange(key, count=count)"
+      }
+     ]
+    },
+    {
+     "name": "xreadgroup",
+     "description": "Read entries from a Redis stream using a consumer group.\n\nArgs:\n    key (str): The stream key.\n    group_name (str): The consumer group name.\n    consumer_name (str): The consumer name.\n    count (int, optional): Maximum number of entries to retrieve.\n    block_ms (int, optional): Maximum time to block waiting for entries.\n        Use None for a non-blocking read. 0 is rejected because Redis treats\n        BLOCK 0 as an indefinite wait.\n    stream_id (str, optional): Stream ID to read from. Use \">\" for new messages.\n\nReturns:\n    str: The retrieved stream entries or an error message.\n",
+     "config": "redis__mcp-redis__xreadgroup.json",
+     "hints": [
+      {
+       "file": "src/tools/stream.py",
+       "line": 129,
+       "text": "async def xreadgroup("
+      },
+      {
+       "file": "src/tools/stream.py",
+       "line": 163,
+       "text": "entries = r.xreadgroup("
+      }
+     ]
+    },
+    {
+     "name": "zadd",
+     "description": "Add a member to a Redis sorted set with an optional expiration time.\n\nArgs:\n    key (str): The sorted set key.\n    score (float): The score of the member.\n    member (str): The member to add.\n    expiration (int, optional): Expiration time in seconds.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__zadd.json",
+     "hints": [
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 10,
+       "text": "async def zadd("
+      },
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 26,
+       "text": "r.zadd(key, {member: score})"
+      }
+     ]
+    },
+    {
+     "name": "zrange",
+     "description": "Retrieve a range of members from a Redis sorted set.\n\nArgs:\n    key (str): The sorted set key.\n    start (int): The starting index.\n    end (int): The ending index.\n    with_scores (bool, optional): Whether to include scores in the result.\n\nReturns:\n    str: The sorted set members in the given range or an error message.\n",
+     "config": "redis__mcp-redis__zrange.json",
+     "hints": [
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 37,
+       "text": "async def zrange(key: str, start: int, end: int, with_scores: bool = False) -> str:"
+      },
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 51,
+       "text": "members = r.zrange(key, start, end, withscores=with_scores)"
+      }
+     ]
+    },
+    {
+     "name": "zrem",
+     "description": "Remove a member from a Redis sorted set.\n\nArgs:\n    key (str): The sorted set key.\n    member (str): The member to remove.\n\nReturns:\n    str: Confirmation message or an error message.\n",
+     "config": "redis__mcp-redis__zrem.json",
+     "hints": [
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 60,
+       "text": "async def zrem(key: str, member: str) -> str:"
+      },
+      {
+       "file": "src/tools/sorted_set.py",
+       "line": 72,
+       "text": "result = r.zrem(key, member)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "kapilduraphe/okta-mcp-server",
+   "slug": "kapilduraphe__okta-mcp-server",
+   "lang": "node",
+   "commit": "d53f5d713aeeebca56e5b7c75ddd033d5156025a",
+   "path": "eval/targets/kapilduraphe__okta-mcp-server",
+   "surface_loc": 2547,
+   "tools": [
+    {
+     "name": "activate_user",
+     "description": "Activate a user in Okta",
+     "config": "kapilduraphe__okta-mcp-server__activate_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 273,
+       "text": "name: \"activate_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 337,
+       "text": "name: \"deactivate_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 625,
+       "text": "activate_user: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 726,
+       "text": "deactivate_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "assign_user_to_group",
+     "description": "Assign a user to a group in Okta",
+     "config": "kapilduraphe__okta-mcp-server__assign_user_to_group.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 200,
+       "text": "name: \"assign_user_to_group\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 510,
+       "text": "assign_user_to_group: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "assign_users_to_groups",
+     "description": "Assign multiple users to groups based on attributes",
+     "config": "kapilduraphe__okta-mcp-server__assign_users_to_groups.json",
+     "hints": [
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 99,
+       "text": "name: \"assign_users_to_groups\","
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 314,
+       "text": "assign_users_to_groups: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 559,
+       "text": "groupResults = await onboardingHandlers.assign_users_to_groups({"
+      }
+     ]
+    },
+    {
+     "name": "bulk_user_import",
+     "description": "Import multiple users from a CSV string",
+     "config": "kapilduraphe__okta-mcp-server__bulk_user_import.json",
+     "hints": [
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 63,
+       "text": "name: \"bulk_user_import\","
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 200,
+       "text": "bulk_user_import: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 538,
+       "text": "const importResults = await onboardingHandlers.bulk_user_import({"
+      }
+     ]
+    },
+    {
+     "name": "create_group",
+     "description": "Create a new group in Okta",
+     "config": "kapilduraphe__okta-mcp-server__create_group.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 137,
+       "text": "name: \"create_group\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 380,
+       "text": "create_group: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_user",
+     "description": "Create a new user in Okta",
+     "config": "kapilduraphe__okta-mcp-server__create_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 236,
+       "text": "name: \"create_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 579,
+       "text": "create_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "deactivate_user",
+     "description": "Deactivate a user in Okta",
+     "config": "kapilduraphe__okta-mcp-server__deactivate_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 337,
+       "text": "name: \"deactivate_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 726,
+       "text": "deactivate_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_group",
+     "description": "Delete a group from Okta",
+     "config": "kapilduraphe__okta-mcp-server__delete_group.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 180,
+       "text": "name: \"delete_group\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 478,
+       "text": "delete_group: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_user",
+     "description": "Delete a user from Okta (must be deactivated first)",
+     "config": "kapilduraphe__okta-mcp-server__delete_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 357,
+       "text": "name: \"delete_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 758,
+       "text": "delete_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "find_users_by_attribute",
+     "description": "Search users by any profile attribute (manager, department, title, firstName, etc.)",
+     "config": "kapilduraphe__okta-mcp-server__find_users_by_attribute.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 155,
+       "text": "name: \"find_users_by_attribute\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 790,
+       "text": "find_users_by_attribute: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_group",
+     "description": "Get detailed information about a specific group",
+     "config": "kapilduraphe__okta-mcp-server__get_group.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 161,
+       "text": "name: \"get_group\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 425,
+       "text": "get_group: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_user",
+     "description": "Retrieve detailed user information from Okta by user ID",
+     "config": "kapilduraphe__okta-mcp-server__get_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 136,
+       "text": "name: \"get_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 377,
+       "text": "name: \"get_user_last_location\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 400,
+       "text": "get_user: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 1023,
+       "text": "get_user_last_location: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_user_last_location",
+     "description": "Retrieve the last known location and login information for a user from Okta system logs",
+     "config": "kapilduraphe__okta-mcp-server__get_user_last_location.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 377,
+       "text": "name: \"get_user_last_location\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 1023,
+       "text": "get_user_last_location: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "list_group_users",
+     "description": "List all users in a specific group",
+     "config": "kapilduraphe__okta-mcp-server__list_group_users.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 248,
+       "text": "name: \"list_group_users\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 580,
+       "text": "list_group_users: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "list_groups",
+     "description": "List user groups from Okta with optional filtering and pagination",
+     "config": "kapilduraphe__okta-mcp-server__list_groups.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 95,
+       "text": "name: \"list_groups\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 279,
+       "text": "list_groups: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "list_users",
+     "description": "List users from Okta with optional filtering and pagination",
+     "config": "kapilduraphe__okta-mcp-server__list_users.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 195,
+       "text": "name: \"list_users\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 481,
+       "text": "list_users: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "provision_applications",
+     "description": "Provision application access for multiple users",
+     "config": "kapilduraphe__okta-mcp-server__provision_applications.json",
+     "hints": [
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 124,
+       "text": "name: \"provision_applications\","
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 419,
+       "text": "provision_applications: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 570,
+       "text": "appResults = await onboardingHandlers.provision_applications({"
+      }
+     ]
+    },
+    {
+     "name": "remove_user_from_group",
+     "description": "Remove a user from a group in Okta",
+     "config": "kapilduraphe__okta-mcp-server__remove_user_from_group.json",
+     "hints": [
+      {
+       "file": "src/tools/groups.ts",
+       "line": 224,
+       "text": "name: \"remove_user_from_group\","
+      },
+      {
+       "file": "src/tools/groups.ts",
+       "line": 545,
+       "text": "remove_user_from_group: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "run_onboarding_workflow",
+     "description": "Run a complete onboarding workflow for multiple users from CSV data",
+     "config": "kapilduraphe__okta-mcp-server__run_onboarding_workflow.json",
+     "hints": [
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 150,
+       "text": "name: \"run_onboarding_workflow\","
+      },
+      {
+       "file": "src/tools/onboarding.ts",
+       "line": 526,
+       "text": "run_onboarding_workflow: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "suspend_user",
+     "description": "Suspend a user in Okta",
+     "config": "kapilduraphe__okta-mcp-server__suspend_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 297,
+       "text": "name: \"suspend_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 317,
+       "text": "name: \"unsuspend_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 662,
+       "text": "suspend_user: async (request: { parameters: unknown }) => {"
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 694,
+       "text": "unsuspend_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    },
+    {
+     "name": "unsuspend_user",
+     "description": "Unsuspend a user in Okta",
+     "config": "kapilduraphe__okta-mcp-server__unsuspend_user.json",
+     "hints": [
+      {
+       "file": "src/tools/users.ts",
+       "line": 317,
+       "text": "name: \"unsuspend_user\","
+      },
+      {
+       "file": "src/tools/users.ts",
+       "line": 694,
+       "text": "unsuspend_user: async (request: { parameters: unknown }) => {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "tumf/mcp-text-editor",
+   "slug": "tumf__mcp-text-editor",
+   "lang": "python",
+   "commit": "2d66b6fa1cf1ab1241b90e8bc71ece19adc615f2",
+   "path": "eval/targets/tumf__mcp-text-editor",
+   "surface_loc": 2521,
+   "tools": [
+    {
+     "name": "append_text_file_contents",
+     "description": "Append content to an existing text file. The file must exist.",
+     "config": "tumf__mcp-text-editor__append_text_file_contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 271,
+       "text": "hint=\"For new files, please consider using append_text_file_contents\","
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 453,
+       "text": "hint_text = \"For new or empty files, please consider using append_text_file_contents instead\""
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 457,
+       "text": "hint_text = \"For adding content at the end of file, please consider using append_text_file_contents instead\""
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 494,
+       "text": "hint=\"For new files, please use append_text_file_contents\","
+      },
+      {
+       "file": "src/mcp_text_editor/server.py",
+       "line": 112,
+       "text": "async def append_text_file_contents("
+      }
+     ]
+    },
+    {
+     "name": "create_text_file",
+     "description": "Create a new text file with given content. The file must not exist already.",
+     "config": "tumf__mcp-text-editor__create_text_file.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/server.py",
+       "line": 102,
+       "text": "async def create_text_file("
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/create_text_file.py",
+       "line": 19,
+       "text": "name = \"create_text_file\""
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/__init__.py",
+       "line": 4,
+       "text": "from .create_text_file import CreateTextFileHandler"
+      }
+     ]
+    },
+    {
+     "name": "delete_text_file_contents",
+     "description": "Delete specified content ranges from a text file. The file must exist. File paths must be absolute. You need to provide the file_hash comes from get_text_file_contents.",
+     "config": "tumf__mcp-text-editor__delete_text_file_contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/service.py",
+       "line": 130,
+       "text": "def delete_text_file_contents("
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 242,
+       "text": "- contents (str): New content to insert (if empty string, consider using delete_text_file_contents instead)"
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 445,
+       "text": "hint=\"Please use delete_text_file_contents to delete content\","
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 623,
+       "text": "async def delete_text_file_contents("
+      },
+      {
+       "file": "src/mcp_text_editor/server.py",
+       "line": 127,
+       "text": "async def delete_text_file_contents("
+      }
+     ]
+    },
+    {
+     "name": "get_text_file_contents",
+     "description": "Read text file contents from multiple files and line ranges. Returns file contents with hashes for concurrency control and line numbers for reference. The hashes are used to detect conflicts when editing the files. File paths must be absolute.",
+     "config": "tumf__mcp-text-editor__get_text_file_contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 311,
+       "text": "hint = \"Please use get_text_file_contents tool to get the current content and hash\""
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 314,
+       "text": "\"FileHash mismatch - Please use get_text_file_contents tool to get current content and hashes, then retry with the updated hashes.\","
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 429,
+       "text": "\"reason\": \"Content range hash mismatch - Please use get_text_file_contents tool with the same start and end to get current content and hashes, then retry with the updated hashes.\","
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 431,
+       "text": "\"hint\": \"Please run get_text_file_contents first to get current content and hashes\","
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 563,
+       "text": "\"reason\": \"File hash mismatch - Please use get_text_file_contents tool to get current content and hash\","
+      }
+     ]
+    },
+    {
+     "name": "insert_text_file_contents",
+     "description": "Insert content before or after a specific line in a text file. Uses hash-based validation for concurrency control. You need to provide the file_hash comes from get_text_file_contents.",
+     "config": "tumf__mcp-text-editor__insert_text_file_contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 460,
+       "text": "hint_text = \"For inserting content within file, please consider using insert_text_file_contents instead\""
+      },
+      {
+       "file": "src/mcp_text_editor/text_editor.py",
+       "line": 513,
+       "text": "async def insert_text_file_contents("
+      },
+      {
+       "file": "src/mcp_text_editor/server.py",
+       "line": 145,
+       "text": "async def insert_text_file_contents("
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/insert_text_file_contents.py",
+       "line": 19,
+       "text": "name = \"insert_text_file_contents\""
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/insert_text_file_contents.py",
+       "line": 89,
+       "text": "result = await self.editor.insert_text_file_contents("
+      }
+     ]
+    },
+    {
+     "name": "patch_text_file_contents",
+     "description": "Apply patches to text files with hash-based validation for concurrency control.you need to use get_text_file_contents tool to get the file hash and range hash every time before using this tool. you can use append_text_file_contents tool to append text contents to the file without range hash, start and end. you can use insert_text_file_contents tool to insert text contents to the file without range hash, start and end.",
+     "config": "tumf__mcp-text-editor__patch_text_file_contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_text_editor/server.py",
+       "line": 84,
+       "text": "async def patch_text_file_contents("
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/__init__.py",
+       "line": 8,
+       "text": "from .patch_text_file_contents import PatchTextFileContentsHandler"
+      },
+      {
+       "file": "src/mcp_text_editor/handlers/patch_text_file_contents.py",
+       "line": 19,
+       "text": "name = \"patch_text_file_contents\""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "aaronjmars/web3-research-mcp",
+   "slug": "aaronjmars__web3-research-mcp",
+   "lang": "node",
+   "commit": "e454995982dae9e47ba38fd8e01ffd23c70cff67",
+   "path": "eval/targets/aaronjmars__web3-research-mcp",
+   "surface_loc": 2514,
+   "tools": [
+    {
+     "name": "coingecko-data",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__coingecko-data.json",
+     "hints": [
+      {
+       "file": "src/tools/coinGeckoTool.ts",
+       "line": 356,
+       "text": "\"coingecko-data\","
+      },
+      {
+       "file": "src/tools/coinGeckoTool.ts",
+       "line": 488,
+       "text": ")}\\n\\nUse \\`coingecko-data\\` with the matching name/ticker for full details.`,"
+      }
+     ]
+    },
+    {
+     "name": "coingecko-search",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__coingecko-search.json",
+     "hints": [
+      {
+       "file": "src/tools/coinGeckoTool.ts",
+       "line": 216,
+       "text": "return `> \u26a0\ufe0f ${resolved.candidateCount} coins matched on ${resolved.matchedOn}; showing highest-rank match (\\`${resolved.coin.id}\\`). Use \\`coingecko-search\\` to disambiguate.\\n\\n`;"
+      },
+      {
+       "file": "src/tools/coinGeckoTool.ts",
+       "line": 444,
+       "text": "\"coingecko-search\","
+      }
+     ]
+    },
+    {
+     "name": "coingecko-tickers",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__coingecko-tickers.json",
+     "hints": [
+      {
+       "file": "src/tools/coinGeckoTool.ts",
+       "line": 508,
+       "text": "\"coingecko-tickers\","
+      }
+     ]
+    },
+    {
+     "name": "create-research-plan",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__create-research-plan.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 153,
+       "text": "1. First, use the \"create-research-plan\" tool to establish a structured research plan."
+      },
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 84,
+       "text": "\"create-research-plan\","
+      }
+     ]
+    },
+    {
+     "name": "defillama-data",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__defillama-data.json",
+     "hints": [
+      {
+       "file": "src/tools/defiLlamaTool.ts",
+       "line": 451,
+       "text": "\"defillama-data\","
+      },
+      {
+       "file": "src/tools/defiLlamaTool.ts",
+       "line": 629,
+       "text": ")}\\n\\nUse \\`defillama-data\\` with the matching name/ticker for full details.`,"
+      }
+     ]
+    },
+    {
+     "name": "defillama-search",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__defillama-search.json",
+     "hints": [
+      {
+       "file": "src/tools/defiLlamaTool.ts",
+       "line": 473,
+       "text": "text: `DeFiLlama: no protocol found matching ${tokenName} (${tokenTicker}). Use \\`defillama-search\\` to look up candidate slugs.`,"
+      },
+      {
+       "file": "src/tools/defiLlamaTool.ts",
+       "line": 497,
+       "text": "? `> \u26a0\ufe0f ${candidateCount} protocols matched on ${matchedOn}; showing highest-TVL match (\\`${match.slug}\\`). Use \\`defillama-search\\` to disambiguate.\\n\\n`"
+      },
+      {
+       "file": "src/tools/defiLlamaTool.ts",
+       "line": 563,
+       "text": "\"defillama-search\","
+      }
+     ]
+    },
+    {
+     "name": "fetch-content",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__fetch-content.json",
+     "hints": [
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 310,
+       "text": "\"fetch-content\","
+      },
+      {
+       "file": "src/storage/researchStorage.ts",
+       "line": 28,
+       "text": "* optional because the raw `fetch-content` path does not know either."
+      }
+     ]
+    },
+    {
+     "name": "list-resources",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__list-resources.json",
+     "hints": [
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 464,
+       "text": "server.registerTool(\"list-resources\", { inputSchema: {} }, async () => {"
+      }
+     ]
+    },
+    {
+     "name": "research-source",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__research-source.json",
+     "hints": [
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 502,
+       "text": "\"research-source\","
+      }
+     ]
+    },
+    {
+     "name": "research-with-keywords",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__research-with-keywords.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 159,
+       "text": "- The \"research-with-keywords\" tool with relevant keywords like \"price\", \"tvl\", \"docs\", etc."
+      },
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 167,
+       "text": "\"research-with-keywords\","
+      },
+      {
+       "file": "src/storage/researchStorage.ts",
+       "line": 26,
+       "text": "* `url` is optional because `research-with-keywords` stores an aggregate of"
+      }
+     ]
+    },
+    {
+     "name": "search",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__search.json",
+     "hints": [
+      {
+       "file": "bin/cli.js",
+       "line": 17,
+       "text": "console.log(`web3-research-mcp \u2014 deep crypto research over the Model Context Protocol"
+      },
+      {
+       "file": "bin/cli.js",
+       "line": 19,
+       "text": "Usage: web3-research-mcp [options]"
+      },
+      {
+       "file": "bin/cli.js",
+       "line": 33,
+       "text": "Docs: https://github.com/aaronjmars/web3-research-mcp`);"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 8,
+       "text": "import ResearchStorage from \"./storage/researchStorage.js\";"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 11,
+       "text": "const storage = new ResearchStorage(\"./research_data\");"
+      }
+     ]
+    },
+    {
+     "name": "search-source",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__search-source.json",
+     "hints": [
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 384,
+       "text": "\"search-source\","
+      },
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 502,
+       "text": "\"research-source\","
+      }
+     ]
+    },
+    {
+     "name": "update-status",
+     "description": "",
+     "config": "aaronjmars__web3-research-mcp__update-status.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 155,
+       "text": "2. For each section in your plan, use \"update-status\" to mark it as \"in_progress\" when you start investigating it, and \"completed\" when you're done."
+      },
+      {
+       "file": "src/tools/researchTools.ts",
+       "line": 246,
+       "text": "\"update-status\","
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

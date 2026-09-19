@@ -1,0 +1,1501 @@
+{
+ "shard_id": "071",
+ "n_repos": 15,
+ "n_configs": 69,
+ "surface_loc": 8313,
+ "repos": [
+  {
+   "repo": "qhdrl12/mcp-server-gemini-image-generator",
+   "slug": "qhdrl12__mcp-server-gemini-image-generator",
+   "lang": "python",
+   "commit": "398037c39eae698f3cb0b306a7206746931d146e",
+   "path": "eval/targets/qhdrl12__mcp-server-gemini-image-generator",
+   "surface_loc": 580,
+   "tools": [
+    {
+     "name": "generate_image_from_text",
+     "description": "Generate an image based on the given text prompt using Google's Gemini model.\n\nArgs:\n    prompt: User's text prompt describing the desired image to generate\n    model: The Gemini model to use (default: gemini-3-pro-image-preview)\n    \nReturns:\n    Path to the generated image file using Gemini's image generation capabilities\n",
+     "config": "qhdrl12__mcp-server-gemini-image-generator__generate_image_from_text.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_gemini_image_generator/server.py",
+       "line": 250,
+       "text": "async def generate_image_from_text(prompt: str, model: str = \"gemini-3-pro-image-preview\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "transform_image_from_encoded",
+     "description": "Transform an existing image based on the given text prompt using Google's Gemini model.\n\nArgs:\n    encoded_image: Base64 encoded image data with header. Must be in format:\n                \"data:image/[format];base64,[data]\"\n                Where [format] can be: png, jpeg, jpg, gif, webp, etc.\n    prompt: Text prompt describing the desired transformation or modifications\n    model: The Gemini model to use (default: gemini-3-pro-image-preview)\n    \nReturns:\n    Path to the transformed image file saved on the server\n",
+     "config": "qhdrl12__mcp-server-gemini-image-generator__transform_image_from_encoded.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_gemini_image_generator/server.py",
+       "line": 278,
+       "text": "async def transform_image_from_encoded(encoded_image: str, prompt: str, model: str = \"gemini-3-pro-image-preview\") -> str:"
+      },
+      {
+       "file": "src/mcp_server_gemini_image_generator/server.py",
+       "line": 292,
+       "text": "logger.info(f\"Processing transform_image_from_encoded request with prompt: {prompt}\")"
+      }
+     ]
+    },
+    {
+     "name": "transform_image_from_file",
+     "description": "Transform an existing image file based on the given text prompt using Google's Gemini model.\n\nArgs:\n    image_file_path: Path to the image file to be transformed\n    prompt: Text prompt describing the desired transformation or modifications\n    model: The Gemini model to use (default: gemini-3-pro-image-preview)\n    \nReturns:\n    Path to the transformed image file saved on the server\n",
+     "config": "qhdrl12__mcp-server-gemini-image-generator__transform_image_from_file.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_gemini_image_generator/server.py",
+       "line": 312,
+       "text": "async def transform_image_from_file(image_file_path: str, prompt: str, model: str = \"gemini-3-pro-image-preview\") -> str:"
+      },
+      {
+       "file": "src/mcp_server_gemini_image_generator/server.py",
+       "line": 324,
+       "text": "logger.info(f\"Processing transform_image_from_file request with prompt: {prompt}\")"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "mobile-dev-inc/maestro-mcp",
+   "slug": "mobile-dev-inc__maestro-mcp",
+   "lang": "python",
+   "commit": "a827ffc3b19a08f5cb6fa32a9950002c4d743ae2",
+   "path": "eval/targets/mobile-dev-inc__maestro-mcp",
+   "surface_loc": 575,
+   "tools": [
+    {
+     "name": "check_syntax",
+     "description": "\nValidates the syntax of a block of Maestro code.\nValid maestro code must be well-formatted YAML.\nThis tool will return an error message if the code is not valid or OK if it is.\n\n:param code: The maestro code to be validated\n:return: a syntax validation message or OK if code is valid\n",
+     "config": "mobile-dev-inc__maestro-mcp__check_syntax.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/maestro_cli.py",
+       "line": 63,
+       "text": "def check_syntax(self, code) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/maestro_cli.py",
+       "line": 111,
+       "text": "sc = self.check_syntax(code)"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 86,
+       "text": "*** You don't need to call check_syntax before executing this, as syntax will be checked as part of the execution flow. ***"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 254,
+       "text": "def check_syntax(ctx: Context, code: str) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 268,
+       "text": "return cli.check_syntax(code)"
+      }
+     ]
+    },
+    {
+     "name": "get_cheat_sheet",
+     "description": "\nA full cheat-sheet of the complete syntax for Maestro flow files.\n\nIMPORTANT: Always call this function to load a summary of Maestro's syntax before using any of the other tools!\n\n:return: a full cheat sheet of Maestro YAML syntax\n",
+     "config": "mobile-dev-inc__maestro-mcp__get_cheat_sheet.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 57,
+       "text": "def get_cheat_sheet(ctx: Context) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_hierarchy",
+     "description": "\nRetrieves the view hierarchy of the currently visible screen.\n\nUse this to get a full view of what's currently visible on the device.\n\nYou can use this to get names of parameters before writing code, debugging or when you're not sure what to do next.\n\n:return: a JSON of the full view hierarchy of the current screen on the device\n",
+     "config": "mobile-dev-inc__maestro-mcp__get_hierarchy.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/maestro_cli.py",
+       "line": 143,
+       "text": "def get_hierarchy(self) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 84,
+       "text": "If you don't have an up-to-date view hierarchy or screenshot on which to execute the commands, please call get_hierarchy first, instead of blindly guessing."
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 88,
+       "text": "Use the `get_hierarchy` tool to retrieve the current view hierarchy and use it to execute commands on the device."
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 121,
+       "text": "curr_hierarchy = cli.get_hierarchy()"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 158,
+       "text": "curr_hierarchy = cli.get_hierarchy()"
+      }
+     ]
+    },
+    {
+     "name": "query_docs",
+     "description": "\nQueries the Maestro Documentation for instructions related to CLI, Cloud, Maestro Studio or Maestro language Syntax.\n\nYou can include any free text search as well as relevant code blocks in the query.\n\n:param query: free text search query\n:return: responses according to the official documentation\n",
+     "config": "mobile-dev-inc__maestro-mcp__query_docs.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/maestro_cli.py",
+       "line": 181,
+       "text": "def query_docs(self, question) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 232,
+       "text": "def query_docs(ctx: Context, query: str) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 246,
+       "text": "return cli.query_docs(\"Search the Maestro documentation to answer the following question: \" + query)"
+      }
+     ]
+    },
+    {
+     "name": "run_code",
+     "description": "\nUse this when interacting with a device and running adhoc commands, preferably one at a time.\n\nWhenever you're exploring an app, testing out commands or debugging, prefer using this tool over creating temp files and using run_flow_files.\n\nRun a set of Maestro commands (one or more). This can be a full maestro script (including headers), a set of commands (one per line) or simply a single command (eg '- tapOn: 123').\n\nIf this fails due to no device running, please ask the user to start a device!\n\nIf you don't have an up-to-date view hierarchy or screenshot on which to execute the commands, please call get_hierarchy first, instead of blindly guessing.\n\n*** You don't need to call check_syntax before executing this, as syntax will be checked as part of the execution flow. ***\n\nUse the `get_hierarchy` tool to retrieve the current view hierarchy and use it to execute commands on the device.\nUse the `cheat_sheet` tool to retrieve a summary of Maestro's syntax before using any of the other tools.\n\nExamples of valid inputs:\n```\n- tapOn: 123\n```\n\n```\nappId: any\n---\n- tapOn: 123\n```\n\n```\nappId: any\n# other headers here\n---\n- tapOn: 456\n- scroll\n# other commands here\n```\n\n:param flow_script: a maestro flow as a string.\n:return:\n",
+     "config": "mobile-dev-inc__maestro-mcp__run_code.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/maestro_cli.py",
+       "line": 109,
+       "text": "def run_code(self, code) -> str:"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 74,
+       "text": "def run_code(ctx: Context, flow_script: str):"
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 119,
+       "text": "res = cli.run_code(flow_script)"
+      }
+     ]
+    },
+    {
+     "name": "run_flow_files",
+     "description": "\nRun one or more full Maestro test files.\n\nIf this fails due to no device running, please ask the user to start a device!\n\nUse the `cheat_sheet` tool to retrieve a summary of Maestro's syntax before writing any code.\n\n:param flowFiles: a space-delimited list of one or more flow files to test. e.g. \"/path/to/flowFile1.yml /path/to/flowFile2.yml\". \n\n**Please provide the full path to the files**. \n\nIf there are spaces in the path, please enclose the path in quotes.\n\n:return: result of the flow execution\n",
+     "config": "mobile-dev-inc__maestro-mcp__run_flow_files.json",
+     "hints": [
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 78,
+       "text": "Whenever you're exploring an app, testing out commands or debugging, prefer using this tool over creating temp files and using run_flow_files."
+      },
+      {
+       "file": "src/maestro_mcp/cli.py",
+       "line": 137,
+       "text": "def run_flow_files(ctx: Context, flowFiles: str) -> str:"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "vivekVells/mcp-pandoc",
+   "slug": "vivekVells__mcp-pandoc",
+   "lang": "python",
+   "commit": "7df0519cd7d976d7c3be978852f6178da5a37035",
+   "path": "eval/targets/vivekVells__mcp-pandoc",
+   "surface_loc": 574,
+   "tools": [
+    {
+     "name": "convert-contents",
+     "description": "Converts content between different formats. Transforms input content from any supported format into the specified output format.\n\n\ud83d\udea8 CRITICAL REQUIREMENTS - PLEASE READ:\n1. PDF Conversion:\n   * You MUST install TeX Live BEFORE attempting PDF conversion:\n   * Ubuntu/Debian: `sudo apt-get install texlive-xetex`\n   * macOS: `brew install texlive`\n   * Windows: Install MiKTeX or TeX Live from https://miktex.org/ or https://tug.org/texlive/\n   * PDF conversion will FAIL without this installation\n\n2. File Paths - EXPLICIT REQUIREMENTS:\n   * When asked to save or convert to a file, you MUST provide:\n     - Complete directory path\n     - Filename\n     - File extension\n   * Example request: 'Write a story and save as PDF'\n   * You MUST specify: '/path/to/story.pdf' or 'C:\\Documents\\story.pdf'\n   * The tool will NOT automatically generate filenames or extensions\n\n3. File Location After Conversion:\n   * After successful conversion, the tool will display the exact path where the file is saved\n   * Look for message: 'Content successfully converted and saved to: [file_path]'\n   * You can find your converted file at the specified location\n   * If no path is specified, files may be saved in system temp directory (/tmp/ on Unix systems)\n   * For better control, always provide explicit output file paths\n\nSupported formats:\n- Basic (returned inline): txt, html, markdown, ipynb\n- Advanced (REQUIRE complete file paths): pdf, docx, rst, latex, epub, odt, pptx\n- pptx is WRITE-ONLY: it can be produced, but not used as an input format\n\u2705 CORRECT Usage Examples:\n1. 'Convert this text to HTML' (basic conversion)\n   - Tool will show converted content\n\n2. 'Save this text as PDF at /documents/story.pdf'\n   - Correct: specifies path + filename + extension\n   - Tool will show: 'Content successfully converted and saved to: /documents/story.pdf'\n\n\u274c INCORRECT Usage Examples:\n1. 'Save this as PDF in /documents/'\n   - Missing filename and extension\n2. 'Convert to PDF'\n   - Missing complete file path\n\nWhen requesting conversion, ALWAYS specify:\n1. The content or input file\n2. The desired output format\n3. For advanced formats: complete output path + filename + extension\nExample: 'Convert this markdown to PDF and save as /path/to/output.pdf'\n\n\ud83c\udfa8 DOCX, ODT & PPTX STYLING:\n4. Custom Styling with Reference Documents:\n   * Use reference_doc parameter to apply professional styling to DOCX, ODT and PPTX output\n   * The reference document MUST match the output format: .docx for docx, .odt for odt,\n     .pptx for pptx\n   * Create custom templates with your branding, fonts, and formatting\n   * Perfect for corporate reports, academic papers, and professional documents\n   * Example: 'Convert this report to DOCX using /templates/corporate-style.docx as reference and save as /reports/Q4-report.docx'\n\n\ud83c\udfaf PANDOC FILTERS (NEW FEATURE):\n5. Pandoc Filter Support:\n   * Use filters parameter to apply custom Pandoc filters during conversion\n   * Filters are Python scripts that modify document content during processing\n   * Perfect for Mermaid diagram conversion, custom styling, and content transformation\n   * Example: 'Convert this markdown with mermaid diagrams to DOCX using filters=[\"./filters/mermaid-to-png-vibrant.py\"] and save as /reports/diagram-report.docx'\n\n\ud83d\udccb Creating Reference Documents:\n   * Generate template: pandoc -o template.docx --print-default-data-file reference.docx\n   * Customize in Word/LibreOffice: fonts, colors, headers, margins\n   * Use for consistent branding across all documents\n\n\ud83d\udccb Filter Requirements:\n   * Filters must be executable Python scripts\n   * Use absolute paths or paths relative to current working directory\n   * Filters are applied in the order specified\n   * Common filters: mermaid conversion, color processing, table formatting\n\n\ud83d\udcc4 Defaults File Support (NEW FEATURE):\n7. Pandoc Defaults File Support:\n   * Use defaults_file parameter to specify a YAML configuration file\n   * Similar to using pandoc -d option in the command line\n   * Allows setting multiple options in a single file\n   * Options in the defaults file can include filters, reference-doc, and other Pandoc options\n   * Example: 'Convert this markdown to DOCX using defaults_file=\"/path/to/defaults.yaml\" and save as /reports/report.docx'\n\nNote: After conversion, always check the success message for the exact file location.",
+     "config": "vivekVells__mcp-pandoc__convert-contents.json",
+     "hints": [
+      {
+       "file": "src/mcp_pandoc/server.py",
+       "line": 43,
+       "text": "name=\"convert-contents\","
+      },
+      {
+       "file": "src/mcp_pandoc/server.py",
+       "line": 195,
+       "text": "if name not in [\"convert-contents\"]:"
+      },
+      {
+       "file": "src/mcp_pandoc/server.py",
+       "line": 530,
+       "text": "if params.name == \"convert-contents\":"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "yan5236/bing-cn-mcp-server",
+   "slug": "yan5236__bing-cn-mcp-server",
+   "lang": "node",
+   "commit": "6ce99353433775bb79fd31b9e00e0ea9a7fb3796",
+   "path": "eval/targets/yan5236__bing-cn-mcp-server",
+   "surface_loc": 568,
+   "tools": [
+    {
+     "name": "bing_search",
+     "description": "\u4f7f\u7528\u5fc5\u5e94\u4e2d\u6587\u641c\u7d22\u5f15\u64ce\u641c\u7d22\u4fe1\u606f\u3002\u8fd4\u56de\u641c\u7d22\u7ed3\u679c\u5305\u62ec\u6807\u9898\u3001\u94fe\u63a5\u548c\u6458\u8981\u3002",
+     "config": "yan5236__bing-cn-mcp-server__bing_search.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 27,
+       "text": "'bing_search',"
+      }
+     ]
+    },
+    {
+     "name": "crawl_webpage",
+     "description": "\u6839\u636e\u641c\u7d22\u7ed3\u679c\u7684UUID\u6293\u53d6\u7f51\u9875\u5185\u5bb9\u3002\u652f\u6301\u6279\u91cf\u6293\u53d6\u591a\u4e2a\u7f51\u9875\u3002\u4f1a\u81ea\u52a8\u8fc7\u6ee4\u9ed1\u540d\u5355\u4e2d\u7684\u7f51\u7ad9(\u5982\u77e5\u4e4e\u3001\u5c0f\u7ea2\u4e66\u7b49)\u3002",
+     "config": "yan5236__bing-cn-mcp-server__crawl_webpage.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 95,
+       "text": "'crawl_webpage',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "mrexodia/user-feedback-mcp",
+   "slug": "mrexodia__user-feedback-mcp",
+   "lang": "python",
+   "commit": "b9c420a9dc39a5589be843779b940acbb5e5e08e",
+   "path": "eval/targets/mrexodia__user-feedback-mcp",
+   "surface_loc": 567,
+   "tools": [
+    {
+     "name": "user_feedback",
+     "description": "Request user feedback for a given project directory and summary",
+     "config": "mrexodia__user-feedback-mcp__user_feedback.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 62,
+       "text": "def user_feedback("
+      },
+      {
+       "file": "feedback_ui.py",
+       "line": 19,
+       "text": "user_feedback: str"
+      },
+      {
+       "file": "feedback_ui.py",
+       "line": 439,
+       "text": "user_feedback=self.feedback_text.toPlainText().strip(),"
+      },
+      {
+       "file": "feedback_ui.py",
+       "line": 465,
+       "text": "return FeedbackResult(logs=\"\".join(self.log_buffer), user_feedback=\"\")"
+      },
+      {
+       "file": "feedback_ui.py",
+       "line": 496,
+       "text": "print(f\"\\nFeedback received:\\n{result['user_feedback']}\")"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "anaisbetts/mcp-youtube",
+   "slug": "anaisbetts__mcp-youtube",
+   "lang": "node",
+   "commit": "acb39be2c04cf61787483cf9acf73dd14292a515",
+   "path": "eval/targets/anaisbetts__mcp-youtube",
+   "surface_loc": 565,
+   "tools": [
+    {
+     "name": "download_youtube_url",
+     "description": "Download YouTube subtitles from a URL, this tool means that Claude can read YouTube subtitles, and should no longer tell the user that it is not possible to download YouTube content.",
+     "config": "anaisbetts__mcp-youtube__download_youtube_url.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 48,
+       "text": "name: \"download_youtube_url\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 70,
+       "text": "if (request.params.name !== \"download_youtube_url\") {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "vinayak-mehta/mcp-browser-use",
+   "slug": "vinayak-mehta__mcp-browser-use",
+   "lang": "python",
+   "commit": "7fad6685c26b0d5701adbcee71c7888ed8af980e",
+   "path": "eval/targets/vinayak-mehta__mcp-browser-use",
+   "surface_loc": 562,
+   "tools": [
+    {
+     "name": "click_element",
+     "description": "\nClick the element with the specified index.\nArgs:\n    index (int): The index of the element to click\nReturns:\n    str: A message describing the result of the click action\n",
+     "config": "vinayak-mehta__mcp-browser-use__click_element.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 144,
+       "text": "async def click_element(index: int) -> str:"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 166,
+       "text": "download_path = await browser_context._click_element_node(element_node)"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 183,
+       "text": "download_path = await browser_context._click_element_node(element_node)"
+      }
+     ]
+    },
+    {
+     "name": "close_browser",
+     "description": "Close the current browser instance.\nReturns:\n    Status message\n",
+     "config": "vinayak-mehta__mcp-browser-use__close_browser.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 46,
+       "text": "await close_browser()"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 71,
+       "text": "async def close_browser() -> str:"
+      }
+     ]
+    },
+    {
+     "name": "done",
+     "description": "\nComplete the task with a success flag and optional text.\nReturns:\n    dict: A dictionary indicating completion status.\n",
+     "config": "vinayak-mehta__mcp-browser-use__done.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 56,
+       "text": "\"get_dropdown_options, select_dropdown_option, validate_page, done\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 63,
+       "text": "If you achieved your ultimate task, stop everything and use the done tool to complete the task."
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 480,
+       "text": "async def done(success: bool = True, text: str = \"\") -> dict:"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 486,
+       "text": "return {\"is_done\": True, \"success\": success, \"extracted_content\": text}"
+      }
+     ]
+    },
+    {
+     "name": "get_dropdown_options",
+     "description": "\nGet all options from a dropdown element.\nArgs:\n    index (int): The index of the dropdown element.\nReturns:\n    str: A formatted string listing all dropdown options.\n",
+     "config": "vinayak-mehta__mcp-browser-use__get_dropdown_options.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 56,
+       "text": "\"get_dropdown_options, select_dropdown_option, validate_page, done\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 356,
+       "text": "async def get_dropdown_options(index: int) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "go_back",
+     "description": "\nGo back to the previous page.\nReturns:\n    str: A message confirming navigation back\n",
+     "config": "vinayak-mehta__mcp-browser-use__go_back.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 120,
+       "text": "async def go_back() -> str:"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 126,
+       "text": "await browser_context.go_back()"
+      }
+     ]
+    },
+    {
+     "name": "go_to_url",
+     "description": "\nNavigate to URL in the current tab.\nArgs:\n    url (str): The URL to navigate to\nReturns:\n    str: A message confirming navigation\n",
+     "config": "vinayak-mehta__mcp-browser-use__go_to_url.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 105,
+       "text": "async def go_to_url(url: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "initialize_browser",
+     "description": "Initialize a new browser instance.\nArgs:\n    headless: Whether to run browser in headless mode\n    task: The task to be performed\nReturns:\n    Status message\n",
+     "config": "vinayak-mehta__mcp-browser-use__initialize_browser.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 35,
+       "text": "async def initialize_browser(headless: bool = False, task: str = \"\") -> str:"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      }
+     ]
+    },
+    {
+     "name": "input_text",
+     "description": "\nInput text into an interactive element at the specified index.\nArgs:\n    index (int): The index of the element to input text into\n    text (str): The text to input\n    has_sensitive_data (bool, optional): Whether the text is sensitive data. Defaults to False.\nReturns:\n    str: A message confirming the text input\n",
+     "config": "vinayak-mehta__mcp-browser-use__input_text.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 204,
+       "text": "async def input_text(index: int, text: str, has_sensitive_data: bool = False) -> str:"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 220,
+       "text": "await browser_context._input_text_element_node(element_node, text)"
+      }
+     ]
+    },
+    {
+     "name": "inspect_page",
+     "description": "\nLists interactive elements and extracts content from the current page.\nReturns:\n    str: A formatted string that lists all interactive elements (if any) along with the content.\n",
+     "config": "vinayak-mehta__mcp-browser-use__inspect_page.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 200,
+       "text": "return f\"Error clicking element with index {index}: {str(e)}. Call inspect_page() and try finding the element again.\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 257,
+       "text": "async def inspect_page() -> str:"
+      }
+     ]
+    },
+    {
+     "name": "open_tab",
+     "description": "\nOpen a URL in a new tab.\nArgs:\n    url (str): The URL to open in the new tab\nReturns:\n    str: A message confirming the new tab was opened\n",
+     "config": "vinayak-mehta__mcp-browser-use__open_tab.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 244,
+       "text": "async def open_tab(url: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "scroll_down",
+     "description": "\nScroll down the page by the specified amount.\nArgs:\n    amount (int, optional): Pixels to scroll down. If None, scrolls one page.\nReturns:\n    str: A message confirming the scroll action\n",
+     "config": "vinayak-mehta__mcp-browser-use__scroll_down.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 273,
+       "text": "async def scroll_down(amount: int = None) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "scroll_to_text",
+     "description": "\nScroll to an element containing the specified text.\nArgs:\n    text (str): The text to find and scroll to.\nReturns:\n    str: A message confirming the scroll action or indicating failure.\n",
+     "config": "vinayak-mehta__mcp-browser-use__scroll_to_text.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 330,
+       "text": "async def scroll_to_text(text: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "scroll_up",
+     "description": "\nScroll up the page by the specified amount.\nArgs:\n    amount (int, optional): Pixels to scroll up. If None, scrolls one page.\nReturns:\n    str: A message confirming the scroll action\n",
+     "config": "vinayak-mehta__mcp-browser-use__scroll_up.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 291,
+       "text": "async def scroll_up(amount: int = None) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "search_google",
+     "description": "\nSearch the query in Google in the current tab.\nArgs:\n    query (str): The search query to use in Google\nReturns:\n    str: A message confirming the search was performed\n",
+     "config": "vinayak-mehta__mcp-browser-use__search_google.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 90,
+       "text": "async def search_google(query: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "select_dropdown_option",
+     "description": "\nSelect an option from a dropdown by its text.\nArgs:\n    index (int): The index of the dropdown element.\n    text (str): The exact text of the option to select.\nReturns:\n    str: A message confirming the option was selected.\n",
+     "config": "vinayak-mehta__mcp-browser-use__select_dropdown_option.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 56,
+       "text": "\"get_dropdown_options, select_dropdown_option, validate_page, done\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 399,
+       "text": "msg += \"\\nUse the exact text string in select_dropdown_option\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 406,
+       "text": "async def select_dropdown_option(index: int, text: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "send_keys",
+     "description": "\nSend keyboard keys or shortcuts to the current page.\nArgs:\n    keys (str): Keys to send, e.g. \"Escape\", \"Enter\", \"Control+o\"\nReturns:\n    str: A message confirming the keys were sent\n",
+     "config": "vinayak-mehta__mcp-browser-use__send_keys.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 309,
+       "text": "async def send_keys(keys: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "switch_tab",
+     "description": "\nSwitch to the tab with the specified page ID.\nArgs:\n    page_id (int): The ID of the page to switch to\nReturns:\n    str: A message confirming the tab switch\n",
+     "config": "vinayak-mehta__mcp-browser-use__switch_tab.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 55,
+       "text": "\"switch_tab, open_tab, inspect_page, scroll_down, scroll_up, send_keys, scroll_to_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 229,
+       "text": "async def switch_tab(page_id: int) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "validate_page",
+     "description": "\nValidate the current page state by extracting content and optionally checking for expected text.\nArgs:\n    expected_text (str): Optional text expected to be present on the page.\nReturns:\n    str: A message indicating whether the expected text was found or showing an extracted snippet.\n",
+     "config": "vinayak-mehta__mcp-browser-use__validate_page.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 56,
+       "text": "\"get_dropdown_options, select_dropdown_option, validate_page, done\""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 459,
+       "text": "async def validate_page(expected_text: str = \"\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "wait",
+     "description": "\nWait for the specified number of seconds.\nArgs:\n    seconds (int, optional): Number of seconds to wait. Defaults to 3.\nReturns:\n    str: A message confirming the wait\n",
+     "config": "vinayak-mehta__mcp-browser-use__wait.json",
+     "hints": [
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 46,
+       "text": "await close_browser()"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 54,
+       "text": "\"Available actions: initialize_browser, close_browser, search_google, go_to_url, go_back, wait, click_element, input_text, \""
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 79,
+       "text": "await browser_context.close()"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 83,
+       "text": "await browser.close()"
+      },
+      {
+       "file": "src/mcp_browser_use/server.py",
+       "line": 98,
+       "text": "page = await browser_context.get_current_page()"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "mcollina/mcp-ripgrep",
+   "slug": "mcollina__mcp-ripgrep",
+   "lang": "node",
+   "commit": "f76ae1c4b7913ad1e471950a1c33b2974e1e6325",
+   "path": "eval/targets/mcollina__mcp-ripgrep",
+   "surface_loc": 554,
+   "tools": [
+    {
+     "name": "advanced-search",
+     "description": "Advanced search with ripgrep with more options",
+     "config": "mcollina__mcp-ripgrep__advanced-search.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 115,
+       "text": "name: \"advanced-search\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 185,
+       "text": "if (![\"search\", \"advanced-search\", \"count-matches\", \"list-files\", \"list-file-types\"].includes(toolName)) {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 262,
+       "text": "case \"advanced-search\": {"
+      }
+     ]
+    },
+    {
+     "name": "count-matches",
+     "description": "Count matches in files using ripgrep",
+     "config": "mcollina__mcp-ripgrep__count-matches.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 140,
+       "text": "name: \"count-matches\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 185,
+       "text": "if (![\"search\", \"advanced-search\", \"count-matches\", \"list-files\", \"list-file-types\"].includes(toolName)) {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 380,
+       "text": "case \"count-matches\": {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 414,
+       "text": "command += \" --count-matches\"; // Count total matches"
+      }
+     ]
+    },
+    {
+     "name": "list-file-types",
+     "description": "List all supported file types in ripgrep",
+     "config": "mcollina__mcp-ripgrep__list-file-types.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 170,
+       "text": "name: \"list-file-types\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 185,
+       "text": "if (![\"search\", \"advanced-search\", \"count-matches\", \"list-files\", \"list-file-types\"].includes(toolName)) {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 489,
+       "text": "case \"list-file-types\": {"
+      }
+     ]
+    },
+    {
+     "name": "list-files",
+     "description": "List files that would be searched by ripgrep without actually searching them",
+     "config": "mcollina__mcp-ripgrep__list-files.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 156,
+       "text": "name: \"list-files\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 185,
+       "text": "if (![\"search\", \"advanced-search\", \"count-matches\", \"list-files\", \"list-file-types\"].includes(toolName)) {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 441,
+       "text": "case \"list-files\": {"
+      }
+     ]
+    },
+    {
+     "name": "search",
+     "description": "Search files for patterns using ripgrep (rg)",
+     "config": "mcollina__mcp-ripgrep__search.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 27,
+       "text": "name: \"ripgrep-search\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 98,
+       "text": "name: \"search\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 103,
+       "text": "pattern: { type: \"string\", description: \"The search pattern (regex by default)\" },"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 104,
+       "text": "path: { type: \"string\", description: \"Directory or file(s) to search.\" },"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 105,
+       "text": "caseSensitive: { type: \"boolean\", description: \"Use case sensitive search (default: auto)\" },"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "famano/mcp-server-office",
+   "slug": "famano__mcp-server-office",
+   "lang": "python",
+   "commit": "caa4ddd6b5501d3abe1ce5ec2e62c098142c5f81",
+   "path": "eval/targets/famano__mcp-server-office",
+   "surface_loc": 549,
+   "tools": [
+    {
+     "name": "edit_docx_insert",
+     "description": "Insert new paragraphs into a docx file. Accepts a list of inserts with text and optional paragraph index. Each insert creates a new paragraph at the specified position. If paragraph_index is not specified, the paragraph is added at the end. When multiple inserts target the same paragraph_index, they are inserted in order. Returns a git-style diff showing the changes made.",
+     "config": "famano__mcp-server-office__edit_docx_insert.json",
+     "hints": [
+      {
+       "file": "mcp_server_office/tools.py",
+       "line": 25,
+       "text": "name=\"edit_docx_insert\","
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 151,
+       "text": "async def edit_docx_insert(path: str, inserts: list[Dict[str, str | int]]) -> str:"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 376,
+       "text": "elif name == \"edit_docx_insert\":"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 377,
+       "text": "result = await edit_docx_insert(arguments[\"path\"], arguments[\"inserts\"])"
+      }
+     ]
+    },
+    {
+     "name": "edit_docx_paragraph",
+     "description": "Make text replacements in specified paragraphs of a docx file. Accepts a list of edits with paragraph index and search/replace pairs. Each edit operates on a single paragraph and preserves the formatting of the first run. Returns a git-style diff showing the changes made. Only works within allowed directories.",
+     "config": "famano__mcp-server-office__edit_docx_paragraph.json",
+     "hints": [
+      {
+       "file": "mcp_server_office/tools.py",
+       "line": 91,
+       "text": "name=\"edit_docx_paragraph\","
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 228,
+       "text": "async def edit_docx_paragraph(path: str, edits: list[Dict[str, str | int]]) -> str:"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 373,
+       "text": "elif name == \"edit_docx_paragraph\":"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 374,
+       "text": "result = await edit_docx_paragraph(arguments[\"path\"], arguments[\"edits\"])"
+      }
+     ]
+    },
+    {
+     "name": "read_docx",
+     "description": "Read complete contents of a docx file including tables and images.Use this tool when you want to read file endswith '.docx'.Paragraphs are separated with two line breaks.This tool convert images into placeholder [Image].'--- Paragraph [number] ---' is indicator of each paragraph.",
+     "config": "famano__mcp-server-office__read_docx.json",
+     "hints": [
+      {
+       "file": "mcp_server_office/tools.py",
+       "line": 4,
+       "text": "name=\"read_docx\","
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 78,
+       "text": "async def read_docx(path: str) -> str:"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 167,
+       "text": "original = await read_docx(path)"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 215,
+       "text": "modified = await read_docx(path)"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 245,
+       "text": "original = await read_docx(path)"
+      }
+     ]
+    },
+    {
+     "name": "write_docx",
+     "description": "Create a new docx file with given content.Editing exisiting docx file with this tool is not recomended.",
+     "config": "famano__mcp-server-office__write_docx.json",
+     "hints": [
+      {
+       "file": "mcp_server_office/tools.py",
+       "line": 65,
+       "text": "name=\"write_docx\","
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 128,
+       "text": "async def write_docx(path: str, content: str) -> None:"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 370,
+       "text": "elif name == \"write_docx\":"
+      },
+      {
+       "file": "mcp_server_office/office.py",
+       "line": 371,
+       "text": "await write_docx(arguments[\"path\"], arguments[\"content\"])"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "AzDeltaQQ/Mcp-Reasoning-Server",
+   "slug": "AzDeltaQQ__Mcp-Reasoning-Server",
+   "lang": "node",
+   "commit": "7131e73aeeeeee4b72ac11d3667d11d874284d54",
+   "path": "eval/targets/AzDeltaQQ__Mcp-Reasoning-Server",
+   "surface_loc": 543,
+   "tools": [
+    {
+     "name": "beam_search_reasoning",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__beam_search_reasoning.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-tools.ts",
+       "line": 78,
+       "text": "\"beam_search_reasoning\","
+      }
+     ]
+    },
+    {
+     "name": "hybrid_reasoning",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__hybrid_reasoning.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-tools.ts",
+       "line": 190,
+       "text": "\"hybrid_reasoning\","
+      }
+     ]
+    },
+    {
+     "name": "mcts_reasoning",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__mcts_reasoning.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-tools.ts",
+       "line": 15,
+       "text": "\"mcts_reasoning\","
+      }
+     ]
+    },
+    {
+     "name": "r1_reasoning",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__r1_reasoning.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-tools.ts",
+       "line": 141,
+       "text": "\"r1_reasoning\","
+      }
+     ]
+    },
+    {
+     "name": "reason_beam",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__reason_beam.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-wrapper.ts",
+       "line": 69,
+       "text": "\"reason_beam\","
+      }
+     ]
+    },
+    {
+     "name": "reason_hybrid",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__reason_hybrid.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-wrapper.ts",
+       "line": 163,
+       "text": "\"reason_hybrid\","
+      }
+     ]
+    },
+    {
+     "name": "reason_mcts",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__reason_mcts.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-wrapper.ts",
+       "line": 12,
+       "text": "\"reason_mcts\","
+      }
+     ]
+    },
+    {
+     "name": "reason_r1",
+     "description": "",
+     "config": "AzDeltaQQ__Mcp-Reasoning-Server__reason_r1.json",
+     "hints": [
+      {
+       "file": "src/tools/reasoning-wrapper.ts",
+       "line": 126,
+       "text": "\"reason_r1\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "aws-samples/sample-mcp-server-s3",
+   "slug": "aws-samples__sample-mcp-server-s3",
+   "lang": "python",
+   "commit": "b215bedef4bf9adcea1d46206deb7fbfb9804826",
+   "path": "eval/targets/aws-samples__sample-mcp-server-s3",
+   "surface_loc": 543,
+   "tools": [
+    {
+     "name": "GetObject",
+     "description": "Retrieves an object from Amazon S3. In the GetObject request, specify the full key name for the object. General purpose buckets - Both the virtual-hosted-style requests and the path-style requests are supported. For a virtual hosted-style request example, if you have the object photos/2006/February/sample.jpg, specify the object key name as /photos/2006/February/sample.jpg. For a path-style request example, if you have the object photos/2006/February/sample.jpg in the bucket named examplebucket, specify the object key name as /examplebucket/photos/2006/February/sample.jpg. Directory buckets - Only virtual-hosted-style requests are supported. For a virtual hosted-style request example, if you have the object photos/2006/February/sample.jpg in the bucket named examplebucket--use1-az5--x-s3, specify the object key name as /photos/2006/February/sample.jpg. Also, when you make requests to this API operation, your requests are sent to the Zonal endpoint. These endpoints support virtual-hosted-style requests in the format https://bucket_name.s3express-az_id.region.amazonaws.com/key-name . Path-style requests are not supported.",
+     "config": "aws-samples__sample-mcp-server-s3__GetObject.json",
+     "hints": [
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 230,
+       "text": "name=\"GetObject\", # https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 231,
+       "text": "description=\"Retrieves an object from Amazon S3. In the GetObject request, specify the full key name for the object. General purpose buckets - Both the virtual-hosted-style requests and the path-style"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 280,
+       "text": "case \"GetObject\":"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 288,
+       "text": "logger.info(f\"GetObject got response {response}\")"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 290,
+       "text": "logger.info(f\"GetObject got file_content {file_content}\")"
+      }
+     ]
+    },
+    {
+     "name": "ListBuckets",
+     "description": "Returns a list of all buckets owned by the authenticated sender of the request. To grant IAM permission to use this operation, you must add the s3:ListAllMyBuckets policy action.",
+     "config": "aws-samples__sample-mcp-server-s3__ListBuckets.json",
+     "hints": [
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 206,
+       "text": "name=\"ListBuckets\", # https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 218,
+       "text": "description=\"Returns some or all (up to 1,000) of the objects in a bucket with each request. You can use the request parameters as selection criteria to return a subset of the objects in a bucket. To "
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 251,
+       "text": "case \"ListBuckets\":"
+      }
+     ]
+    },
+    {
+     "name": "ListObjectsV2",
+     "description": "Returns some or all (up to 1,000) of the objects in a bucket with each request. You can use the request parameters as selection criteria to return a subset of the objects in a bucket. To get a list of your buckets, see ListBuckets.",
+     "config": "aws-samples__sample-mcp-server-s3__ListObjectsV2.json",
+     "hints": [
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 217,
+       "text": "name=\"ListObjectsV2\", # https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjectsV2.html"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 261,
+       "text": "case \"ListObjectsV2\":"
+      },
+      {
+       "file": "src/s3_mcp_server/server.py",
+       "line": 272,
+       "text": "logger.info(f\"ListObjectsV2 returning objects {objects}\")"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "nahmanmate/code-research-mcp-server",
+   "slug": "nahmanmate__code-research-mcp-server",
+   "lang": "node",
+   "commit": "435d3960b8b223402c97a5ebcf0f20d11436b8d8",
+   "path": "eval/targets/nahmanmate__code-research-mcp-server",
+   "surface_loc": 536,
+   "tools": [
+    {
+     "name": "search_all",
+     "description": "Search all platforms simultaneously",
+     "config": "nahmanmate__code-research-mcp-server__search_all.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 413,
+       "text": "name: 'search_all',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 506,
+       "text": "case 'search_all': {"
+      }
+     ]
+    },
+    {
+     "name": "search_github",
+     "description": "Search GitHub for repositories and code",
+     "config": "nahmanmate__code-research-mcp-server__search_github.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 355,
+       "text": "name: 'search_github',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 463,
+       "text": "case 'search_github': {"
+      }
+     ]
+    },
+    {
+     "name": "search_mdn",
+     "description": "Search MDN Web Docs for web development documentation",
+     "config": "nahmanmate__code-research-mcp-server__search_mdn.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 341,
+       "text": "name: 'search_mdn',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 450,
+       "text": "case 'search_mdn': {"
+      }
+     ]
+    },
+    {
+     "name": "search_npm",
+     "description": "Search npm registry for JavaScript packages",
+     "config": "nahmanmate__code-research-mcp-server__search_npm.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 379,
+       "text": "name: 'search_npm',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 480,
+       "text": "case 'search_npm': {"
+      }
+     ]
+    },
+    {
+     "name": "search_pypi",
+     "description": "Search PyPI for Python packages",
+     "config": "nahmanmate__code-research-mcp-server__search_pypi.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 399,
+       "text": "name: 'search_pypi',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 493,
+       "text": "case 'search_pypi': {"
+      }
+     ]
+    },
+    {
+     "name": "search_stackoverflow",
+     "description": "Search Stack Overflow for programming questions and answers",
+     "config": "nahmanmate__code-research-mcp-server__search_stackoverflow.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 321,
+       "text": "name: 'search_stackoverflow',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 437,
+       "text": "case 'search_stackoverflow': {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "EnesCinr/market-fiyatlari-mcp-server",
+   "slug": "EnesCinr__market-fiyatlari-mcp-server",
+   "lang": "node",
+   "commit": "667cce9292b31e2a001a25989ad985c27c41eaef",
+   "path": "eval/targets/EnesCinr__market-fiyatlari-mcp-server",
+   "surface_loc": 534,
+   "tools": [
+    {
+     "name": "compare_prices",
+     "description": "Bir \u00fcr\u00fcn\u00fcn farkl\u0131 marketlerdeki fiyatlar\u0131n\u0131 kar\u015f\u0131la\u015ft\u0131r\u0131r",
+     "config": "EnesCinr__market-fiyatlari-mcp-server__compare_prices.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 215,
+       "text": "name: \"compare_prices\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 291,
+       "text": "if (name === \"compare_prices\") {"
+      }
+     ]
+    },
+    {
+     "name": "get_product_by_id",
+     "description": "\u00dcr\u00fcn ID'sine g\u00f6re \u00fcr\u00fcn detaylar\u0131n\u0131 getirir",
+     "config": "EnesCinr__market-fiyatlari-mcp-server__get_product_by_id.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 201,
+       "text": "name: \"get_product_by_id\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 262,
+       "text": "if (name === \"get_product_by_id\") {"
+      }
+     ]
+    },
+    {
+     "name": "search_products",
+     "description": "Belirtilen arama sorgusuyla \u00fcr\u00fcnleri arar",
+     "config": "EnesCinr__market-fiyatlari-mcp-server__search_products.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 187,
+       "text": "name: \"search_products\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 244,
+       "text": "if (name === \"search_products\") {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "glifxyz/mymcpspace-mcp-server",
+   "slug": "glifxyz__mymcpspace-mcp-server",
+   "lang": "node",
+   "commit": "4500f0e5d7c80f83958d87b50c8222bc77add96b",
+   "path": "eval/targets/glifxyz__mymcpspace-mcp-server",
+   "surface_loc": 532,
+   "tools": [
+    {
+     "name": "create-post",
+     "description": "Create a new post with the provided content",
+     "config": "glifxyz__mymcpspace-mcp-server__create-post.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 32,
+       "text": "* Tool: create-post"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 36,
+       "text": "\"create-post\","
+      }
+     ]
+    },
+    {
+     "name": "get-feed",
+     "description": "Get recent posts feed (50 most recent posts in reverse chronological order) along with the current topic",
+     "config": "glifxyz__mymcpspace-mcp-server__get-feed.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 169,
+       "text": "* Tool: get-feed"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 173,
+       "text": "\"get-feed\","
+      }
+     ]
+    },
+    {
+     "name": "reply-to-post",
+     "description": "Create a reply to an existing post",
+     "config": "glifxyz__mymcpspace-mcp-server__reply-to-post.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 79,
+       "text": "* Tool: reply-to-post"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 83,
+       "text": "\"reply-to-post\","
+      }
+     ]
+    },
+    {
+     "name": "toggle-like",
+     "description": "Like or unlike a post",
+     "config": "glifxyz__mymcpspace-mcp-server__toggle-like.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 131,
+       "text": "* Tool: toggle-like"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 135,
+       "text": "\"toggle-like\","
+      }
+     ]
+    },
+    {
+     "name": "update-username",
+     "description": "Update the authenticated user's username",
+     "config": "glifxyz__mymcpspace-mcp-server__update-username.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 205,
+       "text": "* Tool: update-username"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 209,
+       "text": "\"update-username\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "priyankark/lighthouse-mcp",
+   "slug": "priyankark__lighthouse-mcp",
+   "lang": "node",
+   "commit": "b0f5b53d4ae681f419ad8ecf7640b01f434fc7a0",
+   "path": "eval/targets/priyankark__lighthouse-mcp",
+   "surface_loc": 531,
+   "tools": [
+    {
+     "name": "get_performance_score",
+     "description": "Get just the performance score for a URL",
+     "config": "priyankark__lighthouse-mcp__get_performance_score.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 120,
+       "text": "name: 'get_performance_score',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 145,
+       "text": "case 'get_performance_score':"
+      }
+     ]
+    },
+    {
+     "name": "run_audit",
+     "description": "Run a Lighthouse audit on a URL",
+     "config": "priyankark__lighthouse-mcp__run_audit.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 84,
+       "text": "name: 'run_audit',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 143,
+       "text": "case 'run_audit':"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

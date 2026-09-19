@@ -1,0 +1,135 @@
+STATIC SECURITY REVIEW — shard 013 of the MCP-server tool corpus.
+
+You are doing a READ-ONLY static code audit. You must NOT execute, install,
+build, start, or network-contact anything under eval/targets/ — no `node`,
+`python`, `npm install`, `pip install`, no starting an MCP server, no curl.
+Grep/find/read/cat are fine. If you accidentally run something that starts a
+target process, kill it and do not report anything based on its output.
+
+ROOT = /home/mza6485/toolfuzzer
+
+Step 1: Read your assignment file first:
+  /home/mza6485/toolfuzzer/findings/vanilla-claude-sonnet-5/shards/shard_013.json
+It lists every repo and tool assigned to you, each tool's declared
+`description` (from a real MCP schema probe, may be empty for some), and a
+few `hints` (file/line/text) where the tool's name literal was found by a
+cheap grep — a starting point only, not a claim. `path` is the repo's clone
+directory, relative to ROOT.
+
+Step 2: For every tool in your shard, decide FRESH from the code in front of
+you whether it is vulnerable, and why. Do not reason from memory of CVEs,
+other MCP servers, or anything you have seen elsewhere — judge only the
+actual source you read for this exact tool, in this exact repo. If a hint
+looks wrong or incomplete, find the real declaration yourself (grep the tool
+name string; for python watch for FastMCP's function-name-is-the-tool-name
+convention).
+
+For each tool:
+  a. Locate its declaration and its full handler.
+  b. Follow every hop from the caller-controlled argument (per its declared
+     schema/description) to wherever it is used — file paths, shell commands,
+     URLs, SQL, deserialization, logging, subprocess, eval/exec, etc. Read the
+     helper functions too, not just the top-level handler.
+  c. If the sink is inside an installed dependency (not the repo's own code),
+     open the actual installed version under that repo's own `.venv/` or
+     `node_modules/` and check whether the library itself guards against the
+     issue (do not assume from the library's reputation or version number —
+     read the guard). Note the installed version you checked.
+  d. Decide a verdict.
+
+VERDICT RUBRIC:
+
+  "flag", tier "A" (counted as a real finding) requires ALL of:
+    1. the argument is genuinely caller-controlled per the tool's own schema;
+    2. you actually read every hop from argument to sink, including helpers;
+    3. there is no effective guard on that path — or if a guard exists, you
+       can name a concrete bypass (a specific input that gets past it);
+    4. if the sink sits in a dependency, you checked the installed library
+       source and it does not stop this;
+    5. the impact is a genuine security property (confidentiality, integrity,
+       auth, availability via a targeted mechanism) — not mere robustness,
+       a crash on malformed input, or generic DoS.
+
+  "flag", tier "B" (potential — real mechanism, weaker case) when the
+  mechanism is real but: the behaviour is plainly the tool's advertised
+  purpose (e.g. a "run this shell command" tool actually running shell
+  commands is not itself a finding — but no input validation at all on top
+  of that might still be Tier B if it exceeds what a reasonable caller
+  expects); or it needs credentials/config/state you cannot confirm is
+  present; or a guard exists and a bypass is plausible but you can't fully
+  prove it from static reading alone.
+
+  "clear" — record why, using one of these `reason` values:
+    no-sink            — argument never reaches anything sensitive
+    guarded            — an effective guard exists (say what it is)
+    remote-api-wrapper — tool just forwards to a remote API/service; the
+                          "sink" is the caller's own account/resource
+    constant-args      — no caller-controlled input reaches the sink
+    read-only-query     — read-only, no path/command/injection surface
+    generated          — tool is dynamically generated (OpenAPI/schema/YAML)
+                          and you reviewed the generator + data instead of a
+                          per-tool handler
+    other              — explain in `why`
+
+EXPLICIT ANTI-FALSE-POSITIVE RULES — do not flag these:
+  - a tool that only stores or echoes a caller-supplied string with no sink
+    that ever opens/executes/interprets it;
+  - log-injection unless CR/LF or control bytes actually reach a *structured*
+    log format or a log *file* whose parsing/integrity breaks — "the code
+    calls print()/logger.info() on user input" alone is NOT a finding;
+  - weak PRNG / weak hash usage that is not used for any security decision
+    (auth token, crypto key, password hash, nonce);
+  - binding to 0.0.0.0, missing MCP transport auth, or bare --stdio exposure —
+    these are properties of the MCP protocol/deployment, not of a specific
+    tool; do not file them as per-tool findings (you may note them once in
+    your shard summary if striking, but do not put them in the JSONL as
+    tool-level flags);
+  - anything argued only from the tool's description/docstring without
+    reading the implementing code;
+  - a tool whose entire declared purpose is "fetch/read this URL the caller
+    gives you" being flagged for SSRF with no additional twist (e.g. it also
+    resolves the URL server-side to internal metadata endpoints, or bypasses
+    an allow-list) — plain URL-fetch-what-you're-told is Tier B at most, and
+    only when there's something beyond "it fetches a URL".
+
+CWE TAXONOMY — classify into one of these, or argue explicitly in `why` if a
+finding genuinely doesn't fit:
+  CWE-78 (OS command injection), CWE-88 (argument injection),
+  CWE-94/CWE-95 (code injection / eval), CWE-22/CWE-23 (path traversal),
+  CWE-73 (external control of file name/path), CWE-918 (SSRF),
+  CWE-117 (log injection), CWE-798 (hardcoded credentials),
+  CWE-377 (insecure temp file), CWE-200/CWE-532/CWE-552 (information
+  exposure / sensitive logging / files exposed to unauthorized actors),
+  CWE-89 (SQL injection), CWE-502 (unsafe deserialization),
+  CWE-611 (XXE), CWE-400/CWE-1333 (uncontrolled resource consumption/ReDoS),
+  CWE-306/CWE-862 (missing authorization on a destructive/sensitive tool),
+  CWE-829 (unverified code download / supply chain).
+
+Step 3: Write your results. Do NOT put findings in your final chat message —
+write ONE JSON object per line (JSONL) for every single tool in your shard
+(so your output file must have exactly as many lines as your shard has
+configs) to:
+  /home/mza6485/toolfuzzer/findings/vanilla-claude-sonnet-5/shards/out/shard_013.jsonl
+
+Row schema (flag row):
+{"repo":"<owner>/<name>","tool":"<tool_name>","lang":"python|node",
+  "verdict":"flag","tier":"A"|"B","cwe":"CWE-NN","class":"short-kebab-slug",
+  "file":"<path relative to the repo's own clone dir>","line":<int>,
+  "excerpt":"<verbatim short line(s) from that file, <=200 chars>",
+  "param":"<the caller-controlled argument name>",
+  "sink":"<short description of what happens to it>",
+  "guard":"none"|"bypassable: <concrete bypass input/reason>"|"partial: <why insufficient>",
+  "dep_evidence":"<installed lib path + version you checked, or null>",
+  "why":"<1-3 sentences, the actual reasoning>",
+  "contract":"<short quote from the tool's own description/docstring if relevant, or null>",
+  "confidence":"high"|"medium"|"low"}
+
+Row schema (clear row):
+{"repo":"<owner>/<name>","tool":"<tool_name>","lang":"python|node",
+  "verdict":"clear","reason":"<one of the enum values above>",
+  "why":"<one sentence>"}
+
+Step 4: Your final chat response must be SHORT: shard id, number of configs
+processed (must equal the shard's total), counts of flag-A / flag-B / clear,
+any repo you could not review and why, and confirmation of the output file
+path + line count. Do not repeat the findings themselves in the chat reply.

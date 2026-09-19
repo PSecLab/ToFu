@@ -1,0 +1,899 @@
+{
+ "shard_id": "001",
+ "n_repos": 1,
+ "n_configs": 28,
+ "surface_loc": 161671,
+ "repos": [
+  {
+   "repo": "doobidoo/mcp-memory-service",
+   "slug": "doobidoo__mcp-memory-service",
+   "lang": "python",
+   "commit": "3a360b566c3438517bdce10f89618e62b3466a3f",
+   "path": "eval/targets/doobidoo__mcp-memory-service",
+   "surface_loc": 161671,
+   "tools": [
+    {
+     "name": "commit_session_legacy",
+     "description": "Record end-of-session learnings from an ephemeral agent. Stores decisions, errors, corrections as structured observations.",
+     "config": "doobidoo__mcp-memory-service__commit_session_legacy.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 159,
+       "text": "- **Post-commit learning**: after `commit_session_legacy`, the server runs"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 197,
+       "text": "- `commit_session_legacy` with decisions, errors, corrections (triggers"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 218,
+       "text": "1. `commit_session_legacy` with session summary, decisions, errors, corrections."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 235,
+       "text": "1. `commit_session_legacy` with: session_id, agent_id, task_summary, outcome,"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1875,
+       "text": "# \u00a79: auto_commit \u2014 bridge harvest candidates to commit_session_legacy"
+      }
+     ]
+    },
+    {
+     "name": "get_bootstrap_profile",
+     "description": "Generate a behavioral bootstrap profile for an ephemeral agent.",
+     "config": "doobidoo__mcp-memory-service__get_bootstrap_profile.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 162,
+       "text": "- **Bootstrap refresh**: `get_bootstrap_profile` always returns the latest profile."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 177,
+       "text": "3. `get_bootstrap_profile(agent_ids=[\"kiro\"])` \u2014 behavioral rules (avoidances,"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 214,
+       "text": "1. `get_bootstrap_profile(agent_ids=[\"claude-code\"])` \u2014 incorporate returned rules."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 231,
+       "text": "1. `get_bootstrap_profile(agent_ids=[\"your_agent_id\"])` \u2014 follow returned rules."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2323,
+       "text": "result = await self.handle_get_bootstrap_profile({\"agent_ids\": [agent_id]})"
+      }
+     ]
+    },
+    {
+     "name": "get_onboarding_guide",
+     "description": "Get integration guide for a specific client type. ",
+     "config": "doobidoo__mcp-memory-service__get_onboarding_guide.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 141,
+       "text": "def _get_onboarding_guide(client_type: str = \"generic\") -> str:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1076,
+       "text": "return _get_onboarding_guide(client_type)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2089,
+       "text": "async def handle_get_onboarding_guide(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2092,
+       "text": "return [types.TextContent(type=\"text\", text=_get_onboarding_guide(client_type))]"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2096,
+       "text": "return await self.handle_get_onboarding_guide({\"client_type\": \"generic\"})"
+      }
+     ]
+    },
+    {
+     "name": "get_quarantined_memories",
+     "description": "List memories that have been quarantined due to contradicting active beliefs. Use to review flagged memories.",
+     "config": "doobidoo__mcp-memory-service__get_quarantined_memories.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2071,
+       "text": "async def handle_get_quarantined_memories(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2074,
+       "text": "from .consolidation.quarantine import get_quarantined_memories"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2076,
+       "text": "results = await get_quarantined_memories(self.storage, limit=limit)"
+      },
+      {
+       "file": "src/mcp_memory_service/consolidation/quarantine.py",
+       "line": 98,
+       "text": "async def get_quarantined_memories(storage, limit: int = 50) -> List[dict]:"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 44,
+       "text": "\"get_quarantined_memories\": (\"__self__\", \"handle_get_quarantined_memories\"),"
+      }
+     ]
+    },
+    {
+     "name": "memory_cleanup",
+     "description": "Find and remove duplicate entries",
+     "config": "doobidoo__mcp-memory-service__memory_cleanup.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1167,
+       "text": "name=\"memory_cleanup\","
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1217,
+       "text": "elif name == \"memory_cleanup\":"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1218,
+       "text": "messages = await _prompt_memory_cleanup(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1347,
+       "text": "async def _prompt_memory_cleanup(self, arguments: dict) -> list:"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 27,
+       "text": "\"memory_cleanup\": _handler(\"memory\", \"handle_cleanup_duplicates\"),"
+      }
+     ]
+    },
+    {
+     "name": "memory_conflicts",
+     "description": "List unresolved memory conflicts (contradictory memories detected by similarity analysis)",
+     "config": "doobidoo__mcp-memory-service__memory_conflicts.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2110,
+       "text": "async def handle_memory_conflicts(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2113,
+       "text": "return await quality_handlers.handle_memory_conflicts(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2275,
+       "text": "result = await self.handle_memory_conflicts({})"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 38,
+       "text": "\"memory_conflicts\": _handler(\"quality\", \"handle_memory_conflicts\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 983,
+       "text": "name=\"memory_conflicts\","
+      }
+     ]
+    },
+    {
+     "name": "memory_consolidate",
+     "description": "Memory consolidation management - run, monitor, and control memory optimization.\n\nUSE THIS WHEN:\n- User asks about memory optimization, cleanup, or consolidation\n- Need to check consolidation system health\n- Want to manually trigger or schedule consolidation\n- Need to pause/resume consolidation jobs\n\nACTIONS:\n- run: Execute consolidation for a time horizon (requires time_horizon)\n  Performs dream-inspired memory consolidation:\n  \u2022 Exponential decay scoring\n  \u2022 Creative association discovery\n  \u2022 Semantic clustering and compression\n  \u2022 Controlled forgetting with archival\n\n- status: Get consolidation system health and statistics\n\n- recommend: Get optimization recommendations for a time horizon (requires time_horizon)\n  Analyzes memory state and suggests whether consolidation is needed\n\n- scheduler: View all scheduled consolidation jobs\n  Shows next run times and execution statistics\n\n- pause: Pause consolidation (all or specific horizon)\n  Temporarily stops automatic consolidation jobs\n\n- resume: Resume paused consolidation\n  Re-enables previously paused consolidation jobs\n\n- merge: Combine multiple existing memories into one consolidated entry (requires content_hashes and merged_content)\n  Verifies all source memories exist, stores the merged content, deletes originals\n\nTIME HORIZONS:\n- daily: Consolidate last 24 hours\n- weekly: Consolidate last 7 days\n- monthly: Consolidate last 30 days\n- quarterly: Consolidate last 90 days\n- yearly: Consolidate last 365 days\n\nExamples:\n{\"action\": \"status\"}\n{\"action\": \"run\", \"time_horizon\": \"weekly\"}\n{\"action\": \"run\", \"time_horizon\": \"daily\", \"immediate\": true}\n{\"action\": \"recommend\", \"time_horizon\": \"monthly\"}\n{\"action\": \"scheduler\"}\n{\"action\": \"pause\"}\n{\"action\": \"pause\", \"time_horizon\": \"daily\"}\n{\"action\": \"resume\", \"time_horizon\": \"weekly\"}\n{\"action\": \"merge\", \"content_hashes\": [\"hash1\", \"hash2\"], \"merged_content\": \"Consolidated text\"}\n{\"action\": \"merge\", \"content_hashes\": [\"hash1\", \"hash2\"], \"merged_content\": \"text\", \"tags\": [\"important\"], \"memory_type\": \"note\"}",
+     "config": "doobidoo__mcp-memory-service__memory_consolidate.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1653,
+       "text": "async def handle_memory_consolidate(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1656,
+       "text": "return await consolidation_handlers.handle_memory_consolidate(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2308,
+       "text": "await self.handle_memory_consolidate({\"time_horizon\": \"incremental\"})"
+      },
+      {
+       "file": "src/mcp_memory_service/consolidation/consolidator.py",
+       "line": 117,
+       "text": "# within the last `window`, which is what the `memory_consolidate` tool"
+      },
+      {
+       "file": "src/mcp_memory_service/consolidation/consolidator.py",
+       "line": 1019,
+       "text": "# in here so `memory_consolidate status` reports real totals."
+      }
+     ]
+    },
+    {
+     "name": "memory_delete",
+     "description": "Delete memories with flexible filtering. Combine filters for precise targeting.\n\nUSE THIS WHEN:\n- User says \"delete\", \"remove\", \"forget\" specific memories\n- Need to clean up by tag, time range, or specific hash\n- Bulk deletion with safety preview (dry_run=true)\n\nFILTER COMBINATIONS (AND logic when multiple specified):\n- content_hash only: Delete single memory by hash\n- tags only: Delete memories with matching tags\n- before/after: Delete memories in time range\n- tags + time: Delete tagged memories within time range\n\nSAFETY FEATURES:\n- dry_run=true: Preview what will be deleted without deleting\n- Returns deleted_hashes for audit trail\n- No filters = error (prevents accidental mass deletion)\n\nExamples:\n{\"content_hash\": \"abc123def456\"}\n{\"tags\": [\"temporary\", \"draft\"], \"tag_match\": \"any\"}\n{\"tags\": [\"archived\", \"old\"], \"tag_match\": \"all\"}\n{\"before\": \"2024-01-01\"}\n{\"after\": \"2024-06-01\", \"before\": \"2024-12-31\"}\n{\"tags\": [\"cleanup\"], \"before\": \"2024-01-01\", \"dry_run\": true}",
+     "config": "doobidoo__mcp-memory-service__memory_delete.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1617,
+       "text": "async def handle_memory_delete(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1620,
+       "text": "return await memory_handlers.handle_memory_delete(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 26,
+       "text": "\"memory_delete\": _handler(\"memory\", \"handle_memory_delete\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 392,
+       "text": "name=\"memory_delete\","
+      },
+      {
+       "file": "src/mcp_memory_service/web/sse.py",
+       "line": 377,
+       "text": "def create_memory_deleted_event(content_hash: str, success: bool = True) -> SSEEvent:"
+      }
+     ]
+    },
+    {
+     "name": "memory_detail",
+     "description": "Get the full ranked detail for a single entity.\n\nUSE THIS WHEN:\n- User drills into one entity from a knowledge map (\"tell me more about X\")\n- Need the full ranked list of chunks for an entity plus its related entities\n\nReturns:\n- entity_id, name\n- chunks: ranked memory chunks (relevance now; composite_score + score_components once #55 lands)\n- related_entities: neighbouring entities (gated by include_related / max_hops)\n\nRead-only.\n\nExamples:\n{\"entity_id\": \"authentication-design\"}\n{\"entity_id\": \"python\", \"limit\": 20, \"include_related\": false}\n{\"entity_id\": \"database\", \"max_hops\": 2}\n",
+     "config": "doobidoo__mcp-memory-service__memory_detail.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 191,
+       "text": "2. `memory_detail(entity_id=\"<id>\")` \u2192 deep dive into one entity"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 37,
+       "text": "\"memory_detail\": _handler(\"graph\", \"handle_memory_detail\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1334,
+       "text": "name=\"memory_detail\","
+      },
+      {
+       "file": "src/mcp_memory_service/scoring/composite.py",
+       "line": 3,
+       "text": "Opt-in scoring model for memory_explore / memory_detail (Issue #55)."
+      },
+      {
+       "file": "src/mcp_memory_service/server/handlers/graph.py",
+       "line": 930,
+       "text": "async def handle_memory_detail(server, arguments: dict) -> List[types.TextContent]:"
+      }
+     ]
+    },
+    {
+     "name": "memory_distill",
+     "description": "Extract insights from existing memories via LLM rewriter (batch mode). ",
+     "config": "doobidoo__mcp-memory-service__memory_distill.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1980,
+       "text": "async def handle_memory_distill(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2248,
+       "text": "await self.handle_memory_distill({\"batch_size\": 20, \"dry_run\": False})"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2264,
+       "text": "await self.handle_memory_distill({\"batch_size\": 20, \"dry_run\": False})"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 49,
+       "text": "\"memory_distill\": (\"__self__\", \"handle_memory_distill\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1233,
+       "text": "name=\"memory_distill\","
+      }
+     ]
+    },
+    {
+     "name": "memory_explore",
+     "description": "Explore a knowledge map of entities, with query-scoped chunks per entity (LLM-free).\n\nREQUIRES A POPULATED ENTITY GRAPH \u2014 returns {\"entities\": [], \"count\": 0} otherwise, for\nevery query. Check with memory_graph {\"action\": \"list_entities\"}; populate with\nmemory_quality {\"action\": \"maintain\", \"dry_run\": false} (dry_run defaults to true and\nstores nothing). Unavailable on the Cloudflare backend.\nGuide: docs/guides/token-efficient-retrieval.md\n\nUSE THIS WHEN:\n- User wants a high-level overview (\"what do I know about X\", \"map out\", \"explore\")\n- Need entities + their relationships rather than raw memory chunks\n- Building a knowledge graph view or entity dashboard\n\nReturns a list of entities. Per entity:\n- entity_id: canonical slug (NFKD-normalized, hash fallback for non-Latin scripts)\n- name, entity_type\n- summary: extractive (LLM-free) summary from top chunks\n- relation_count: number of graph relationships\n- top_chunks: most relevant memory chunks for the entity\n\nRead-only. Composes with `store` for multi-store scoping.\n\nExamples:\n{\"query\": \"authentication design\"}\n{\"query\": \"python\", \"max_entities\": 5, \"chunks_per_entity\": 2}\n{\"query\": \"database\", \"tags\": [\"reference\"], \"min_score\": 0.3}\n",
+     "config": "doobidoo__mcp-memory-service__memory_explore.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 189,
+       "text": "1. `memory_explore(query=\"<topic>\", max_entities=5, chunks_per_entity=2)`"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 36,
+       "text": "\"memory_explore\": _handler(\"graph\", \"handle_memory_explore\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1258,
+       "text": "name=\"memory_explore\","
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1358,
+       "text": "\"description\": \"Canonical entity id (slug) returned by memory_explore\","
+      },
+      {
+       "file": "src/mcp_memory_service/scoring/composite.py",
+       "line": 3,
+       "text": "Opt-in scoring model for memory_explore / memory_detail (Issue #55)."
+      }
+     ]
+    },
+    {
+     "name": "memory_graph",
+     "description": "Memory association graph operations - explore connections between memories.\n\nACTIONS:\n- connected: Find memories connected via associations (BFS traversal)\n- path: Find shortest path between two memories\n- subgraph: Get graph structure around a memory for visualization\n- infer: Find transitive relationships (A\u2192B\u2192C implies A\u2192C). Params: rel_type (string), max_hops (int, default 2)\n- suggest: Suggest potential relationships for a memory based on shared neighbors. Params: hash (string)\n\nExamples:\n{\"action\": \"connected\", \"hash\": \"abc123\", \"max_hops\": 2}\n{\"action\": \"path\", \"hash1\": \"abc123\", \"hash2\": \"def456\", \"max_depth\": 5}\n{\"action\": \"subgraph\", \"hash\": \"abc123\", \"radius\": 2}\n{\"action\": \"infer\", \"rel_type\": \"causes\", \"max_hops\": 2}\n{\"action\": \"suggest\", \"hash\": \"abc123\"}\n",
+     "config": "doobidoo__mcp-memory-service__memory_graph.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 183,
+       "text": "2. `memory_graph(action=\"connected\", hash=\"<top result hash>\", max_hops=2)`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1956,
+       "text": "async def handle_memory_graph(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1959,
+       "text": "return await graph_handlers.handle_memory_graph(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/mcp_server.py",
+       "line": 757,
+       "text": "async def memory_graph("
+      },
+      {
+       "file": "src/mcp_memory_service/config/graph.py",
+       "line": 14,
+       "text": "#   - 'dual_write': Write to both memories.metadata.associations AND memory_graph table (migration mode, default)"
+      }
+     ]
+    },
+    {
+     "name": "memory_harvest",
+     "description": "Extract learnings from Claude Code session transcripts.\n\nUSE THIS WHEN:\n- End of session \u2014 auto-capture decisions, bugs, conventions, learnings\n- User asks to \"harvest\" or \"extract learnings\" from sessions\n- Building knowledge base from past sessions\n\nMODES:\n- dry_run=true (DEFAULT): Preview candidates without storing\n- dry_run=false: Store candidates as tagged memories\n\nMEMORY TYPES EXTRACTED:\n- decision: Architectural choices, tool selections\n- bug: Issues encountered and root causes\n- convention: Patterns/rules established\n- learning: Insights, mistakes learned from\n- context: Session state for continuity\n\nLLM CLASSIFICATION (Phase 2):\n- use_llm=true: Validate candidates with Groq LLM (higher precision, ~$0.001/candidate)\n- Filters conversation fragments, deduplicates, refines content\n- Requires GROQ_API_KEY environment variable\n\nExamples:\n{\"sessions\": 1, \"dry_run\": true}\n{\"sessions\": 3, \"types\": [\"decision\", \"bug\"]}\n{\"session_ids\": [\"abc123\"], \"dry_run\": false}\n{\"min_confidence\": 0.7, \"sessions\": 1}\n{\"sessions\": 1, \"use_llm\": true, \"dry_run\": true}\n",
+     "config": "doobidoo__mcp-memory-service__memory_harvest.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 199,
+       "text": "- `memory_harvest(sessions=1, dry_run=false)` as fallback if commit is unavailable."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1480,
+       "text": "return frozenset({\"memory_harvest\", \"memory_ingest\"})"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1738,
+       "text": "async def handle_memory_harvest(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1739,
+       "text": "\"\"\"Handle memory_harvest tool calls \u2014 extract learnings from session transcripts.\"\"\""
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 33,
+       "text": "\"memory_harvest\": (\"__self__\", \"handle_memory_harvest\"),"
+      }
+     ]
+    },
+    {
+     "name": "memory_health",
+     "description": "Check database health and get statistics",
+     "config": "doobidoo__mcp-memory-service__memory_health.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 28,
+       "text": "\"memory_health\": _handler(\"utility\", \"handle_check_database_health\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 473,
+       "text": "name=\"memory_health\","
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 63,
+       "text": "\"memory_delete\", \"memory_update\", \"memory_health\","
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 105,
+       "text": "(\"check_database_health\", \"memory_health\"),"
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 198,
+       "text": "(\"memory_health\", {}),"
+      }
+     ]
+    },
+    {
+     "name": "memory_ingest",
+     "description": "Ingest documents or directories into memory database.\n\nUSE THIS WHEN:\n- User wants to import a document (PDF, TXT, MD, JSON)\n- Need to batch import a directory of documents\n- Building knowledge base from existing files\n\nSUPPORTED FORMATS:\n- PDF files (.pdf)\n- Text files (.txt, .md, .markdown, .rst)\n- JSON files (.json)\n\nMODE:\n- file: Ingest single document (requires file_path)\n- directory: Batch ingest all documents in directory (requires directory_path)\n\nCHUNKING:\n- Documents are split into chunks for better retrieval\n- chunk_size: Target characters per chunk (default: 1000)\n- chunk_overlap: Overlap between chunks (default: 200)\n\nExamples:\n{\"file_path\": \"/path/to/document.pdf\"}\n{\"file_path\": \"/path/to/notes.md\", \"tags\": [\"documentation\"]}\n{\"directory_path\": \"/path/to/docs\", \"recursive\": true}\n{\"directory_path\": \"/path/to/project\", \"file_extensions\": [\"md\", \"txt\"], \"tags\": [\"project-docs\"]}\n",
+     "config": "doobidoo__mcp-memory-service__memory_ingest.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1480,
+       "text": "return frozenset({\"memory_harvest\", \"memory_ingest\"})"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1733,
+       "text": "async def handle_memory_ingest(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1736,
+       "text": "return await document_handlers.handle_memory_ingest(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 32,
+       "text": "\"memory_ingest\": _handler(\"documents\", \"handle_memory_ingest\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 684,
+       "text": "name=\"memory_ingest\","
+      }
+     ]
+    },
+    {
+     "name": "memory_list",
+     "description": "List and browse memories with pagination and optional filters.\n\nUSE THIS WHEN:\n- User wants to browse all memories (\"show me my memories\", \"list everything\")\n- Need to paginate through large result sets\n- Filter by tag OR memory type for categorical browsing\n- User asks \"what do I have stored\", \"browse my memories\"\n\nUnlike memory_search (semantic search), this does categorical listing/filtering.\n\nPAGINATION:\n- page: 1-based page number (default: 1)\n- page_size: Results per page (default: 20, max: 100)\n\nFILTERS (combine with AND logic):\n- tags: Filter to memories with matching tags\n- tag_match: \"any\" (OR, default) or \"all\" (AND) \u2014 controls how multiple tags are matched\n- memory_type: Filter by type (note, reference, decision, etc.)\n- stale_days: Filter to memories not accessed in the last N days\n\nExamples:\n{}  // List first 20 memories\n{\"page\": 2, \"page_size\": 50}\n{\"tags\": [\"python\", \"reference\"]}\n{\"tags\": [\"python\", \"reference\"], \"tag_match\": \"all\"}\n{\"memory_type\": \"decision\", \"page_size\": 10}\n{\"tags\": [\"important\"], \"memory_type\": \"note\"}\n{\"stale_days\": 30}  // Memories not accessed in 30 days\n{\"stale_days\": 7, \"tags\": [\"archived\"]}  // Stale archived memories\n",
+     "config": "doobidoo__mcp-memory-service__memory_list.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1602,
+       "text": "async def handle_memory_list(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1605,
+       "text": "return await memory_handlers.handle_memory_list(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 25,
+       "text": "\"memory_list\": _handler(\"memory\", \"handle_memory_list\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 316,
+       "text": "name=\"memory_list\","
+      },
+      {
+       "file": "src/mcp_memory_service/server/handlers/memory.py",
+       "line": 678,
+       "text": "async def handle_memory_list(server, arguments: dict) -> List[types.TextContent]:"
+      }
+     ]
+    },
+    {
+     "name": "memory_quality",
+     "description": "Memory quality management - rate, inspect, and analyze.\n\nACTIONS:\n- rate: Manually rate a memory's quality (thumbs up/down)\n- get: Get quality metrics for a specific memory\n- analyze: Analyze quality distribution across all memories\n- maintain: Run maintenance cycle (cleanup + conflicts + stale + quality)\n- maintain_status: Get stats from last maintenance run\n\nExamples:\n{\"action\": \"rate\", \"content_hash\": \"abc123\", \"rating\": 1, \"feedback\": \"Very useful\"}\n{\"action\": \"get\", \"content_hash\": \"abc123\"}\n{\"action\": \"analyze\"}\n{\"action\": \"analyze\", \"min_quality\": 0.5, \"max_quality\": 1.0}\n{\"action\": \"maintain\"}\n{\"action\": \"maintain\", \"dry_run\": false}\n{\"action\": \"maintain_status\"}\n",
+     "config": "doobidoo__mcp-memory-service__memory_quality.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 153,
+       "text": "- `memory_quality(action=\"rate\", content_hash, rating=1|-1)`: rate memories after use."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1936,
+       "text": "async def handle_memory_quality(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1939,
+       "text": "return await quality_handlers.handle_memory_quality(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1946,
+       "text": "async def handle_get_memory_quality(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 1949,
+       "text": "return await quality_handlers.handle_get_memory_quality(self, arguments)"
+      }
+     ]
+    },
+    {
+     "name": "memory_resolve",
+     "description": "Resolve a memory conflict by choosing a winner",
+     "config": "doobidoo__mcp-memory-service__memory_resolve.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2115,
+       "text": "async def handle_memory_resolve(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2118,
+       "text": "return await quality_handlers.handle_memory_resolve(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 39,
+       "text": "\"memory_resolve\": _handler(\"quality\", \"handle_memory_resolve\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 989,
+       "text": "name=\"memory_resolve\","
+      },
+      {
+       "file": "src/mcp_memory_service/server/handlers/quality.py",
+       "line": 675,
+       "text": "async def handle_memory_resolve(server, arguments: dict) -> List[types.TextContent]:"
+      }
+     ]
+    },
+    {
+     "name": "memory_search",
+     "description": "Search memories with flexible modes and filters. Primary tool for finding stored information.\n\nUSE THIS WHEN:\n- User asks \"what do you remember about X\", \"recall\", \"find memories\"\n- Looking for past decisions, preferences, context from previous sessions\n- Need semantic, exact, or time-based search\n- User references \"last time we discussed\", \"you should know\"\n\nMODES:\n- semantic (default): Finds conceptually similar content even if exact words differ\n- exact: Finds memories containing the exact query string\n- hybrid: Combines semantic similarity with quality scoring\n\nTIME FILTERS (can combine with other filters):\n- time_expr: Natural language like \"yesterday\", \"last week\", \"2 days ago\", \"last month\"\n- after/before: Explicit ISO dates (YYYY-MM-DD)\n\nQUALITY BOOST (for semantic/hybrid modes):\n- 0.0 = pure semantic ranking (default)\n- 0.3 = 30% quality weight, 70% semantic (recommended for important lookups)\n- 1.0 = pure quality ranking\n\nTAG FILTER:\n- Filter results to only memories with specific tags\n- Useful for categorical searches (\"find all 'reference' memories about databases\")\n\nDEBUG:\n- include_debug=true adds timing, embedding info, filter details\n\nExamples:\n{\"query\": \"python async patterns\"}\n{\"query\": \"API endpoint\", \"mode\": \"exact\"}\n{\"time_expr\": \"last week\", \"limit\": 20}\n{\"query\": \"database config\", \"time_expr\": \"yesterday\"}\n{\"query\": \"architecture decisions\", \"tags\": [\"important\"], \"quality_boost\": 0.3}\n{\"after\": \"2024-01-01\", \"before\": \"2024-06-30\", \"limit\": 50}\n{\"query\": \"error handling\", \"include_debug\": true}",
+     "config": "doobidoo__mcp-memory-service__memory_search.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 151,
+       "text": "- `memory_search(mode=\"ranked\")`: default search \u2014 ranks by recency + access + quality."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 173,
+       "text": "1. `memory_search(query=\"session checkpoint\", time_expr=\"last 3 days\", limit=3)`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 181,
+       "text": "1. `memory_search(query=\"<task summary>\", mode=\"hybrid\", limit=5)`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 192,
+       "text": "3. `memory_search(query=\"<topic>\", mode=\"ranked\")`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 203,
+       "text": "- NEVER decide without searching. `memory_search` before any architectural decision."
+      }
+     ]
+    },
+    {
+     "name": "memory_stats",
+     "description": "Get MCP server global cache statistics for performance monitoring.\n\n                    Returns detailed metrics about storage and memory service caching,\n                    including hit rates, initialization times, and cache sizes.\n\n                    This tool is useful for:\n                    - Monitoring cache effectiveness\n                    - Debugging performance issues\n                    - Verifying cache persistence across MCP tool calls\n\n                    Returns cache statistics including total calls, hit rate percentage,\n                    storage/service cache metrics, performance metrics, and backend info.",
+     "config": "doobidoo__mcp-memory-service__memory_stats.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 29,
+       "text": "\"memory_stats\": _handler(\"utility\", \"handle_get_cache_stats\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 479,
+       "text": "name=\"memory_stats\","
+      },
+      {
+       "file": "src/mcp_memory_service/web/api/health.py",
+       "line": 257,
+       "text": "async def get_memory_stats("
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 64,
+       "text": "\"memory_stats\", \"memory_consolidate\", \"memory_cleanup\","
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 106,
+       "text": "(\"get_cache_stats\", \"memory_stats\"),"
+      }
+     ]
+    },
+    {
+     "name": "memory_store",
+     "description": "Store new information with optional tags.\n\n                    Accepts two tag formats in metadata:\n                    - Array: [\"tag1\", \"tag2\"]\n                    - String: \"tag1,tag2\"\n\n                    Use `conversation_id` to bypass semantic deduplication when saving\n                    incremental memories from the same conversation.\n\n                   Examples:\n                    # Using array format:\n                    {\n                        \"content\": \"Memory content\",\n                        \"metadata\": {\n                            \"tags\": [\"important\", \"reference\"],\n                            \"type\": \"note\"\n                        }\n                    }\n\n                    # Using string format(preferred):\n                    {\n                        \"content\": \"Memory content\",\n                        \"metadata\": {\n                            \"tags\": \"important,reference\",\n                            \"type\": \"note\"\n                        }\n                    }\n\n                    # Using conversation_id to save incremental notes:\n                    {\n                        \"content\": \"User prefers dark mode\",\n                        \"conversation_id\": \"conv_abc123\",\n                        \"metadata\": {\n                            \"tags\": \"preference,ui\"\n                        }\n                    }",
+     "config": "doobidoo__mcp-memory-service__memory_store.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 147,
+       "text": "- `memory_store`: save decisions, observations, references. Include \u22652 tags and a"
+      },
+      {
+       "file": "src/mcp_memory_service/config/quality.py",
+       "line": 77,
+       "text": "# Auto-capture (RFC #1008 \u00a73) \u2014 inline extraction on memory_store / memory_observe"
+      },
+      {
+       "file": "src/mcp_memory_service/config/transport.py",
+       "line": 23,
+       "text": "# memory_stored rates). Set to 0 to disable replay entirely."
+      },
+      {
+       "file": "src/mcp_memory_service/consolidation/contradictions.py",
+       "line": 148,
+       "text": "Called during memory_store when MCP_CONTRADICTION_ON_STORE=true."
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 22,
+       "text": "\"memory_store\": _handler(\"memory\", \"handle_store_memory\"),"
+      }
+     ]
+    },
+    {
+     "name": "memory_store_session",
+     "description": "Store a full conversation session as a single memory unit.\n\nUse this instead of memory_store when you want to preserve the full context\nof a multi-turn conversation. All turns are stored together, making session-level\nretrieval more reliable than storing individual turns separately.\n\nExample:\n{\n\"turns\": [\n    {\"role\": \"user\", \"content\": \"How do I configure Redis?\"},\n    {\"role\": \"assistant\", \"content\": \"Set REDIS_URL in your .env file...\"}\n],\n\"session_id\": \"optional-stable-id\",\n\"tags\": \"redis,configuration\"\n}",
+     "config": "doobidoo__mcp-memory-service__memory_store_session.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 23,
+       "text": "\"memory_store_session\": _handler(\"memory\", \"handle_store_session\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 109,
+       "text": "name=\"memory_store_session\","
+      }
+     ]
+    },
+    {
+     "name": "memory_update",
+     "description": "Update memory metadata without recreating the entire memory entry.\n                    \n                    This provides efficient metadata updates while preserving the original\n                    memory content, embeddings, and optionally timestamps.\n                    \n                    Examples:\n                    # Add tags to a memory\n                    {\n                        \"content_hash\": \"abc123...\",\n                        \"updates\": {\n                            \"tags\": [\"important\", \"reference\", \"new-tag\"]\n                        }\n                    }\n                    \n                    # Update memory type and custom metadata\n                    {\n                        \"content_hash\": \"abc123...\",\n                        \"updates\": {\n                            \"memory_type\": \"reminder\",\n                            \"metadata\": {\n                                \"priority\": \"high\",\n                                \"due_date\": \"2024-01-15\"\n                            }\n                        }\n                    }\n                    \n                    # Update custom fields directly\n                    {\n                        \"content_hash\": \"abc123...\",\n                        \"updates\": {\n                            \"priority\": \"urgent\",\n                            \"status\": \"active\"\n                        }\n                    }",
+     "config": "doobidoo__mcp-memory-service__memory_update.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 30,
+       "text": "\"memory_update\": _handler(\"memory\", \"handle_update_memory_metadata\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 496,
+       "text": "name=\"memory_update\","
+      },
+      {
+       "file": "src/mcp_memory_service/web/static/app.js",
+       "line": 787,
+       "text": "case 'memory_updated':"
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 63,
+       "text": "\"memory_delete\", \"memory_update\", \"memory_health\","
+      },
+      {
+       "file": "scripts/validate_tool_optimization.py",
+       "line": 108,
+       "text": "(\"update_memory_metadata\", \"memory_update\"),"
+      }
+     ]
+    },
+    {
+     "name": "mistake_note_add",
+     "description": "Record a mistake pattern for error replay. Tracks what went wrong and the correct action. Auto-increments failure_count for repeated patterns.",
+     "config": "doobidoo__mcp-memory-service__mistake_note_add.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 150,
+       "text": "- `mistake_note_add`: record error patterns with {pattern, context, wrong, right}."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2122,
+       "text": "async def handle_mistake_note_add(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2125,
+       "text": "return await mistake_handlers.handle_mistake_note_add(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2176,
+       "text": "# Process errors \u2192 mistake_note_add"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2178,
+       "text": "await self.memory_service.mistake_note_add("
+      }
+     ]
+    },
+    {
+     "name": "mistake_note_delete",
+     "description": "Delete a mistake note by content hash. Only deletes memories with memory_type='mistake'.",
+     "config": "doobidoo__mcp-memory-service__mistake_note_delete.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2137,
+       "text": "async def handle_mistake_note_delete(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2140,
+       "text": "return await mistake_handlers.handle_mistake_note_delete(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 43,
+       "text": "\"mistake_note_delete\": _handler(\"mistake_notes\", \"handle_mistake_note_delete\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1095,
+       "text": "name=\"mistake_note_delete\","
+      },
+      {
+       "file": "src/mcp_memory_service/services/memory_service.py",
+       "line": 1103,
+       "text": "async def mistake_note_delete(self, content_hash: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "mistake_note_search",
+     "description": "Search mistake notes by semantic similarity. Use before starting a task to check for known pitfalls and past errors.",
+     "config": "doobidoo__mcp-memory-service__mistake_note_search.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 175,
+       "text": "2. `mistake_note_search(query=\"<likely task context>\")`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 185,
+       "text": "3. `mistake_note_search(query=\"<task domain>\")`"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 215,
+       "text": "2. `mistake_note_search(query=\"<task context>\")` \u2014 check known pitfalls."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 232,
+       "text": "2. `mistake_note_search(query=\"<task context>\")` \u2014 check known pitfalls."
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2127,
+       "text": "async def handle_mistake_note_search(self, arguments: dict) -> List[types.TextContent]:"
+      }
+     ]
+    },
+    {
+     "name": "mistake_note_update",
+     "description": "Update fields of an existing mistake note. Can update failure_count, error_pattern, context_signature, incorrect_action, or correct_action. Content changes create a new hash (delete + re-store).",
+     "config": "doobidoo__mcp-memory-service__mistake_note_update.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2132,
+       "text": "async def handle_mistake_note_update(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2135,
+       "text": "return await mistake_handlers.handle_mistake_note_update(self, arguments)"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 42,
+       "text": "\"mistake_note_update\": _handler(\"mistake_notes\", \"handle_mistake_note_update\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1060,
+       "text": "name=\"mistake_note_update\","
+      },
+      {
+       "file": "src/mcp_memory_service/services/memory_service.py",
+       "line": 1013,
+       "text": "async def mistake_note_update("
+      }
+     ]
+    },
+    {
+     "name": "unquarantine_memory",
+     "description": "Release a memory from quarantine. Use when a quarantined memory is valid (e.g., the contradicted belief was wrong).",
+     "config": "doobidoo__mcp-memory-service__unquarantine_memory.json",
+     "hints": [
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2079,
+       "text": "async def handle_unquarantine_memory(self, arguments: dict) -> List[types.TextContent]:"
+      },
+      {
+       "file": "src/mcp_memory_service/server_impl.py",
+       "line": 2082,
+       "text": "from .consolidation.quarantine import unquarantine_memory as _unquarantine"
+      },
+      {
+       "file": "src/mcp_memory_service/consolidation/quarantine.py",
+       "line": 34,
+       "text": "async def unquarantine_memory(storage, content_hash: str) -> dict:"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/routing.py",
+       "line": 45,
+       "text": "\"unquarantine_memory\": (\"__self__\", \"handle_unquarantine_memory\"),"
+      },
+      {
+       "file": "src/mcp_memory_service/tools/registry.py",
+       "line": 1125,
+       "text": "name=\"unquarantine_memory\","
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

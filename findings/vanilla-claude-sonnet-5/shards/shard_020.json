@@ -1,0 +1,114 @@
+{
+ "shard_id": "020",
+ "n_repos": 1,
+ "n_configs": 3,
+ "surface_loc": 14286,
+ "repos": [
+  {
+   "repo": "awkoy/notion-mcp-server",
+   "slug": "awkoy__notion-mcp-server",
+   "lang": "node",
+   "commit": "14fd63962dd77d800b669a480018d75064690cda",
+   "path": "eval/targets/awkoy__notion-mcp-server",
+   "surface_loc": 14286,
+   "tools": [
+    {
+     "name": "notion_describe",
+     "description": "Return the JSON Schema and a working example for one operation, plus which tool runs it (notion_read or notion_write). Use this BEFORE calling the operation when the payload shape is non-trivial (query filters, structured block trees, database property definitions). For simple ops, just call it \u2014 errors carry the schema.",
+     "config": "awkoy__notion-mcp-server__notion_describe.json",
+     "hints": [
+      {
+       "file": "src/tools/index.ts",
+       "line": 98,
+       "text": "If the payload is malformed, the error response includes the schema + a working example so you can correct and retry in one round-trip. Call notion_describe(operation) ahead of time only for complex s"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 109,
+       "text": "If the payload is malformed, the error response includes the schema + a working example so you can correct and retry in one round-trip. Call notion_describe(operation) ahead of time only for complex s"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 175,
+       "text": "`The ${access} operation to run. This list is the complete menu of ${access} operations enabled on this server; notion_describe(operation) returns any operation's full schema.`"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 202,
+       "text": "// notion_describe takes a plain string: the read and write enums above are"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 207,
+       "text": "\"notion_describe\","
+      }
+     ]
+    },
+    {
+     "name": "notion_read",
+     "description": "Run one Notion read operation by name. Nothing is modified.\n\nCall: { operation, payload } \u2014 payload carries that operation's fields. Common: search_pages { query }, get_page { page_id }, get_page_markdown { page_id }, query_database { database_id, where? }, get_block_children { block_id }.\n\nResponses are slimmed; pass verbose:true in payload for the raw Notion object. Every id field (page_id, block_id, database_id, view_id, \u2026) also accepts a Notion URL, as copied from Share \u2192 Copy link. A block link's #fragment is used for block_id fields and a database link's ?v= for view_id fields.\n\nIf the payload is malformed, the error response includes the schema + a working example so you can correct and retry in one round-trip. Call notion_describe(operation) ahead of time only for complex shapes (query_database filters).",
+     "config": "awkoy__notion-mcp-server__notion_read.json",
+     "hints": [
+      {
+       "file": "src/tools/index.ts",
+       "line": 46,
+       "text": "read: \"notion_read\","
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 59,
+       "text": "// most common mistake is sending a write op to notion_read (or vice versa)."
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 111,
+       "text": "const DESCRIBE_DESCRIPTION = `Return the JSON Schema and a working example for one operation, plus which tool runs it (notion_read or notion_write). Use this BEFORE calling the operation when the payl"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 114,
+       "text": "* Shared body of notion_read and notion_write: optional confirmation, dispatch,"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 214,
+       "text": ".describe(\"Operation name to describe, as listed by notion_read / notion_write.\"),"
+      }
+     ]
+    },
+    {
+     "name": "notion_write",
+     "description": "Run one Notion write operation by name. Archive, trash and delete operations remove content \u2014 confirm with the user before running them.\n\nTwo ways to call:\n  \u2022 Single: { operation: \"set_page_title\", payload: { page_id, title } }\n  \u2022 Batch:  { operation: \"set_page_title\", payload: { items: [{page_id, title}, ...], atomic?: false, idempotency_key?: \"...\", concurrency?: 3 } }\ncreate_page, append_blocks, update_block and update_page_markdown also take a markdown string.\n\nResponses are slimmed; pass verbose:true inside payload (single) or per item (batch) for the raw Notion object. Every id field (page_id, block_id, database_id, view_id, \u2026) also accepts a Notion URL, as copied from Share \u2192 Copy link.\n\nIf the payload is malformed, the error response includes the schema + a working example so you can correct and retry in one round-trip. Call notion_describe(operation) ahead of time only for complex shapes (block trees, database property definitions, batch_mixed_blocks).",
+     "config": "awkoy__notion-mcp-server__notion_write.json",
+     "hints": [
+      {
+       "file": "src/tools/confirm.ts",
+       "line": 15,
+       "text": "// Before notion_write dispatches an operation the registry marks"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 47,
+       "text": "write: \"notion_write\","
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 111,
+       "text": "const DESCRIBE_DESCRIPTION = `Return the JSON Schema and a working example for one operation, plus which tool runs it (notion_read or notion_write). Use this BEFORE calling the operation when the payl"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 114,
+       "text": "* Shared body of notion_read and notion_write: optional confirmation, dispatch,"
+      },
+      {
+       "file": "src/tools/index.ts",
+       "line": 160,
+       "text": "// (or an allow-list without writes) the client sees no notion_write, so it"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

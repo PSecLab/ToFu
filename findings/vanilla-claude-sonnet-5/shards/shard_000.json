@@ -1,0 +1,306 @@
+{
+ "shard_id": "000",
+ "n_repos": 1,
+ "n_configs": 9,
+ "surface_loc": 178499,
+ "repos": [
+  {
+   "repo": "jeanibarz/knowledge-base-mcp-server",
+   "slug": "jeanibarz__knowledge-base-mcp-server",
+   "lang": "node",
+   "commit": "095cb5932700240fb804fd8b3971a03c8581f557",
+   "path": "eval/targets/jeanibarz__knowledge-base-mcp-server",
+   "surface_loc": 178499,
+   "tools": [
+    {
+     "name": "add_document",
+     "description": "Adds or overwrites a UTF-8 document in a knowledge base, creating parent directories as needed, then updates the active model index so the new content is queryable immediately.",
+     "config": "jeanibarz__knowledge-base-mcp-server__add_document.json",
+     "hints": [
+      {
+       "file": "src/audit-log.test.ts",
+       "line": 117,
+       "text": "surface: 'mcp.add_document',"
+      },
+      {
+       "file": "src/audit-log.test.ts",
+       "line": 145,
+       "text": "expect(second.surface).toBe('mcp.add_document');"
+      },
+      {
+       "file": "src/kb-fs.ts",
+       "line": 414,
+       "text": "* When false (add_document, kb remember/capture writes), the lexical"
+      },
+      {
+       "file": "src/kb-fs.ts",
+       "line": 455,
+       "text": "// Promote the plain Error to a typed KBError so callers (add_document,"
+      },
+      {
+       "file": "src/kb-fs.ts",
+       "line": 490,
+       "text": "// confirm it resolves inside the KB. This is what lets add_document"
+      }
+     ]
+    },
+    {
+     "name": "ask_knowledge",
+     "description": "Answers a question from retrieved knowledge-base context using the configured local OpenAI-compatible LLM endpoint. Returns a structured payload with answer, citations, context-packing diagnostics, abstention_reason, LLM provenance, retrieval model, and optional timing. Use retrieve_knowledge when you only need raw chunks.",
+     "config": "jeanibarz__knowledge-base-mcp-server__ask_knowledge.json",
+     "hints": [
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 506,
+       "text": "'ask_knowledge',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 509,
+       "text": "toolAnnotations('ask_knowledge'),"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 1235,
+       "text": "tool: 'ask_knowledge',"
+      },
+      {
+       "file": "src/ask-answer-cache.ts",
+       "line": 14,
+       "text": "// `kb ask` / `ask_knowledge` answer cache (#656)."
+      },
+      {
+       "file": "src/mcp-tools-doc.test.ts",
+       "line": 33,
+       "text": "const askSpec = MCP_TOOL_SPECS.find((spec) => spec.name === 'ask_knowledge');"
+      }
+     ]
+    },
+    {
+     "name": "delete_document",
+     "description": "DESTRUCTIVE: Deletes a document from a knowledge base and removes its hash sidecar. FAISS does not support vector deletion in this server, so orphan vectors for the removed file persist until a full rebuild; run reindex_knowledge_base after deletes if vector hygiene matters.",
+     "config": "jeanibarz__knowledge-base-mcp-server__delete_document.json",
+     "hints": [
+      {
+       "file": "src/kb-fs.ts",
+       "line": 456,
+       "text": "// delete_document) keep their `error.code === 'VALIDATION'` contract."
+      },
+      {
+       "file": "src/mcp-document-mutations.test.ts",
+       "line": 190,
+       "text": "expect(canonicalBases).toEqual([{ tool: 'delete_document', kb_scope: 'alpha' }]);"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 554,
+       "text": "'delete_document',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 557,
+       "text": "toolAnnotations('delete_document'),"
+      },
+      {
+       "file": "src/audit-log.ts",
+       "line": 5,
+       "text": "// MCP `delete_document` \u2014 append one JSON line per write attempt."
+      }
+     ]
+    },
+    {
+     "name": "diff_index",
+     "description": "Compares retrieval-result churn across two persisted FAISS index versions for a list of plaintext queries. Returns rank deltas, top-K membership changes, and stability/churn scores; useful before promoting a new index version.",
+     "config": "jeanibarz__knowledge-base-mcp-server__diff_index.json",
+     "hints": [
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 535,
+       "text": "'diff_index',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 538,
+       "text": "toolAnnotations('diff_index'),"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 735,
+       "text": "tool: 'diff_index',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 748,
+       "text": "message: 'diff_index requires at least one non-empty query',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.test.ts",
+       "line": 2714,
+       "text": "'diff_index',"
+      }
+     ]
+    },
+    {
+     "name": "kb_stats",
+     "description": "Reports observability stats for the knowledge base index: per-KB file_count, chunk_count, total_bytes_indexed and last_updated_at; the active embedding provider/model/dim; the on-disk index_path; server version/commit/uptime; process-lifetime chat-completion calls with bounded provider/model attribution, attempts/retries, cache outcomes, and answer impact; answer-cache counters; and HTTP/SSE transport counters when a remote transport is active. Pass `knowledge_base_name` to scope to a single KB; omit it to get an entry per registered KB.",
+     "config": "jeanibarz__knowledge-base-mcp-server__kb_stats.json",
+     "hints": [
+      {
+       "file": "src/kb-stats.ts",
+       "line": 1,
+       "text": "// kb-stats.ts \u2014 read-only observability surface for the kb_stats MCP tool"
+      },
+      {
+       "file": "src/kb-stats.ts",
+       "line": 295,
+       "text": "logger.debug(`kb_stats: could not stat ${filePath}: ${(err as Error).message}`);"
+      },
+      {
+       "file": "src/kb-stats.ts",
+       "line": 336,
+       "text": "* Issue #54 + #157 \u2014 compute the kb_stats payload from a manager + the"
+      },
+      {
+       "file": "src/kb-fs.ts",
+       "line": 123,
+       "text": "* `kb_stats`, the indexer, `kb models add` cost preview, and `kb search`"
+      },
+      {
+       "file": "src/cli-stats.ts",
+       "line": 33,
+       "text": "Mirrors the MCP \\`kb_stats\\` payload for local shell use: per-KB file/chunk/byte"
+      }
+     ]
+    },
+    {
+     "name": "list_knowledge_bases",
+     "description": "Lists the available knowledge bases.",
+     "config": "jeanibarz__knowledge-base-mcp-server__list_knowledge_bases.json",
+     "hints": [
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 489,
+       "text": "'list_knowledge_bases',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 491,
+       "text": "toolAnnotations('list_knowledge_bases'),"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 648,
+       "text": "return this.withCanonicalTool({ tool: 'list_knowledge_bases' }, async () => {"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.test.ts",
+       "line": 2709,
+       "text": "'list_knowledge_bases',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.test.ts",
+       "line": 2722,
+       "text": "'list_knowledge_bases',"
+      }
+     ]
+    },
+    {
+     "name": "list_models",
+     "description": "Lists the embedding models registered for retrieval. Returns an array of {model_id, provider, model_name, active}. Use the model_id as the optional `model_name` argument to retrieve_knowledge to query a specific model instead of the active default.",
+     "config": "jeanibarz__knowledge-base-mcp-server__list_models.json",
+     "hints": [
+      {
+       "file": "src/active-model.ts",
+       "line": 444,
+       "text": "* `list_models` MCP tool, `resolveActiveModel`, and migration scans."
+      },
+      {
+       "file": "src/active-model.ts",
+       "line": 469,
+       "text": "* since the upgrade. Surfaced by `kb models list` and the `list_models`"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 513,
+       "text": "// RFC 013 M3 \u00a74.5 \u2014 list_models surfaces what's registered so an agent"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 516,
+       "text": "'list_models',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 518,
+       "text": "toolAnnotations('list_models'),"
+      }
+     ]
+    },
+    {
+     "name": "reindex_knowledge_base",
+     "description": "Forces the active model to fully rebuild its FAISS index from on-disk files, replacing the in-memory store and clearing orphan vectors left behind by prior delete_document calls. The rebuild always covers every KB because FAISS lacks per-vector deletion; passing knowledge_base_name is accepted (and recorded in the response) but does not narrow the rebuild scope.",
+     "config": "jeanibarz__knowledge-base-mcp-server__reindex_knowledge_base.json",
+     "hints": [
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 563,
+       "text": "'reindex_knowledge_base',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 566,
+       "text": "toolAnnotations('reindex_knowledge_base'),"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.ts",
+       "line": 848,
+       "text": "tool: 'reindex_knowledge_base',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.test.ts",
+       "line": 2717,
+       "text": "'reindex_knowledge_base',"
+      },
+      {
+       "file": "src/KnowledgeBaseServer.test.ts",
+       "line": 2738,
+       "text": "expect(annotationsOf(server, 'reindex_knowledge_base')).toMatchObject({"
+      }
+     ]
+    },
+    {
+     "name": "retrieve_knowledge",
+     "description": "Retrieves similar chunks from the knowledge base based on a query. Optionally, if a knowledge base is specified, only that one is searched; otherwise, all available knowledge bases are considered. By default, at most 10 documents are returned. Dense retrieval limits results to a similarity score of 2 by default; a different threshold can optionally be provided. Hybrid retrieval does not apply this threshold because both legs are over-fetched for fusion.",
+     "config": "jeanibarz__knowledge-base-mcp-server__retrieve_knowledge.json",
+     "hints": [
+      {
+       "file": "src/hybrid-retrieval.ts",
+       "line": 4,
+       "text": "// three places: the MCP `retrieve_knowledge` handler, the CLI"
+      },
+      {
+       "file": "src/rrf.ts",
+       "line": 5,
+       "text": "// (CLI `--mode=hybrid` and MCP `retrieve_knowledge` with"
+      },
+      {
+       "file": "src/mcp-progress.test.ts",
+       "line": 3,
+       "text": "// Drives a real in-memory MCP transport: a client calls `retrieve_knowledge`"
+      },
+      {
+       "file": "src/mcp-progress.test.ts",
+       "line": 117,
+       "text": "{ name: 'retrieve_knowledge', arguments: { query: 'hello' } },"
+      },
+      {
+       "file": "src/mcp-progress.test.ts",
+       "line": 147,
+       "text": "name: 'retrieve_knowledge',"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

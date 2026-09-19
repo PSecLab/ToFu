@@ -1,0 +1,747 @@
+{
+ "shard_id": "013",
+ "n_repos": 1,
+ "n_configs": 47,
+ "surface_loc": 20074,
+ "repos": [
+  {
+   "repo": "Teradata/mcp-server",
+   "slug": "Teradata__mcp-server",
+   "lang": "python",
+   "commit": "7a23211ad019707e6e54b92498d80d564a6d7454",
+   "path": "eval/targets/Teradata__mcp-server",
+   "surface_loc": 20074,
+   "tools": [
+    {
+     "name": "base_columnDescription",
+     "description": "List the column names, data types, and basic attributes for a single Teradata table or view. Use for straightforward questions like 'what columns does this table have?' or 'what are the fields and their types?'. For precise Teradata-specific type codes, character sets, decimal precision, index details, or bulk metadata across many objects, use base_columnMetadata instead.\n\nArguments:\n  database_name - Database name. Defaults to '%' (all databases).\n  table_name - Table or view name. Defaults to '%' (all tables).\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_columnDescription.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 486,
+       "text": "Retrieve detailed technical column metadata for Teradata tables and views, including exact Teradata type codes, character sets (LATIN/UNICODE), decimal precision, scale, nullability, and index classif"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 1002,
+       "text": "This is the same metadata source used by the legacy base_columnDescription"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 1398,
+       "text": "to \u2014 consistent with the security model used by base_columnDescription."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 1437,
+       "text": "# the security model used by base_columnDescription."
+      },
+      {
+       "file": "examples/server-customisation/server-hooks/perf_monitor_hooks.py",
+       "line": 8,
+       "text": "2026-05-04 10:23:16 | base_columnDescription  |   0.031s | ERROR: ..."
+      }
+     ]
+    },
+    {
+     "name": "base_columnMetadata",
+     "description": "\nRetrieve detailed technical column metadata for Teradata tables and views, including exact Teradata type codes, character sets (LATIN/UNICODE), decimal precision, scale, nullability, and index classification. Use when the user needs precise Teradata-specific column information, not just basic column names and types. For a simple list of columns and types for a single object, use base_columnDescription instead. Supports bulk retrieval across many objects with payload and time budgets.\n\nResolution paths:\n    Tables (T, O, Q) \u2014 DBC.ColumnsVX + DBC.IndicesVX. No HELP COLUMN.\n    Views (V)        \u2014 HELP COLUMN with derived-table wrapper, the only\n                       reliable mechanism for resolving view column types.\n\nUses the native TeradataConnection cursor pattern, consistent with all\nother tools in this module.\n\nTechnical capabilities:\n- Exact Teradata type codes and their SQL type string equivalents\n- Character set information (LATIN, UNICODE, etc.)\n- Decimal precision and scale\n- Detection of broken/invalid views\n- Column-level metadata for all objects in a database at once\n\nLARGE-SCALE USAGE GUIDANCE:\n---------------------------\nWhen retrieving metadata for many objects (e.g. all views in DBC),\nboth the response payload and the execution time can exceed limits.\nUse these strategies to control both:\n\n1. FILTER FIELDS: Pass only the columns you need via the ``fields``\n   parameter. View rows via HELP COLUMN return ~49 fields by default;\n   table rows via DBC.ColumnsVX return fewer. Trimming to 6-8 fields\n   can reduce payload by 80%+.\n   Three computed fields (ColumnTypeString, IndexTypeString,\n   CharSetString) are always included automatically.\n   Example: fields='ColumnName,ColumnType,ColumnLength,CharType,\n                    UpperCase,Nullable,Indexed?,Primary?,Unique?'\n\n2. EXCLUDE OBJECTS: Use ``exclude_objects`` to skip objects you do\n   not need. Accepts SQL LIKE patterns (% wildcard) as a CSV.\n   Applied before any metadata queries, so excluded objects\n   consume zero time and zero payload.\n   Example: exclude_objects='ResUsage%,%ResUsage%,Res%View'\n\n3. INCREASE PARALLELISM: Set ``max_workers`` to 12-16 for large\n   databases. Each worker gets its own Teradata session via\n   conn.cursor(). Default is 8.\n\n4. FILTER BY KIND: Use ``table_kind`` to limit to just the object\n   types you need (e.g. 'V' for views only, 'T' for tables only).\n\n5. PAYLOAD BUDGET: Use ``max_payload_kb`` (default 900) to set the\n   maximum response payload size in kilobytes. When the accumulated\n   result data approaches this limit, the tool stops collecting and\n   returns what it has, plus a ``remaining_objects`` CSV in metadata\n   listing the unprocessed objects. Pass that CSV straight into\n   ``object_name`` on the next call for automatic continuation.\n   This self-adapts to object sizes: small-column views fit more\n   per call, large-column views page earlier.\n\n6. TIME BUDGET: Use ``max_execution_seconds`` (default 180) to set\n   the maximum wall-clock execution time. The tool monitors elapsed\n   time as each object completes, and self-interrupts BEFORE the\n   MCP transport timeout (typically 240s) kills the session without\n   returning any data. When the time budget is reached, the tool\n   returns all data collected so far plus ``remaining_objects`` for\n   continuation \u2014 exactly the same pattern as payload budget.\n   This is the key difference from an MCP timeout: a timeout\n   returns NOTHING; a time budget returns EVERYTHING collected so\n   far, plus a continuation token.\n\nCONTINUATION PATTERN (automatic pagination):\n    # Call 1 \u2014 starts processing, time or payload budget fills up\n    result1 = base_columnMetadata(database_name='DBC', table_kind='V', ...)\n    # metadata contains: remaining_objects='ViewX,ViewY,...'\n\n    # Call 2 \u2014 pass remaining_objects as object_name\n    result2 = base_columnMetadata(\n        database_name='DBC',\n        object_name='ViewX,ViewY,...',  # from result1 metadata\n        ...\n    )\n    # Repeat until metadata has no remaining_objects key.\n\nTypical call for a large database:\n    base_columnMetadata(\n        database_name='DBC',\n        table_kind='V',\n        exclude_objects='ResUsage%,%ResUsage%',\n        fields='ColumnName,ColumnType,ColumnLength,CharType,\n                UpperCase,Nullable,Indexed?,Primary?,Unique?',\n        max_workers=16,\n        max_payload_kb=900,\n        max_execution_seconds=180\n    )\n\nArguments:\n    conn                  - TeradataConnection (injected by MCP server)\n    database_name         - Name of the Teradata database to inspect\n    object_name           - Optional: specific object name, or a CSV of\n                            names. Also used for continuation: pass the\n                            ``remaining_objects`` value from a previous\n                            truncated call to resume.\n                            If omitted, all objects matching table_kind\n                            are processed.\n    table_kind            - Optional: CSV of TableKind codes to filter by.\n                            Examples: 'V' (views only), 'T,O' (tables +\n                            NoPI), 'T,V' (tables and views). Defaults to\n                            all qualifying object types (T, O, V, Q).\n                            Tables (T, O, Q) use DBC.ColumnsVX +\n                            DBC.IndicesVX. Views (V) use HELP COLUMN with\n                            a derived-table wrapper to force type\n                            resolution \u2014 this is the only reliable\n                            mechanism for view column types.\n                            Stored procedures (P, E), functions\n                            (A, F, R, B, S), and macros (M) are not\n                            supported. DBC.ColumnsVX does return parameter\n                            rows for these object types, but their\n                            parameter semantics (IN/OUT/INOUT,\n                            SPParameterType) are incompatible with the\n                            column metadata model this tool produces.\n                            Support is a planned future enhancement.\n    max_workers           - Optional: number of parallel threads for view\n                            resolution via HELP COLUMN. Default: 8.\n                            Table metadata is retrieved via DBC.ColumnsVX\n                            and DBC.IndicesVX within the same worker pool.\n    fields                - Optional: CSV of field names to include in the\n                            response. Reduces payload size significantly.\n                            Computed fields (ObjectName, ColumnTypeString,\n                            IndexTypeString, CharSetString) always included.\n    exclude_objects       - Optional: CSV of object name patterns to\n                            exclude. Uses SQL LIKE-style % wildcards.\n                            Applied before any database calls \u2014 excluded\n                            objects incur zero query cost.\n    max_payload_kb        - Optional: maximum response payload budget in KB.\n                            Default: 900. Set to 0 to disable.\n    max_execution_seconds - Optional: maximum wall-clock execution time in\n                            seconds. Default: 180. Set to 0 to disable.\n    *args                 - Positional bind parameters (reserved)\n    **kwargs              - Named bind parameters (reserved)\n\nReturns:\n    MCP-compliant response via create_response() containing a list\n    of column metadata records with normalised keys and four\n    computed string fields per column:\n\n        ColumnTypeString      - Human-readable SQL type (e.g. \"VARCHAR(200)\n                                UNICODE\", \"DECIMAL(18,2)\", \"INTEGER\")\n        IndexTypeString       - Index classification: 'UPI', 'NUPI', 'USI',\n                                'NUSI', or None if not indexed.\n                                For tables (T, O, Q): sourced from\n                                DBC.IndicesVX \u2014 composite index grouping\n                                (IndexNumber + ColumnPosition) is fully\n                                preserved.\n                                For views (V): sourced from HELP COLUMN\n                                flags \u2014 reports column participation only,\n                                not composite index grouping. Query\n                                DBC.IndicesVX against the base table for\n                                full composite index detail.\n        CharSetString         - Character set name: 'LATIN', 'UNICODE',\n                                'KANJI1', 'GRAPHIC', 'KANJISJIS', or None.\n        CaseSpecificityString - Case attribute: 'UPPERCASE', 'CASESPECIFIC',\n                                'NOT CASESPECIFIC', or None if no explicit\n                                case attribute is defined on the column.\n\n    When truncated, metadata will include:\n        remaining_objects  - CSV of unprocessed object names\n        truncated          - True\n        truncation_reason  - 'time_budget_exceeded' or\n                             'payload_budget_exceeded'\n        elapsed_seconds    - Wall-clock time consumed (always present)\n",
+     "config": "Teradata__mcp-server__base_columnMetadata.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 340,
+       "text": "# base_columnMetadata - Teradata MCP Server Tool"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 442,
+       "text": "C_MODULE = \"base_columnMetadata\""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 445,
+       "text": "# Runtime constants for base_columnMetadata"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 472,
+       "text": "def handle_base_columnMetadata(  # noqa: PLR0917"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 553,
+       "text": "result1 = base_columnMetadata(database_name='DBC', table_kind='V', ...)"
+      }
+     ]
+    },
+    {
+     "name": "base_databaseList",
+     "description": "List all databases or schemas available in the Teradata system. ONLY call when the user explicitly asks which databases or schemas exist on the system. Do NOT call this tool as a preliminary step toward listing tables \u2014 if the user asks about tables without naming a database, ask them which database they mean rather than discovering databases first.\n\nArguments:\n  scope - Filter scope: 'user' returns only user-created databases (excludes system databases), 'all' returns every database.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_databaseList.json",
+     "hints": []
+    },
+    {
+     "name": "base_readQuery",
+     "description": "\nExecute a user-provided SQL query against Teradata and return the results. Use this tool ONLY when the user supplies an explicit SQL statement or a request that includes filter conditions (WHERE clause, aggregations, JOINs, etc.). Do NOT use for simply browsing or sampling rows from a table \u2014 use base_tablePreview for that. The sql parameter is required and must contain the full SQL text.\n\nArguments:\n  sql       - SQL text, with optional bind-parameter placeholders\n  persist   - Set to True to persist the results as a table and reuse it later. Recommended for large result sets.\n  row_limit - Maximum rows to return (default 1000, ceiling 50000). Pass a higher value when you need more rows.\n\nWhen the response metadata contains 'truncated: true', more rows exist beyond the limit. To get more data:\n  - Pass a higher row_limit (up to 50000) to retrieve more rows in the response.\n  - Use persist=true to write all rows to a volatile table and query it directly \u2014 this bypasses\n    the row limit entirely and is the recommended approach for large result sets.\n\nReturns:\n  ResponseType: formatted response with query results + metadata\n               (includes 'volatile_table' field in metadata if persist=True)\n               (includes 'truncated' and 'row_limit' in metadata when results are capped)\n",
+     "config": "Teradata__mcp-server__base_readQuery.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 540,
+       "text": "- Example: search_tool(\"base_readQuery\")"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 630,
+       "text": "# Always register base_readQuery as a direct MCP tool (core tool)"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 631,
+       "text": "if tool_name == \"base_readQuery\":"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 646,
+       "text": "logger.info(\"MCP exposes: search_tool, execute_tool, base_readQuery\")"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 830,
+       "text": "return td.handle_base_readQuery(conn, sql, tool_name=tool_name or name, **bind_kwargs)"
+      }
+     ]
+    },
+    {
+     "name": "base_saveDDL",
+     "description": "\nExtract the DDL for a Teradata table, view, or stored procedure and SAVE it as a .sql file on disk. Use this tool ONLY when the user explicitly wants to export, write, download, or persist DDL to a file. Do NOT use simply to display or view DDL in the conversation \u2014 use base_tableDDL to display DDL without saving.\n\nArguments:\n  database_name - Database name (e.g., 'MKTG_USR')\n  table_name - Object name (e.g., 'SP_LOAD_VARIABLES_ARGUMENTARIO_IAG_FICHA_CLIENTE'). Accepts comma-separated values for bulk retrieval.\n  object_type - Type of object: 'PROCEDURE', 'TABLE', 'VIEW' (default: 'PROCEDURE')\n  output_dir - Directory where to save the DDL file (default: './ddls_extracted')\n\nReturns:\n  ResponseType: formatted response with file path, size, and metadata\n",
+     "config": "Teradata__mcp-server__base_saveDDL.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 201,
+       "text": "def handle_base_saveDDL("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 227,
+       "text": "f\"Tool: handle_base_saveDDL: Args: database_name={database_name}, \""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 237,
+       "text": "return create_response([{\"error\": error_msg}], {\"tool_name\": \"base_saveDDL\", \"status\": \"error\"})"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 260,
+       "text": "return create_response([{\"error\": error_msg}], {\"tool_name\": \"base_saveDDL\", \"status\": \"not_found\"})"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 320,
+       "text": "\"tool_name\": \"base_saveDDL\","
+      }
+     ]
+    },
+    {
+     "name": "base_tableAffinity",
+     "description": "Identify which tables in a database tend to co-occur together in the same SQL queries, revealing natural JOIN relationships and data affinity patterns. Use when the user asks which tables are queried together, what tables are related to a specific table, or what tables are commonly used in the same workflows. For access frequency, query counts, or per-user access statistics, use base_tableUsage instead.\n\nArguments:\n  database_name - Database name\n  table_name - Table or view name\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_tableAffinity.json",
+     "hints": []
+    },
+    {
+     "name": "base_tableDDL",
+     "description": "Return the CREATE TABLE DDL statement for a Teradata table, showing its full schema definition including column types, constraints, primary indexes, and keys. Use when the user wants the CREATE statement, the table definition, or needs to see how the table was built. If the user has not specified both a table name AND a database name, ask for clarification before calling \u2014 do not guess or use an empty database name. To save DDL to a file on disk, use base_saveDDL instead. For just column names and types, use base_columnDescription instead.\n\nArguments:\n  table_name - Table name\n  database_name - Database name\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_tableDDL.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 211,
+       "text": "Extract the DDL for a Teradata table, view, or stored procedure and SAVE it as a .sql file on disk. Use this tool ONLY when the user explicitly wants to export, write, download, or persist DDL to a fi"
+      }
+     ]
+    },
+    {
+     "name": "base_tableList",
+     "description": "List all tables and views within a specific Teradata database or schema. Pass a specific database name to list tables in that database only. Omit or leave empty to list tables from all databases. If the user does not name a database and you want to list tables from a single database, ask a clarifying question instead of returning results from all databases.\n\nArguments:\n  database_name - Database name. Leave empty to list tables from all databases.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_tableList.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 550,
+       "text": "3. Get full docs: search_tool(\"base_tableList\")"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 551,
+       "text": "4. Execute: execute_tool(\"base_tableList\", {\"database_name\": \"demo\"})"
+      },
+      {
+       "file": "src/teradata_mcp_server/app.py",
+       "line": 571,
+       "text": "Example: execute_tool(\"base_tableList\", {\"database_name\": \"demo\"})"
+      },
+      {
+       "file": "examples/server-customisation/server-hooks/perf_monitor_hooks.py",
+       "line": 6,
+       "text": "2026-05-04 10:23:14 | base_tableList          |   0.234s | OK"
+      }
+     ]
+    },
+    {
+     "name": "base_tablePreview",
+     "description": "Return a quick sample of the first few rows from a Teradata table or view so the user can see what data looks like, with no SQL required. Use this tool when the user wants to explore or peek at a table's contents without specifying conditions or writing a query. Do NOT use when the user provides a WHERE clause, filter, or explicit SQL statement \u2014 use base_readQuery for that.\n\nArguments:\n  table_name - Table or view name\n  database_name - Database name\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_tablePreview.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/base/base_tools.py",
+       "line": 31,
+       "text": "Execute a user-provided SQL query against Teradata and return the results. Use this tool ONLY when the user supplies an explicit SQL statement or a request that includes filter conditions (WHERE claus"
+      }
+     ]
+    },
+    {
+     "name": "base_tableUsage",
+     "description": "Report access frequency and per-user query patterns for tables and views in a Teradata database, showing which objects are most actively queried and by whom. Use when the user asks how often tables are accessed, which tables are most popular, or which users are running queries against a database. For discovering which tables appear together in the same queries, use base_tableAffinity instead.\n\nArguments:\n  database_name - Database name. Leave empty for all databases.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__base_tableUsage.json",
+     "hints": []
+    },
+    {
+     "name": "dba_databaseSpace",
+     "description": "Show disk space allocation for a specific named Teradata database. Use when the user asks how much space a particular database is using or how much has been allocated to it. If no database name is provided, ask for clarification \u2014 do not call with an empty database name. For table-level breakdowns within a database, use dba_tableSpace. For system-wide totals across all databases, use dba_systemSpace.\n\nArguments:\n  database_name - Database name. Required \u2014 do not pass empty string.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_databaseSpace.json",
+     "hints": []
+    },
+    {
+     "name": "dba_databaseVersion",
+     "description": "Return the Teradata database software version and release information. Use when the user asks what version of Teradata is running on the system.\n\nArguments:\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_databaseVersion.json",
+     "hints": []
+    },
+    {
+     "name": "dba_featureUsage",
+     "description": "Report which Teradata product features were used during a specified date range. Use when the user asks about feature adoption, which Teradata capabilities are being used, or how feature utilization has changed over a period.\n\nArguments:\n  start_date - The start date for the query range in YYYY-MM-DD format.\n  end_date - The end date for the query range in YYYY-MM-DD format.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_featureUsage.json",
+     "hints": []
+    },
+    {
+     "name": "dba_flowControl",
+     "description": "Report Teradata workload management flow control events showing when and how much the system throttled or delayed queries due to resource constraints. Use when the user asks about system throttling, flow control delays, or how often the workload manager imposed restrictions. For how long individual users personally waited in queues, use dba_userDelay instead.\n\nArguments:\n  start_date - The start date for the query range in YYYY-MM-DD format.\n  end_date - The end date for the query range in YYYY-MM-DD format.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_flowControl.json",
+     "hints": []
+    },
+    {
+     "name": "dba_resusageSummary",
+     "description": "Report system-wide resource consumption (CPU, IO, memory) broken down by time period, application, workload type, or complexity class. Use when the user asks for system-level resource breakdowns, workload profiles, or consumption trends over a date range \u2014 not tied to a specific database. For per-database or per-user impact within a named database, use dba_tableUsageImpact instead.\n\nArguments:\n  user_name - User name to filter by. Leave empty for all users.\n  LogDate - Log date to filter by in YYYY-MM-DD format. Leave empty for all dates.\n  dayOfWeek - Day of week to filter by (1=Sunday, 2=Monday, ..., 7=Saturday). Leave empty for all days.\n  hourOfDay - Hour of day to filter by (0-23). Leave empty for all hours.\n  workloadType - Workload type to filter by (e.g., 'Batch', 'Interactive'). Leave empty for all workload types.\n  workloadComplexity - Workload complexity to filter by (e.g., 'Simple', 'Medium', 'Complex'). Leave empty for all complexity levels.\n  AppID - Application ID to filter by. Leave empty for all applications.\n  no_days - Number of days to look back from today (e.g., 7, 30, 90).\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_resusageSummary.json",
+     "hints": []
+    },
+    {
+     "name": "dba_sessionInfo",
+     "description": "Report currently active session information for a specific user or all users. Use when the user asks about open connections, active sessions, or currently logged-in users. You may call with the default '*' to show all sessions when no specific user is mentioned \u2014 no clarification required for this tool.\n\nArguments:\n  user_name - User name to analyze. Use '*' to get all users.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_sessionInfo.json",
+     "hints": []
+    },
+    {
+     "name": "dba_systemSpace",
+     "description": "Show total disk space usage across the entire Teradata system, aggregated over all databases. Use when the user asks about warehouse-wide storage, total system capacity, or overall disk consumption across all databases. For a single named database, use dba_databaseSpace. For table-level details within a database, use dba_tableSpace.\n\nArguments:\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_systemSpace.json",
+     "hints": []
+    },
+    {
+     "name": "dba_tableSpace",
+     "description": "Show table-level disk space usage within a specific Teradata database, ranked by size. Use when the user asks which tables are largest or consuming the most storage within a named database. NEVER call this tool with an empty database_name \u2014 if the user's message does not explicitly name a database, ask which database they want before calling. For space allocated to a whole database, use dba_databaseSpace. For total system-wide storage, use dba_systemSpace.\n\nArguments:\n  database_name - Database name. Required \u2014 do not pass empty string.\n  table_name - Table name filter. Leave empty for all tables.\n  top_n - Limit results to top N largest tables by space. Set to 0 for no limit (default: 0).\n  exclude_system - Exclude system databases and tables. Set to 'Y' to exclude, 'N' to include all (default: 'N').\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_tableSpace.json",
+     "hints": []
+    },
+    {
+     "name": "dba_tableSqlList",
+     "description": "Retrieve SQL statements that have been executed against a specific named table. Use when the user asks what queries have run against a particular table. ONLY call when the user has explicitly named a specific table \u2014 if no table name is in the message, ask for clarification. Do NOT use for SQL history by user \u2014 use dba_userSqlList when the user asks what queries a specific person has been running.\n\nArguments:\n  table_name - Table name to search for\n  no_days - Number of days to look back\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_tableSqlList.json",
+     "hints": []
+    },
+    {
+     "name": "dba_tableUsageImpact",
+     "description": "Identify which users and tables are driving the most query and resource activity within a specific Teradata database. Use when the user asks who is hitting a named database hardest, which users are most active, or which tables generate the most load. ONLY call when the user has specified a database name \u2014 if no database name appears in the message, ask for clarification. For system-wide CPU, IO, and memory metrics by time period or application, use dba_resusageSummary instead.\n\nArguments:\n  database_name - Database name to analyze. Required \u2014 do not pass empty string.\n  user_name - User name to analyze. Leave empty for all users.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_tableUsageImpact.json",
+     "hints": []
+    },
+    {
+     "name": "dba_userDelay",
+     "description": "Report how long Teradata users waited in the query queue before their queries began executing. Use when the user asks about user wait times, queue delays, or how long users had to wait. For system-level throttling and workload management flow control events, use dba_flowControl instead.\n\nArguments:\n  start_date - The start date for the query range in YYYY-MM-DD format.\n  end_date - The end date for the query range in YYYY-MM-DD format.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_userDelay.json",
+     "hints": []
+    },
+    {
+     "name": "dba_userSqlList",
+     "description": "Retrieve SQL statements executed by a specific named user. Use when the user asks what queries a particular person or account has been running. ONLY call when the user has explicitly named a specific user account \u2014 if no user name appears in the message, ask for clarification. NEVER call with an empty user_name. Do NOT use for SQL history by table \u2014 use dba_tableSqlList when the user asks about queries against a specific table.\n\nArguments:\n  user_name - User name to filter by. Required \u2014 do not pass empty string.\n  no_days - Number of days to look back\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__dba_userSqlList.json",
+     "hints": []
+    },
+    {
+     "name": "graph_analyseDatabase",
+     "description": "\nComposite graph analysis \u2014 runs findRootObjects, connectedComponents,\ndetectCycles, and bfsLevels in a single MCP call with ONE shared\nedge fetch.\n\nThis tool eliminates the scalability bottleneck of serial MCP round-\ntrips by combining four graph analyses that would otherwise require\nfour separate tool calls, each independently fetching the same edge\nset from Teradata.\n\nPerformance vs individual tools:\n  - 1 SQL round-trip instead of 4 (shared edge fetch)\n  - 1 MCP response instead of 4 (eliminates stdio serialisation overhead)\n  - Same algorithmic complexity (O(V+E) BFS, O(\u03b1\u00b7N) Union-Find, O(V+E) DFS)\n  - In-memory edge sharing: all analyses operate on the same Python list\n\nUse this for:\n  - Full database migration readiness assessment\n  - Pre-migration cycle + root + wave analysis in one call\n  - Dashboard data population (all four analyses needed simultaneously)\n  - Any workflow that would otherwise call 3+ individual graph tools\n\nArguments:\n  container_pattern - str: CSV LIKE patterns for container scope.\n                      Supports wildcards (%) and CSV format.\n                      Examples: '%SALES%', '%SALES%,%FINANCE%', 'PROD_%'\n\n                      CRITICAL: STRING type, not array.\n                      CORRECT: container_pattern=\"%SALES%,%FINANCE%\"\n                      WRONG:   container_pattern=[\"%SALES%\", \"%FINANCE%\"]\n\n  exclude_objects    - str: CSV LIKE patterns to exclude.\n                       Default: '' (no exclusions)\n\n  top_n_roots        - int: Number of top root objects (by downstream\n                       dependent count) to include in BFS wave analysis.\n                       Default: 4\n\n  max_depth_down     - int: Maximum downstream BFS hops from roots.\n                       Default: 10\n\n  max_depth_up       - int: Maximum upstream BFS hops from roots.\n                       0 = skip upstream analysis.\n                       Default: 0\n\n  edge_repository    - str: Edge repository view/table conforming to the\n                       Graph Edge Contract (Src_Container_Name,\n                       Src_Object_Name, Src_Kind, Tgt_Container_Name,\n                       Tgt_Object_Name, Tgt_Kind columns).\n                       Call graph_edgeContractDDL to generate one.\n                       Required parameter \u2014 no default.\n\nReturns:\n  ResponseType: single response containing all four analyses:\n\n  {\n    \"root_objects\":   { \"objects\": [...], \"summary\": {...} },\n    \"components\":     { \"node_details\": [...], \"summaries\": [...], \"stats\": [...] },\n    \"cycles\":         { \"details\": [...], \"summaries\": [...], \"stats\": [...] },\n    \"bfs_waves\":      { \"nodes\": [...], \"cycle_candidates\": [...], \"summary\": {...} },\n    \"edge_stats\":     { \"total_edges\": N, \"fetch_time_ms\": N }\n  }\n\nExample calls:\n  # Full analysis of Sales and Finance databases\n  handle_graph_analyseDatabase(\n      conn=connection,\n      container_pattern=\"%SALES%,%FINANCE%\",\n      edge_repository=\"MY_LINEAGE_DB.EdgeRepository\"\n  )\n\n  # Single database family with top 8 roots\n  handle_graph_analyseDatabase(\n      conn=connection,\n      container_pattern=\"%FINANCE%\",\n      top_n_roots=8,\n      edge_repository=\"MY_LINEAGE_DB.EdgeRepository\"\n  )\n\n  # Exclude sandbox schemas\n  handle_graph_analyseDatabase(\n      conn=connection,\n      container_pattern=\"PROD_%,STAGE_%\",\n      exclude_objects=\"SANDBOX%,%.temp_%\",\n      edge_repository=\"MY_LINEAGE_DB.EdgeRepository\"\n  )\n",
+     "config": "Teradata__mcp-server__graph_analyseDatabase.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/__init__.py",
+       "line": 28,
+       "text": "from .graph_analyse_database import handle_graph_analyseDatabase"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_tools.py",
+       "line": 119,
+       "text": "handle_graph_analyseDatabase,"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_analyse_database.py",
+       "line": 2,
+       "text": "graph_analyseDatabase.py \u2014 Composite graph analysis tool."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_analyse_database.py",
+       "line": 4,
+       "text": "Provides handle_graph_analyseDatabase and GRAPH_ANALYSE_DATABASE_TOOL."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_analyse_database.py",
+       "line": 309,
+       "text": "def handle_graph_analyseDatabase(  # noqa: PLR0917"
+      }
+     ]
+    },
+    {
+     "name": "graph_bfsLevels",
+     "description": "\nCompute BFS shortest-path hop distances from one or more root nodes.\n\nPure-Python implementation \u2014 no stored procedure required.\n\nWHEN TO USE THIS TOOL vs graph_traceLineage:\n-------------------------------------------------------\nUse graph_bfsLevels when asked to:\n  - Sequence objects for deployment or migration (ORDER BY downstream_level\n    gives correct topological deployment order for root objects)\n  - Group objects into migration waves (nearest_root identifies which of\n    the input root tables each object belongs to)\n  - Find which migration root table each object is closest to across a\n    multi-root migration scope\n  - Identify cycle members by depth (direction='BOTH' nodes with unequal\n    absolute upstream/downstream levels are cycle candidates)\n  - Count objects within N hops of a change (blast-radius sizing)\n  - Answer \"how far is object X from the migration root tables?\"\n\nDo NOT use graph_bfsLevels for general lineage tracing, impact path\nanalysis, or questions about which specific objects depend on which.\nUse graph_traceLineage for those \u2014 it returns the full edge\nset with relationship detail. graph_bfsLevels returns distances and\nwave groupings, not dependency paths or edge detail.\n\nKEY DISTINCTION \u2014 root_node_list accepts EXACT FQ names only (no\nwildcards). Use graph_findRootObjects first to identify the seed\nobjects, then pass their exact FQ names here.\n\nArguments:\n  root_node_list    - str: CSV of exact fully-qualified root node names.\n                      No wildcards \u2014 exact names only.\n\n                      SINGLE ROOT:\n                      'DEV01_StGeo_STD_T.mortgage_account'\n\n                      MULTIPLE ROOTS (CSV):\n                      'DEV01_StGeo_STD_T.mortgage_account,\n                       DEV01_StGeo_STD_T.mortgage_borrower,\n                       DEV01_StGeo_STD_T.mortgage_property'\n\n                      CRITICAL: Exact FQ names, no wildcards.\n                      Use graph_findRootObjects or\n                      graph_traceLineage first to discover names.\n\n  max_depth_up      - int: Maximum upstream hops to traverse.\n                      0 = skip upstream analysis entirely.\n                      Default: 10\n\n                      Upstream means \"what this object DEPENDS ON\" \u2014\n                      its sources, prerequisites, and ancestors.\n                      For root objects with in-degree zero, upstream_level\n                      will be NULL for all non-root nodes (correct).\n\n  max_depth_down    - int: Maximum downstream hops to traverse.\n                      0 = skip downstream analysis entirely.\n                      Default: 10\n\n                      Downstream means \"what DEPENDS ON this object\" \u2014\n                      its consumers, dependents, and impact radius.\n                      For root objects with in-degree zero, downstream_level\n                      will show positive values for all consumers (correct).\n\n  exclude_objects   - str: CSV of FQ object name LIKE patterns to exclude.\n                      Matched against both Src and Tgt sides of every edge.\n                      Python fnmatch is used for pattern matching (% \u2192 *).\n                      Example: 'DFJ%,C_D02%,%.temp_%'\n                      Default: '' (no exclusions)\n\n  include_containers - str: CSV of container name LIKE patterns to include.\n                       Only edges where BOTH Src and Tgt containers match\n                       at least one pattern are traversed.\n                       Python fnmatch used for matching (% \u2192 *).\n                       Empty = all containers included.\n                       Example: 'DEV01_StGeo%,MF_STGEO%,TABLEAU%,POWERBI%'\n                       Default: '' (all containers)\n\n  edge_repository   - str: Edge repository view/table conforming to the\n                      Required parameter \u2014 no default.\n\nReturns:\n  ResponseType: formatted response with BFS node results + metadata.\n  Schema is identical to handle_graph_bfsLevels (SP-based tool).\n\n  Response structure:\n    {\n      \"nodes\": [\n        {\n          \"node\":             \"DEV01_StGeo_STD_T.mortgage_account\",\n          \"container_name\":   \"DEV01_StGeo_STD_T\",\n          \"object_name\":      \"mortgage_account\",\n          \"object_kind\":      \"Table\",\n          \"upstream_level\":   None,    // None (NULL) if unreachable or skipped\n          \"downstream_level\": 0,       // 0 for root, positive for consumers\n          \"nearest_root\":     \"DEV01_StGeo_STD_T.mortgage_account\",\n          \"direction\":        \"ROOT\",  // ROOT / U / D / BOTH\n          \"is_root\":          \"Y\"\n        },\n        ...\n      ],\n      \"cycle_candidates\": [...],  // direction='BOTH' nodes with unequal\n                                  // absolute upstream/downstream levels\n      \"summary\": {\n        \"total_nodes\":          46,\n        \"root_nodes\":           3,\n        \"upstream_only\":        12,\n        \"downstream_only\":      28,\n        \"both_directions\":      3,\n        \"cycle_candidates\":     1,\n        \"max_upstream_depth\":   4,\n        \"max_downstream_depth\": 5,\n        \"nodes_per_nearest_root\": {\"DB.Root1\": 20, \"DB.Root2\": 26},\n        \"object_kind_counts\":   {\"Table\": 10, \"View\": 22, \"Macro\": 8, ...}\n      }\n    }\n\n  direction values:\n    ROOT  - One of the input root nodes\n    U     - Reachable upstream only (negative upstream_level)\n    D     - Reachable downstream only (positive downstream_level)\n    BOTH  - Reachable in both directions \u2014 possible cycle member.\n            Unequal absolute levels indicate a back-edge (cycle).\n            Equal absolute levels indicate a shared dependency.\n\nTechnical Implementation Notes:\n  - One SQL round-trip to fetch all edges matching the container/exclusion\n    filters. All BFS computation is then done in Python memory.\n  - Standard queue-based BFS (O(V+E)) \u2014 optimal for unweighted graphs.\n    This is more correct than the original Bellman-Ford style SQL\n    relaxation loop that the SP inherited from the notebook.\n  - Multi-source BFS: all root nodes are seeded simultaneously at level 0.\n    Each non-root node settles at the distance to its nearest root, with\n    ties broken deterministically by lexicographic root name order.\n  - Upstream BFS follows Src\u2192Tgt edges to discover Src-side ancestors.\n  - Downstream BFS follows Tgt\u2192Src edges to discover Tgt-side consumers.\n  - This direction convention matches the corrected SP (Option B fix):\n      upstream_level = NULL for root objects with in-degree zero (correct)\n      downstream_level = positive for all consumers (correct)\n  - Filter application order:\n      1. SQL WHERE clause: fetch only edges matching include_containers\n         (both Src and Tgt containers must match at least one pattern)\n      2. Python post-filter: exclude edges where either endpoint matches\n         an exclude_objects pattern (applied before building adjacency)\n      3. BFS depth cap: enforced during queue processing\n  - Node metadata (container_name, object_name, object_kind) is derived\n    from the edge set and stored in a node registry during the fetch phase.\n",
+     "config": "Teradata__mcp-server__graph_bfsLevels.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 440,
+       "text": "\"Use graph_bfsLevels after this tool to compute hop distances from the \""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 17,
+       "text": "Edge direction convention (matches Edge Repository / graph_bfsLevels):"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/__init__.py",
+       "line": 31,
+       "text": "from .graph_bfs_levels import handle_graph_bfsLevels"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 2,
+       "text": "graph_bfsLevels.py \u2014 Pure-Python BFS implementation for graph dependency analysis."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 4,
+       "text": "This module provides handle_graph_bfsLevels, a pure-Python BFS"
+      }
+     ]
+    },
+    {
+     "name": "graph_connectedComponents",
+     "description": "\nIdentify all Weakly Connected Components (WCC) in the dependency graph.\n\nPure-Python implementation \u2014 no stored procedure required.  Issues a single\nSQL SELECT to fetch the scoped edge set, then performs Union-Find WCC\npartitioning entirely in the MCP server process.\n\nA connected component is a maximal set of nodes where every node can reach\nevery other node when edge direction is ignored.  This partitions the graph\ninto isolated sub-graphs.\n\nUse this tool for:\n  - Understanding graph structure and partitioning\n  - Identifying isolated sub-graphs\n  - Scoping downstream impact analysis to a single component\n  - Pre-filtering before cycle detection (cycles exist only within a component)\n  - Identifying \"islands\" of related objects for migration or refactoring\n  - Estimating blast radius\n\nArguments:\n  container_pattern - str: CSV LIKE patterns for container scope.\n                      Supports wildcards (%) and CSV format.\n                      Examples: '%WBC%', '%WBC%,%StGeo%', 'DEV01_%,DEV02_%'\n\n                      CRITICAL: STRING type, not array.\n                      CORRECT: container_pattern=\"%WBC%,%StGeo%\"\n                      WRONG:   container_pattern=[\"%WBC%\", \"%StGeo%\"]\n\n  exclude_objects   - str: CSV LIKE patterns to exclude.\n                      Matches against container name (or DB.Object if\n                      the pattern contains a dot).\n                      Default: '' (no exclusions)\n\n  edge_repository   - str: Edge repository view/table conforming to the\n                      Graph Edge Contract (Src_Container_Name,\n                      Src_Object_Name, Src_Kind, Tgt_Container_Name,\n                      Tgt_Object_Name, Tgt_Kind columns).\n                      For AI-Native Data Products use:\n                        '{ProductName}_Semantic.lineage_graph'\n                      Call graph_edgeContractDDL to generate a new one.\n                      Required \u2014 no default.\n\nReturns:\n  ResponseType: formatted response with connected component results.\n\n  Response structure:\n    {\n      \"node_details\":        [...],  // One row per node with Component_Id\n      \"component_summaries\": [...],  // One row per component\n      \"summary_stats\":       [...]   // Single aggregate row\n    }\n\n  node_details row fields:\n    Node_FQ, DatabaseName, ObjectName, Component_Id, Object_Kind\n\n  component_summaries row fields:\n    Component_Id, Node_Count, Node_List\n\n  summary_stats row fields:\n    Component_Count, Node_Count, Edge_Count,\n    Largest_Component, Smallest_Component, Singleton_Count, Summary_Message\n",
+     "config": "Teradata__mcp-server__graph_connectedComponents.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 2,
+       "text": "graph_connectedComponents.py \u2014 Connected components analysis tool."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 4,
+       "text": "Provides handle_graph_connectedComponents and GRAPH_CONNECTED_COMPONENTS_TOOL."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 231,
+       "text": "def handle_graph_connectedComponents("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 303,
+       "text": "\"Tool: handle_graph_connectedComponents: Args: container_pattern=%s, exclude_objects=%s, edge_repository=%s\","
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 317,
+       "text": "\"tool_name\": tool_name or \"graph_connectedComponents\","
+      }
+     ]
+    },
+    {
+     "name": "graph_detectCycles",
+     "description": "\nDetect circular dependencies (cycles) in the dependency graph.\n\nPure-Python implementation \u2014 no stored procedure required.  Issues a single\nSQL SELECT to fetch the scoped edge set, then performs WCC partitioning\nfollowed by iterative DFS cycle detection entirely in the MCP server process.\n\nUse this tool for:\n  - Validating graph integrity (DAG property)\n  - Finding objects that form circular references\n  - Identifying stub-then-replace code patterns\n  - Debugging topological sort hangs\n  - Pre-deployment cycle checks\n\nArguments:\n  container_pattern - str: CSV LIKE patterns for container scope.\n                      Supports wildcards (%) and CSV format.\n                      Examples:\n                        'DFJ%'              \u2014 single database family\n                        '%WBC%,%StGeo%'     \u2014 multiple families\n                        'DEV01_%,DEV02_%'   \u2014 multiple prefixes\n\n  exclude_objects   - str: CSV LIKE patterns to exclude from the scan.\n                      Matches against container name (or DB.Object if\n                      the pattern contains a dot).\n                      Default: '' (no exclusions)\n\n  edge_repository   - str: Edge repository view/table conforming to the\n                      Graph Edge Contract (Src_Container_Name,\n                      Src_Object_Name, Src_Kind, Tgt_Container_Name,\n                      Tgt_Object_Name, Tgt_Kind columns).\n                      For AI-Native Data Products use:\n                        '{ProductName}_Semantic.lineage_graph'\n                      Call graph_edgeContractDDL to generate a new one.\n                      Required \u2014 no default.\n\nReturns:\n  ResponseType: formatted response with cycle detection results.\n\n  Response structure:\n    {\n      \"cycle_details\":   [...],  // One row per node per cycle\n      \"cycle_summaries\": [...],  // One row per cycle with path string\n      \"summary_stats\":   [...]   // Single aggregate row\n    }\n\n  cycle_details row fields:\n    Cycle_Id, Cycle_Pos, Node_FQ, Cycle_Length, Component_Id\n\n  cycle_summaries row fields:\n    Cycle_Id, Cycle_Length, Component_Id, Cycle_Path\n\n  summary_stats row fields:\n    Cycle_Count, Total_Nodes_In_Cycles, Components_With_Cycles,\n    Edge_Count, Components_Scanned, Summary_Message\n",
+     "config": "Teradata__mcp-server__graph_detectCycles.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/__init__.py",
+       "line": 37,
+       "text": "from .graph_detect_cycles import handle_graph_detectCycles"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_tools.py",
+       "line": 57,
+       "text": "\u2502   \u251c\u2500\u2500 graph_detectCycles.py           \u2190 Python: Union-Find + iterative DFS"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_tools.py",
+       "line": 91,
+       "text": "graph_detectCycles"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_tools.py",
+       "line": 131,
+       "text": "handle_graph_detectCycles,"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_analyse_database.py",
+       "line": 830,
+       "text": "\"graph_connectedComponents, graph_detectCycles, and \""
+      }
+     ]
+    },
+    {
+     "name": "graph_edgeContractDDL",
+     "description": "\nGenerate DDL for a Graph Edge Contract-conforming table or view.\n\nThis tool does NOT require a database connection \u2014 it generates DDL\ntext from templates. No SQL is executed. The conn parameter is\naccepted for ModuleLoader calling convention compatibility but is\nnot used.\n\nRequired columns in the generated schema (6):\n  Src_Container_Name, Src_Object_Name, Src_Kind,\n  Tgt_Container_Name, Tgt_Object_Name, Tgt_Kind\n\nOptional enrichment columns (2):\n  Edge_Relationship   \u2014 nature of the edge (ETL_INPUT, ETL_OUTPUT, DIRECT\u2026)\n  Transformation_Type \u2014 process category (ETL, FEATURE_ENG, AGGREGATION\u2026)\n  These are ignored by graph analysis tools but useful for visualisation.\n\nAI-Native Data Product shortcut:\n  If you are working within an AI-Native Data Product, the view\n  {ProductName}_Semantic.lineage_graph (Observability Module v1.5)\n  already conforms to this contract. You do not need to generate DDL\n  \u2014 pass that view's fully-qualified name directly as edge_repository\n  on any graph_* tool. Example:\n    edge_repository='StGeoMortgage_Semantic.lineage_graph'\n\nArguments:\n  conn:            TeradataConnection (unused \u2014 accepted for\n                   ModuleLoader compatibility).\n  target_database: Database in which to create the edge repository.\n                   For AI-Native Data Products this is typically\n                   {ProductName}_Semantic.\n                   Example: 'StGeoMortgage_Semantic'\n  object_name:     Name for the edge table/view.\n                   Default: 'EdgeRepository'\n  output_type:     'TABLE' or 'VIEW'.\n                   TABLE: generates CREATE TABLE DDL + separate sample DML.\n                          Includes all 6 required + 2 optional columns.\n                   VIEW:  generates a CREATE VIEW template for mapping an\n                          existing lineage source to all 8 contract columns.\n                   Default: 'TABLE'\n\nReturns:\n    list[dict]: Response payload containing:\n        - ddl:              DDL script (CREATE TABLE/VIEW + COMMENTs)\n        - sample_dml:       Sample INSERT statements + validation query\n                            (TABLE only; absent for VIEW)\n        - output_type:      'TABLE' or 'VIEW'\n        - contract_version: Contract version string\n",
+     "config": "Teradata__mcp-server__graph_edgeContractDDL.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 161,
+       "text": "{\"error\": \"edge_repository is required. Call graph_edgeContractDDL to generate one.\"},"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 443,
+       "text": "\"If you don't have one yet, call graph_edgeContractDDL first to \""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 463,
+       "text": "\"Call graph_edgeContractDDL to generate one if needed. \""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 279,
+       "text": "Call graph_edgeContractDDL to generate a new one."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_connected_components.py",
+       "line": 329,
+       "text": "\"Call graph_edgeContractDDL to generate a new edge repository.\""
+      }
+     ]
+    },
+    {
+     "name": "graph_findRootObjects",
+     "description": "\nFind root objects (objects with no upstream dependencies) in specified containers.\n\nRoot objects are ideal starting points for downstream impact analysis as they\nrepresent the foundational data sources that nothing else depends upon.\n\nUse this for:\n- Finding starting points for downstream impact analysis\n- Identifying source tables and base objects in data pipelines\n- Discovering independent objects that can be safely analysed in isolation\n- Understanding data flow origins in a schema or database\n- Planning migration or refactoring by identifying foundation objects\n\nArguments:\n  container_pattern - str: Database/schema pattern(s) to search. SUPPORTS WILDCARDS (%) and CSV.\n\n                      IMPORTANT: This is a STRING parameter (type: str), not an array.\n                      Pass multiple patterns as a single comma-separated string.\n\n                      SINGLE CONTAINER:\n                      'DEV01_StGeo_STD_T' - Specific database\n\n                      WILDCARDS (%):\n                      '%WBC%' - All databases containing WBC\n                      'DEV01_%' - All databases starting with DEV01_\n                      '%_STD_T' - All databases ending with _STD_T\n\n                      MULTIPLE CONTAINERS (CSV format):\n                      '%WBC%,%StGeo%' - All WBC and StGeo databases\n                      'DEV01_StGeo_STD_T,DEV02_WBC_STD_T' - Specific databases\n                      'DEV01_%,DEV02_%' - All DEV01 and DEV02 databases\n\n                      WHITESPACE HANDLING:\n                      Whitespace is automatically trimmed, so these are equivalent:\n                      \u2705 '%WBC%,%StGeo%' (no spaces)\n                      \u2705 '%WBC%, %StGeo%' (spaces after commas - OK)\n\n                      HOW TO PASS IN CODE:\n                      Python: container_pattern=\"%WBC%,%StGeo%\"\n                      JSON: {\"container_pattern\": \"%WBC%,%StGeo%\"}\n\n                      CRITICAL: This is a STRING type parameter.\n                      \u2705 CORRECT: Pass as string: container_pattern=\"%WBC%,%StGeo%\"\n                      \u274c WRONG: Pass as array: container_pattern=[\"%WBC%\", \"%StGeo%\"]\n\n  exclude_objects   - str: Comma-separated list of patterns to exclude (SERVER-SIDE filter).\n                      Matches against DatabaseName.ObjectName format.\n\n                      Common exclusion patterns:\n                      'PRD_%,PROD_%' - Exclude production databases\n                      '%.temp_%,%.bak_%' - Exclude temporary and backup objects\n                      'DFJ%,C_D02%' - Exclude personal/sandbox schemas\n\n                      Performance: Reduces result set and improves query time\n                      Default: '' (empty string = no exclusions)\n\n  edge_repository   - str: Edge repository table/view conforming to the\n                      Required parameter \u2014 no default.\n\n  object_types      - str: Comma-separated list of object types to include (optional filter).\n                      Examples: 'T' (tables), 'V' (views), 'P' (procedures), 'M' (macros)\n                      Multiple: 'T,V' (tables and views only)\n                      Empty = all object types included\n                      Default: '' (all types)\n\n  return_format     - str: Output format: 'detailed' or 'summary'\n                      'detailed' (default): Full object list with metadata\n                      'summary': High-level statistics and counts only\n                      Default: 'detailed'\n\nReturns:\n  ResponseType: formatted response with root objects + metadata\n\nExample queries that trigger this tool:\n  - \"Which objects in WBC and StGeo databases have no dependencies?\"\n  - \"Find root objects in DEV01 databases\"\n  - \"What are the starting points for impact analysis in StGeo?\"\n  - \"Show me base tables with no upstream dependencies\"\n  - \"Which objects should I start analysing for downstream impact?\"\n\nExample calls:\n  # Find root objects in WBC and StGeo databases\n  handle_graph_findRootObjects(\n      conn=connection,\n      container_pattern=\"%WBC%,%StGeo%\"\n  )\n\n  # Find only root tables (no views/procedures)\n  handle_graph_findRootObjects(\n      conn=connection,\n      container_pattern=\"DEV01_%\",\n      object_types=\"T\"\n  )\n\n  # Find root objects excluding production and temporary objects\n  handle_graph_findRootObjects(\n      conn=connection,\n      container_pattern=\"%WBC%,%StGeo%\",\n      exclude_objects=\"PRD_%,%.temp_%,%.bak_%\"\n  )\n\n  # Quick summary of root objects\n  handle_graph_findRootObjects(\n      conn=connection,\n      container_pattern=\"DEV01_StGeo_STD_T\",\n      return_format=\"summary\"\n  )\n\nTechnical Implementation:\n  - Queries the edge repository to find all objects in specified containers\n  - Identifies objects that appear as sources but never as targets\n  - These are \"root\" objects - they have no upstream dependencies\n  - Results are filtered by exclude_objects and object_types parameters\n  - Returns list of root objects suitable for downstream impact analysis\n",
+     "config": "Teradata__mcp-server__graph_findRootObjects.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 2,
+       "text": "graph_findRootObjects.py \u2014 Root object discovery tool."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 4,
+       "text": "Provides handle_graph_findRootObjects and GRAPH_FIND_ROOT_OBJECTS_TOOL."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 22,
+       "text": "def handle_graph_findRootObjects(  # noqa: PLR0917"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 115,
+       "text": "handle_graph_findRootObjects("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_find_root_objects.py",
+       "line": 121,
+       "text": "handle_graph_findRootObjects("
+      }
+     ]
+    },
+    {
+     "name": "graph_traceLineage",
+     "description": "\nAnalyse object dependencies in Teradata. Supports wildcards (%) and CSV patterns.\n\nHybrid implementation \u2014 no stored procedure required.  Python constructs\nTeradata recursive CTEs that execute entirely server-side.  Only the\nreachable subgraph crosses the network \u2014 not the full edge table.\n\nExamples: 'DB.Table' (single), '%WBC%.%' (wildcard), 'DB.T1,DB.T2' (CSV)\n\nFinds upstream dependencies (what the object depends on) and downstream\ndependents (what depends on the object).  Returns nodes and edges\nrepresenting the dependency subgraph.\n\nWhen multiple patterns are provided via CSV, one upstream CTE and one\ndownstream CTE is executed per pattern.  Results are merged and\ndeduplicated by Python before assembly.\n\nUse this for:\n  - Impact analysis: \"What breaks if I change or drop this object?\"\n  - Lineage tracing: \"Where does this data come from?\"\n  - Dependency discovery: \"What does this object use?\"\n  - Pre-deployment validation: checking impacts before making changes\n\nArguments:\n  object_name        - str: Object name pattern(s).\n                       Supports wildcards (%) and CSV format.\n                       STRING type \u2014 not an array.\n\n                       Single:   'DEV01_StGeo_STD_T.mortgage_account'\n                       Wildcard: '%WBC%.%'\n                       Multiple: '%WBC%.%,%StGeo%.%'\n\n  max_depth_up       - int: Maximum levels to traverse upstream (0-10).\n                       0 = no upstream analysis.  Default: 3\n\n  max_depth_down     - int: Maximum levels to traverse downstream (0-10).\n                       0 = no downstream analysis.  Default: 3\n\n  exclude_objects    - str: CSV LIKE patterns to exclude.\n                       Matches against DB.Object format.\n                       Example: 'PRD_%,%.temp_%'\n                       Default: '' (no exclusions)\n\n  include_containers - str: CSV of container LIKE patterns to include\n                       (whitelist).  Empty = all containers.\n                       Default: '' (all containers)\n\n  edge_repository    - str: Edge repository view/table conforming to the\n                       Required parameter \u2014 no default.\n\n  return_format      - str: 'detailed' (default), 'summary', or 'edges_only'\n\nReturns:\n  ResponseType: formatted response with dependency analysis results.\n\n  detailed response structure:\n    {\n      \"nodes\":           [...],  // Unique nodes (deduplicated)\n      \"upstream_edges\":  [...],  // One row per upstream edge\n      \"downstream_edges\":[...],  // One row per downstream edge\n      \"summary\":         {...}   // Aggregate statistics\n    }\n\n  Edge row fields:\n    DependentObjectDBName, DependentObjectName, FQDependentObjectName,\n    ReferencedObjectDBName, ReferencedObjectName, FQReferencedObjectName,\n    Src_Kind, Tgt_Kind, Depth, DependencyPath\n",
+     "config": "Teradata__mcp-server__graph_traceLineage.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/graph/__init__.py",
+       "line": 44,
+       "text": "from .graph_trace_lineage import handle_graph_traceLineage"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 76,
+       "text": "WHEN TO USE THIS TOOL vs graph_traceLineage:"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 92,
+       "text": "Use graph_traceLineage for those \u2014 it returns the full edge"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 114,
+       "text": "graph_traceLineage first to discover names."
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/graph/graph_bfs_levels.py",
+       "line": 803,
+       "text": "\"USE THIS TOOL \u2014 not graph_traceLineage \u2014 when asked to: \""
+      }
+     ]
+    },
+    {
+     "name": "plot_line_chart",
+     "description": "\nGenerate a line chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the x-axis column in `labels` (typically a date or time field), and one or more y-axis numeric columns in `columns`. Use for time-series, trend lines, or sequential data. Do NOT use for proportional category breakdowns \u2014 use plot_pie_chart or plot_polar_chart. Do NOT use for multi-dimensional spider comparisons \u2014 use plot_radar_chart.\n\nPARAMETERS:\n    table_name:\n        Required Argument.\n        Specifies the name of the table to generate the line chart.\n        Types: str\n\n    labels:\n        Required Argument.\n        Specifies the x-axis column (typically date or time).\n        Types: str\n\n    columns:\n        Required Argument.\n        Specifies the y-axis numeric column(s) for the line chart.\n        Types: List[str]\n\nRETURNS:\n    dict\n",
+     "config": "Teradata__mcp-server__plot_line_chart.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 6,
+       "text": "def handle_plot_line_chart(conn: TeradataConnection, table_name: str, labels: str, columns: str | list[str]):"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 68,
+       "text": "Generate a pie chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch or aggregate data first. Specify the table in `table_name`, the category column in `labels`, and"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 97,
+       "text": "Generate a radar chart (spider chart or web chart) that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the category column"
+      }
+     ]
+    },
+    {
+     "name": "plot_pie_chart",
+     "description": "\nGenerate a pie chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch or aggregate data first. Specify the table in `table_name`, the category column in `labels`, and the numeric value column in `column`. Use when the user asks for proportions, shares, or how a total breaks down by category. For polar area charts, use plot_polar_chart. For time-series trends, use plot_line_chart.\n\nPARAMETERS:\n    table_name:\n        Required Argument.\n        Specifies the name of the table to generate the pie chart.\n        Types: str\n\n    labels:\n        Required Argument.\n        Specifies the category column for labels.\n        Types: str\n\n    column:\n        Required Argument.\n        Specifies the numeric value column for the pie chart.\n        Types: str\n\nRETURNS:\n    dict\n",
+     "config": "Teradata__mcp-server__plot_pie_chart.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 8,
+       "text": "Generate a line chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the x-axis column in `labels` (typically a date "
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 38,
+       "text": "Generate a polar area chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery first. Specify the table in `table_name`, the category column in `labels`, and the numeric value colum"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 66,
+       "text": "def handle_plot_pie_chart(conn: TeradataConnection, table_name: str, labels: str, column: str):"
+      }
+     ]
+    },
+    {
+     "name": "plot_polar_chart",
+     "description": "\nGenerate a polar area chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery first. Specify the table in `table_name`, the category column in `labels`, and the numeric value column in `column`. Use when the user explicitly asks for a polar chart or polar area chart. For standard pie-style breakdowns, use plot_pie_chart instead.\n\nPARAMETERS:\n    table_name:\n        Required Argument.\n        Specifies the name of the table to generate the polar chart.\n        Types: str\n\n    labels:\n        Required Argument.\n        Specifies the category column for labels.\n        Types: str\n\n    column:\n        Required Argument.\n        Specifies the numeric value column for the polar chart.\n        Types: str\n\nRETURNS:\n    dict\n",
+     "config": "Teradata__mcp-server__plot_polar_chart.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 8,
+       "text": "Generate a line chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the x-axis column in `labels` (typically a date "
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 36,
+       "text": "def handle_plot_polar_chart(conn: TeradataConnection, table_name: str, labels: str, column: str):"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 68,
+       "text": "Generate a pie chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch or aggregate data first. Specify the table in `table_name`, the category column in `labels`, and"
+      }
+     ]
+    },
+    {
+     "name": "plot_radar_chart",
+     "description": "\nGenerate a radar chart (spider chart or web chart) that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the category column in `labels`, and one or more value columns in `columns`. Use when the user asks for a spider chart, radar chart, web chart, or multi-dimensional comparison across categories. For time-series or trend data, use plot_line_chart instead.\n\nPARAMETERS:\n    table_name:\n        Required Argument.\n        Specifies the name of the table to generate the radar chart.\n        Types: str\n\n    labels:\n        Required Argument.\n        Specifies the category column for labels.\n        Types: str\n\n    columns:\n        Required Argument.\n        Specifies the value column(s) for the radar chart.\n        Types: str | List[str]\n\nRETURNS:\n    dict\n",
+     "config": "Teradata__mcp-server__plot_radar_chart.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 8,
+       "text": "Generate a line chart that reads directly from a Teradata table \u2014 do NOT use base_readQuery to pre-fetch data first. Specify the table in `table_name`, the x-axis column in `labels` (typically a date "
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/plot/plot_tools.py",
+       "line": 95,
+       "text": "def handle_plot_radar_chart(conn: TeradataConnection, table_name: str, labels: str, columns: str | list[str]):"
+      }
+     ]
+    },
+    {
+     "name": "qlty_columnSummary",
+     "description": "Get summary statistics for ALL columns in a table in a single call. Use when the user asks for an overview, profile, or summary of every field in a table. For detailed statistics on a SINGLE specific column (min, max, percentiles), use qlty_univariateStatistics instead.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_columnSummary.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_distinctCategories",
+     "description": "Get the unique (distinct) values present in a specific column of a table. Use when the user asks what unique values, categories, or entries exist in a named column. Requires both a table name and a column name \u2014 if no column name is specified, ask for clarification before calling.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  column_name - Column name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_distinctCategories.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_missingValues",
+     "description": "List the column names that contain NULL or missing values in a table. Returns a column-level summary showing WHICH columns have missing data. Use when the user asks which columns have nulls, which fields have missing data, or how many nulls exist per column. Do NOT use to retrieve the actual data rows \u2014 use qlty_rowsWithMissingValues to get the specific records where a column is null.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_missingValues.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_negativeValues",
+     "description": "Identify which numeric columns in a table contain negative values. Use when the user asks about negative numbers, values below zero, or columns with anomalous negative entries. Returns the list of affected column names.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_negativeValues.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_rowsWithMissingValues",
+     "description": "Retrieve the actual data rows where a specific column is NULL or missing. Returns the records themselves, not a column summary. Use when the user wants to SEE or FETCH the rows with missing values in a named column. Do NOT write a SQL query with base_readQuery for this \u2014 always use this tool when the request is about rows with null values. Do NOT use for a column-level summary of which columns have nulls \u2014 use qlty_missingValues for that.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  column_name - Column name to analyze for missing values\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_rowsWithMissingValues.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_standardDeviation",
+     "description": "Calculate the mean (average) and standard deviation for a single numeric column. Use when the user asks specifically for standard deviation, the spread of values, or just mean and variability. For a fuller statistical profile including min, max, quartiles, and percentiles, use qlty_univariateStatistics instead.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  column_name - Column name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_standardDeviation.json",
+     "hints": []
+    },
+    {
+     "name": "qlty_univariateStatistics",
+     "description": "Calculate full univariate statistics for a single numeric column including min, max, mean, standard deviation, quartiles, and percentiles. Use when the user asks for a complete or comprehensive statistical breakdown of one specific column. For just mean and standard deviation, use qlty_standardDeviation. For statistics across ALL columns in a table at once, use qlty_columnSummary.\n\nArguments:\n  database_name - Name of the database (optional)\n  table_name - Table name to analyze\n  column_name - Column name to analyze\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__qlty_univariateStatistics.json",
+     "hints": []
+    },
+    {
+     "name": "rag_Execute_Workflow",
+     "description": "\nExecute complete RAG workflow to answer user questions based on document context.\nThis tool handles the entire RAG pipeline in a single step when a user query is tagged with /rag.\n\nWORKFLOW STEPS (executed automatically):\n1. Configuration setup using configurable values from rag_config.yml\n2. Store user query with '/rag ' prefix stripping\n3. Generate query embeddings using either BYOM (ONNXEmbeddings) or IVSM functions based on config\n4. Perform semantic search against precomputed chunk embeddings\n5. Return context chunks for answer generation\n\nCONFIGURATION VALUES (from rag_config.yml):\n- version: 'ivsm' or 'byom' to select embedding approach\n- All database names, table names, and model settings are configurable\n- Vector store metadata fields are dynamically detected\n- Embedding parameters are configurable\n- Default chunk retrieval count is configurable\n- Default values are provided as fallback\n\nTECHNICAL DETAILS:\n- Strips the '/rag ' prefix if present from user questions\n- Creates query table if it does not exist (columns: id, txt, created_ts)\n- BYOM approach: Uses mldb.ONNXEmbeddings UDF for tokenization and embedding\n- IVSM approach: Uses ivsm.tokenizer_encode and ivsm.IVSM_score functions\n- Both approaches store embeddings in configured output table\n- Uses cosine similarity via TD_VECTORDISTANCE for semantic search\n- Returns the top-k matching chunks from the configured vector store\n- Each result includes chunk text, similarity score, and metadata fields\n\nCRITICAL ANSWERING RULES:\n- Answer ONLY using retrieved chunks - no external knowledge, speculation, or inference\n- Quote source content directly without paraphrasing, summarizing, or rewriting\n- If no relevant context found: \"Not enough information found in the provided context\"\n- If partial context: \"The available context does not fully answer the question\"\n- Include document/page references when available (e.g., \"On page 2 of 'demo_policy.pdf'...\")\n- Execute entire workflow silently without showing function calls to user - only show final answer\n\nLANGUAGE RESTRICTIONS:\n- Do not say \"According to the context\" or \"The context says\" - just quote directly\n- Do not say \"It can be inferred that...\" - no inference allowed\n- Use exact or near-verbatim quotes only\n- No paraphrasing, summarizing, or adding transitions between quotes\n- Copy content precisely - no expansion or interpretation\n\nBEHAVIORAL REQUIREMENTS:\n- Execute all RAG workflow steps silently without showing tool calls to users\n- Only display final answers based strictly on retrieved context chunks\n- Do not use external knowledge or speculation - only quote retrieved content directly\n- RAG mode only triggers with explicit /rag prefix - do not enter RAG mode implicitly\n- Hide all tool execution steps from user\n- Provide clean, direct response with only the answer based on retrieved chunks\n- This is a complete end-to-end RAG workflow - no additional tools needed\n\nEXECUTION: Run completely silently - user only sees their question and the final context-grounded answer.\n",
+     "config": "Teradata__mcp-server__rag_Execute_Workflow.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/rag/rag_tools.py",
+       "line": 138,
+       "text": "def handle_rag_Execute_Workflow("
+      }
+     ]
+    },
+    {
+     "name": "sec_rolePermissions",
+     "description": "List the database-level permissions granted to a named Teradata role. Use when the user asks what access rights a ROLE has, what a role is allowed to do, or what permissions have been granted to a role. Do NOT confuse with user-level queries \u2014 use sec_userDbPermissions for a user's direct permissions or sec_userRoles for a user's role membership. Requires a role name.\n\nArguments:\n  role_name - Role name to analyze.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__sec_rolePermissions.json",
+     "hints": []
+    },
+    {
+     "name": "sec_userDbPermissions",
+     "description": "List the database-level access permissions (SELECT, INSERT, UPDATE, DELETE, etc.) granted directly to a specific Teradata user across all databases. Use when the user asks what a named user can DO in each database \u2014 their access rights, grants, or privileges on database objects. Do NOT use to see what roles a user has \u2014 use sec_userRoles for that. Requires a user name.\n\nArguments:\n  user_name - User name to analyze.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__sec_userDbPermissions.json",
+     "hints": []
+    },
+    {
+     "name": "sec_userRoles",
+     "description": "List the roles currently assigned to a specific Teradata user account. Use when the user asks which roles a named user HAS, belongs to, or has been assigned. Do NOT use to see the permissions of those roles \u2014 use sec_rolePermissions for that. Do NOT use to see a user's direct database privileges \u2014 use sec_userDbPermissions for that. Requires a user name.\n\nArguments:\n  user_name - User name to analyze.\n  persist - If True, materializes result as a volatile table and returns table name",
+     "config": "Teradata__mcp-server__sec_userRoles.json",
+     "hints": []
+    },
+    {
+     "name": "sql_Analyze_Cluster_Stats",
+     "description": "\n**ANALYZE SQL QUERY CLUSTER PERFORMANCE STATISTICS**\n\nThis tool analyzes pre-computed cluster statistics to identify optimization opportunities without re-running the clustering pipeline. Perfect for iterative analysis and decision-making on which query clusters to focus optimization efforts.\n\n**ANALYSIS CAPABILITIES:**\n- **Performance Ranking**: Sort clusters by any performance metric to identify top resource consumers\n- **Resource Impact Assessment**: Compare clusters by CPU usage, I/O volume, and execution complexity\n- **Skew Problem Detection**: Identify clusters with CPU or I/O distribution issues\n- **Workload Characterization**: Understand query patterns by user, application, and workload type\n- **Optimization Prioritization**: Focus on clusters with highest impact potential\n\n**AVAILABLE SORTING METRICS:**\n- **avg_cpu**: Average CPU seconds per cluster (primary optimization target)\n- **avg_io**: Average logical I/O operations (scan intensity indicator)\n- **avg_cpuskw**: Average CPU skew (distribution problem indicator)\n- **avg_ioskw**: Average I/O skew (hot spot indicator)\n- **avg_pji**: Average Physical-to-Logical I/O ratio (compute intensity)\n- **avg_uii**: Average Unit I/O Intensity (I/O efficiency)\n- **avg_numsteps**: Average query plan complexity\n- **queries**: Number of queries in cluster (frequency indicator)\n- **cluster_silhouette_score**: Clustering quality measure\n\n**PERFORMANCE CATEGORIZATION:**\nAutomatically categorizes clusters using configurable thresholds (from sql_opt_config.yml):\n- **HIGH_CPU_USAGE**: Average CPU > config.performance_thresholds.cpu.high\n- **HIGH_IO_USAGE**: Average I/O > config.performance_thresholds.io.high\n- **HIGH_CPU_SKEW**: CPU skew > config.performance_thresholds.skew.high\n- **HIGH_IO_SKEW**: I/O skew > config.performance_thresholds.skew.high\n- **NORMAL**: Clusters within configured normal performance ranges\n\n**TYPICAL ANALYSIS WORKFLOW:**\n1. Sort by 'avg_cpu' or 'avg_io' to find highest resource consumers\n2. Sort by 'avg_cpuskw' or 'avg_ioskw' to find distribution problems\n4. Use limit_results to focus on top problematic clusters\n\n**OPTIMIZATION DECISION FRAMEWORK:**\n- **High CPU + High Query Count**: Maximum impact optimization candidates\n- **High Skew + Moderate CPU**: Distribution/statistics problems\n- **High I/O + Low PJI**: Potential indexing opportunities\n- **High NumSteps**: Complex query rewriting candidates\n\n**OUTPUT FORMAT:**\nReturns detailed cluster statistics with performance rankings, categories, and metadata for LLM analysis and optimization recommendations.\n",
+     "config": "Teradata__mcp-server__sql_Analyze_Cluster_Stats.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 138,
+       "text": "1. sql_Analyze_Cluster_Stats to identify problematic clusters"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 508,
+       "text": "def handle_sql_Analyze_Cluster_Stats("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 559,
+       "text": "logger.debug(f\"handle_sql_Analyze_Cluster_Stats: sort_by={sort_by_metric}, limit={limit_results}\")"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 647,
+       "text": "\"tool_name\": \"sql_Analyze_Cluster_Stats\","
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 704,
+       "text": "1. Start with clusters identified from sql_Analyze_Cluster_Stats"
+      }
+     ]
+    },
+    {
+     "name": "sql_Execute_Full_Pipeline",
+     "description": "\n**COMPLETE SQL QUERY CLUSTERING PIPELINE FOR HIGH-USAGE QUERY OPTIMIZATION**\n\nThis tool executes the entire SQL query clustering workflow to identify and analyze high CPU usage queries for optimization opportunities. It's designed for database performance analysts and DBAs who need to systematically identify query optimization candidates.\n\n**FULL PIPELINE WORKFLOW:**\n1. **Query Log Extraction**: Extracts SQL queries from DBC.DBQLSqlTbl with comprehensive performance metrics\n2. **Performance Metrics Calculation**: Computes CPU skew, I/O skew, PJI (Physical to Logical I/O ratio), UII (Unit I/O Intensity)\n3. **Query Tokenization**: Tokenizes SQL text using {sql_clustering_config.get('model', {}).get('model_id', 'bge-small-en-v1.5')} tokenizer via ivsm.tokenizer_encode\n4. **Embedding Generation**: Creates semantic embeddings using ivsm.IVSM_score with ONNX models\n5. **Vector Store Creation**: Converts embeddings to vector columns via ivsm.vector_to_columns\n6. **K-Means Clustering**: Groups similar queries using TD_KMeans with optimal K from configuration\n7. **Silhouette Analysis**: Calculates clustering quality scores using TD_Silhouette\n8. **Statistics Generation**: Creates comprehensive cluster statistics with performance aggregations\n\n**PERFORMANCE METRICS EXPLAINED:**\n- **AMPCPUTIME**: Total CPU seconds across all AMPs (primary optimization target)\n- **CPUSKW/IOSKW**: CPU/I/O skew ratios (>2.0 indicates distribution problems)\n- **PJI**: Physical-to-Logical I/O ratio (higher = more CPU-intensive)\n- **UII**: Unit I/O Intensity (higher = more I/O-intensive relative to CPU)\n- **LogicalIO**: Total logical I/O operations (indicates scan intensity)\n- **NumSteps**: Query plan complexity (higher = more complex plans)\n\n**CONFIGURATION (from sql_opt_config.yml):**\n- Uses top {default_max_queries} queries by CPU time (configurable)\n- Creates {default_optimal_k} clusters by default (configurable via optimal_k parameter)\n- Embedding model: {sql_clustering_config.get('model', {}).get('model_id', 'bge-small-en-v1.5')}\n- Vector dimensions: {sql_clustering_config.get('embedding', {}).get('vector_length', 384)}\n- All database and table names are configurable\n\n**OPTIMIZATION WORKFLOW:**\nAfter running this tool, use:\n1. sql_Analyze_Cluster_Stats to identify problematic clusters\n2. sql_Retrieve_Cluster_Queries to get actual SQL from target clusters\n3. LLM analysis to identify patterns and propose specific optimizations\n\n**USE CASES:**\n- Identify query families consuming the most system resources\n- Find queries with similar patterns but different performance\n- Discover optimization opportunities through clustering analysis\n- Prioritize DBA effort on highest-impact query improvements\n- Understand workload composition and resource distribution\n\n**PREREQUISITES:**\n- DBC.DBQLSqlTbl and DBC.DBQLOgTbl must be accessible\n- Embedding models and tokenizers must be installed in feature_ext_db\n- Sufficient space in feature_ext_db for intermediate and final tables\n",
+     "config": "Teradata__mcp-server__sql_Execute_Full_Pipeline.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 103,
+       "text": "def handle_sql_Execute_Full_Pipeline("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 163,
+       "text": "logger.debug(f\"handle_sql_Execute_Full_Pipeline: optimal_k={optimal_k}, max_queries={max_queries}\")"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 472,
+       "text": "\"tool_name\": \"sql_Execute_Full_Pipeline\","
+      }
+     ]
+    },
+    {
+     "name": "sql_Retrieve_Cluster_Queries",
+     "description": "\n**RETRIEVE ACTUAL SQL QUERIES FROM SPECIFIC CLUSTERS FOR PATTERN ANALYSIS**\n\nThis tool extracts the actual SQL query text and performance metrics from selected clusters, enabling detailed pattern analysis and specific optimization recommendations. Essential for moving from cluster-level analysis to actual query optimization.\n\n**DETAILED ANALYSIS CAPABILITIES:**\n- **SQL Pattern Recognition**: Analyze actual query structures, joins, predicates, and functions\n- **Performance Correlation**: Connect query patterns to specific performance characteristics\n- **Optimization Identification**: Identify common anti-patterns, missing indexes, inefficient joins\n- **Code Quality Assessment**: Evaluate query construction, complexity, and best practices\n- **Workload Understanding**: See actual business logic and data access patterns\n\n**QUERY SELECTION STRATEGIES:**\n- **By CPU Impact**: Sort by 'ampcputime' to focus on highest CPU consumers\n- **By I/O Volume**: Sort by 'logicalio' to find scan-intensive queries\n- **By Skew Problems**: Sort by 'cpuskw' or 'ioskw' for distribution issues\n- **By Complexity**: Sort by 'numsteps' for complex execution plans\n- **By Response Time**: Sort by 'response_secs' for user experience impact\n\n**AVAILABLE METRICS FOR SORTING:**\n- **ampcputime**: Total CPU seconds (primary optimization target)\n- **logicalio**: Total logical I/O operations (scan indicator)\n- **cpuskw**: CPU skew ratio (distribution problems)\n- **ioskw**: I/O skew ratio (hot spot indicators)\n- **pji**: Physical-to-Logical I/O ratio (compute intensity)\n- **uii**: Unit I/O Intensity (I/O efficiency)\n- **numsteps**: Query execution plan steps (complexity)\n- **response_secs**: Wall-clock execution time (user impact)\n- **delaytime**: Time spent in queue (concurrency issues)\n\n**AUTOMATIC PERFORMANCE CATEGORIZATION:**\nEach query is categorized using configurable thresholds (from sql_opt_config.yml):\n- **CPU Categories**: VERY_HIGH_CPU (>config.very_high), HIGH_CPU (>config.high), MEDIUM_CPU (>10s), LOW_CPU\n- **CPU Skew**: SEVERE_CPU_SKEW (>config.severe), HIGH_CPU_SKEW (>config.high), MODERATE_CPU_SKEW (>config.moderate), NORMAL\n- **I/O Skew**: SEVERE_IO_SKEW (>config.severe), HIGH_IO_SKEW (>config.high), MODERATE_IO_SKEW (>config.moderate), NORMAL\n\nUse thresholds set in config file for, CPU - high, very_high, Skew moderate, high, severe\n\n**TYPICAL OPTIMIZATION WORKFLOW:**\n1. Start with clusters identified from sql_Analyze_Cluster_Stats\n2. Retrieve top queries by impact metric (usually 'ampcputime')\n3. Analyze SQL patterns for common issues:\n   - Missing WHERE clauses or inefficient predicates\n   - Cartesian products or missing JOIN conditions\n   - Inefficient GROUP BY or ORDER BY operations\n   - Suboptimal table access patterns\n   - Missing or outdated statistics\n4. Develop specific optimization recommendations\n\n**QUERY LIMIT STRATEGY:**\n- Use the query limit set in config file for  pattern recognition and analysis, unless user specifies a different limit\n\n**OUTPUT INCLUDES:**\n- Complete SQL query text for each query\n- All performance metrics, user, application, and workload context, cluster membership and rankings\n- Performance categories for quick filtering\n",
+     "config": "Teradata__mcp-server__sql_Retrieve_Cluster_Queries.json",
+     "hints": [
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 139,
+       "text": "2. sql_Retrieve_Cluster_Queries to get actual SQL from target clusters"
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 662,
+       "text": "def handle_sql_Retrieve_Cluster_Queries("
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 726,
+       "text": "f\"handle_sql_Retrieve_Cluster_Queries: clusters={cluster_ids}, metric={metric}, limit={limit_per_cluster}\""
+      },
+      {
+       "file": "src/teradata_mcp_server/tools/sql_opt/sql_opt_tools.py",
+       "line": 831,
+       "text": "\"tool_name\": \"sql_Retrieve_Cluster_Queries\","
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
