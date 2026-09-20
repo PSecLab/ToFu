@@ -498,6 +498,10 @@ def main():
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--limit", type=int, default=0, help="scan at most N servers")
     ap.add_argument("--set", dest="only_set", default=None, help="restrict to set A or B")
+    ap.add_argument("--only-repo", default=None,
+                    help="comma-separated substrings; scan ONLY servers whose repo matches "
+                         "one. Bypasses the done-set so you can re-scan named repos (e.g. to "
+                         "add the llm analyzer to repos already YARA-scanned).")
     a = ap.parse_args()
 
     if a.setup:
@@ -520,8 +524,13 @@ def main():
         return
 
     done = {r["repo"] for r in read_jsonl(RUNS) if r.get("ok")}
-    targets = [t for t in read_jsonl(PREPARED)
-               if t.get("status") == "ready" and t["repo"] not in done]
+    ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
+    if a.only_repo:
+        pats = [p.strip().lower() for p in a.only_repo.split(",") if p.strip()]
+        targets = [t for t in ready if any(p in t["repo"].lower() for p in pats)]
+        log(f"--only-repo {pats}: {len(targets)} servers (done-set bypassed for re-scan)")
+    else:
+        targets = [t for t in ready if t["repo"] not in done]
     if a.only_set:
         targets = [t for t in targets if t.get("set") == a.only_set]
     if a.limit:

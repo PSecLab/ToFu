@@ -199,15 +199,22 @@ def main():
     ap.add_argument("--rounds", type=int, default=int(os.environ.get("VIPER_ROUNDS", "10")))
     ap.add_argument("--timeout", type=int, default=1800, help="per-server seconds (paper: ~15 min)")
     ap.add_argument("--limit", type=int, default=0)
-    ap.add_argument("--only", default=None)
+    ap.add_argument("--only", default=None,
+                    help="comma-separated substrings; run ONLY repos matching one "
+                         "(bypasses the done-set, for budget-limited subset runs)")
     a = ap.parse_args()
     if not preflight(a.skip_codeql or a.test_agent, a.codeql): sys.exit(1)
     if a.preflight: return
     base = load_yaml(BASE_CFG)
     done = {r["repo"] for r in read_jsonl(RUNS) if not r.get("test_agent")}
     ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
-    if not a.test_agent: ready = [t for t in ready if t["repo"] not in done]
-    if a.only: ready = [t for t in ready if a.only.lower() in t["repo"].lower()]
+    if a.only:
+        # comma-separated substrings; explicit targeting BYPASSES the done-set so
+        # named repos re-run (subset runs to save LLM budget).
+        pats = [p.strip().lower() for p in a.only.split(",") if p.strip()]
+        ready = [t for t in ready if any(p in t["repo"].lower() for p in pats)]
+    elif not a.test_agent:
+        ready = [t for t in ready if t["repo"] not in done]
     if a.limit: ready = ready[:a.limit]
     log(f"todo={len(ready)} already_done={len(done)}")
     # --test-agent only exercises the LLM; never let it trigger a CodeQL build.
