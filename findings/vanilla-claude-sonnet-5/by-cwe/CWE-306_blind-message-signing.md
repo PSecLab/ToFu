@@ -1,0 +1,8 @@
+# CWE-306 -- Missing Authentication for Critical Function (2 findings: 0 Tier-A, 2 Tier-B)
+
+vanilla-claude-sonnet-5 static audit, 2026-09-21. Grounded per Phase 2 (verify_findings.py). Static reading only, no execution.
+
+| repo | tool | tier | cwe | file:line | param -> sink | why |
+|---|---|---|---|---|---|---|
+| mcpdotdirect/evm-mcp-server | `sign_message` | B | CWE-306/CWE-862 | `src/core/tools.ts:1240` | message -> services/wallet.ts signMessage() calls account.signMessage({message}) using the env-configured private key/mnemonic with zero validation, confirmation, or allowlisting of the message content before producing a valid signature from a fund-controlling key. | The tool signs whatever arbitrary string the caller supplies with the real wallet key (services/wallet.ts:96-105), with no display, confirmation step, or restriction on message content; because personal_sign signatures can be used for off-chain authentication/authorization (e.g. SIWE) elsewhere, ... |
+| mcpdotdirect/evm-mcp-server | `sign_typed_data` | B | CWE-306/CWE-862 | `src/core/tools.ts:1299` | domainJson,typesJson,primaryType,messageJson -> services/wallet.ts signTypedData() calls account.signTypedData({domain,types,primaryType,message}) using the env-configured key, with domain/types/message parsed straight from caller JSON and no semantic validation (e.g. no check on verifyingContract, no amount/allowance caps, no confirmation). | domain, types, primaryType and message are fully attacker/caller-controlled JSON strings that get signed as-is by the real wallet key with no allowlist of verifyingContract, no inspection of primaryType (e.g. an ERC-2612 Permit granting unlimited allowance to an arbitrary spender), and no confirm... |

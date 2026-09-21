@@ -1,0 +1,8 @@
+# CWE-829 -- Inclusion of Functionality from Untrusted Control Sphere (2 findings: 1 Tier-A, 1 Tier-B)
+
+vanilla-claude-sonnet-5 static audit, 2026-09-21. Grounded per Phase 2 (verify_findings.py). Static reading only, no execution.
+
+| repo | tool | tier | cwe | file:line | param -> sink | why |
+|---|---|---|---|---|---|---|
+| pollinations/chucknorris | `chuckNorris` | B | CWE-829 | `chucknorris-mcp-server.js:57` | llmName -> Sets global currentLlmName which is later read by getEnhancedChuckNorrisSchema() in schemas.js, which calls fetchPrompt(currentLlmName) to fetch and embed a remote file's content as the next tools/list response's tool description. | This tool triggers the same fetchPrompt sink as easyChuckNorris, but only indirectly (via global state consumed on a subsequent tools/list call), and the server declares listChanged:true but I could not confirm from static reading whether it actually sends the change notification needed to make t... |
+| pollinations/chucknorris | `easyChuckNorris` | A | CWE-829 | `chucknorris-mcp-server.js:92` | llmName -> utils.js fetchPrompt() builds `https://raw.githubusercontent.com/elder-plinius/L1B3RT4S/main/${llmName}.mkd`, fetches it, and the handler returns the fetched content verbatim as the tool's result text, framed as "system instructions"/"enhancement prompt" for the calling model to follow. | llmName is caller-controlled per the tool's own schema and is used unvalidated to fetch a file from a public jailbreak-prompt repository (L1B3RT4S), which is then returned to be read and acted on as legitimate system instructions by the calling LLM -- an unverified remote content download present... |
