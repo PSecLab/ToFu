@@ -586,6 +586,79 @@ def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str
     return False, ""
 
 
+def check_introspection_exfil(accessed_files: List[str], network_connections: List[dict]) -> Tuple[bool, str]:
+    """
+    Introspection Sanitizer for data EXFILTRATION (CWE-201 / CWE-200): correlates a
+    sensitive/traversal FILE READ with an OUTBOUND network SEND in the SAME tool call.
+    ToFu already traces file opens and socket connects separately; the blind spot was
+    that no oracle correlated "read secret -> send it out" (CodeQL flags this as
+    js/file-access-to-http). This is a heuristic correlation, not full taint: the
+    necessary conditions (sensitive read AND external egress in one execution) firing
+    together is the exfiltration signal.
+
+    :param accessed_files: files opened during the call.
+    :param network_connections: outbound connection records captured during the call.
+    """
+    if not accessed_files or not network_connections:
+        return False, ""
+    SENSITIVE = ("/etc/passwd", "/etc/shadow", "/proc/self/environ", "/proc/self/cmdline",
+                 ".env", ".ssh", "id_rsa", "id_ed25519", "credentials", ".aws", ".git/config",
+                 ".netrc", "shadow", "secrets")
+    read_sensitive = [str(f) for f in accessed_files
+                      if any(s in str(f).lower() for s in SENSITIVE) or ".." in str(f)]
+    outbound = []
+    for conn in network_connections:
+        host = str(conn.get("host", "")) if isinstance(conn, dict) else str(conn)
+        if host and host not in ("127.0.0.1", "localhost", "::1", "0.0.0.0"):
+            outbound.append(host)
+    if read_sensitive and outbound:
+        return True, (
+            f"Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal "
+            f"file(s) {read_sensitive[:3]} AND made outbound network connection(s) to "
+            f"{outbound[:3]} in the same call -- a read->send exfiltration path."
+        )
+    return False, ""
+
+
+def check_reflected_output(tool_input, tool_output) -> Tuple[bool, str]:
+    """
+    Reflected-output / XSS Sanitizer (CWE-79 / CWE-116): a dangerous HTML/script/template
+    payload supplied in the INPUT is echoed UNESCAPED in the tool OUTPUT. ToFu has no
+    browser render sink, so this is the necessary-condition oracle for reflected XSS /
+    missing output encoding: the payload surviving verbatim into output is what a browser
+    would then execute. Confirm in the rendering context before calling it exploitable.
+
+    :param tool_input: the generated arguments dict/list/str sent to the tool.
+    :param tool_output: the tool's stringified result.
+    """
+    out = str(tool_output or "")
+    if not out:
+        return False, ""
+
+    def _vals(x):
+        if isinstance(x, dict):
+            for v in x.values():
+                yield from _vals(v)
+        elif isinstance(x, (list, tuple)):
+            for v in x:
+                yield from _vals(v)
+        elif x is not None:
+            yield str(x)
+
+    inp = " ".join(_vals(tool_input)).lower()
+    out_l = out.lower()
+    PAYLOADS = ["<script", "</script>", "javascript:", "onerror=", "onload=",
+                "<img", "<svg", "<iframe", "{{", "${"]
+    hit = [p for p in PAYLOADS if p in inp and p in out_l]
+    if hit:
+        return True, (
+            f"Reflected Output Alert (CWE-79/CWE-116): input payload token(s) {hit} echoed "
+            f"UNESCAPED in the tool output -- reflected-XSS / missing output-encoding "
+            f"(necessary condition; verify in the rendering context)."
+        )
+    return False, ""
+
+
 class NetworkExecutionTracer:
     """
     Traces outgoing socket connection attempts (socket.socket.connect, socket.create_connection)

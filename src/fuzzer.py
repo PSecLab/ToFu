@@ -494,7 +494,8 @@ class MCPDifferentialFuzzer:
             check_introspection_deadlock, check_introspection_file_descriptor_leak,
             check_introspection_prototype_pollution, check_introspection_external_config_control,
             check_introspection_format_string, check_introspection_type_confusion,
-            check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges
+            check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges,
+            check_introspection_exfil, check_reflected_output
         )
         # Item 78: this sanitizer greps the STRINGIFIED response for
         # substrings like "SyntaxError:" -- it has no way to tell an actually
@@ -519,6 +520,14 @@ class MCPDifferentialFuzzer:
             if cs_triggered:
                 triggered_by.append("check_introspection_cross_session_data_leak")
                 err_details += cs_err
+
+        # Reflected-output / XSS (CWE-79/116): dangerous input payload echoed unescaped in
+        # output. Evidence-gated on there being any output to reflect into.
+        if "check_reflected_output" in self.selected_sanitizer_names or current_out:
+            refl_triggered, refl_err = check_reflected_output(generated_arguments, current_out)
+            if refl_triggered:
+                triggered_by.append("check_reflected_output")
+                err_details += refl_err
 
         error_string = str(getattr(res, "error", ""))
         if "check_introspection_type_confusion" in self.selected_sanitizer_names or error_string:
@@ -628,6 +637,14 @@ class MCPDifferentialFuzzer:
             if sym_triggered:
                 triggered_by.append("check_introspection_symlink_following")
                 err_details += sym_err
+
+        # Exfiltration correlation (CWE-201): sensitive file READ + outbound network SEND in
+        # the same call. Evidence-gated on BOTH a file access and a network connection.
+        if "check_introspection_exfil" in self.selected_sanitizer_names or (accessed_files and net_conns):
+            exfil_triggered, exfil_err = check_introspection_exfil(accessed_files, net_conns)
+            if exfil_triggered:
+                triggered_by.append("check_introspection_exfil")
+                err_details += exfil_err
 
         written_files = getattr(res, "written_files", [])
         if "check_introspection_insecure_file_permissions" in self.selected_sanitizer_names or written_files:
