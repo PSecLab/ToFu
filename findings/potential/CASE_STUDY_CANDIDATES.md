@@ -46,11 +46,30 @@ C1–C4 the paper wants to land.
 
 ---
 
+## Tier 1.5 — the false-positive / alert-volume exemplar (do NOT skip this one)
+
+### wonderwhy-er/DesktopCommanderMCP :: `create_directory` (817 alerts → 0 promoted)
+- **Adds:** the honesty story the current case study only *asserts*. `create_directory`
+  fired **817** `check_path_traversal` alerts (list_directory 324), all succ=1.000,
+  yet **0 are promoted** — the tool documents `allowedDirectories: []` = full
+  filesystem access (server.ts:346), so traversal is the intended default → fails
+  promotion condition 1 (Role). This is the corpus-scale proof of "alert volume is
+  not a proxy for vulnerability count" that casestudy.tex claims.
+- **Three-way disagreement (great table):** ToFu 817 raw alerts (correctly
+  unpromoted) · vanilla-claude cleared every tool as "guarded" (right verdict,
+  wrong reason) · human triage = FP-documented (right verdict, right reason). Only
+  sink-read triage reasons correctly → argues for the role/action/effect gate.
+- **Also** the operational-hazard datapoint (below).
+- writeup: `DesktopCommanderMCP_full-access-default_and_host-hazard.md`.
+- **Evidence caveat:** the host-load spike is real (why it's skipped) but the exact
+  loadavg number is NOT in a committed log — state it qualitatively (CLAUDE.md 3).
+
 ## Tier 2 — demonstrated-live blast-radius sidebar (unique to this eval)
 
-These two literally attacked the eval host **during fuzzing** — runtime proof that
+These literally attacked the eval host **during fuzzing** — runtime proof that
 needs no directed re-test. Best as a boxed "real-world impact" paragraph, not a
-full A/G/O walkthrough (they're missing-authorization, not subtle semantics).
+full A/G/O walkthrough (they're missing-authorization, not subtle semantics). All
+three are on `set_e2_unsafe_repos.txt` (the OS-control skip list, item 91).
 
 - **m-ahmed-elbeskeri/UltimateCoderMCP :: `tool_delete_path`** (CWE-22/73) —
   arbitrary file/dir deletion; **deleted ToFu's own working tree** (5830 configs,
@@ -59,10 +78,14 @@ full A/G/O walkthrough (they're missing-authorization, not subtle semantics).
 - **nickgnd/tmux-mcp :: `kill-session` / `execute-command`** (CWE-284) — unscoped
   control of the host tmux; **killed the running campaign's own tmux session**.
   (`tmux-mcp_session-hijack-and-kill.md`)
+- **wonderwhy-er/DesktopCommanderMCP :: `start_process` / process tools** (CWE-284)
+  — unrestricted local process spawn; **host-load spike stopped the campaign** →
+  skipped. (Same repo as Tier 1.5; here for the operational-hazard angle.)
 
 Framing: "the same tool that erased our harness erases a user's home directory" —
 a powerful local capability exposed as an unauthenticated MCP tool. Motivates the
-adversarial-argument thesis viscerally.
+adversarial-argument thesis viscerally, and motivates the isolation + skip-list
+methodology (item 91).
 
 ---
 
@@ -84,7 +107,9 @@ adversarial-argument thesis viscerally.
 ## Recommended final set for the paper
 Keep excel-reader-mcp as the primary walkthrough. **Add #1 (python-interpreter,
 the introspection-observed mode) and #2 (mcp-gsc, ToFu-exclusive SSRF)** as full
-mini-walkthroughs, and **#3 (memorymesh) + Tier 2 pair** as short paragraphs. That
-gives: both detection modes, 4 CWE families (write/RCE/SSRF/XSS), a ToFu-exclusive,
-an extensibility result, and two demonstrated-live impacts — one case per challenge
-C1–C4.
+mini-walkthroughs; **DesktopCommander (Tier 1.5)** as the FP/alert-volume exemplar
+(it makes the promotion-gate claim concrete); and **#3 (memorymesh) + the Tier 2
+trio** as short paragraphs. That gives: both detection modes, 4 CWE families
+(write/RCE/SSRF/XSS), a ToFu-exclusive, an extensibility result, a false-positive
+exemplar, and three demonstrated-live host impacts — one case per challenge C1–C4
+plus the honesty/FP story RQ2 needs.
