@@ -103,6 +103,27 @@ finished ones into the archive.
    already HAVE oracles → those misses are reachability, not oracle-absence. Frame
    ToFu's ~35–40% blind spot as this principled runtime/static division of labor.
 
+   SINK + SANITIZER CONSTRUCTION — DEFEND in the paper (2026-09-21). Verified counts
+   (pin the exact reported number by DEFINING "sink" first): 21 sink TRACER classes
+   (hooked dangerous operations: FileAccess, FileWrite, NetworkExecution, Command/
+   Code/SQLExecution, Deserialization, XXE, ReDoS, WeakHash/PRNG, NonceReuse,
+   TempFileLeak, SensitiveDataLogging, LogInjection, SSLCertValidation,
+   UnrestrictedIPBinding, UnverifiedCodeDownload, BlockingEventLoopCall,
+   LoopCondition, DataAmplification) == the 21 sink FAMILIES in the corpus scan;
+   ~30 distinct res.* evidence channels; **73 registered AVAILABLE_SANITIZERS**
+   (75 check_ defined; 2 unregistered = check_invalid_git_ref/check_unsafe_s;
+   10 BASE_MANDATORY always-on + 63 LLM/evidence-selected). The 2 newest
+   (exfil, reflected_output) added sanitizers only, NO new sink.
+   DEFENSE the reviewers will demand ("why THESE sinks/sanitizers, not others?"):
+   ground the taxonomy, don't present it as ad-hoc — (a) each maps to a CWE; (b)
+   derived from the MCP tool threat surface + observed sink families in the scan
+   (the 21 are what actually occur in the corpus, not invented); (c) prior-work
+   coverage (Viper's 3 classes ⊂ ours; CodeQL rule families cross-checked); (d) the
+   2 additions were miss-analysis-DRIVEN (evidence, not guesswork). State the
+   mandatory-vs-selected split (attribution trap, CLAUDE.md §2). Open q to answer:
+   completeness ("is 21 the right basis?") + why some CWEs have no oracle (item 10
+   scope note above).
+
 11. [PAPER-NOTE — 2026-09-21] AUTO-TRIAGE CLASSIFIER — report in the paper
    (methodology / results). Reproducible implementation: eval/triage_findings.py.
    It runs over the RUN INDEX (runs.<arm>.jsonl), not prose. Pipeline:
