@@ -14,8 +14,8 @@ headline reference; the dated docs hold the detail.
 | static extraction succeeded | 1,778 | 69 failed: 52 deleted/private, 13 clone err, 4 timeout |
 | **tool-exposing (≥1 tool)** | **1,404** | 597 py + 807 node, **24,194 tools** |
 | set_e2 prepared + ready (fuzzable) | **482** | prepared.jsonl status=ready |
-| ToFu-startable (server ran, tool invoked) | **408** | |
-| **cleanly executable (tool returned success ≥1 input)** | **249** (230 solid) | the honest reachable denominator |
+| runnable + tool invoked + fuzzable | **408** | |
+| **cleanly executable (tool returned success ≥1 input)** | **249** | the honest reachable denominator |
 
 Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu —
 static tools "work" only because they never execute.
@@ -54,6 +54,11 @@ ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
 ## 5. Head-to-head (45 ToFu-flagged repos, all tools same set)
 ToFu 45/579 · CodeQL 11/111 · Viper 23-of-35/45 · Cisco 3/13. **16 ToFu-exclusive.**
 (ToFu-selected → demonstrates unique catches, not blanket superiority.)
+Per-repo breakdown of all 45 (every tool, incl. ToolFuzz+vanilla columns):
+head_to_head_per_repo_20260922.md — after security-class triage: ToFu 30/45 repos,
+12 ToFu-exclusive vs all 3 static comparators (the 16 above is the looser raw-hit
+measure). Coverage-vs-time for the 8 recovered re-run repos:
+coverage_rerun_20260922.png (coverage keeps climbing past the 60s budget).
 
 ## 6. Miss-analysis (repos others flagged, ToFu didn't; post-rerun 76, was 87)
 Of the 87 original: **~63% reachability/coverage-fixable** (item-94 in-process
@@ -80,6 +85,7 @@ DO have oracles → those misses are reachability, not absence.
 
 ## Docs (findings/baselines/)
 baseline_comparison_full_20260919.md, tofu_miss_analysis_20260919.md,
-head_to_head_results_20260921.md, rerun_results_20260922.md, REAL_vulns_20260919.md,
-head_to_head_shortlist_20260920.md; index snapshots *_2026091{9}/22.jsonl;
+head_to_head_results_20260921.md, head_to_head_per_repo_20260922.md (+ .json),
+rerun_results_20260922.md, coverage_rerun_20260922.png (+ .json + plot_cov_rerun.py),
+REAL_vulns_20260919.md, head_to_head_shortlist_20260920.md; index snapshots *_2026091{9}/22.jsonl;
 harvest findings/potential/corpus_20260919/. Paper-notes: ToFu_src/nazmul.todo items 10–11.
