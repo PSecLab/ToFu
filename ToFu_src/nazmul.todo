@@ -84,3 +84,21 @@ finished ones into the archive.
 
 9. [POINTER] 36 "TO DOUBLE-CHECK" items live in nazmul.todo.archive. They are
    Ananto's to confirm + remove — do not delete them from the archive.
+
+10. [PAPER-NOTE — 2026-09-21] RUNTIME-ORACLE SCOPE — report in the paper
+   (threats-to-validity / design-scope / limitations). ToFu is a RUNTIME (dynamic)
+   analyzer; its oracle observes runtime behavior of a tool driven by adversarial
+   input. Three vuln classes are DELIBERATELY out of scope because they have NO
+   runtime event a dynamic oracle can observe — a principled boundary, NOT a
+   weakness; CodeQL/static tools are the correct complement:
+     1. CORS-permissive (CWE-942): static server CONFIG; no tool input triggers it.
+     2. Regexp / sanitization CORRECTNESS (incomplete-hostname-regexp, missing-anchor,
+        incomplete-multi-char-sanitization): latent code weakness; generic fuzz inputs
+        don't manifest it and the oracle can't know the intended contract.
+     3. TOCTOU file-system-race (CWE-367): needs CONCURRENT access to open the
+        check→use window; ToFu fuzzes one input at a time (execution-model limit).
+   ADDED 2026-09-21 (these DO have a runtime signal): check_introspection_exfil
+   (CWE-201, sensitive-read↔outbound-send correlation) + check_reflected_output
+   (CWE-79/116, dangerous input echoed unescaped). prototype-pollution/ReDoS/XXE
+   already HAVE oracles → those misses are reachability, not oracle-absence. Frame
+   ToFu's ~35–40% blind spot as this principled runtime/static division of labor.
