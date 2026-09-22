@@ -1,0 +1,85 @@
+# ToFu — consolidated results + comparisons (source of truth for the paper)
+
+Last updated 2026-09-22. Every number traces to committed indices in
+findings/baselines/*.jsonl and the docs cited per section. This is the single
+headline reference; the dated docs hold the detail.
+
+## 1. Dataset funnel
+| stage | count | source |
+|---|---|---|
+| MCPCorpus records | 13,875 | lin2025mcpcorpus, mcpso_servers_cleaned.json |
+| after filter (GitHub repo, ≥10 stars, not archived, not client) | 2,501 | |
+| dedup by repository | 2,222 | |
+| Python + Node only (excl. Go 154, Rust 41, Java 34, C# 19, PHP 17, …) | 1,847 | 808 py + 1,039 node |
+| static extraction succeeded | 1,778 | 69 failed: 52 deleted/private, 13 clone err, 4 timeout |
+| **tool-exposing (≥1 tool)** | **1,404** | 597 py + 807 node, **24,194 tools** |
+| set_e2 prepared + ready (fuzzable) | **482** | prepared.jsonl status=ready |
+| ToFu-startable (server ran, tool invoked) | **408** | |
+| **cleanly executable (tool returned success ≥1 input)** | **249** (230 solid) | the honest reachable denominator |
+
+Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu —
+static tools "work" only because they never execute.
+
+## 2. ToFu headline (full set_e2, 2026-09-22, post re-run)
+- 481 repos fuzzed, **5,551/6,153 configs ok (90%)**, 0 crashes (after item-91 cwd
+  + $TMUX isolation + 16-repo unsafe-skip).
+- **627 real-vuln candidates / 299 high-confidence (succ≥0.5) / 157 repos.**
+- By security class (any-succ): log-injection 135, ssrf 199, insecure-temp-file 142,
+  path-traversal 121, reflected-xss 21, os-command-injection 7, hardcoded-creds 2.
+- The auto-triage classifier (eval/triage_findings.py) filters oracle hits →
+  security-exploitable classes, dedups by (repo,tool,class), tiers by success rate.
+  UNCONFIRMED candidates (mandatory layer not subtracted; FP pass owed).
+
+## 3. Confirmed / hand-verified exploits
+14 hand-verified across the host-39 set (tab:identified_issues in the paper):
+local file access, path traversal (HAR/ZIP), arbitrary write, DoS/crash, log
+injection, missing-auth, fail-open init, temp-file leak, deprecated-API. These
+are the confirmed subset; the 627 are the corpus-scale candidate set.
+
+## 4. Baseline comparison (full set_e2) — units differ, NOT one leaderboard
+| tool | repos covered | repos flagged | findings | axis | full corpus? |
+|---|---|---|---|---|---|
+| **ToFu** | 481 | **157** | 627 candidates (299 hi) | runtime silent-bug | ✅ |
+| CodeQL sec-extended | 482 | 154 | 1,037 | static SAST | ✅ |
+| Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
+| vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
+| ToolFuzz | 59 | 43 | 2,030 discrepancies | correctness (diff axis) | ❌ partial |
+| Viper-MCP | 38 | 5 | 12 | static taint, 3 classes (node-only) | ❌ partial |
+
+Overlap (full): ToFu∩CodeQL 37, ToFu∩Cisco 14, vanilla∩ToFu 107 (100 ToFu-only /
+107 vanilla-only, 47 vanilla-exclusive). Complementary, not redundant.
+ToFu flags the 2nd-most repos (157), behind only the unverified LLM audit (214),
+ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
+
+## 5. Head-to-head (45 ToFu-flagged repos, all tools same set)
+ToFu 45/579 · CodeQL 11/111 · Viper 23-of-35/45 · Cisco 3/13. **16 ToFu-exclusive.**
+(ToFu-selected → demonstrates unique catches, not blanket superiority.)
+
+## 6. Miss-analysis (repos others flagged, ToFu didn't; post-rerun 76, was 87)
+Of the 87 original: **~63% reachability/coverage-fixable** (item-94 in-process
+discovery = biggest lever; JS startup hangs; schema/cred/format input gates — only
+6.2% of miss-configs reached a live tool call) · **~22% true runtime-oracle blind
+spots** · **~15% Cisco static-capability flags**. Re-run recovered **11/27** of a
+hard subset (7 via the new reflected-xss oracle, 4 via 5× budget) — empirical
+backing for the "fixable" majority.
+
+## 7. Oracle inventory + construction (defend in paper)
+**21 sink tracers** (== 21 sink families in the corpus scan) + ~30 evidence
+channels; **73 registered sanitizers** (75 check_ defined; 10 BASE_MANDATORY
+always-on + 63 LLM/evidence-selected). Each maps to a CWE; derived from the MCP
+tool threat surface + observed sink families + prior-work coverage; 2 newest
+(check_introspection_exfil CWE-201, check_reflected_output CWE-79/116) were
+miss-analysis-driven.
+
+## 8. Deliberate scope (blind spots — report as design boundary, not weakness)
+No runtime oracle for: CORS-permissive (static config, no runtime event),
+regexp/sanitization correctness (latent, no event + unknown intended contract),
+TOCTOU file-system-race (needs concurrency; ToFu is single-input). These are
+static-analysis territory (CodeQL complements). prototype-pollution/ReDoS/XXE
+DO have oracles → those misses are reachability, not absence.
+
+## Docs (findings/baselines/)
+baseline_comparison_full_20260919.md, tofu_miss_analysis_20260919.md,
+head_to_head_results_20260921.md, rerun_results_20260922.md, REAL_vulns_20260919.md,
+head_to_head_shortlist_20260920.md; index snapshots *_2026091{9}/22.jsonl;
+harvest findings/potential/corpus_20260919/. Paper-notes: ToFu_src/nazmul.todo items 10–11.
