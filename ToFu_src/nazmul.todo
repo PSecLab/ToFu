@@ -102,3 +102,29 @@ finished ones into the archive.
    (CWE-79/116, dangerous input echoed unescaped). prototype-pollution/ReDoS/XXE
    already HAVE oracles → those misses are reachability, not oracle-absence. Frame
    ToFu's ~35–40% blind spot as this principled runtime/static division of labor.
+
+11. [PAPER-NOTE — 2026-09-21] AUTO-TRIAGE CLASSIFIER — report in the paper
+   (methodology / results). Reproducible implementation: eval/triage_findings.py.
+   It runs over the RUN INDEX (runs.<arm>.jsonl), not prose. Pipeline:
+     - INPUT: every config with finding_hits>0 = the silent-bug oracle already
+       fired (adversarial input tripped a sanitizer AND the tool returned success).
+     - CLASS MAP (signal vs noise): each triggered sanitizer → a category.
+       KEPT (security-exploitable): path_traversal→CWE-22; command_injection /
+       blocked_command_bypass→CWE-78; SSRF family (introspection_ssrf,
+       url_ssrf_ip_ranges, url_hostname_canonicalization,
+       url_alternative_ip_representations, strict_url_security_contract)→CWE-918;
+       log_injection→CWE-117; hardcoded_credentials→CWE-798; temp_file_leak→CWE-377.
+       DROPPED (robustness/noise): type_confusion, unexpected_crash, invalid_json,
+       resource_exhaustion, incomplete_cleanup, fd_leaks, weak_prng — quality/DoS
+       or mandatory-layer artifacts (CLAUDE.md §2: 10 always-on sanitizers fire
+       regardless of LLM selection → not evidence of a targeted vuln).
+     - SEVERITY PICK: label a config by its highest-severity kept class
+       (path-traversal + crash → path-traversal).
+     - DEDUP: count distinct (repo, tool, class) — same tool across runs = 1 vuln.
+     - CONFIDENCE TIER by exec_success_rate (fraction of execs the tool swallowed
+       the adversarial input): ≥0.5 = high-confidence (consistent, not flaky);
+       any >0 = full candidate set.
+   RESULT (set_e2): 600 candidates / 281 high-confidence / 148 repos. State it as
+   a noise filter + ranking, NOT a confirmer — candidates still need hand-
+   verification + a false-positive rate; mandatory layer must be subtracted before
+   any LLM-selection (RQ2/RQ3) claim.
