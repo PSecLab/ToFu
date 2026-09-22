@@ -11,55 +11,57 @@ Every tool run on the **same 45 repos** (the head-to-head shortlist, `Benchmarks
 | **Cisco** | MCP-Scanner YARA + LLM analyzer findings | static metadata + LLM |
 | **Viper** | Phase-II oracle hit-markers; `n/a` = python (Viper is node-only, item 95) | static taint + LLM (3 classes) |
 | **ToolFuzz** | description-conformance discrepancies; `–` = not in ToolFuzz's 59-repo set | correctness (different axis) |
-| **vanilla** | Sonnet-5 code-audit flagged tools (unverified) | LLM code-read |
+| **sonnet-5** | Sonnet-5 code-audit flagged tools (unverified) | LLM code-read |
 
-| repo | lang | ToFu | CodeQL | Cisco | Viper | ToolFuzz | vanilla |
-|---|---|---|---|---|---|---|---|
-| ocean-zhc/dolphinscheduler-mcp | py | **72** (9) | 2 | 0 | n/a | – | 2 |
-| openags/paper-search-mcp | py | **29** (26) | 9 | 0 | n/a | 55 | 23 |
-| meilisearch/meilisearch-mcp | py | **24** (2) | 0 | 0 | n/a | 49 | 1 |
-| alaturqua/mcp-trino-python | py | **19** (0) | 0 | 0 | n/a | – | 18 |
-| neka-nat/freecad-mcp | py | **15** (13) | 0 | 0 | n/a | – | 2 |
-| AminForou/mcp-gsc | py | **13** (13) | 0 | 0 | n/a | – | 0 |
-| aliyun/alibabacloud-dms-mcp-server | py | **11** (1) | 0 | 1 | n/a | – | 0 |
-| maoxiaoke/mcp-media-processor | no | **10** (8) | 0 | 0 | 0 | – | 6 |
-| prathammanocha/wordpress-mcp-server | no | **10** (0) | 0 | 0 | 0 | – | 3 |
-| sworddut/mcp-ffmpeg-helper | no | **8** (8) | 0 | 0 | 1 | – | 7 |
-| pixelsock/directus-mcp | no | **7** (7) | 1 | 0 | 2 | – | 18 |
-| vinayak-mehta/mcp-browser-use | py | **7** (2) | 0 | 0 | n/a | – | 0 |
-| Tisik79/MCP-Facebook | no | **6** (6) | 28 | 0 | 0 | – | 5 |
-| movibe/memory-bank-mcp | no | **5** (2) | 1 | 0 | 6 | – | 3 |
-| newtype-01/obsidian-mcp | no | **5** (1) | 1 | 0 | 1 | – | 8 |
-| rishijatia/fantasy-pl-mcp | py | **5** (4) | 0 | 0 | n/a | – | 0 |
-| dazeb/Cline-Memory-Bank | no | **4** (1) | 0 | 0 | 0 | – | 4 |
-| dazeb/cline-mcp-memory-bank | no | **4** (1) | 0 | 0 | 0 | – | 4 |
-| jinzcdev/leetcode-mcp-server | no | **3** (3) | 0 | 0 | 2 | – | 0 |
-| joshrutkowski/applescript-mcp | no | **3** (3) | 2 | 0 | 4 | 32 | 21 |
-| IncomeStreamSurfer/roo-code-memory-bank-mcp-server | no | **2** (0) | 0 | 0 | 1 | – | 2 |
-| davidteren/claude-server | no | **2** (1) | 0 | 0 | 1 | – | 4 |
-| Augmented-Nature/Augmented-Nature-ChEMBL-MCP-Server | no | **1** (0) | 0 | 0 | 1 | – | 12 |
-| PhialsBasement/CMD-MCP-Server | no | **1** (1) | 0 | 0 | 2 | – | 0 |
-| revit-mcp/revit-mcp | no | **1** (1) | 0 | 0 | 0 | – | 1 |
-| RegiByte/todo-list-mcp | no | **1** (1) | 0 | 0 | 0 | – | 0 |
-| Sheshiyer/framer-plugin-mcp | no | **1** (1) | 0 | 0 | 1 | – | 2 |
-| T1nker-1220/memories-with-lessons-mcp-server | no | **1** (0) | 0 | – | 1 | – | 0 |
-| WilliamCloudQi/matlab-mcp-server | no | **1** (1) | 0 | 0 | 5 | – | 2 |
-| taylorwilsdon/google_workspace_mcp | py | **1** (0) | 59 | 5 | n/a | 115 | 0 |
-| Antonytm/mcp-sitecore-server | no | 0 | 4 | 7 | 0 | 123 | 8 |
-| antvis/mcp-server-chart | no | 0 | 3 | 0 | 1 | – | 0 |
-| graphlit/graphlit-mcp-server | no | 0 | 0 | 0 | 0 | 5 | 2 |
-| bradrisse/kanban-mcp | no | 0 | 0 | 0 | 2 | – | 8 |
-| ProgramComputer/NASA-MCP-server | no | 0 | 1 | 0 | 1 | – | 1 |
-| alioshr/memory-bank-mcp | no | 0 | 0 | 0 | 1 | – | 1 |
-| fireproof-storage/mcp-database-server | no | 0 | 0 | 0 | 1 | – | 0 |
-| doggybee/mcp-server-ccxt | no | 0 | 0 | 0 | 0 | – | 1 |
-| gdli6177/mcp-prompt-server | no | 0 | 0 | 0 | 1 | – | 0 |
-| yokingma/time-mcp | no | 0 | 0 | 0 | 0 | – | 0 |
-| AzDeltaQQ/Mcp-Reasoning-Server | no | 0 | 0 | 0 | 1 | – | 0 |
-| 34892002/bilibili-mcp-js | no | 0 | 0 | 0 | 3 | – | 0 |
-| Jacck/mcp-reasoner | no | 0 | 0 | 0 | 3 | – | 0 |
-| StevenStavrakis/mcp-starter-template | no | 0 | 0 | 0 | 0 | – | 0 |
-| aaronjmars/web3-research-mcp | no | 0 | 0 | 0 | 3 | – | 1 |
+`n/a` = viper is node-only (python repo). `–` = repo not in that tool's run set. ToFu cell = triaged security-class candidates (high-confidence succ≥0.5 in parens).
+
+| repo | tofu | viper | codeql | cisco | sonnet-5 | toolfuzz |
+|---|---|---|---|---|---|---|
+| ocean-zhc/dolphinscheduler-mcp | **72** (9) | n/a | 2 | 0 | 2 | – |
+| openags/paper-search-mcp | **29** (26) | n/a | 9 | 0 | 23 | 55 |
+| meilisearch/meilisearch-mcp | **24** (2) | n/a | 0 | 0 | 1 | 49 |
+| alaturqua/mcp-trino-python | **19** (0) | n/a | 0 | 0 | 18 | – |
+| neka-nat/freecad-mcp | **15** (13) | n/a | 0 | 0 | 2 | – |
+| AminForou/mcp-gsc | **13** (13) | n/a | 0 | 0 | 0 | – |
+| aliyun/alibabacloud-dms-mcp-server | **11** (1) | n/a | 0 | 1 | 0 | – |
+| maoxiaoke/mcp-media-processor | **10** (8) | 0 | 0 | 0 | 6 | – |
+| prathammanocha/wordpress-mcp-server | **10** (0) | 0 | 0 | 0 | 3 | – |
+| sworddut/mcp-ffmpeg-helper | **8** (8) | 1 | 0 | 0 | 7 | – |
+| pixelsock/directus-mcp | **7** (7) | 2 | 1 | 0 | 18 | – |
+| vinayak-mehta/mcp-browser-use | **7** (2) | n/a | 0 | 0 | 0 | – |
+| Tisik79/MCP-Facebook | **6** (6) | 0 | 28 | 0 | 5 | – |
+| movibe/memory-bank-mcp | **5** (2) | 6 | 1 | 0 | 3 | – |
+| newtype-01/obsidian-mcp | **5** (1) | 1 | 1 | 0 | 8 | – |
+| rishijatia/fantasy-pl-mcp | **5** (4) | n/a | 0 | 0 | 0 | – |
+| dazeb/Cline-Memory-Bank | **4** (1) | 0 | 0 | 0 | 4 | – |
+| dazeb/cline-mcp-memory-bank | **4** (1) | 0 | 0 | 0 | 4 | – |
+| jinzcdev/leetcode-mcp-server | **3** (3) | 2 | 0 | 0 | 0 | – |
+| joshrutkowski/applescript-mcp | **3** (3) | 4 | 2 | 0 | 21 | 32 |
+| IncomeStreamSurfer/roo-code-memory-bank-mcp-server | **2** (0) | 1 | 0 | 0 | 2 | – |
+| davidteren/claude-server | **2** (1) | 1 | 0 | 0 | 4 | – |
+| Augmented-Nature/Augmented-Nature-ChEMBL-MCP-Server | **1** (0) | 1 | 0 | 0 | 12 | – |
+| PhialsBasement/CMD-MCP-Server | **1** (1) | 2 | 0 | 0 | 0 | – |
+| revit-mcp/revit-mcp | **1** (1) | 0 | 0 | 0 | 1 | – |
+| RegiByte/todo-list-mcp | **1** (1) | 0 | 0 | 0 | 0 | – |
+| Sheshiyer/framer-plugin-mcp | **1** (1) | 1 | 0 | 0 | 2 | – |
+| T1nker-1220/memories-with-lessons-mcp-server | **1** (0) | 1 | 0 | – | 0 | – |
+| WilliamCloudQi/matlab-mcp-server | **1** (1) | 5 | 0 | 0 | 2 | – |
+| taylorwilsdon/google_workspace_mcp | **1** (0) | n/a | 59 | 5 | 0 | 115 |
+| Antonytm/mcp-sitecore-server | 0 | 0 | 4 | 7 | 8 | 123 |
+| antvis/mcp-server-chart | 0 | 1 | 3 | 0 | 0 | – |
+| graphlit/graphlit-mcp-server | 0 | 0 | 0 | 0 | 2 | 5 |
+| bradrisse/kanban-mcp | 0 | 2 | 0 | 0 | 8 | – |
+| ProgramComputer/NASA-MCP-server | 0 | 1 | 1 | 0 | 1 | – |
+| alioshr/memory-bank-mcp | 0 | 1 | 0 | 0 | 1 | – |
+| fireproof-storage/mcp-database-server | 0 | 1 | 0 | 0 | 0 | – |
+| doggybee/mcp-server-ccxt | 0 | 0 | 0 | 0 | 1 | – |
+| gdli6177/mcp-prompt-server | 0 | 1 | 0 | 0 | 0 | – |
+| yokingma/time-mcp | 0 | 0 | 0 | 0 | 0 | – |
+| AzDeltaQQ/Mcp-Reasoning-Server | 0 | 1 | 0 | 0 | 0 | – |
+| 34892002/bilibili-mcp-js | 0 | 3 | 0 | 0 | 0 | – |
+| Jacck/mcp-reasoner | 0 | 3 | 0 | 0 | 0 | – |
+| StevenStavrakis/mcp-starter-template | 0 | 0 | 0 | 0 | 0 | – |
+| aaronjmars/web3-research-mcp | 0 | 3 | 0 | 0 | 1 | – |
 
 ## Tally over the 45-repo set (repos with ≥1 finding)
 | tool | repos flagged | denom | note |
