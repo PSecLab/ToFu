@@ -31,7 +31,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REAL = [
     ("check_command_injection",              ("os-command-injection", "CWE-78")),
     ("check_blocked_command_bypass",         ("os-command-injection", "CWE-78")),
+    ("check_introspection_exfil",            ("data-exfiltration",     "CWE-201")),
     ("check_path_traversal",                 ("path-traversal",        "CWE-22")),
+    ("check_reflected_output",               ("reflected-xss",         "CWE-79")),
     ("check_introspection_ssrf",             ("ssrf",                  "CWE-918")),
     ("check_url_ssrf_ip_ranges",             ("ssrf",                  "CWE-918")),
     ("check_url_hostname_canonicalization",  ("ssrf",                  "CWE-918")),
