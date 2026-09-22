@@ -1,5 +1,13 @@
 # Baseline comparison — full set_e2 corpus — 6 tools — 2026-09-19
 
+> **UPDATE 2026-09-22 (see rerun_results_20260922.md):** after the reachability
+> re-run + 2 new oracles, ToFu totals are now **627 candidates / 299 high-conf /
+> 157 repos** (was 600/281/148); new reflected-xss class = 21 (18 hi). vanilla-
+> claude-sonnet-5 also completed the full corpus (484 repos, 214 flagged) — it is
+> now a 4th full-corpus tool. Figures below are the 09-19 snapshot; use the update
+> for the headline.
+
+
 Supersedes baseline_comparison_e2_20260918.md. All indices snapshotted in
 findings/baselines/*_20260919.jsonl (+ vanilla-claude-sonnet-5/). ToFu run
 complete: 6,153 configs, 481 repos, 5,551 ok (90%), 0 crashes.
