@@ -384,6 +384,12 @@ class MCPDifferentialFuzzer:
             triggered_by,
             err_details
         )
+        # Findings-over-time timeline (opt-in via TOFU_FINDINGS_TIMELINE; no-op
+        # otherwise). Records time-to-bug for the 24h deep campaign / RQ4.
+        if self.metrics_collector is not None:
+            self.metrics_collector.record_finding(
+                self.target_tool_name, inputs, triggered_by, err_details
+            )
         self.silent_bug_found = True
 
     def _execute_and_time(self, generated_arguments: dict, created_temp_files: list[str]) -> tuple[any, float, set[str], set[int]]:

@@ -2,6 +2,7 @@ import os
 import re
 import csv
 import time
+import hashlib
 import logging
 import threading
 from dataclasses import dataclass, asdict
@@ -95,6 +96,18 @@ class CoverageTimelineCollector:
         self._csv_path = None
         self._mongo_client = None
 
+        # --- Findings-over-time timeline (opt-in, e.g. the 24h deep campaign) ---
+        # Off by default: only active when TOFU_FINDINGS_TIMELINE is set to a
+        # truthy value (the 24h run script sets it). Normal runs pay nothing.
+        self._findings_enabled = os.environ.get(
+            "TOFU_FINDINGS_TIMELINE", ""
+        ).strip().lower() not in ("", "0", "false", "no")
+        self._findings_file = None
+        self._findings_writer = None
+        self._findings_path = None
+        self._seen_findings: set[str] = set()
+        self._n_distinct_findings = 0
+
         # Periodic background sampler thread
         self._sampler_thread = None
         self._stop_sampler = threading.Event()
@@ -117,6 +130,64 @@ class CoverageTimelineCollector:
         if not file_exists:
             self._csv_writer.writeheader()
             self._csv_file.flush()
+
+    FINDINGS_HEADER = [
+        "relative_time_sec",
+        "tool",
+        "n_distinct",
+        "input_hash",
+        "triggered_sanitizers",
+        "input_preview",
+    ]
+
+    def _init_findings_csv(self):
+        """Lazily open the findings-timeline CSV (only when the first finding fires
+        and the feature is enabled). Shares output_dir with the coverage timeline
+        so the two series line up on the same per-config time base."""
+        os.makedirs(self.output_dir, exist_ok=True)
+        timestamp_str = time.strftime("%Y%m%d_%H%M%S")
+        self._findings_path = os.path.join(
+            self.output_dir, f"findings_timeline_{timestamp_str}.csv"
+        )
+        exists = os.path.exists(self._findings_path) and os.path.getsize(self._findings_path) > 0
+        self._findings_file = open(self._findings_path, mode="a", newline="", encoding="utf-8")
+        self._findings_writer = csv.DictWriter(self._findings_file, fieldnames=self.FINDINGS_HEADER)
+        if not exists:
+            self._findings_writer.writeheader()
+            self._findings_file.flush()
+
+    def record_finding(self, tool_name: str, inputs, triggered_sanitizers, analysis: str = "") -> None:
+        """Append one row per NEW distinct (input, sanitizer-set) alert, timestamped
+        relative to this tool's fuzz start. No-op unless TOFU_FINDINGS_TIMELINE is
+        set, so it never touches normal runs. Never raises into the fuzz loop.
+
+        The relative time uses the same start reference as the coverage sampler
+        (set in set_tool), giving an aligned bugs-over-time series for RQ4."""
+        if not self._findings_enabled:
+            return
+        try:
+            sans = sorted(triggered_sanitizers or [])
+            key_src = f"{repr(inputs)}|{','.join(sans)}"
+            h = hashlib.sha1(key_src.encode("utf-8", errors="replace")).hexdigest()[:16]
+            with self._lock:
+                if h in self._seen_findings:
+                    return
+                self._seen_findings.add(h)
+                self._n_distinct_findings += 1
+                rel = max(0.0, time.time() - self._start_time) if self._start_time else 0.0
+                if self._findings_writer is None:
+                    self._init_findings_csv()
+                self._findings_writer.writerow({
+                    "relative_time_sec": round(rel, 3),
+                    "tool": tool_name or self._current_tool,
+                    "n_distinct": self._n_distinct_findings,
+                    "input_hash": h,
+                    "triggered_sanitizers": ",".join(sans),
+                    "input_preview": repr(inputs)[:200],
+                })
+                self._findings_file.flush()
+        except Exception as e:
+            logger.debug(f"record_finding skipped (non-fatal): {e}")
 
     def _get_mongo_collection(self):
         if self._mongo_client is None:
@@ -301,6 +372,12 @@ class CoverageTimelineCollector:
                 try:
                     self._csv_file.flush()
                     self._csv_file.close()
+                except Exception:
+                    pass
+            if self._findings_file and not self._findings_file.closed:
+                try:
+                    self._findings_file.flush()
+                    self._findings_file.close()
                 except Exception:
                     pass
             if self._mongo_client:
