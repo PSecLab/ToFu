@@ -94,7 +94,8 @@ def load_jsonl(p):
 def score_tool(slug, tool):
     base = os.path.join(OUT, slug, tool.replace("/", "_"))
     r = {"rt_tests": 0, "rt_trigger_raw": 0, "classes": collections.Counter(), "crash_msgs": set(),
-         "unclass_msgs": set(), "tf_runtime": 0, "tf_crash": 0, "ct_sets": 0, "tf_correct": 0}
+         "unclass_msgs": set(), "tf_runtime": 0, "tf_crash": 0, "ct_sets": 0, "tf_correct": 0,
+         "tf_correct_exec": 0}
     try:
         rt = json.load(open(base + ".runtime.json"))
     except Exception:
@@ -127,6 +128,12 @@ def score_tool(slug, tool):
                 d = run.get("unexpected_agent_output")
                 if isinstance(d, int) and not isinstance(d, bool) and d <= 5:
                     r["tf_correct"] += 1
+                    # executed-only view: the tool actually ran (its output is not a
+                    # backend/credential/harness error), so the inconsistency is in
+                    # real tool behaviour rather than in error messages.
+                    if classify(run.get("tool_output") or "") not in ("HARNESS", "ENV") \
+                            and not run.get("tool_failure"):
+                        r["tf_correct_exec"] += 1
     return r
 
 
@@ -185,6 +192,7 @@ def main():
     def flagged(d, key):
         return {k for k, v in d.items() if (len(v[key]) if isinstance(v[key], list) else v[key]) > 0}
     tf_rt, tf_cr, tf_co = flagged(both, "tf_runtime"), flagged(both, "tf_crash"), flagged(both, "tf_correct")
+    tf_cx = flagged(both, "tf_correct_exec")
     tu_sec, tu_rob = flagged(both, "tofu_sec"), flagged(both, "tofu_rob")
     tf_any = tf_rt | tf_co
 
@@ -203,6 +211,7 @@ def main():
           f"| robustness (ToolFuzz CRASH vs ToFu crash/exhaustion hits) | {len(tf_cr)} | {len(tu_rob)} | {len(tf_cr & tu_rob)} |",
           f"| security (ToFu triaged classes; ToolFuzz has no security oracle) | — | {len(tu_sec)} | — |",
           f"| functional correctness (ToolFuzz formula; ToFu has no such oracle) | {len(tf_co)} | — | — |",
+          f"| ↳ same, tool actually executed (outputs not backend/harness errors) | {len(tf_cx)} | — | — |",
           f"| ToolFuzz runtime, its own definition minus HARNESS (incl. ENV/REJECT) | {len(tf_rt)} | — | — |",
           "",
           f"ToFu security-flagged tools that ToolFuzz flagged for *anything*: "
