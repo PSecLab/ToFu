@@ -9,7 +9,7 @@ import time
 import logging
 import glob
 
-from .llm import LLMHandler
+from .llm import LLMHandler, SeedProvenanceError
 from .client import MCPInspector
 from . import sanitizers
 from .runners import PythonRunner, JSRunner
@@ -1081,7 +1081,15 @@ class MCPDifferentialFuzzer:
                     self._cleanup_runner()
                     continue
 
-                self._setup_corpus_seeds()
+                try:
+                    self._setup_corpus_seeds()
+                except SeedProvenanceError as e:
+                    # strict seed provenance: never fuzz with fallback seeds. Stop the
+                    # target server first, then fail the run loudly (non-zero exit) so
+                    # the harness records it as an error, not an empty clean run.
+                    logger.error(f"SEED_PROVENANCE_FAIL tool={tool}: {e}")
+                    self._cleanup_runner()
+                    raise
 
                 self._execute_fuzzing(time_per_iteration)
                 self._cleanup_runner()

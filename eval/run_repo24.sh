@@ -22,6 +22,8 @@ PLATEAU="${TOFU_PLATEAU:-3600}"
 BUDGET_H="${TOFU_BUDGET_H:-24}"
 export TOFU_TIME="${TOFU_TIME:-$((PLATEAU + 600))}"   # slice length
 export TOFU_KEEP_CORPUS=1                            # resume each tool across slices
+export TOFU_REQUIRE_LLM_SEEDS="${TOFU_REQUIRE_LLM_SEEDS:-1}"  # LLM seeds only: cached iff tagged
+                                                     # llm, else live; live failure aborts the tool
 export TOFU_FINDINGS_TIMELINE=1
 export TOFU_KILL_GRACE="${TOFU_KILL_GRACE:-300}"
 export TOFU_STARTUP_TIMEOUT="${TOFU_STARTUP_TIMEOUT:-25}"

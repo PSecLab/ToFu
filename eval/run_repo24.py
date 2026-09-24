@@ -203,10 +203,19 @@ def run_slice(arm, t, slice_s, prov, plateau):
     t["slices"] += 1
     t["worker_s"] += float(rec.get("seconds") or 0)
     t["fuzz_s"] = base + t_end
+    t.setdefault("seed_sources", []).append(rec.get("llm_seeds") or "unknown")
+    strict = os.environ.get("TOFU_REQUIRE_LLM_SEEDS", "").strip().lower() not in ("", "0", "false", "no")
     if not ok:
         t["failures"] += 1
+        t["last_error"] = (rec.get("error") or rec.get("harness_error") or "")[-300:]
         if t["failures"] >= 2:
-            t["status"] = "dead"
+            t["status"] = ("no_llm_seeds" if "SeedProvenanceError" in t["last_error"]
+                           or "SEED_PROVENANCE_FAIL" in t["last_error"] else "dead")
+    elif strict and rec.get("llm_seeds") != "ok":
+        # belt and braces: strict mode should make this impossible. If a slice
+        # still ran on non-LLM seeds, stop fuzzing the tool and say why.
+        t["status"] = "no_llm_seeds"
+        t["last_error"] = f"slice ran with llm_seeds={rec.get('llm_seeds')!r} under TOFU_REQUIRE_LLM_SEEDS"
     idle = t["fuzz_s"] - max(t["t_last_edge"], t["t_last_sig"])
     if t["status"] == "active" and t["fuzz_s"] >= plateau and idle >= plateau:
         t["status"] = "saturated"
@@ -271,8 +280,9 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
                "fuzz_h": round(sum(t["fuzz_s"] for t in R["tools"]) / 3600, 2),
                "stop_reason": R["stop_reason"], "n_tools": len(R["tools"]),
                "unreachable_tools": R["unreachable_tools"],
-               "tools": [{k: t[k] for k in ("tool", "config", "status", "slices", "best_cov",
-                                            "prior_cov_final", "prior_t_end", "n_inputs")}
+               "tools": [{k: t.get(k) for k in ("tool", "config", "status", "slices", "best_cov",
+                                                "prior_cov_final", "prior_t_end", "n_inputs",
+                                                "seed_sources", "last_error")}
                          | {"fuzz_h": round(t["fuzz_s"] / 3600, 2),
                             "t_last_edge_h": round(t["t_last_edge"] / 3600, 2),
                             "t_last_sig_h": round(t["t_last_sig"] / 3600, 2),

@@ -28,6 +28,18 @@ else:
 logger = logging.getLogger(__name__)
 
 
+class SeedProvenanceError(RuntimeError):
+    """TOFU_REQUIRE_LLM_SEEDS is set but no LLM-generated seeds are available."""
+
+
+def _require_llm_seeds() -> bool:
+    """Strict seed provenance (per-repo deep campaign): use cached seeds only when
+    they are tagged seeds_provenance == "llm"; regenerate anything else live; and
+    if the live LLM call fails, abort the tool instead of fuzzing it with the
+    local fallback mapping. Off by default -- normal runs keep the fallback."""
+    return os.environ.get("TOFU_REQUIRE_LLM_SEEDS", "").strip().lower() not in ("", "0", "false", "no")
+
+
 _FENCE_RE = re.compile(r"```(?:[A-Za-z0-9_+-]*)\s*\n?(.*?)```", re.DOTALL)
 
 
@@ -671,6 +683,13 @@ class LLMHandler:
                        selected_sanitizers: list = None) -> list:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
         cached = self._cache_load()
+        if (cached is not None and cached.get("seeds") is not None and _require_llm_seeds()
+                and cached.get("seeds_provenance") != "llm"):
+            # strict mode: a fallback or unproven entry is not LLM evidence -- regenerate
+            logging.info(f"LLM_SEEDGEN_CACHE_SKIP tool={tool_name} key={self.cache_key} "
+                         f"provenance={cached.get('seeds_provenance') or 'unknown'} "
+                         f"reason=TOFU_REQUIRE_LLM_SEEDS")
+            cached = None
         if cached is not None and cached.get("seeds") is not None:
             # provenance: WHO produced these seeds. eval/gen_llm_cache.py
             # retro-builds entries from corpus seed_*.json, which the fuzzer
@@ -685,6 +704,9 @@ class LLMHandler:
         
         seed_bank = self._load_seed_bank()
         if not seed_bank:
+            if _require_llm_seeds():
+                raise SeedProvenanceError(f"seed bank empty for '{tool_name}'; refusing the local "
+                                          f"fallback because TOFU_REQUIRE_LLM_SEEDS is set")
             logging.warning("Seed bank is empty or not found. Falling back to local mapping.")
             return self._local_fallback_mapping(input_schema, {}, selected_sanitizers)
             
@@ -840,6 +862,10 @@ Strict Instructions:
                 attempt += 1
                 
         # Trigger local fallback mapping if LLM failed
+        if _require_llm_seeds():
+            raise SeedProvenanceError(f"LLM seed generation failed for '{tool_name}' after "
+                                      f"{max_attempts} attempts; refusing the local fallback "
+                                      f"because TOFU_REQUIRE_LLM_SEEDS is set")
         return self._local_fallback_mapping(input_schema, seed_bank, selected_sanitizers)
 
 
