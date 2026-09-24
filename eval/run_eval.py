@@ -70,6 +70,29 @@ _apply_arm(ARM)
 lock = threading.Lock()
 counter = {"done": 0, "findings": 0, "errors": 0, "harness_errors": 0}
 
+# In-flight fuzzer subprocesses. They run in their own sessions
+# (start_new_session=True), so a terminal Ctrl-C never reaches them; without
+# this registry an interrupted campaign leaves them fuzzing for the rest of
+# their budget and they double-run on resume. _abort() kills them all.
+_LIVE = set()
+_LIVE_LOCK = threading.Lock()
+
+
+def _abort(signum, frame):
+    with _LIVE_LOCK:
+        live = list(_LIVE)
+    for p in live:
+        try: os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+        except Exception: pass
+    # take the index lock so no record is torn mid-write, then leave at once
+    # (a normal exit would block in ThreadPoolExecutor shutdown for up to
+    # budget + TOFU_KILL_GRACE seconds).
+    lock.acquire(timeout=5)
+    sys.stderr.write(f"\n[run_eval] interrupted (signal {signum}): killed {len(live)} "
+                     f"in-flight config(s); they are not in the index and re-run on resume\n")
+    sys.stderr.flush()
+    os._exit(130)
+
 def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
 
 def done_set():
@@ -326,6 +349,8 @@ def one(cfgfile, budget, prov):
              "--corpus-dir", corpus, "--metrics-dir", metrics],
             cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
+        with _LIVE_LOCK:
+            _LIVE.add(p)
         # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz budget
         # before the whole subprocess is SIGKILLed. atheris caps the fuzz loop at
         # -max_total_time already; the grace only covers LLM + startup + cleanup
@@ -342,6 +367,8 @@ def one(cfgfile, budget, prov):
             except Exception: pass
             so, se = p.communicate()
             rc = p.returncode
+        with _LIVE_LOCK:
+            _LIVE.discard(p)
         out = (so or b"").decode(errors="ignore") + "\n" + (se or b"").decode(errors="ignore")
     except Exception as e:
         # A failure HERE is our bug, not the target's. Keep it in its own
@@ -531,6 +558,10 @@ def main():
                          "_repo matches one are SKIPPED. Use with set_e2_unsafe_repos.txt to "
                          "exclude host-control targets (process kill/spawn, tmux, FS delete) "
                          "that crash the harness when fuzzed without a sandbox.")
+    ap.add_argument("--only-configs-file", default=None,
+                    help="file of exact config names (eval/configs basenames, one per "
+                         "line or comma-separated); run ONLY those. Exact, tool-level, "
+                         "no substring collisions. Used by eval/run_deep24.sh.")
     ap.add_argument("--status", action="store_true")
     ap.add_argument("--reparse", action="store_true",
                     help="rebuild runs.jsonl from eval/runs/*.log and exit")
@@ -577,6 +608,20 @@ def main():
         before = len(all_cfg)
         all_cfg = [f for f in all_cfg if not any(p in _repo_of(f).lower() for p in pats)]
         log(f"--skip-repo {pats}: dropped {before - len(all_cfg)}, {len(all_cfg)} remain")
+
+    if a.only_configs_file:
+        # Exact config-name allowlist (basename without .json, one per line or
+        # comma-separated). Unlike --only-repo this is exact, tool-level, and
+        # collision-free -- used by the 24h deep campaign to fuzz only the
+        # reachable, still-climbing tools chosen by eval/select_deep24.py.
+        raw = open(a.only_configs_file).read()
+        want = {p.strip() for p in raw.replace("\n", ",").split(",")
+                if p.strip() and not p.strip().startswith("#")}
+        want = {w[:-5] if w.endswith(".json") else w for w in want}
+        all_cfg = [f for f in all_cfg if os.path.splitext(f)[0] in want]
+        missing = want - {os.path.splitext(f)[0] for f in all_cfg}
+        log(f"--only-configs-file: {len(all_cfg)} configs kept"
+            + (f", {len(missing)} listed but not found in eval/configs" if missing else ""))
 
     if a.skip_repos_file and os.path.exists(a.skip_repos_file):
         raw = open(a.skip_repos_file).read()
@@ -698,6 +743,8 @@ def main():
         f"python={prov['python']} {prov['platform']}")
     log(f"rough wall-clock estimate: {len(todo) * a.time / max(a.workers,1) / 3600:.1f} h")
 
+    signal.signal(signal.SIGINT, _abort)
+    signal.signal(signal.SIGTERM, _abort)
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         for i, r in enumerate(ex.map(lambda f: one(f, a.time, prov), todo), 1):
