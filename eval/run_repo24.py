@@ -208,9 +208,12 @@ def run_slice(arm, t, slice_s, prov, plateau):
     if not ok:
         t["failures"] += 1
         t["last_error"] = (rec.get("error") or rec.get("harness_error") or "")[-300:]
-        if t["failures"] >= 2:
-            t["status"] = ("no_llm_seeds" if "SeedProvenanceError" in t["last_error"]
-                           or "SEED_PROVENANCE_FAIL" in t["last_error"] else "dead")
+        if "SeedProvenanceError" in t["last_error"] or "SEED_PROVENANCE_FAIL" in t["last_error"]:
+            # the LLM already retried 4x inside generate_seeds; at temperature 0 and a
+            # fixed seed another slice would replay the same failure -- stop now
+            t["status"] = "no_llm_seeds"
+        elif t["failures"] >= 2:
+            t["status"] = "dead"
     elif strict and rec.get("llm_seeds") != "ok":
         # belt and braces: strict mode should make this impossible. If a slice
         # still ran on non-LLM seeds, stop fuzzing the tool and say why.
