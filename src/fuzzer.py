@@ -24,6 +24,10 @@ from .runners.base import BaseRunner
 
 logger = logging.getLogger(__name__)
 
+def _keep_corpus() -> bool:
+    """Opt-in corpus persistence across runs of the same tool (TOFU_KEEP_CORPUS)."""
+    return os.environ.get("TOFU_KEEP_CORPUS", "").strip().lower() not in ("", "0", "false", "no")
+
 _STR_CONTRACT_CACHE = {}
 
 
@@ -1169,7 +1173,10 @@ class MCPDifferentialFuzzer:
             seeds = self.llm.generate_seeds(
                 self.target_tool_name, self.target_tool_desc, self.current_schema,
                 selected_sanitizers=self.selected_sanitizer_names)
-        if os.path.exists(self.corpus_dir):
+        # TOFU_KEEP_CORPUS=1 (per-repo deep campaign, eval/run_repo24.py): keep the
+        # corpus from the previous slice of this tool so fuzzing resumes instead of
+        # restarting from the seeds. Off by default -- every other run starts clean.
+        if os.path.exists(self.corpus_dir) and not _keep_corpus():
             shutil.rmtree(self.corpus_dir, ignore_errors=True)
         os.makedirs(self.corpus_dir, exist_ok=True)
 
@@ -1314,7 +1321,7 @@ class MCPDifferentialFuzzer:
         if not self.silent_bug_found:
             logger.info(f"Fuzzing session completed. No silent bugs detected with current coverage.")
 
-        if os.path.exists(self.corpus_dir):
+        if os.path.exists(self.corpus_dir) and not _keep_corpus():
             shutil.rmtree(self.corpus_dir, ignore_errors=True)
 
     def run_single(self, input_data: dict) -> None:

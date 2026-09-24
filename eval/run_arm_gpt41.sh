@@ -58,5 +58,8 @@ echo "index -> eval/state/runs.$ARM.jsonl   logs -> eval/runs/$ARM/"
 echo
 
 # NOT exec: the EXIT trap above must run afterwards to restore .env.
-"$PY" eval/run_eval.py --arm "$ARM" --time "$TIME" --workers "$WORKERS" "$@"
+# TOFU_ENTRY swaps the driver (eval/run_repo24.sh uses eval/run_repo24.py) while
+# keeping this file's .env hiding and model/temperature/seed setup in one place.
+ENTRY="${TOFU_ENTRY:-eval/run_eval.py}"
+"$PY" "$ENTRY" --arm "$ARM" --time "$TIME" --workers "$WORKERS" "$@"
 exit $?
