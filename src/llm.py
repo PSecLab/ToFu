@@ -672,8 +672,14 @@ class LLMHandler:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
         cached = self._cache_load()
         if cached is not None and cached.get("seeds") is not None:
+            # provenance: WHO produced these seeds. eval/gen_llm_cache.py
+            # retro-builds entries from corpus seed_*.json, which the fuzzer
+            # writes for fallback seeds too -- so a hit alone is not evidence
+            # that the LLM generated them (2026-09-23: >=12 of 5022 VM entries
+            # replay fallback seeds). run_eval.parse_log reads this field.
             logging.info(f"LLM_SEEDGEN_CACHE_HIT tool={tool_name} "
-                         f"n_seeds={len(cached['seeds'])} key={self.cache_key}")
+                         f"n_seeds={len(cached['seeds'])} key={self.cache_key} "
+                         f"provenance={cached.get('seeds_provenance') or 'unknown'}")
             return cached["seeds"]
         logging.info(f"[LLM] Generation of smart seed corpus for '{tool_name}' using Seed Bank...")
         
@@ -823,7 +829,7 @@ Strict Instructions:
                     f"LLM_SEEDGEN_OK tool={tool_name} attempt={attempt} "
                     f"n_seeds={len(kept)} n_rejected={len(rejected)} "
                     f"validated={int(checked)}")
-                self._cache_update(seeds=kept)
+                self._cache_update(seeds=kept, seeds_provenance="llm")
                 return kept
                 
             except Exception as e:

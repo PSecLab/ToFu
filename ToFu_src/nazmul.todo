@@ -211,3 +211,54 @@ finished ones into the archive.
    indexed llm_selection=unknown (seen on all leakcheck runs); deep24/repo24
    reuse the cache, so their indexes will misreport selection health until fixed.
 
+13. [RESOLVED — 2026-09-23] CACHED RUNS INDEXED AS llm_selection=unknown; AND
+   THE REPLAY CACHE HOLDS FALLBACK SEEDS.
+   SYMPTOM: every run served by the LLM replay cache (src/llm.py,
+   TOFU_LLM_CACHE_DIR, default eval/state/llm_cache) was indexed
+   llm_selection=unknown / llm_seeds=unknown with no n_selected/n_seeds, because
+   run_eval.parse_log knew only LLM_SELECTION_OK/FAILED and LLM_SEEDGEN_OK/
+   FALLBACK, while a cached run logs LLM_SELECTION_CACHE_HIT / LLM_SEEDGEN_CACHE_HIT.
+   Seen on all item-12 leakcheck runs. deep24/repo24 reuse the cache -> their
+   whole index would have misreported LLM-stage health.
+   SECOND FINDING (why a seed hit is NOT reported as "ok"): eval/gen_llm_cache.py
+   retro-built the cache from corpus seed_*.json, and fuzzer._setup_corpus_seeds
+   writes seed_*.json for WHATEVER seeds it got -- including the deterministic
+   fallback. Cross-checked against the gpt41-corpus logs (VM, 5022 entries,
+   4122 with seeds): llm=3670, fallback=12, unknown=440 (source log has neither
+   marker, mostly runs that were themselves cache hits or timed out). 3 of the
+   12 fallback entries are deep24 configs:
+     CodeLogicIncEngineering__codelogic-mcp-server__lineai-graph-validate-change-scope
+     IncomeStreamSurfer__roo-code-memory-bank-mcp-server__append_memory_bank_entry
+     IncomeStreamSurfer__roo-code-memory-bank-mcp-server__read_memory_bank_file
+   The SELECTION cache is clean: it is only written on the LLM_SELECTION_OK path
+   (live _cache_update; gen_llm_cache's "Sanitizers selected:" is OK-only).
+   FIX:
+     - parse_log: selection CACHE_HIT -> llm_selection="ok", llm_n_selected (no
+       n_dropped: not recorded). Seed CACHE_HIT -> by the entry's provenance:
+       llm -> "ok", fallback -> "fallback", missing/unknown -> NEW bucket
+       "cached". llm_seeds_provenance recorded; llm_cached=True on any hit.
+     - src/llm.py: seed CACHE_HIT line now carries provenance=<llm|fallback|
+       unknown>; live LLM_SEEDGEN_OK writes seeds_provenance="llm" to the cache.
+     - gen_llm_cache.py: tags seeds_provenance from the source log on build;
+       new --backfill-provenance (dry run unless --write; never overwrites an
+       existing tag; atomic) for the EXISTING cache.
+     - summarize(): "LLM replay cache: N/M run(s) made no LLM call" and a !! line
+       counting seeds of unknown provenance.
+   VERIFIED on REAL VM logs (not fixtures): 3 leakcheck-fixed cache-hit logs
+   (old format) -> ok/cached=True/n_selected 5,3,3/seeds=cached; live gpt41-corpus
+   get_jobs -> unchanged ok/ok; live manage_docs -> ok/fallback. New-format e2e
+   (arm prov-check, TEMP copy of 3 entries in ~/leakcheck/cache, real cache
+   untouched): provenance=llm -> ok, =fallback -> fallback, =unknown -> cached.
+   `--arm leakcheck-fixed --reparse`: selection unknown=3 -> ok=3.
+   Old parse_log on the same real log -> unknown/None/unknown (test fails pre-fix).
+   tests/test_parse_log_cache.py + tests/data/parse_log_real/*.txt (verbatim VM
+   logs, .txt because .gitignore has *.log). Laptop suite 169 passed, 1 skipped.
+   NOT DONE -- Ananto's call:
+     (a) run `python3 eval/gen_llm_cache.py --arm gpt41-corpus --backfill-provenance
+         --write` on the VM (tags 3670 llm + 12 fallback; 440 stay untagged ->
+         "cached"). Metadata only, llm.py ignores the key, but it rewrites the
+         live cache a running campaign reads.
+     (b) should a cache entry holding FALLBACK seeds be replayed at all, or
+         dropped so the LLM regenerates? Replaying keeps runs reproducible but
+         fuzzes 3 deep24 configs from deterministic seeds.
+     (c) --reparse existing arm indexes (it backs each up first).

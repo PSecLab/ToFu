@@ -176,6 +176,11 @@ _RE_FLAGGED  = re.compile(r"Sanitizers\s*(\[[^\]]*\])\s*flagged")
 _RE_CHECK    = re.compile(r"check_[A-Za-z0-9_]+")
 _RE_SEL_OK   = re.compile(r"LLM_SELECTION_OK\b[^\n]*?n_selected=(\d+)\s+n_dropped=(\d+)")
 _RE_SEED_OK  = re.compile(r"LLM_SEEDGEN_OK\b[^\n]*?n_seeds=(\d+)")
+# Replay-cache hits (src/llm.py, TOFU_LLM_CACHE_DIR). Missing these recorded
+# every cached run as llm_selection=unknown (2026-09-23, all leakcheck runs).
+_RE_SEL_HIT  = re.compile(r"LLM_SELECTION_CACHE_HIT\b[^\n]*?n_selected=(\d+)")
+_RE_SEED_HIT = re.compile(r"LLM_SEEDGEN_CACHE_HIT\b[^\n]*?n_seeds=(\d+)"
+                          r"(?:[^\n]*?\bprovenance=(\w+))?")
 
 _RE_EXEC = re.compile(
     r"EXEC_SUMMARY tool=(\S+) n_exec=(\d+) n_success=(\d+) success_rate=([\d.]+)")
@@ -205,7 +210,19 @@ def parse_log(out: str) -> dict:
 
     # Did the LLM stage actually run? Without this the campaign degrades
     # silently to the deterministic fallback while the logs look healthy.
-    if "LLM_SELECTION_OK" in out:
+    #
+    # REPLAY CACHE. A cached run makes no LLM call; it logs *_CACHE_HIT instead.
+    # llm_cached records that, so cached and live runs stay distinguishable.
+    #  - a SELECTION hit is a real past LLM success: the cache only ever holds
+    #    a selection from the LLM_SELECTION_OK path (live _cache_update, and
+    #    gen_llm_cache's "Sanitizers selected:" line, printed only there).
+    #  - a SEED hit is NOT: gen_llm_cache retro-built entries from corpus
+    #    seed_*.json, which the fuzzer writes for fallback seeds too. So the
+    #    hit is scored by the entry's provenance, and one with no provenance
+    #    is its own bucket, "cached" -- never silently "ok".
+    sel_hit, seed_hit = _RE_SEL_HIT.search(out), _RE_SEED_HIT.search(out)
+    rec["llm_cached"] = bool(sel_hit or seed_hit)
+    if "LLM_SELECTION_OK" in out or sel_hit:
         rec["llm_selection"] = "ok"
     elif "LLM_SELECTION_FAILED" in out or "Falling back to default sanitizers" in out:
         rec["llm_selection"] = "failed"
@@ -214,16 +231,24 @@ def parse_log(out: str) -> dict:
     m = _RE_SEL_OK.search(out)
     if m:
         rec["llm_n_selected"], rec["llm_n_dropped"] = int(m.group(1)), int(m.group(2))
+    elif sel_hit:
+        rec["llm_n_selected"] = int(sel_hit.group(1))   # n_dropped not recorded
 
     if "LLM_SEEDGEN_OK" in out:
         rec["llm_seeds"] = "ok"
     elif "LLM_SEEDGEN_FALLBACK" in out:
         rec["llm_seeds"] = "fallback"
+    elif seed_hit:
+        prov = seed_hit.group(2) or "unknown"
+        rec["llm_seeds_provenance"] = prov
+        rec["llm_seeds"] = {"llm": "ok", "fallback": "fallback"}.get(prov, "cached")
     else:
         rec["llm_seeds"] = "unknown"
     m = _RE_SEED_OK.search(out)
     if m:
         rec["llm_n_seeds"] = int(m.group(1))
+    elif seed_hit:
+        rec["llm_n_seeds"] = int(seed_hit.group(1))
 
     # DID THE TOOL ACTUALLY RUN? A tool whose every execution returns
     # isError/JSON-RPC-error never executed, so no sanitizer could fire and
@@ -511,6 +536,14 @@ def summarize(allrecs):
         seed[r.get("llm_seeds", "unknown")]     = seed.get(r.get("llm_seeds", "unknown"), 0) + 1
     log("  LLM sanitizer selection: " + ", ".join(f"{k}={v}" for k, v in sorted(sel.items())))
     log("  LLM seed generation:     " + ", ".join(f"{k}={v}" for k, v in sorted(seed.items())))
+    n_cached = sum(1 for r in allrecs if r.get("llm_cached"))
+    if n_cached:
+        log(f"  LLM replay cache:        {n_cached}/{len(allrecs)} run(s) made no LLM call "
+            f"(llm_cached); their selection is a replayed past success")
+    if seed.get("cached"):
+        log(f"  !! {seed['cached']} run(s) replayed cached seeds of UNKNOWN provenance "
+            f"(the retro-built cache also holds fallback seeds). Not evidence of LLM "
+            f"seed generation: eval/gen_llm_cache.py --backfill-provenance")
     if sel.get("ok", 0) == 0:
         log("  !! LLM selection never succeeded -- every run used the "
             "deterministic fallback. Do NOT report these as ToFu results.")
