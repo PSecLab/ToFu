@@ -150,7 +150,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repos-file", default=None)
     ap.add_argument("--write", default=None)
+    ap.add_argument("--index", default=None, help="toolfuzz index (default eval/state/toolfuzz_runs.jsonl)")
+    ap.add_argument("--out", default=None, help="toolfuzz raw results dir (default eval/toolfuzz_runs)")
     a = ap.parse_args()
+    global INDEX, OUT
+    INDEX, OUT = a.index or INDEX, a.out or OUT
     only = None
     if a.repos_file:
         only = {x.strip().lower() for x in open(a.repos_file).read().replace("\n", ",").split(",") if x.strip()}

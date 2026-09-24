@@ -42,8 +42,8 @@ sys.path.insert(0, TOOLFUZZ)
 os.chdir(TOOLFUZZ)
 
 PREPARED = os.path.join(ROOT, "eval", "state", "prepared.jsonl")
-OUT      = os.path.join(ROOT, "eval", "toolfuzz_runs")
-INDEX    = os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl")
+OUT      = os.environ.get("TOOLFUZZ_OUT", os.path.join(ROOT, "eval", "toolfuzz_runs"))
+INDEX    = os.environ.get("TOOLFUZZ_INDEX", os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl"))
 TOFU_IDX = os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl")
 
 # budget knobs (recorded in every row)
