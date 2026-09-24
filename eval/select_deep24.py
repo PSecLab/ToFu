@@ -112,6 +112,9 @@ def main():
     ap.add_argument("--per-repo", type=int, default=4, help="max configs per repo")
     ap.add_argument("--min-cov", type=int, default=20, help="ignore trivially small programs")
     ap.add_argument("--unsafe", default="Benchmarks/extraction/set_e2_unsafe_repos.txt")
+    ap.add_argument("--exclude", default="Benchmarks/extraction/deep24_exclude_repos.txt",
+                    help="extra repos to skip for long unattended runs (scanners, payments, "
+                         "posting, cloud deploys, external account writes)")
     ap.add_argument("--out-configs", default="eval/deep24_configs.txt")
     a = ap.parse_args()
 
@@ -122,6 +125,9 @@ def main():
     up = os.path.join(ROOT, a.unsafe)
     if os.path.exists(up):
         unsafe = {p.strip().lower() for p in open(up).read().replace("\n", ",").split(",") if p.strip()}
+    xp = os.path.join(ROOT, a.exclude)
+    if os.path.exists(xp):
+        unsafe |= {p.strip().lower() for p in open(xp).read().replace("\n", ",").split(",") if p.strip()}
 
     # latest row per config wins (re-runs append)
     latest = {}
