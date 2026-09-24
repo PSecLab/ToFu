@@ -294,6 +294,7 @@ def main():
     ap.add_argument("--executable-only", action="store_true",
                     help="only tools ToFu saw succeed at least once")
     ap.add_argument("--max-tools", type=int, default=0, help="cap tools per repo (0=all)")
+    ap.add_argument("--tools", default=None, help="comma list of tool names to run (debugging)")
     ap.add_argument("--shard", default="0/1", help="K/N: this process handles repos i%%N==K")
     ap.add_argument("--tool-timeout", type=int, default=int(os.environ.get("TOOLFUZZ_TOOL_TIMEOUT", "600")),
                     help="per-tool wall-clock cap (s)")
@@ -342,6 +343,9 @@ def main():
             continue
         if exe is not None:
             tools = [x for x in tools if (repo.lower(), x.name) in exe]
+        if a.tools:
+            want = {x.strip() for x in a.tools.split(",") if x.strip()}
+            tools = [x for x in tools if x.name in want]
         if a.max_tools: tools = tools[:a.max_tools]
         todo = [x for x in tools if (repo, x.name) not in done]
         log(f"    {len(tools)} tools, {len(tools) - len(todo)} done, {len(todo)} to run")

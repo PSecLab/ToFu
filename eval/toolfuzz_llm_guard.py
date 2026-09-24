@@ -207,6 +207,8 @@ def install():
         k.pop("model_name", None)
         k["streaming"] = False
         k.setdefault("max_retries", 6)
+        # bound every single call's cost; ToolFuzz's generations are short JSON
+        k.setdefault("max_tokens", int(os.environ.get("TOOLFUZZ_MAX_TOKENS", "2048")))
         if seed:
             k.setdefault("seed", int(seed))
         orig_init(self, *a, **k)
