@@ -82,6 +82,8 @@ def load_done():
 
 def load_list(path):
     if not path: return None
+    if not os.path.isabs(path):        # we chdir'd into ToolFuzz; paths are repo-relative
+        path = os.path.join(ROOT, path)
     txt = open(path).read().replace("\n", ",")
     return {x.strip().lower() for x in txt.split(",") if x.strip()}
 
