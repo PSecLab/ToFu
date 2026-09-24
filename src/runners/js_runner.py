@@ -112,6 +112,24 @@ from .secrets import (  # noqa: E402
     SECRET_SUFFIX as _SECRET_SUFFIX,
     scrub_secrets as _scrub_secrets,
 )
+from .procreap import pdeathsig_prefix, reap_tagged  # noqa: E402
+import atexit  # noqa: E402
+import weakref  # noqa: E402
+
+# Every JSRunner whose server may still be alive. atexit stops them on any
+# Python-level exit (sys.exit, uncaught exception). It does NOT run when
+# libFuzzer ends the run with its C-level exit() -- that path is covered by the
+# wrapper's orphan guard, PDEATHSIG and run_eval's tag sweep (see procreap.py).
+_LIVE_RUNNERS = weakref.WeakSet()
+
+
+@atexit.register
+def _stop_live_runners():
+    for r in list(_LIVE_RUNNERS):
+        try:
+            r.stop()
+        except Exception:
+            pass
 
 class JSRunner(BaseRunner):
     """
@@ -139,6 +157,11 @@ class JSRunner(BaseRunner):
         self.custom_env = custom_env or {}
 
     def start(self):
+        if self.process is not None:
+            # Restart after a crash (execute() calls start() when the server
+            # died): reap what the previous server left in its group first.
+            self.stop()
+            self.process = None
         try:
             from . import fake_coverage
         except ImportError:
@@ -162,7 +185,10 @@ class JSRunner(BaseRunner):
         target_script = os.path.abspath(target_script)
         wrapper_path = os.path.join(os.path.dirname(__file__), "coverage_wrapper.js")
 
-        cmd = ["node", wrapper_path, target_script] + target_args
+        # LEAK FIX (2026-09-23): pdeathsig_prefix() arms PR_SET_PDEATHSIG on
+        # Linux so the server tree dies with the fuzzer even when libFuzzer's
+        # C exit() skips stop(). See procreap.py for the 663-orphan incident.
+        cmd = pdeathsig_prefix() + ["node", wrapper_path, target_script] + target_args
         # BUG 23 (2026-09-12): this was a bare os.environ.copy(). run_arm_*.sh
         # sources .env, so every fuzzed server -- untrusted third-party code --
         # inherited our real OPENAI_API_KEY / OLLAMA_CLOUD_API_KEY and could
@@ -195,7 +221,8 @@ class JSRunner(BaseRunner):
             # SOCKET_READY readline never gets EOF.
             start_new_session=True,
         )
-        
+        _LIVE_RUNNERS.add(self)
+
         # Wait for socket ready signal on stdout, BOUNDED. Many corpus node
         # servers hang on startup (wait on a backend/API) and never print
         # SOCKET_READY; this readline loop would then block until the run_eval
@@ -269,10 +296,13 @@ class JSRunner(BaseRunner):
         if self.process:
             # The server runs in its own session (start_new_session=True), so
             # reap the WHOLE group -- some servers spawn child shells that would
-            # otherwise orphan when only the node parent is killed.
+            # otherwise orphan when only the node parent is killed. The pgid is
+            # the leader's pid; do not ask os.getpgid() for it, which fails
+            # once the leader is gone while its children are still in the group.
+            pgid = self.process.pid
             def _killpg(sig):
                 try:
-                    os.killpg(os.getpgid(self.process.pid), sig)
+                    os.killpg(pgid, sig)
                     return True
                 except Exception:
                     return False
@@ -282,9 +312,23 @@ class JSRunner(BaseRunner):
             try:
                 self.process.wait(timeout=2.0)
             except subprocess.TimeoutExpired:
-                if not _killpg(signal.SIGKILL):
-                    try: self.process.kill()
-                    except Exception: pass
+                pass
+            # Unconditional: a child that ignores SIGTERM outlives its leader.
+            if not _killpg(signal.SIGKILL) and self.process.poll() is None:
+                try: self.process.kill()
+                except Exception: pass
+            try:
+                self.process.wait(timeout=2.0)
+            except Exception:
+                pass
+            # Anything the server started OUTSIDE its group (a grandchild that
+            # called setsid, a daemonised helper) still inherits the unique
+            # FUZZER_SOCKET_PATH, so sweep by that too.
+            try:
+                reap_tagged("FUZZER_SOCKET_PATH", self.sock_path)
+            except Exception:
+                pass
+            _LIVE_RUNNERS.discard(self)
         if os.path.exists(self.sock_path):
             try:
                 os.unlink(self.sock_path)

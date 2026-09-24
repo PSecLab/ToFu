@@ -23,10 +23,17 @@ so a bug in the parser can never destroy a campaign's data again. If the
 parser is fixed or extended, re-derive every record from eval/runs/*.log
 instead of re-running the campaign.
 """
-import argparse, json, os, platform, re, shutil, signal, subprocess, sys, threading, time
+import argparse, importlib.util, json, os, platform, re, shutil, signal, subprocess, sys, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Loaded by path, not `import src...`: src/__init__ pulls in the fuzzer and
+# atheris, which the harness interpreter need not have.
+_spec = importlib.util.spec_from_file_location(
+    "tofu_procreap", os.path.join(ROOT, "src", "runners", "procreap.py"))
+procreap = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(procreap)
 EVAL  = os.path.join(ROOT, "eval")
 CFG   = os.path.join(EVAL, "configs")
 STATE = os.path.join(EVAL, "state")
@@ -70,20 +77,36 @@ _apply_arm(ARM)
 lock = threading.Lock()
 counter = {"done": 0, "findings": 0, "errors": 0, "harness_errors": 0}
 
-# In-flight fuzzer subprocesses. They run in their own sessions
-# (start_new_session=True), so a terminal Ctrl-C never reaches them; without
-# this registry an interrupted campaign leaves them fuzzing for the rest of
-# their budget and they double-run on resume. _abort() kills them all.
-_LIVE = set()
+# In-flight fuzzer subprocesses -> their reap tag. They run in their own
+# sessions (start_new_session=True), so a terminal Ctrl-C never reaches them;
+# without this registry an interrupted campaign leaves them fuzzing for the
+# rest of their budget and they double-run on resume. _abort() kills them all.
+#
+# Killing the fuzzer's process group is NOT enough: JSRunner puts the node
+# server in a session of its own, so killpg(fuzzer) never reached it, and on a
+# normal exit libFuzzer's C exit() skips JSRunner.stop(). Every node config
+# leaked its server -- 663 orphans / ~47 GB on the VM, 2026-09-23. Each config
+# therefore gets a unique TOFU_REAP_TAG in its environment, inherited by every
+# descendant, and reap() kills whatever still carries it (procreap.py).
+_LIVE = {}
 _LIVE_LOCK = threading.Lock()
+
+
+def reap(tag):
+    try:
+        return procreap.reap_tagged(procreap.TAG_ENV, tag)
+    except Exception:
+        return 0
 
 
 def _abort(signum, frame):
     with _LIVE_LOCK:
-        live = list(_LIVE)
-    for p in live:
-        try: os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+        live = list(_LIVE.items())
+    for p, _tag in live:
+        try: os.killpg(p.pid, signal.SIGKILL)
         except Exception: pass
+    for _p, tag in live:
+        reap(tag)
     # take the index lock so no record is torn mid-write, then leave at once
     # (a normal exit would block in ThreadPoolExecutor shutdown for up to
     # budget + TOFU_KILL_GRACE seconds).
@@ -153,6 +176,11 @@ _RE_FLAGGED  = re.compile(r"Sanitizers\s*(\[[^\]]*\])\s*flagged")
 _RE_CHECK    = re.compile(r"check_[A-Za-z0-9_]+")
 _RE_SEL_OK   = re.compile(r"LLM_SELECTION_OK\b[^\n]*?n_selected=(\d+)\s+n_dropped=(\d+)")
 _RE_SEED_OK  = re.compile(r"LLM_SEEDGEN_OK\b[^\n]*?n_seeds=(\d+)")
+# Replay-cache hits (src/llm.py, TOFU_LLM_CACHE_DIR). Missing these recorded
+# every cached run as llm_selection=unknown (2026-09-23, all leakcheck runs).
+_RE_SEL_HIT  = re.compile(r"LLM_SELECTION_CACHE_HIT\b[^\n]*?n_selected=(\d+)")
+_RE_SEED_HIT = re.compile(r"LLM_SEEDGEN_CACHE_HIT\b[^\n]*?n_seeds=(\d+)"
+                          r"(?:[^\n]*?\bprovenance=(\w+))?")
 
 _RE_EXEC = re.compile(
     r"EXEC_SUMMARY tool=(\S+) n_exec=(\d+) n_success=(\d+) success_rate=([\d.]+)")
@@ -182,7 +210,19 @@ def parse_log(out: str) -> dict:
 
     # Did the LLM stage actually run? Without this the campaign degrades
     # silently to the deterministic fallback while the logs look healthy.
-    if "LLM_SELECTION_OK" in out:
+    #
+    # REPLAY CACHE. A cached run makes no LLM call; it logs *_CACHE_HIT instead.
+    # llm_cached records that, so cached and live runs stay distinguishable.
+    #  - a SELECTION hit is a real past LLM success: the cache only ever holds
+    #    a selection from the LLM_SELECTION_OK path (live _cache_update, and
+    #    gen_llm_cache's "Sanitizers selected:" line, printed only there).
+    #  - a SEED hit is NOT: gen_llm_cache retro-built entries from corpus
+    #    seed_*.json, which the fuzzer writes for fallback seeds too. So the
+    #    hit is scored by the entry's provenance, and one with no provenance
+    #    is its own bucket, "cached" -- never silently "ok".
+    sel_hit, seed_hit = _RE_SEL_HIT.search(out), _RE_SEED_HIT.search(out)
+    rec["llm_cached"] = bool(sel_hit or seed_hit)
+    if "LLM_SELECTION_OK" in out or sel_hit:
         rec["llm_selection"] = "ok"
     elif "LLM_SELECTION_FAILED" in out or "Falling back to default sanitizers" in out:
         rec["llm_selection"] = "failed"
@@ -191,16 +231,24 @@ def parse_log(out: str) -> dict:
     m = _RE_SEL_OK.search(out)
     if m:
         rec["llm_n_selected"], rec["llm_n_dropped"] = int(m.group(1)), int(m.group(2))
+    elif sel_hit:
+        rec["llm_n_selected"] = int(sel_hit.group(1))   # n_dropped not recorded
 
     if "LLM_SEEDGEN_OK" in out:
         rec["llm_seeds"] = "ok"
     elif "LLM_SEEDGEN_FALLBACK" in out:
         rec["llm_seeds"] = "fallback"
+    elif seed_hit:
+        prov = seed_hit.group(2) or "unknown"
+        rec["llm_seeds_provenance"] = prov
+        rec["llm_seeds"] = {"llm": "ok", "fallback": "fallback"}.get(prov, "cached")
     else:
         rec["llm_seeds"] = "unknown"
     m = _RE_SEED_OK.search(out)
     if m:
         rec["llm_n_seeds"] = int(m.group(1))
+    elif seed_hit:
+        rec["llm_n_seeds"] = int(seed_hit.group(1))
 
     # DID THE TOOL ACTUALLY RUN? A tool whose every execution returns
     # isError/JSON-RPC-error never executed, so no sanitizer could fire and
@@ -295,6 +343,7 @@ def one(cfgfile, budget, prov):
     rec.update(prov)
     out, rc, timed_out, harness_err = "", None, False, None
     scratch = None
+    tag = f"{name}.{uuid.uuid4().hex}"
     try:
         cfg = json.load(open(cfgpath))
         rec.update(repo=cfg.get("_repo"), set=cfg.get("_set"),
@@ -343,6 +392,7 @@ def one(cfgfile, budget, prov):
         env.pop("TMUX", None)
         env.pop("TMUX_PANE", None)
         env["TMUX_TMPDIR"] = scratch
+        env[procreap.TAG_ENV] = tag
 
         p = subprocess.Popen(
             [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
@@ -350,7 +400,7 @@ def one(cfgfile, budget, prov):
             cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
         with _LIVE_LOCK:
-            _LIVE.add(p)
+            _LIVE[p] = tag
         # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz budget
         # before the whole subprocess is SIGKILLed. atheris caps the fuzz loop at
         # -max_total_time already; the grace only covers LLM + startup + cleanup
@@ -363,17 +413,25 @@ def one(cfgfile, budget, prov):
             rc = p.returncode
         except subprocess.TimeoutExpired:
             timed_out = True
-            try: os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+            try: os.killpg(p.pid, signal.SIGKILL)
             except Exception: pass
+            # A server holding the fuzzer's stdout/stderr open would block
+            # communicate() forever; kill the tagged tree before draining.
+            rec["reaped"] = reap(tag)
             so, se = p.communicate()
             rc = p.returncode
         with _LIVE_LOCK:
-            _LIVE.discard(p)
+            _LIVE.pop(p, None)
         out = (so or b"").decode(errors="ignore") + "\n" + (se or b"").decode(errors="ignore")
     except Exception as e:
         # A failure HERE is our bug, not the target's. Keep it in its own
         # field so a harness bug can never masquerade as a target result.
         harness_err = f"{type(e).__name__}: {e}"[:300]
+    finally:
+        # Whatever this config started and is still alive -- on a normal exit,
+        # a timeout or a harness exception alike -- dies here. Nonzero means
+        # the wrapper's orphan guard and PDEATHSIG both missed something.
+        rec["reaped"] = rec.get("reaped", 0) + reap(tag)
 
     # item 91: drop the throwaway scratch cwd (disposable; whatever the target
     # wrote/deleted in it goes with it, keeping the harness tree clean).
@@ -478,6 +536,14 @@ def summarize(allrecs):
         seed[r.get("llm_seeds", "unknown")]     = seed.get(r.get("llm_seeds", "unknown"), 0) + 1
     log("  LLM sanitizer selection: " + ", ".join(f"{k}={v}" for k, v in sorted(sel.items())))
     log("  LLM seed generation:     " + ", ".join(f"{k}={v}" for k, v in sorted(seed.items())))
+    n_cached = sum(1 for r in allrecs if r.get("llm_cached"))
+    if n_cached:
+        log(f"  LLM replay cache:        {n_cached}/{len(allrecs)} run(s) made no LLM call "
+            f"(llm_cached); their selection is a replayed past success")
+    if seed.get("cached"):
+        log(f"  !! {seed['cached']} run(s) replayed cached seeds of UNKNOWN provenance "
+            f"(the retro-built cache also holds fallback seeds). Not evidence of LLM "
+            f"seed generation: eval/gen_llm_cache.py --backfill-provenance")
     if sel.get("ok", 0) == 0:
         log("  !! LLM selection never succeeded -- every run used the "
             "deterministic fallback. Do NOT report these as ToFu results.")
@@ -745,6 +811,7 @@ def main():
 
     signal.signal(signal.SIGINT, _abort)
     signal.signal(signal.SIGTERM, _abort)
+    signal.signal(signal.SIGHUP, _abort)   # tmux/ssh session closed under us
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         for i, r in enumerate(ex.map(lambda f: one(f, a.time, prov), todo), 1):
