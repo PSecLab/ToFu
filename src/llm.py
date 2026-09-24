@@ -95,7 +95,43 @@ def _balanced_span(text: str, open_ch: str, close_ch: str):
     return None
 
 
-def _extract_json(content, expect=None):
+
+# A backslash that does not start a valid JSON escape (\" \\ \/ \b \f \n \r \t \uXXXX).
+# LLM-written adversarial seeds are full of them: Windows traversal paths
+# (..\..\windows\win.ini) typed with single backslashes are invalid JSON.
+_ESCAPE_RE = re.compile(r'\\(["\\/bfnrt]|u[0-9a-fA-F]{4})|\\')
+
+
+def _repair_json_text(text: str) -> str:
+    """Double every backslash that does not begin a valid JSON escape. Scans left
+    to right and consumes valid escapes whole, so an existing \\\\ pair is kept."""
+    return _ESCAPE_RE.sub(lambda m: m.group(0) if m.group(1) else "\\\\", text)
+
+
+def _salvage_objects(text: str) -> list:
+    """Parse each top-level {...} object on its own (escape-repaired, control
+    characters allowed) and keep the ones that parse. Used only when the reply as
+    a whole cannot be parsed, so one broken seed does not discard the rest."""
+    out, i = [], 0
+    while True:
+        j = text.find("{", i)
+        if j < 0:
+            break
+        span = _balanced_span(text[j:], "{", "}")
+        if not span:
+            break
+        for cand in (span, _repair_json_text(span)):
+            try:
+                v = json.loads(cand, strict=False)
+            except Exception:
+                continue
+            if isinstance(v, dict):
+                out.append(v)
+            break
+        i = j + len(span)
+    return out
+
+def _extract_json(content, expect=None, repair=False, info=None):
     """Recover a JSON value from an LLM reply that may wrap it in prose
     and/or a markdown fence.
 
@@ -144,6 +180,36 @@ def _extract_json(content, expect=None):
             )
             continue
         return data
+    if repair:
+        # Seed generation only (selection parsing is unchanged). Each step keeps
+        # the model's own content; nothing is invented. ``info["repaired"]``
+        # records which step was needed so recovered replies stay auditable.
+        rcands = []
+        for base in candidates:
+            if not base:
+                continue
+            fixed = _repair_json_text(base)
+            rcands += [("control_chars", base), ("escapes", fixed)]
+            for open_ch, close_ch, typ in pairs:
+                if expect is None or typ is expect:
+                    sp = _balanced_span(fixed, open_ch, close_ch)
+                    if sp:
+                        rcands.append(("escapes", sp))
+        for how, cand in rcands:
+            try:
+                data = json.loads(cand, strict=False)
+            except Exception:
+                continue
+            if expect is None or isinstance(data, expect):
+                if info is not None:
+                    info["repaired"] = how
+                return data
+        if expect in (None, list):
+            objs = _salvage_objects(text)
+            if objs:
+                if info is not None:
+                    info["repaired"] = f"salvaged:{len(objs)}"
+                return objs
     raise ValueError("no parsable JSON in LLM response (%s)" % (last_err,))
 
 
@@ -829,7 +895,8 @@ Strict Instructions:
                     attempt += 1
                     continue
                 
-                parsed_seeds = _extract_json(content, expect=list)
+                pinfo = {}
+                parsed_seeds = _extract_json(content, expect=list, repair=True, info=pinfo)
 
                 # Validate BEFORE declaring success. See _validate_seeds.
                 kept, rejected, checked = _validate_seeds(
@@ -850,12 +917,16 @@ Strict Instructions:
                 logging.info(
                     f"LLM_SEEDGEN_OK tool={tool_name} attempt={attempt} "
                     f"n_seeds={len(kept)} n_rejected={len(rejected)} "
-                    f"validated={int(checked)}")
+                    f"validated={int(checked)} repaired={pinfo.get('repaired', 'no')}")
                 self._cache_update(seeds=kept, seeds_provenance="llm")
                 return kept
                 
             except Exception as e:
                 logging.warning(f"Seed generation attempt {attempt} failed ({e}).")
+                if "no parsable JSON" in str(e) and locals().get("content"):
+                    # keep the evidence: what the model actually wrote
+                    logging.warning(f"SEEDGEN_RAW_REPLY tool={tool_name} attempt={attempt} "
+                                    f"len={len(content)} reply={content[:2000]!r}")
                 if attempt == max_attempts:
                     break
                 messages.append(HumanMessage(content=f"Your previous output was invalid: {str(e)}. Please correct it and output ONLY the valid raw JSON array."))
