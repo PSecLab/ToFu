@@ -1,5 +1,8 @@
 # Head-to-head, per repo — 45 ToFu-flagged repos — 2026-09-22
 
+> **2026-09-23: the `toolfuzz` column is withdrawn** — it counted ToolFuzz prompt-set *tests*, not failures (see toolfuzz_method_20260923.md). Replaced by the H2H-45 re-run.
+
+
 Every tool run on the **same 45 repos** (the head-to-head shortlist, `Benchmarks/extraction/head2head_cisco.txt`). Rows sorted by ToFu candidate count. This is the repo-level detail behind RESULTS_SUMMARY.md §5.
 
 > **Units differ — do NOT read across a row as a leaderboard.** Each column answers a different question; the table shows *where each tool fires*, not which is "better".
