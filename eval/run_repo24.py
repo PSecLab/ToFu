@@ -266,7 +266,7 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
                 t["status"] = "budget"
         R["status"], R["finished"] = "done", time.time()
         save_state(arm, st)
-        res = {"repo": repo, "lang": R["lang"], "budget_h": R["budget_h"],
+        res = {"repo": repo, "lang": R["lang"], "budget_h": R['budget_h'],
                "worker_h": round(R["worker_s"] / 3600, 2),
                "fuzz_h": round(sum(t["fuzz_s"] for t in R["tools"]) / 3600, 2),
                "stop_reason": R["stop_reason"], "n_tools": len(R["tools"]),
@@ -279,7 +279,7 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
                             "signatures": t["sigs"]} for t in R["tools"]]}
         with open(os.path.join(RE.STATE, f"repo24_results.{arm}.jsonl"), "a") as f:
             f.write(json.dumps(res) + "\n")
-    log(f"DONE {repo}: {R['stop_reason']} after {res['worker_h']}h of {R["budget_h"]:.3g}h")
+    log(f"DONE {repo}: {R['stop_reason']} after {res['worker_h']}h of {R['budget_h']:.3g}h")
     return R
 
 
@@ -288,7 +288,7 @@ def status(arm):
     st = load_state(arm)
     for repo, R in st["repos"].items():
         c = collections.Counter(t["status"] for t in R["tools"])
-        print(f"{R['status']:8} {R['worker_s']/3600:5.2f}/{R["budget_h"]:.3g}h "
+        print(f"{R['status']:8} {R['worker_s']/3600:5.2f}/{R['budget_h']:.3g}h "
               f"{dict(c)}  {R.get('stop_reason') or ''}  {repo}")
     if not st["repos"]:
         print("no repos started yet")
