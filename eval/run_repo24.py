@@ -239,15 +239,19 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
             save_state(arm, st)
     if R["status"] == "done":
         return R
-    rr = 0
+    tools, n = R["tools"], len(R["tools"])
+    cur = R.get("cursor", 0)   # stable round-robin over the full list: a tool that
+                               # saturates must not make the scheduler skip its successor
     while True:
-        active = [t for t in R["tools"] if t["status"] == "active"]
-        if not active:
+        if not any(t["status"] == "active" for t in tools):
             R["stop_reason"] = "all_saturated"; break
         remaining = budget_s - R["worker_s"]
         if remaining < MIN_SLICE:
             R["stop_reason"] = "budget_exhausted"; break
-        t = active[rr % len(active)]; rr += 1
+        while tools[cur % n]["status"] != "active":
+            cur += 1
+        t = tools[cur % n]; cur += 1
+        R["cursor"] = cur % n
         this = int(min(slice_s, remaining))
         rec, ok, idle = run_slice(arm, t, this, prov, plateau)
         with STATE_LOCK:
@@ -255,7 +259,7 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
             save_state(arm, st)
         log(f"{'    ' if ok else 'ERR '}{repo}::{t['tool']} slice {t['slices']} "
             f"{rec.get('seconds')}s cov={t['best_cov']} sigs={len(t['sigs'])} "
-            f"idle={idle/60:.0f}m -> {t['status']}  repo {R['worker_s']/3600:.2f}/{budget_s/3600:g}h")
+            f"idle={idle/60:.0f}m -> {t['status']}  repo {R['worker_s']/3600:.2f}/{budget_s/3600:.3g}h")
     with STATE_LOCK:
         for t in R["tools"]:
             if t["status"] == "active":
@@ -275,7 +279,7 @@ def run_repo(arm, repo, inv_e, st, budget_s, slice_s, plateau, prov):
                             "signatures": t["sigs"]} for t in R["tools"]]}
         with open(os.path.join(RE.STATE, f"repo24_results.{arm}.jsonl"), "a") as f:
             f.write(json.dumps(res) + "\n")
-    log(f"DONE {repo}: {R['stop_reason']} after {res['worker_h']}h of {R['budget_h']:g}h")
+    log(f"DONE {repo}: {R['stop_reason']} after {res['worker_h']}h of {R["budget_h"]:.3g}h")
     return R
 
 
@@ -284,7 +288,7 @@ def status(arm):
     st = load_state(arm)
     for repo, R in st["repos"].items():
         c = collections.Counter(t["status"] for t in R["tools"])
-        print(f"{R['status']:8} {R['worker_s']/3600:5.2f}/{R['budget_h']:g}h "
+        print(f"{R['status']:8} {R['worker_s']/3600:5.2f}/{R["budget_h"]:.3g}h "
               f"{dict(c)}  {R.get('stop_reason') or ''}  {repo}")
     if not st["repos"]:
         print("no repos started yet")
@@ -335,7 +339,7 @@ def main():
     todo = [r for r in repos if st["repos"].get(r, {}).get("status") != "done"]
     log(f"repo24: {len(repos)} repos ({len(repos) - len(todo)} done), budget {a.budget_h}h/repo, "
         f"slice {a.time}s, plateau {a.plateau_s}s, {a.workers} in parallel")
-    log(f"worst case wall: {-(-len(todo) // max(a.workers, 1)) * a.budget_h:g} h")
+    log(f"worst case wall: {-(-len(todo) // max(a.workers, 1)) * a.budget_h:.3g} h")
 
     signal.signal(signal.SIGINT, RE._abort)
     signal.signal(signal.SIGTERM, RE._abort)
