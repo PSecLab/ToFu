@@ -5,8 +5,8 @@
 # never through an agent tool call (CLAUDE.md rule 4).
 #
 #   ./eval/run_repo24.sh --select 10     # 1) pick the top-10 repos -> eval/repo24_repos.txt
-#   ARM=repo24-smoke TOFU_PLATEAU=120 TOFU_BUDGET_H=0.2 ./eval/run_repo24.sh --limit 1
-#                                        # 2) smoke: ~12 min, separate arm
+#   ARM=repo24-smoke TOFU_PLATEAU=120 TOFU_TIME=180 TOFU_BUDGET_H=0.25 ./eval/run_repo24.sh --limit 1
+#                                        # 2) smoke: ~15 min, several slices, separate arm
 #   ./eval/run_repo24.sh                 # 3) campaign
 #   ./eval/run_repo24.sh --status        #    progress only
 #
