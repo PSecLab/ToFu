@@ -28,7 +28,9 @@ export TOFU_FINDINGS_TIMELINE=1
 export TOFU_KILL_GRACE="${TOFU_KILL_GRACE:-300}"
 export TOFU_STARTUP_TIMEOUT="${TOFU_STARTUP_TIMEOUT:-25}"
 export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-6144}"
-export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-500}"
+# 500 suited the 60 s corpus sweep; here it killed reachable low-success tools
+# (agentic-tools-mcp: 0.1-6.6% success on the VM, 0/500 on the second machine).
+export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-5000}"
 export TOFU_JS_COV_SLOTS="${TOFU_JS_COV_SLOTS:-1024}"
 export TOFU_ENTRY=eval/run_repo24.py
 
