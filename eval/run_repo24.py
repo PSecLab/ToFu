@@ -339,6 +339,7 @@ def main():
 
     signal.signal(signal.SIGINT, RE._abort)
     signal.signal(signal.SIGTERM, RE._abort)
+    signal.signal(signal.SIGHUP, RE._abort)    # tmux/ssh closed: reap, don't orphan
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         list(ex.map(lambda r: run_repo(a.arm, r, inv[r], st, a.budget_h * 3600,
                                        a.time, a.plateau_s, prov), todo))

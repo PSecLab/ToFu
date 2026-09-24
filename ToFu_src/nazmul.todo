@@ -149,3 +149,65 @@ finished ones into the archive.
    a noise filter + ranking, NOT a confirmer — candidates still need hand-
    verification + a false-positive rate; mandatory layer must be subtracted before
    any LLM-selection (RQ2/RQ3) claim.
+
+12. [RESOLVED — 2026-09-23] NODE TARGET SERVERS LEAKED ON EVERY JS CONFIG.
+   SYMPTOM: VM had 663 orphaned `node src/runners/coverage_wrapper.js
+   eval/targets/<repo>/.../index.js`, all ppid=1, 44-48h old (set_e2 / rerun),
+   ~47 GB RSS, 5 GB free of 38. Killed by hand. Same class as item 1's "92
+   orphans" follow-up (a). The laptop still has ~180 of them from local runs.
+   REPRODUCED (VM, 3 node configs, --time 20, arm leakcheck-baseline, ORIGINAL
+   code): normal exit 3/3 servers leaked; forced timeout 1/3; Ctrl-C 2/3.
+   ROOT CAUSE, two independent holes:
+     (a) JSRunner Popen(start_new_session=True) puts node in its OWN session
+         (needed so its startup watchdog can killpg the server tree), so
+         run_eval's os.killpg(<fuzzer pgid>) on timeout/Ctrl-C never reached it.
+     (b) libFuzzer ends at -max_total_time with a C-level exit(): fuzzer.
+         _cleanup_runner() -> JSRunner.stop() never runs, nor do Python atexit
+         handlers. The wrapper never noticed: it writes stdout once
+         (SOCKET_READY), never reads its real stdin, and the listening socket
+         keeps its event loop alive forever. (Servers that later write to the
+         dead stdout pipe die of EPIPE -- why it was 663 and not every config.)
+     Not libFuzzer forks (no -fork/-jobs used).
+   FIX (layered; any one suffices for the common case):
+     1. coverage_wrapper.js ORPHAN GUARD: on real-stdin EOF (kernel closes it the
+        instant the fuzzer dies, any cause), ppid change, or SIGTERM -> unlink
+        its socket + SIGKILL its whole process group (node + target children).
+     2. JSRunner: Linux `setpriv --pdeathsig TERM` prefix (procreap.
+        pdeathsig_prefix; main-thread only, since PDEATHSIG follows the forking
+        THREAD). NOT KILL -- measured: KILL killed node before the guard ran and
+        orphaned the target's own child. stop() now always SIGKILLs the group
+        after SIGTERM, then sweeps by the unique FUZZER_SOCKET_PATH env; start()
+        reaps a crashed predecessor before restarting; atexit stops live runners.
+     3. run_eval.one(): unique TOFU_REAP_TAG=<config>.<uuid> in the fuzzer env,
+        inherited by every descendant (not stripped by scrub_secrets); after each
+        config (normal / timeout / harness exception) and in _abort, SIGKILL
+        every process whose /proc/PID/environ carries it. Catches setsid'd
+        grandchildren too. Index field `reaped` = how many the sweep had to kill
+        (nonzero => layers 1-2 missed something). SIGHUP now -> _abort too
+        (run_eval + run_repo24), so a closed tmux/ssh reaps instead of orphaning.
+     Code: src/runners/procreap.py (new), js_runner.py, coverage_wrapper.js,
+     eval/run_eval.py, eval/run_repo24.py; tests/test_procreap.py (new).
+   VERIFIED on the VM (py3.13, node v22.23.2), leftover `node coverage_wrapper`
+   count after each run, arms eval/state/runs.leakcheck-*.jsonl:
+     normal exit           0  (reaped=0 x3: guard/PDEATHSIG got them first)
+     forced timeout        0  (TOFU_KILL_GRACE=-95 -> killed at 25s mid-fuzz)
+     Ctrl-C (SIGINT group) 0  (and 0 fuzzers)
+     sweep ONLY (TOFU_NO_ORPHAN_GUARD=1 TOFU_NO_PDEATHSIG=1): normal 0 (reaped=1
+       x3), timeout 0 (reaped=1 x3), Ctrl-C 0  -> layer 3 alone is sufficient.
+     No new /tmp/mcp_fuzz_*.sock left behind (1641 stale ones predate the fix).
+   tests/test_procreap.py::test_js_server_dies... FAILS with both layers off
+   (2 survivors: node + its child) and passes with the fix, VM and laptop.
+   macOS: `ps -E` no longer exposes other processes' env, so layer 3 is
+   Linux-only; the laptop relies on layer 1 (+atexit).
+   RESIDUAL GAP: a target wedged in a synchronous JS loop runs no handler, so
+   layers 1-2 cannot fire; only layer 3 (run_eval, Linux) catches it. A target
+   that CLEARS its env and setsid()s escapes layer 3 too.
+   SIDE NOTES: (i) tests now 160 passed / 1 skipped on the laptop (CLAUDE.md's
+   "66 passed, 1 skipped" is stale); VM also fails test_no_undefined_names_
+   anywhere = pyflakes RecursionError on eval/targets/**/.venv, pre-existing
+   item 1(c). (ii) test_introspection_sanitizer.py:375 leaves
+   os.environ["PATH"]="/tmp/malicious_bin" for every later test.
+   (iii) run_eval.parse_log ignores LLM_SELECTION_CACHE_HIT -> cached runs are
+   indexed llm_selection=unknown (seen on all leakcheck runs); deep24/repo24
+   reuse the cache, so their indexes will misreport selection health until fixed.
+

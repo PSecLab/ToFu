@@ -23,10 +23,17 @@ so a bug in the parser can never destroy a campaign's data again. If the
 parser is fixed or extended, re-derive every record from eval/runs/*.log
 instead of re-running the campaign.
 """
-import argparse, json, os, platform, re, shutil, signal, subprocess, sys, threading, time
+import argparse, importlib.util, json, os, platform, re, shutil, signal, subprocess, sys, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Loaded by path, not `import src...`: src/__init__ pulls in the fuzzer and
+# atheris, which the harness interpreter need not have.
+_spec = importlib.util.spec_from_file_location(
+    "tofu_procreap", os.path.join(ROOT, "src", "runners", "procreap.py"))
+procreap = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(procreap)
 EVAL  = os.path.join(ROOT, "eval")
 CFG   = os.path.join(EVAL, "configs")
 STATE = os.path.join(EVAL, "state")
@@ -70,20 +77,36 @@ _apply_arm(ARM)
 lock = threading.Lock()
 counter = {"done": 0, "findings": 0, "errors": 0, "harness_errors": 0}
 
-# In-flight fuzzer subprocesses. They run in their own sessions
-# (start_new_session=True), so a terminal Ctrl-C never reaches them; without
-# this registry an interrupted campaign leaves them fuzzing for the rest of
-# their budget and they double-run on resume. _abort() kills them all.
-_LIVE = set()
+# In-flight fuzzer subprocesses -> their reap tag. They run in their own
+# sessions (start_new_session=True), so a terminal Ctrl-C never reaches them;
+# without this registry an interrupted campaign leaves them fuzzing for the
+# rest of their budget and they double-run on resume. _abort() kills them all.
+#
+# Killing the fuzzer's process group is NOT enough: JSRunner puts the node
+# server in a session of its own, so killpg(fuzzer) never reached it, and on a
+# normal exit libFuzzer's C exit() skips JSRunner.stop(). Every node config
+# leaked its server -- 663 orphans / ~47 GB on the VM, 2026-09-23. Each config
+# therefore gets a unique TOFU_REAP_TAG in its environment, inherited by every
+# descendant, and reap() kills whatever still carries it (procreap.py).
+_LIVE = {}
 _LIVE_LOCK = threading.Lock()
+
+
+def reap(tag):
+    try:
+        return procreap.reap_tagged(procreap.TAG_ENV, tag)
+    except Exception:
+        return 0
 
 
 def _abort(signum, frame):
     with _LIVE_LOCK:
-        live = list(_LIVE)
-    for p in live:
-        try: os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+        live = list(_LIVE.items())
+    for p, _tag in live:
+        try: os.killpg(p.pid, signal.SIGKILL)
         except Exception: pass
+    for _p, tag in live:
+        reap(tag)
     # take the index lock so no record is torn mid-write, then leave at once
     # (a normal exit would block in ThreadPoolExecutor shutdown for up to
     # budget + TOFU_KILL_GRACE seconds).
@@ -295,6 +318,7 @@ def one(cfgfile, budget, prov):
     rec.update(prov)
     out, rc, timed_out, harness_err = "", None, False, None
     scratch = None
+    tag = f"{name}.{uuid.uuid4().hex}"
     try:
         cfg = json.load(open(cfgpath))
         rec.update(repo=cfg.get("_repo"), set=cfg.get("_set"),
@@ -343,6 +367,7 @@ def one(cfgfile, budget, prov):
         env.pop("TMUX", None)
         env.pop("TMUX_PANE", None)
         env["TMUX_TMPDIR"] = scratch
+        env[procreap.TAG_ENV] = tag
 
         p = subprocess.Popen(
             [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
@@ -350,7 +375,7 @@ def one(cfgfile, budget, prov):
             cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
         with _LIVE_LOCK:
-            _LIVE.add(p)
+            _LIVE[p] = tag
         # TOFU_KILL_GRACE (default 600) = seconds ALLOWED beyond the fuzz budget
         # before the whole subprocess is SIGKILLed. atheris caps the fuzz loop at
         # -max_total_time already; the grace only covers LLM + startup + cleanup
@@ -363,17 +388,25 @@ def one(cfgfile, budget, prov):
             rc = p.returncode
         except subprocess.TimeoutExpired:
             timed_out = True
-            try: os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+            try: os.killpg(p.pid, signal.SIGKILL)
             except Exception: pass
+            # A server holding the fuzzer's stdout/stderr open would block
+            # communicate() forever; kill the tagged tree before draining.
+            rec["reaped"] = reap(tag)
             so, se = p.communicate()
             rc = p.returncode
         with _LIVE_LOCK:
-            _LIVE.discard(p)
+            _LIVE.pop(p, None)
         out = (so or b"").decode(errors="ignore") + "\n" + (se or b"").decode(errors="ignore")
     except Exception as e:
         # A failure HERE is our bug, not the target's. Keep it in its own
         # field so a harness bug can never masquerade as a target result.
         harness_err = f"{type(e).__name__}: {e}"[:300]
+    finally:
+        # Whatever this config started and is still alive -- on a normal exit,
+        # a timeout or a harness exception alike -- dies here. Nonzero means
+        # the wrapper's orphan guard and PDEATHSIG both missed something.
+        rec["reaped"] = rec.get("reaped", 0) + reap(tag)
 
     # item 91: drop the throwaway scratch cwd (disposable; whatever the target
     # wrote/deleted in it goes with it, keeping the harness tree clean).
@@ -745,6 +778,7 @@ def main():
 
     signal.signal(signal.SIGINT, _abort)
     signal.signal(signal.SIGTERM, _abort)
+    signal.signal(signal.SIGHUP, _abort)   # tmux/ssh session closed under us
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         for i, r in enumerate(ex.map(lambda f: one(f, a.time, prov), todo), 1):

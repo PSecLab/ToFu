@@ -62,6 +62,37 @@ const customStdout = new Writable({
 Object.defineProperty(process, 'stdin', { value: customStdin, writable: true, configurable: true });
 Object.defineProperty(process, 'stdout', { value: customStdout, writable: true, configurable: true });
 
+// ORPHAN GUARD (2026-09-23). The fuzzer is our only reason to exist. It used to
+// die without us noticing -- libFuzzer's C exit() skips JSRunner.stop(), and
+// the listening socket keeps this event loop alive forever -- which left 663
+// servers (~47 GB) orphaned on the VM. When the fuzzer goes away, take down our
+// whole process group (JSRunner makes us a session leader, so pgid == our pid)
+// and so every child the target spawned. Two signals, either suffices:
+//   - EOF on the real stdin: JSRunner holds the write end and never writes, so
+//     the kernel closes it exactly when the fuzzer process dies (any cause).
+//   - our parent pid changes (reparented to init/a subreaper).
+// Plus SIGTERM, which JSRunner.stop() sends and which Linux delivers as our
+// PDEATHSIG (procreap.pdeathsig_prefix): node's default SIGTERM exits node
+// alone and orphans the target's children.
+// Set TOFU_NO_ORPHAN_GUARD=1 to run the wrapper by hand with stdin closed.
+if (!process.env.TOFU_NO_ORPHAN_GUARD) {
+  const parentPid = process.ppid;
+  const reapGroup = () => {
+    // stop() never ran, so nobody else will remove the socket (1641 stale
+    // /tmp/mcp_fuzz_*.sock on the VM). Only fires from events, by which time
+    // socketPath below is initialised.
+    try { fs.unlinkSync(socketPath); } catch (e) {}
+    try { process.kill(-process.pid, 'SIGKILL'); } catch (e) {}
+    process.exit(137);   // not a group leader (run by hand): at least exit
+  };
+  realStdin.on('end', reapGroup);
+  realStdin.on('close', reapGroup);
+  realStdin.on('error', reapGroup);
+  realStdin.on('data', () => {});   // flowing mode, so 'end' is delivered
+  process.on('SIGTERM', reapGroup);
+  setInterval(() => { if (process.ppid !== parentPid) reapGroup(); }, 1000).unref();
+}
+
 import net from 'node:net';
 
 const socketPath = process.env.FUZZER_SOCKET_PATH || '/tmp/mcp_fuzzer.sock';
