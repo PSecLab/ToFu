@@ -53,7 +53,8 @@ HARNESS = re.compile(r"for TestFailureResult|StructuredTool does not support syn
 ENV = re.compile(r"fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|getaddrinfo|Connection refused|connect ECON|"
                  r"API[ _-]?key|not configured|authenticat|unauthori[sz]ed|\b401\b|\b403\b|credential|"
                  r"No active project|not connected|No frontend client|AppleScript|osascript|Base URL|"
-                 r"No model registered|Name or service not known|Network is unreachable|ETIMEDOUT|timed out", re.I)
+                 r"No model registered|Name or service not known|Network is unreachable|ETIMEDOUT|timed out|"
+                 r"status code 5\d\d|timeout of \d+\s*ms|not initiali[sz]ed|Make sure .{0,80}exists", re.I)
 REJECT = re.compile(r"validation error|Input validation|Invalid (argument|input|param|request|value)|-32602|"
                     r"Field required|is required|required (field|property|parameter|argument)|missing required|"
                     r"should be a valid|must (be|provide|specify|contain)|Supply exactly|Access denied|"
@@ -63,7 +64,9 @@ REJECT = re.compile(r"validation error|Input validation|Invalid (argument|input|
 CRASH = re.compile(r"TypeError|AttributeError|KeyError|IndexError|ReferenceError|RangeError|Cannot read propert|"
                    r"is not a function|undefined is not|of undefined|of null|NoneType|UnboundLocalError|"
                    r"ZeroDivision|Traceback|Maximum call stack|RecursionError|JSONDecodeError|Unexpected token|"
-                   r"SyntaxError|ValueError|AssertionError|Internal (server )?error|unhandled|segmentation", re.I)
+                   r"SyntaxError|ValueError|AssertionError|Internal (server )?error|unhandled|segmentation|"
+                   # unvalidated argument reaching an OS call, error leaking out
+                   r"ENAMETOOLONG|Errno 36|File name too long", re.I)
 
 
 def classify(msg):
