@@ -88,3 +88,18 @@ Scored output: `python3 eval/score_toolfuzz.py --write findings/baselines/toolfu
   model as in the authors' own GPT-4o-mini experiments, chosen for cost; ToFu's arm used gpt-4.1.
   Budget: 1 correctness prompt set x 3 paraphrases, 1 prompt per failing runtime input, <=3 failing
   inputs per error type, 10 fuzz iterations, cap 40 calls/tool. All recorded in every index row.
+
+## Results — H2H re-run on the PSU PC (2026-09-25), final config
+Source: findings/baselines/toolfuzz_h2h_20260925/ (index, llm_calls.json, raw per-tool JSON, scored report).
+- 298 tools / 31 repos completed; NASA-MCP-server not loadable by ToolFuzz's MCP bridge (server
+  sends notifications before its initialize reply); 6 repos deferred (overlap with live repo24-b);
+  CMD-MCP-Server unsafe-skipped. 4,708 real LLM calls total (gpt-4.1-mini), median 16 per tool.
+- Runtime triggers: ENV 36 · REJECT 6 · CRASH 8 · UNCLASS 1 · HARNESS 0 (harness bugs fixed).
+  All 8 CRASH are unvalidated arguments reaching a filesystem call (ENAMETOOLONG / Errno 36) —
+  and all 8 are on tools ToFu flags for security (path-handling tools).
+- Correctness: 35 tools by ToolFuzz's code formula, **0** once only real executions count — all
+  105 positive runs were "Tool FAILURE" records (tool threw during a correctness prompt; ToolFuzz
+  stores judge score 0). The paper defines correctness failures as incorrect results, not errors.
+- Robustness overlap on the same tools: ToolFuzz crash 8 · ToFu crash/exhaustion 55 · both 1.
+- ToFu security-flagged tools (unverified candidates; e.g. mcp-gsc's 13 are known FPs): 125;
+  ToolFuzz flagged 16 of them for anything, 8 as a crash.

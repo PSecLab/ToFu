@@ -43,7 +43,7 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 | CodeQL sec-extended | 482 | 154 | 1,037 | static SAST | ✅ |
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
-| ToolFuzz | — | — | **withdrawn** (v1 counted tests, not failures; see toolfuzz_method_20260923.md) — re-run on H2H-45 pending | robustness + correctness (diff axis) | ❌ |
+| ToolFuzz (H2H re-run, 2026-09-25) | 31 of H2H-45 (298 tools) | 8 tools genuine crash | 51 tools runtime (own def.), 8 crash; correctness 35 by formula → **0** genuine (all were tool errors) | tool-doc robustness/correctness (diff axis) | ❌ H2H only |
 | Viper-MCP | 38 | 5 | 12 | static taint, 3 classes (node-only) | ❌ partial |
 
 Overlap (full): ToFu∩CodeQL 37, ToFu∩Cisco 14, vanilla∩ToFu 107 (100 ToFu-only /
