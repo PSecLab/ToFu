@@ -198,7 +198,7 @@ def install():
     if os.environ.get("TOOLFUZZ_CACHE", "1") not in ("0", "false", "no"):
         set_llm_cache(_make_cache_cls()(CACHE_DB))
 
-    forced = os.environ.get("TOOLFUZZ_MODEL", "gpt-4.1")
+    forced = os.environ.get("TOOLFUZZ_MODEL", "gpt-4.1-mini")
     seed = os.environ.get("TOOLFUZZ_SEED")
     orig_init = ChatOpenAI.__init__
 

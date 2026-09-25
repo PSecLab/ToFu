@@ -84,5 +84,7 @@ Scored output: `python3 eval/score_toolfuzz.py --write findings/baselines/toolfu
   State this as a limitation of applying ToolFuzz to MCP.
 - **Correctness positives need manual inspection** (as the authors did) before any count is compared;
   otherwise report raw counts next to the authors' own 46% FDR. The executed-only view is a pre-filter.
-- Deviation: gpt-4.1 for every ToolFuzz LLM role (same model as ToFu's arm) instead of GPT-4o/4o-mini;
-  per-tool call caps recorded in every index row.
+- Deviation (final config, 2026-09-25): **gpt-4.1-mini** for every ToolFuzz LLM role — a mini-class
+  model as in the authors' own GPT-4o-mini experiments, chosen for cost; ToFu's arm used gpt-4.1.
+  Budget: 1 correctness prompt set x 3 paraphrases, 1 prompt per failing runtime input, <=3 failing
+  inputs per error type, 10 fuzz iterations, cap 40 calls/tool. All recorded in every index row.
