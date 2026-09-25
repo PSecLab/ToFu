@@ -33,7 +33,7 @@ EXTRA_ARGS=("$@")
 
 TFPY="$ROOT/Benchmarks/ToolFuzz/.venv/bin/python"
 [ -x "$TFPY" ] || { echo "missing ToolFuzz venv: run eval/vm_bootstrap_toolfuzz.sh"; exit 1; }
-for f in "$REPOS_FILE" "${TOOLFUZZ_PREPARED:-eval/state/prepared.jsonl}" \
+for f in "$REPOS_FILE" "$SKIP_FILE" "${TOOLFUZZ_PREPARED:-eval/state/prepared.jsonl}" \
          "${TOOLFUZZ_TOFU_INDEX:-eval/state/runs.gpt41-corpus.jsonl}"; do
   [ -f "$f" ] || { echo "missing $f"; exit 1; }
 done

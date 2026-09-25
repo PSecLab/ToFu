@@ -113,7 +113,11 @@ SCRATCH_ROOT = os.path.join(os.environ.get("TOFU_SCRATCH_ROOT")
 
 
 def bwrap_args(writable):
-    args = ["--die-with-parent", "--ro-bind", "/", "/", "--dev", "/dev",
+    # own PID + IPC namespace and a new session: a target cannot see, signal or
+    # ptrace any host process (e.g. a co-located ToFu campaign), nor inject into
+    # the launching terminal. Network is kept (tools legitimately call APIs).
+    args = ["--die-with-parent", "--unshare-pid", "--unshare-ipc", "--new-session",
+            "--ro-bind", "/", "/", "--dev", "/dev",
             "--tmpfs", "/dev/shm", "--proc", "/proc", "--tmpfs", "/tmp"]
     for d in writable:
         if d and os.path.isdir(d):

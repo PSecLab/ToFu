@@ -22,7 +22,9 @@ export SHARDS="${SHARDS:-3}" NICE="${NICE:-19}"
 # (shared external APIs / rate limits could change its results). Those repos
 # are skipped now and picked up by a later resume once repo24 is done.
 SKIP="$R/eval/state_tf/skip_now.txt"
-cat Benchmarks/extraction/set_e2_unsafe_repos.txt > "$SKIP"
+UNSAFE=Benchmarks/extraction/set_e2_unsafe_repos.txt
+[ -s "$UNSAFE" ] || { echo "missing $UNSAFE -- refusing to run without the unsafe-repo skip list"; exit 1; }
+cat "$UNSAFE" > "$SKIP"
 for f in $(ps -eo args | awk '/[r]un_repo24.py/ {for(i=1;i<=NF;i++) if($i=="--repos-file") print $(i+1)}'); do
   [ -f "$f" ] && { echo; cat "$f"; } >> "$SKIP" && echo "avoiding repos of running repo24: $f"
 done
