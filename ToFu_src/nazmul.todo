@@ -262,3 +262,21 @@ finished ones into the archive.
          dropped so the LLM regenerates? Replaying keeps runs reproducible but
          fuzzes 3 deep24 configs from deterministic seeds.
      (c) --reparse existing arm indexes (it backs each up first).
+
+## item 14 (2026-09-24): filesystem sandbox (bwrap) + obsidian-mcp vault escape
+- INCIDENT: repo24 (Monika VM) crashed 15:44:59 -- newtype-01/obsidian-mcp::manage_folder
+  followed a fuzzed ../../ path out of its scratch dir and deleted eval/configs (6231),
+  eval/runs, and 36 tracked files. cwd isolation (item 91) is necessary but NOT sufficient.
+- FIX: TOFU_SANDBOX=bwrap (run_eval._sandbox_cmd, commit 262371a). Each fuzzer runs with /
+  read-only, private /tmp, only its own scratch/corpus/metrics/seeds/llm_cache/target dirs
+  writable. run_repo24.sh sets it by default and refuses to start without bwrap.
+  Verified on node (obsidian manage_folder) AND python (paper-search search_dblp) targets:
+  canary + eval/configs survive. sandbox="bwrap" recorded per run.
+- FINDING: findings/potential/obsidian-mcp_manage_folder_vault-escape.md (live-demonstrated,
+  same class as UltimateCoderMCP / DesktopCommander).
+- DATA LOSS (report honestly, CLAUDE.md 3): corpus per-run logs for ~3150 of 6153 configs and
+  metrics_gpt41-corpus were destroyed; 3001 logs restored from ~/tofu_backup_20260918. Headline
+  numbers come from the intact index; state per-run logs lost for N configs on 2026-09-24.
+- TO DOUBLE-CHECK: PSU PC (repo24-b) almost certainly hit the same wipe (scratch was inside
+  the repo at /scratch/tofu/.tofu_scratch); assess when reachable, move scratch outside repo.
+- repo24 arm quarantined: eval/state/quarantine-2026-09-24-repo24-obsidian-wipe/. Restarted fresh.
