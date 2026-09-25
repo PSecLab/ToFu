@@ -33,6 +33,19 @@ never-matching keyword set shipped.
 5. **Record what you find in `nazmul.todo`** as a dated section. That is how this
    project carries state across sessions.
 
+## Per-machine work confinement
+
+- **Ananto PSU PC** (`mza6485@130.203.32.16`, Ubuntu 24.04, 16 threads): work **only
+  inside `/scratch/tofu`**. Do not read, write, move, or delete anything outside it
+  -- not `/home/grads/mza6485` (a quota'd NFS home) and not the rest of the host.
+  Caches and per-config scratch already live under `/scratch` via
+  `source /scratch/tofu/.tofu_env.sh`; keep them there. This is a hard rule.
+- **Monika VM** (`mza6485@172.31.126.75`): work inside `~/toolfuzzer`.
+- Every fuzzer must run under the filesystem sandbox (`TOFU_SANDBOX=bwrap`,
+  run_eval `_sandbox_cmd`; `run_repo24.sh` sets it by default). cwd isolation alone
+  is not sufficient: 2026-09-24 a fuzzed obsidian-mcp path escaped its scratch dir
+  and wiped the harness (nazmul.todo item 14).
+
 ## Before any campaign whose numbers might be published
 
 - `python3 -m pytest tests/ -q` → expect 66 passed, 1 skipped
