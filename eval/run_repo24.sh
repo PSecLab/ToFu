@@ -36,8 +36,12 @@ export TOFU_ENTRY=eval/run_repo24.py
 # Filesystem sandbox for every fuzzer (see run_eval._sandbox_cmd). Required: a
 # target once removed harness files by following a path out of its scratch dir.
 export TOFU_SANDBOX="${TOFU_SANDBOX:-bwrap}"
-if [ "$TOFU_SANDBOX" = bwrap ] && ! command -v bwrap >/dev/null; then
-    echo "bubblewrap missing: sudo apt install bubblewrap (or TOFU_SANDBOX= to run unsandboxed)"; exit 1
+if [ "$TOFU_SANDBOX" = bwrap ]; then
+    command -v bwrap >/dev/null || { echo "bubblewrap missing: sudo apt install bubblewrap"; exit 1; }
+    if ! _bw=$(bwrap --die-with-parent --ro-bind / / --dev /dev --proc /proc --tmpfs /tmp -- /bin/true 2>&1); then
+        echo "bwrap cannot start here: $_bw"
+        echo "Ubuntu 24.04: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0"; exit 1
+    fi
 fi
 
 echo "== repo24: ${BUDGET_H} worker-h/repo, slice ${TOFU_TIME}s, plateau ${PLATEAU}s, ${WORKERS} repos in parallel =="

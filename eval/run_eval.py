@@ -411,6 +411,14 @@ def one(cfgfile, budget, prov):
         cmd = [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
                "--corpus-dir", corpus, "--metrics-dir", metrics]
         if os.environ.get("TOFU_SANDBOX", "").strip().lower() == "bwrap":
+            # private writable HOME inside scratch: targets that keep a config dir or
+            # a sqlite DB under $HOME would otherwise fail on the read-only real home
+            # ("attempt to write a readonly database"), changing reachability.
+            home = os.path.join(scratch, "home")
+            os.makedirs(home, exist_ok=True)
+            env["HOME"] = home
+            for k in ("XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_STATE_HOME"):
+                env.pop(k, None)
             cmd = _sandbox_cmd(cmd, [scratch, corpus, metrics, seeds,
                                      env.get("TOFU_LLM_CACHE_DIR"), cfg.get("cwd")])
             rec["sandbox"] = "bwrap"

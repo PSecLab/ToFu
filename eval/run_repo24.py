@@ -160,8 +160,20 @@ def run_slice(arm, t, slice_s, prov, plateau):
 
     # keep every slice's log (one() writes <name>.log and would overwrite it)
     lp = os.path.join(RE.OUT, name + ".log")
+    sp = os.path.join(RE.OUT, f"{name}.slice{t['slices'] + 1:03d}.log")
     if os.path.exists(lp):
-        os.replace(lp, os.path.join(RE.OUT, f"{name}.slice{t['slices'] + 1:03d}.log"))
+        os.replace(lp, sp)
+    # A sandbox that cannot start is OUR failure, not the tool's: never let it
+    # count toward a tool's failures (2026-09-24 PSU PC: "bwrap: setting up uid
+    # map: Permission denied" marked every tool dead). Stop the whole campaign.
+    try:
+        head = open(sp, errors="ignore").read(400) if os.path.exists(sp) else ""
+    except Exception:
+        head = ""
+    if "bwrap:" in head:
+        log(f"FATAL sandbox failure on {name}: {head.strip()[:160]} -- aborting; "
+            f"this slice is not counted. Fix bwrap (user namespaces) and re-run.")
+        RE._abort(signal.SIGTERM, None)
 
     base = t["fuzz_s"]
     cov_rows, fnd_rows = [], []
