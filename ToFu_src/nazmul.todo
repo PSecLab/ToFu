@@ -291,3 +291,20 @@ finished ones into the archive.
   Both arms restarted clean (quarantine-2026-09-24-repo24-prehome,
   quarantine-2026-09-24-repo24b-bwrap-uidmap). Smokes: PC MemoryMesh add_npc 455/1024
   success sandboxed; VM file-context read_context succeeds.
+
+## item 15 [PAPER-NOTE — 2026-09-25] TOOLFUZZ BASELINE — report these in the paper
+- **ToolFuzz's own false-discovery rate is 46% for correctness failures** (Milev et al.
+  2025, Table 3: authors hand-checked every positive, 622 TP / 534 FP). Report it next
+  to any ToolFuzz correctness count, and/or hand-check a sample of our ToolFuzz
+  correctness positives the same way before comparing.
+- Their "runtime detection has no false positives" holds for LangChain tools (exception
+  = crash); MCP servers return errors as protocol replies -> we split ENV / REJECT /
+  CRASH (eval/score_toolfuzz.py). Report ToolFuzz's own number AND the CRASH subset.
+- ToolFuzz targets tool-DOCUMENTATION errors, not security (paper §3/§5.3) — positioning
+  vs ToFu (implementation vs documented security contract).
+- Its taint-guided fuzzer loses taint over MCP (server is a separate process) ->
+  degrades to type-based Faker generation. State as a limitation of applying it to MCP.
+- First campaign's ToolFuzz numbers are withdrawn ("2,030 discrepancies" = tests run;
+  harness artifacts). Final config: gpt-4.1-mini, 1 correctness set x 3 prompts,
+  1 runtime prompt per failing input, cap 40 calls/tool. Details:
+  findings/baselines/toolfuzz_method_20260923.md.
