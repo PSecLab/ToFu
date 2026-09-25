@@ -39,7 +39,7 @@ import os, re, sys, json, glob, argparse, collections, importlib.util
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "eval", "toolfuzz_runs")
 INDEX = os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl")
-TOFU_IDX = os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl")
+TOFU_IDX = os.environ.get("TOOLFUZZ_TOFU_INDEX", os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl"))
 
 _spec = importlib.util.spec_from_file_location("triage", os.path.join(ROOT, "eval", "triage_findings.py"))
 _triage = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_triage)

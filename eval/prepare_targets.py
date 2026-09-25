@@ -21,9 +21,11 @@ import argparse, json, os, shutil, subprocess, sys, time
 
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 EVAL   = os.path.join(ROOT, "eval")
-TGTDIR = os.path.join(EVAL, "targets")
-CFGDIR = os.path.join(EVAL, "configs")
-STATE  = os.path.join(EVAL, "state")
+# Overridable so a second harness (the ToolFuzz baseline) can prepare its own
+# targets on a host where a ToFu campaign is using eval/targets + eval/configs.
+TGTDIR = os.environ.get("TOFU_TARGETS_DIR") or os.path.join(EVAL, "targets")
+CFGDIR = os.environ.get("TOFU_CONFIGS_DIR") or os.path.join(EVAL, "configs")
+STATE  = os.environ.get("TOFU_STATE_DIR") or os.path.join(EVAL, "state")
 EXTR   = os.path.join(ROOT, "Benchmarks", "extraction")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
 SKIPPED  = os.path.join(STATE, "skipped.jsonl")

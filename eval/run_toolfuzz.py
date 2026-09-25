@@ -41,10 +41,11 @@ import toolfuzz_llm_guard as guard  # noqa: E402  (before ToolFuzz builds any Ch
 sys.path.insert(0, TOOLFUZZ)
 os.chdir(TOOLFUZZ)
 
-PREPARED = os.path.join(ROOT, "eval", "state", "prepared.jsonl")
+PREPARED = os.environ.get("TOOLFUZZ_PREPARED", os.path.join(ROOT, "eval", "state", "prepared.jsonl"))
 OUT      = os.environ.get("TOOLFUZZ_OUT", os.path.join(ROOT, "eval", "toolfuzz_runs"))
 INDEX    = os.environ.get("TOOLFUZZ_INDEX", os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl"))
-TOFU_IDX = os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl")
+# ToFu's run index decides --executable-only; the committed snapshot works on any host
+TOFU_IDX = os.environ.get("TOOLFUZZ_TOFU_INDEX", os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl"))
 
 # budget knobs (recorded in every row)
 RT_MAX_EXAMPLES = int(os.environ.get("TOOLFUZZ_RT_MAX_EXAMPLES", "3"))
