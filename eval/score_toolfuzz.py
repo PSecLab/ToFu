@@ -37,8 +37,8 @@ axis by axis -- never one summed bug count.
 import os, re, sys, json, glob, argparse, collections, importlib.util
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT = os.path.join(ROOT, "eval", "toolfuzz_runs")
-INDEX = os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl")
+OUT = os.environ.get("TOOLFUZZ_OUT", os.path.join(ROOT, "eval", "toolfuzz_runs"))
+INDEX = os.environ.get("TOOLFUZZ_INDEX", os.path.join(ROOT, "eval", "state", "toolfuzz_runs.jsonl"))
 TOFU_IDX = os.environ.get("TOOLFUZZ_TOFU_INDEX", os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl"))
 
 _spec = importlib.util.spec_from_file_location("triage", os.path.join(ROOT, "eval", "triage_findings.py"))
