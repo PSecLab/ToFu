@@ -116,6 +116,20 @@ def _abort(signum, frame):
     sys.stderr.flush()
     os._exit(130)
 
+def _sandbox_cmd(cmd, writable):
+    """TOFU_SANDBOX=bwrap: run the fuzzer (and the target it spawns) with the whole
+    filesystem read-only, a private /tmp, and only this config's own directories
+    writable. Changing cwd (item 91) could not stop a target from following a
+    path out of its scratch dir: on 2026-09-24 newtype-01/obsidian-mcp
+    manage_folder removed eval/configs, eval/runs and 36 tracked files mid-campaign."""
+    args = ["bwrap", "--die-with-parent", "--ro-bind", "/", "/",
+            "--dev", "/dev", "--tmpfs", "/dev/shm", "--proc", "/proc", "--tmpfs", "/tmp"]
+    for d in writable:
+        if d and os.path.isdir(d):
+            args += ["--bind", d, d]
+    return args + ["--"] + cmd
+
+
 def log(m): print(f"[{time.strftime('%H:%M:%S')}] {m}", flush=True)
 
 def done_set():
@@ -394,9 +408,14 @@ def one(cfgfile, budget, prov):
         env["TMUX_TMPDIR"] = scratch
         env[procreap.TAG_ENV] = tag
 
+        cmd = [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
+               "--corpus-dir", corpus, "--metrics-dir", metrics]
+        if os.environ.get("TOFU_SANDBOX", "").strip().lower() == "bwrap":
+            cmd = _sandbox_cmd(cmd, [scratch, corpus, metrics, seeds,
+                                     env.get("TOFU_LLM_CACHE_DIR"), cfg.get("cwd")])
+            rec["sandbox"] = "bwrap"
         p = subprocess.Popen(
-            [sys.executable, "-m", "src", "--config", cfgpath, "--time", str(budget),
-             "--corpus-dir", corpus, "--metrics-dir", metrics],
+            cmd,
             cwd=scratch, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             start_new_session=True, env=env)
         with _LIVE_LOCK:

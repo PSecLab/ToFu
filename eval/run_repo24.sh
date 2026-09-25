@@ -33,6 +33,12 @@ export TOFU_RSS_LIMIT_MB="${TOFU_RSS_LIMIT_MB:-6144}"
 export TOFU_FAILFAST_EXECS="${TOFU_FAILFAST_EXECS:-5000}"
 export TOFU_JS_COV_SLOTS="${TOFU_JS_COV_SLOTS:-1024}"
 export TOFU_ENTRY=eval/run_repo24.py
+# Filesystem sandbox for every fuzzer (see run_eval._sandbox_cmd). Required: a
+# target once removed harness files by following a path out of its scratch dir.
+export TOFU_SANDBOX="${TOFU_SANDBOX:-bwrap}"
+if [ "$TOFU_SANDBOX" = bwrap ] && ! command -v bwrap >/dev/null; then
+    echo "bubblewrap missing: sudo apt install bubblewrap (or TOFU_SANDBOX= to run unsandboxed)"; exit 1
+fi
 
 echo "== repo24: ${BUDGET_H} worker-h/repo, slice ${TOFU_TIME}s, plateau ${PLATEAU}s, ${WORKERS} repos in parallel =="
 exec ./eval/run_arm_gpt41.sh --budget-h "$BUDGET_H" --plateau-s "$PLATEAU" "$@"
