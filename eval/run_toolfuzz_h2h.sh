@@ -7,7 +7,7 @@
 #
 # Resumable: re-run the same command; finished (repo, tool) rows are skipped and
 # every LLM response is cached, so a redone tool costs ~0 calls.
-# Ctrl-C safe: all shards stop, .env is restored, the in-flight tools are redone.
+# Ctrl-C safe: all shards stop; the in-flight tools are redone on resume.
 # Hard stop: when TOOLFUZZ_MAX_CALLS real API calls have been made, every shard
 # exits (code 3). Raise the cap and re-run to continue.
 set -uo pipefail
@@ -15,6 +15,8 @@ cd "$(dirname "$0")/.."
 ROOT=$(pwd)
 
 : "${SHARDS:=4}"
+: "${NICE:=0}"          # e.g. NICE=10 on a host shared with a ToFu campaign
+export TOOLFUZZ_SANDBOX="${TOOLFUZZ_SANDBOX:-bwrap}"
 : "${REPOS_FILE:=Benchmarks/extraction/head2head_cisco.txt}"
 : "${SKIP_FILE:=Benchmarks/extraction/set_e2_unsafe_repos.txt}"
 export TOOLFUZZ_MODEL="${TOOLFUZZ_MODEL:-gpt-4.1}"
@@ -35,11 +37,11 @@ for f in "$REPOS_FILE" eval/state/prepared.jsonl eval/state/runs.gpt41-corpus.js
   [ -f "$f" ] || { echo "missing $f"; exit 1; }
 done
 
-# secrets: load, then hide .env from third-party servers for the run's duration
+# secrets: load. .env is NOT moved (a campaign sharing this checkout may re-read
+# it); the bwrap sandbox masks it with /dev/null inside every target instead.
 if [ -f .env ]; then set -a; . ./.env; set +a; fi
 [ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set (.env)"; exit 1; }
 HIDDEN=""
-if [ -f .env ]; then HIDDEN=".env.hidden.$$"; mv .env "$HIDDEN"; fi
 
 PIDS=()
 cleanup() {
@@ -53,9 +55,9 @@ cleanup() {
 trap cleanup INT TERM EXIT
 
 mkdir -p eval/logs
-echo "ToolFuzz H2H: shards=$SHARDS model=$TOOLFUZZ_MODEL cap=$TOOLFUZZ_MAX_CALLS calls (per tool $TOOLFUZZ_MAX_CALLS_PER_TOOL)"
+echo "ToolFuzz H2H: sandbox=$TOOLFUZZ_SANDBOX nice=$NICE shards=$SHARDS model=$TOOLFUZZ_MODEL cap=$TOOLFUZZ_MAX_CALLS calls (per tool $TOOLFUZZ_MAX_CALLS_PER_TOOL)"
 for ((k=0; k<SHARDS; k++)); do
-  "$TFPY" eval/run_toolfuzz.py --shard "$k/$SHARDS" --repos-file "$REPOS_FILE" \
+  nice -n "$NICE" "$TFPY" eval/run_toolfuzz.py --shard "$k/$SHARDS" --repos-file "$REPOS_FILE" \
       --skip-repos-file "$SKIP_FILE" --executable-only "${EXTRA_ARGS[@]}" \
       >> "eval/logs/toolfuzz_h2h_shard$k.log" 2>&1 &
   PIDS+=($!)

@@ -49,7 +49,7 @@ TOFU_ROBUST = {"check_unexpected_crash", "check_resource_exhaustion", "check_inv
 HARNESS = re.compile(r"for TestFailureResult|StructuredTool does not support sync|^<class 'KeyError'>|"
                      r"openai\.|RateLimit|APIConnection|APITimeout|GraphRecursion|Recursion limit|"
                      r"maximum recursion depth|McpError: Connection closed|TaskGroup|BrokenResource|"
-                     r"ClosedResource|tool exceeded \d+s|Broken pipe|LLMToolCap|LLMBudget", re.I)
+                     r"ClosedResource|tool exceeded \d+s|Broken pipe|LLMToolCap|LLMBudget|bwrap:", re.I)
 ENV = re.compile(r"fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|getaddrinfo|Connection refused|connect ECON|"
                  r"API[ _-]?key|not configured|authenticat|unauthori[sz]ed|\b401\b|\b403\b|credential|"
                  r"No active project|not connected|No frontend client|AppleScript|osascript|Base URL|"

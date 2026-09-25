@@ -100,11 +100,67 @@ def executable_tools():
     return ex
 
 
-def server_cfg(t):
+# Filesystem sandbox (CLAUDE.md: every fuzzer runs under bwrap). ToolFuzz drives
+# third-party tools with LLM-chosen arguments; on 2026-09-24 a fuzzed
+# newtype-01/obsidian-mcp path escaped its scratch dir and wiped the harness, and
+# that repo is in the head-to-head set. Same policy as run_eval._sandbox_cmd:
+# whole filesystem read-only, private /tmp, only the server's scratch dir and the
+# target's own directory writable, HOME inside scratch.
+SANDBOX = os.environ.get("TOOLFUZZ_SANDBOX", "bwrap").strip().lower()
+SCRATCH_ROOT = os.path.join(os.environ.get("TOFU_SCRATCH_ROOT")
+                            or os.path.join(os.path.expanduser("~"), ".tofu_scratch"), "toolfuzz")
+
+
+def bwrap_args(writable):
+    args = ["--die-with-parent", "--ro-bind", "/", "/", "--dev", "/dev",
+            "--tmpfs", "/dev/shm", "--proc", "/proc", "--tmpfs", "/tmp"]
+    for d in writable:
+        if d and os.path.isdir(d):
+            args += ["--bind", d, d]
+    # hide the harness's secrets from targets without touching the real file
+    # (moving .env aside would break a campaign sharing this checkout)
+    envf = os.path.join(ROOT, ".env")
+    if os.path.exists(envf):
+        args += ["--ro-bind", "/dev/null", envf]
+    return args
+
+
+def sandbox_preflight():
+    """Refuse to run rather than run unsandboxed (or count sandbox failures as
+    tool failures -- item 14 follow-up: an AppArmor userns restriction made every
+    bwrap start fail with 'setting up uid map: Permission denied')."""
+    import shutil, subprocess
+    if SANDBOX == "none":
+        log("WARNING: TOOLFUZZ_SANDBOX=none -- targets run UNSANDBOXED"); return
+    if SANDBOX != "bwrap":
+        log(f"unknown TOOLFUZZ_SANDBOX={SANDBOX!r}"); sys.exit(4)
+    if not shutil.which("bwrap"):
+        log("bwrap not installed; refusing to run targets unsandboxed"); sys.exit(4)
+    probe = os.path.join(SCRATCH_ROOT, ".probe")
+    os.makedirs(probe, exist_ok=True)
+    r = subprocess.run(["bwrap"] + bwrap_args([probe]) +
+                       ["--", "sh", "-c", f"touch {probe}/ok && ! touch /etc/.tf_probe 2>/dev/null"],
+                       capture_output=True, text=True, timeout=30)
+    if r.returncode != 0 or not os.path.exists(os.path.join(probe, "ok")):
+        log(f"bwrap preflight failed: {(r.stderr or r.stdout).strip()[:200]}"); sys.exit(4)
+    log("bwrap preflight ok (scratch writable, / read-only)")
+
+
+def server_cfg(t, slug):
     env = {k: v for k, v in os.environ.items() if not k.startswith(SCRUB_ENV)}
     env.update(t.get("env") or {})
-    return {"command": t["command"], "args": t.get("args") or [],
-            "transport": "stdio", "cwd": t.get("cwd"), "env": env}
+    cmd, args = t["command"], list(t.get("args") or [])
+    if SANDBOX == "bwrap":
+        scratch = os.path.join(SCRATCH_ROOT, slug)
+        home = os.path.join(scratch, "home")
+        os.makedirs(home, exist_ok=True)
+        env["HOME"] = home
+        env["TMUX_TMPDIR"] = scratch
+        for k in ("XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME"):
+            env.pop(k, None)
+        args = bwrap_args([scratch, t.get("cwd")]) + ["--", cmd] + args
+        cmd = "bwrap"
+    return {"command": cmd, "args": args, "transport": "stdio", "cwd": t.get("cwd"), "env": env}
 
 
 def _to_text(res):
@@ -150,7 +206,7 @@ def make_sync(tool):
 
 async def load_tools(name, t):
     from langchain_mcp_adapters.client import MultiServerMCPClient
-    client = MultiServerMCPClient({name: server_cfg(t)})
+    client = MultiServerMCPClient({name: server_cfg(t, name)})
     return [make_sync(x) for x in await client.get_tools()]
 
 
@@ -304,12 +360,13 @@ def main():
 
     if not os.environ.get("OPENAI_API_KEY"):
         log("OPENAI_API_KEY not set"); sys.exit(1)
+    sandbox_preflight()
     guard.install()
     from langchain_openai import ChatOpenAI
     llm = ChatOpenAI(temperature=0)   # model forced by guard (TOOLFUZZ_MODEL)
     knobs = {"model": llm.model_name, "iters": a.iters, "rt_max_examples": RT_MAX_EXAMPLES,
              "rt_max_prompts": RT_MAX_PROMPTS, "ct_sets": CT_SETS, "ct_max_prompts": CT_MAX_PROMPTS,
-             "max_calls_per_tool": guard.MAX_PER_TOOL}
+             "max_calls_per_tool": guard.MAX_PER_TOOL, "sandbox": SANDBOX}
 
     ready = [t for t in (json.loads(l) for l in open(PREPARED)) if t.get("status") == "ready"]
     only = load_list(a.repos_file)
@@ -338,6 +395,8 @@ def main():
         try:
             tools = asyncio.run(load_tools(slug, t))
         except Exception as e:
+            if "bwrap" in str(e):
+                log(f"ABORT: sandbox failure, not a target failure: {str(e)[:160]}"); sys.exit(4)
             log(f"    LOAD ERR {str(e)[:120]}")
             append_index({"repo": repo, "tool": "*", "ok": False, "error": f"load_tools: {str(e)[:200]}"})
             continue
