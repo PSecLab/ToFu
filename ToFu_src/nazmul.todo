@@ -280,3 +280,14 @@ finished ones into the archive.
 - TO DOUBLE-CHECK: PSU PC (repo24-b) almost certainly hit the same wipe (scratch was inside
   the repo at /scratch/tofu/.tofu_scratch); assess when reachable, move scratch outside repo.
 - repo24 arm quarantined: eval/state/quarantine-2026-09-24-repo24-obsidian-wipe/. Restarted fresh.
+- 2026-09-24 follow-up (7ba41b3): PSU PC sandboxed run lost every tool to
+  "bwrap: setting up uid map: Permission denied" (Ubuntu 24.04 AppArmor
+  unprivileged-userns restriction; fixed by Ananto with
+  kernel.apparmor_restrict_unprivileged_userns=0 in /etc/sysctl.d/60-tofu-userns.conf).
+  Each failed sandbox start had been counted as a TOOL failure. Now: run_repo24.sh
+  preflights bwrap and refuses to start; a bwrap error in a slice log aborts the
+  campaign uncounted. Also 34 "attempt to write a readonly database": targets keep
+  state under $HOME, read-only under bwrap -> each config now gets HOME=<scratch>/home.
+  Both arms restarted clean (quarantine-2026-09-24-repo24-prehome,
+  quarantine-2026-09-24-repo24b-bwrap-uidmap). Smokes: PC MemoryMesh add_npc 455/1024
+  success sandboxed; VM file-context read_context succeeds.
