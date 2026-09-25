@@ -55,10 +55,16 @@ cleanup() {
 }
 trap cleanup INT TERM EXIT
 
+# Protect any co-located campaign: every ToolFuzz process (and each target server
+# it spawns, by inheritance) is the kernel OOM killer's FIRST choice, runs at NICE
+# CPU priority and idle-class disk I/O.
+echo 1000 > /proc/self/oom_score_adj 2>/dev/null || true
+IONICE=(); command -v ionice >/dev/null && IONICE=(ionice -c3)
+
 mkdir -p eval/logs
 echo "ToolFuzz H2H: sandbox=$TOOLFUZZ_SANDBOX nice=$NICE shards=$SHARDS model=$TOOLFUZZ_MODEL cap=$TOOLFUZZ_MAX_CALLS calls (per tool $TOOLFUZZ_MAX_CALLS_PER_TOOL)"
 for ((k=0; k<SHARDS; k++)); do
-  nice -n "$NICE" "$TFPY" eval/run_toolfuzz.py --shard "$k/$SHARDS" --repos-file "$REPOS_FILE" \
+  nice -n "$NICE" "${IONICE[@]}" "$TFPY" eval/run_toolfuzz.py --shard "$k/$SHARDS" --repos-file "$REPOS_FILE" \
       --skip-repos-file "$SKIP_FILE" --executable-only "${EXTRA_ARGS[@]}" \
       >> "eval/logs/toolfuzz_h2h_shard$k.log" 2>&1 &
   PIDS+=($!)
