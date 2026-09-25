@@ -75,7 +75,12 @@ class CorrectnessPromptGenerator(PromptGenerator, LoggingMixin):
             self.generated_args += args['argument_values'][:2]
 
     def to_prompts(self, template, prompt_args):
-        str_template = re.sub('\[.*?\]', '{}', template)
+        # PATCH (ToFu): templates may contain literal braces (e.g. JSON like
+        # {targeting}); str.format then raised KeyError/IndexError and killed the
+        # tool. Escape literal braces, then turn each [mask] into a slot.
+        str_template = re.sub('\[.*?\]', '\x00', template).replace('{', '{{').replace('}', '}}')
+        n_slots = str_template.count('\x00')
+        str_template = str_template.replace('\x00', '{}')
         arguments = prompt_args['template_arguments']
         str_args_sets = []
         # PATCH (ToFu): the LLM returns ragged argument_values lists (or none);
@@ -92,7 +97,8 @@ class CorrectnessPromptGenerator(PromptGenerator, LoggingMixin):
                 str_args_sets.append(str_args)
 
         # now yield the results
-        prompts = [str_template.format(*str_args_set) for str_args_set in str_args_sets]
+        prompts = [str_template.format(*str_args_set) for str_args_set in str_args_sets
+                   if len(str_args_set) == n_slots]  # PATCH (ToFu): skip arity mismatches
         prompts = [prompt for prompt in prompts if len(re.findall('\[.*?\]', prompt)) == 0]
         if len(prompts) == 0:
             self.log_debug(f"WARN: couldn't infill template: {template}, arguments: {arguments}")

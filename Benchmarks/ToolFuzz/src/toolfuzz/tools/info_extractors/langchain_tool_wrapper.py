@@ -121,7 +121,9 @@ class LangchainToolWrapper(ToolWrapper):
                 # If the type is not array, we can return the type directly (it is not container type)
                 return ArgumentType(name=value['type'])
             else:
-                return ArgumentType(name=value['type'], sub_types=[self.__get_type(value['items'])], has_subtype=True)
+                # PATCH (ToFu): JSON-schema arrays may omit "items" (= any item);
+                # original indexed value['items'] -> KeyError killed the tool.
+                return ArgumentType(name=value['type'], sub_types=[self.__get_type(value.get('items', {}))], has_subtype=True)
         elif 'anyOf' in value:
             subtypes = []
             for item in value['anyOf']:

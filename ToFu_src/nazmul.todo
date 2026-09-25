@@ -308,3 +308,24 @@ finished ones into the archive.
   harness artifacts). Final config: gpt-4.1-mini, 1 correctness set x 3 prompts,
   1 runtime prompt per failing input, cap 40 calls/tool. Details:
   findings/baselines/toolfuzz_method_20260923.md.
+
+## item 16 (2026-09-25): ToolFuzz H2H run results + a ToFu headline-count issue
+- ToolFuzz H2H on PSU PC finished 03:50: 299 tools / 32 repos, 292 ok, 7 err, 4,665 real
+  calls (3.66M in / 366k out, gpt-4.1-mini), max 23 calls/tool (cap 40 never hit).
+  Pending: 6 repos deferred while repo24-b runs (kanban, cline-mcp-memory-bank,
+  roo-code-memory-bank, Mcp-Reasoning-Server, web3-research, fantasy-pl); CMD-MCP-Server
+  unsafe-skipped by design.
+- 6 of 7 errors were ToolFuzz bugs, patched (PATCH (ToFu)): literal braces in a generated
+  template crashed str.format (4 tools); array schema without "items" (2 tools). Rerun.
+- NASA-MCP-server: server works under bwrap (answers initialize) but emits
+  notifications/message BEFORE its initialize reply; the Python MCP client in ToolFuzz's
+  bridge closes (BrokenResourceError). Likely strict-client incompatibility (not fully
+  confirmed). Excluded from the ToolFuzz comparison set; ToFu had 0 security candidates there.
+- **TO DOUBLE-CHECK — ToFu headline 627 includes 249 candidates from tools with
+  exec_success_rate == 0** (every execution errored; e.g. mcp-trino-python backend absent).
+  triage_findings.py's docstring says "any success>0 = the full candidate set" but the code
+  never filters on success. With success>0: 378 candidates / 126 repos (high-conf 299
+  unchanged). Some zero-success hits are genuine introspection side effects (SSRF connect,
+  temp file, log write) but none can be the silent-success oracle. By class (succ==0): ssrf
+  129, insecure-temp-file 63, log-injection 49, path-traversal 6, os-cmd-inj 1, creds 1.
+  Decide the headline definition before the paper cites 627.
