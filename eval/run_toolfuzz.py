@@ -120,9 +120,9 @@ def bwrap_args(writable):
             args += ["--bind", d, d]
     # hide the harness's secrets from targets without touching the real file
     # (moving .env aside would break a campaign sharing this checkout)
-    envf = os.path.join(ROOT, ".env")
-    if os.path.exists(envf):
-        args += ["--ro-bind", "/dev/null", envf]
+    for envf in (os.path.join(ROOT, ".env"), os.environ.get("TOOLFUZZ_ENV_FILE")):
+        if envf and os.path.exists(envf):
+            args += ["--ro-bind", "/dev/null", envf]
     return args
 
 

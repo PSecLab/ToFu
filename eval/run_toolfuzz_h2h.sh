@@ -40,8 +40,9 @@ done
 
 # secrets: load. .env is NOT moved (a campaign sharing this checkout may re-read
 # it); the bwrap sandbox masks it with /dev/null inside every target instead.
-if [ -f .env ]; then set -a; . ./.env; set +a; fi
-[ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set (.env)"; exit 1; }
+ENVF="${TOOLFUZZ_ENV_FILE:-.env}"
+if [ -f "$ENVF" ]; then set -a; . "$ENVF"; set +a; fi
+[ -n "${OPENAI_API_KEY:-}" ] || { echo "OPENAI_API_KEY not set ($ENVF)"; exit 1; }
 HIDDEN=""
 
 PIDS=()
