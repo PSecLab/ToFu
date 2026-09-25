@@ -49,9 +49,9 @@ TOFU_IDX = os.environ.get("TOOLFUZZ_TOFU_INDEX", os.path.join(ROOT, "eval", "sta
 
 # budget knobs (recorded in every row)
 RT_MAX_EXAMPLES = int(os.environ.get("TOOLFUZZ_RT_MAX_EXAMPLES", "3"))
-RT_MAX_PROMPTS  = int(os.environ.get("TOOLFUZZ_RT_MAX_PROMPTS", "2"))
-CT_SETS         = int(os.environ.get("TOOLFUZZ_CT_SETS", "2"))
-CT_MAX_PROMPTS  = int(os.environ.get("TOOLFUZZ_CT_MAX_PROMPTS", "4"))
+RT_MAX_PROMPTS  = int(os.environ.get("TOOLFUZZ_RT_MAX_PROMPTS", "1"))
+CT_SETS         = int(os.environ.get("TOOLFUZZ_CT_SETS", "1"))
+CT_MAX_PROMPTS  = int(os.environ.get("TOOLFUZZ_CT_MAX_PROMPTS", "3"))
 
 # never hand the harness's secrets / terminal to third-party servers
 SCRUB_ENV = ("OPENAI_", "ANTHROPIC_", "TOFU_", "TOOLFUZZ_", "CISCO_LLM", "TMUX")

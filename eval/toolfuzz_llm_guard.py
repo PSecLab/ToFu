@@ -41,8 +41,8 @@ def _int_env(name, default):
         return int(default)
 
 
-MAX_CALLS = _int_env("TOOLFUZZ_MAX_CALLS", "25000")
-MAX_PER_TOOL = _int_env("TOOLFUZZ_MAX_CALLS_PER_TOOL", "80")
+MAX_CALLS = _int_env("TOOLFUZZ_MAX_CALLS", "10000")
+MAX_PER_TOOL = _int_env("TOOLFUZZ_MAX_CALLS_PER_TOOL", "40")
 
 _tool_calls = 0          # real calls charged to the current tool (this process)
 _tool_tokens = [0, 0]    # prompt, completion for the current tool
