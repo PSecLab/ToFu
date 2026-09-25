@@ -60,3 +60,29 @@ All ToolFuzz counts are its own outcome definitions; ToolFuzz correctness bugs a
 LLM-judged and unverified.
 
 Scored output: `python3 eval/score_toolfuzz.py --write findings/baselines/toolfuzz_h2h_scored_<date>.md`.
+
+## Verified against the paper (Milev et al. 2025, "ToolFuzz — Automated Agent Tool Testing", read 2026-09-25)
+- **Goal:** detect tool-*documentation* errors (under-/ill-specified docs) that make agents misuse
+  tools; autofix rewrites descriptions. Not a security tester (§3, §5.3).
+- **Runtime failures (§4.1, Tables 1–2):** taint-guided fuzzer (taint objects capture syntax priors;
+  Faker for semantic priors) finds failing arguments → agent sanity check → LLM writes a user query →
+  counted as an *erroneous prompt* if the agent run raises a runtime error. Reported as erroneous /
+  tested prompts, unique errors (ToolFuzz: 999 / 3,297, 41 unique) and vulnerable tools per error type.
+  Paper states runtime detection has no false positives — true for LangChain tools where an exception
+  is a crash; on MCP servers errors are graceful protocol replies, hence our ENV/REJECT/CRASH split.
+- **Correctness failures (§4.2, Table 3):** positive only if all three checks fail — argument
+  inconsistency, output inconsistency, LLM oracle score vs. a majority-vote expected answer at or
+  below 5 on 1–10. **All positives were manually inspected: 622 TP / 534 FP, FDR 46%.**
+- **Setup (§5.1):** ReAct agent, LangChain, GPT-4o / GPT-4o-mini, 32 LangChain community tools
+  without API keys + 35 synthetic tools.
+
+### Consequences for our comparison
+- Our scorer's criteria match the paper (code `<= 5` = paper threshold 5); runtime reported as unique
+  errors per tool, as in Tables 1–2.
+- **Taint guidance is lost over MCP:** taint tracking is in-process Python only; an MCP server is a
+  separate process receiving JSON, so ToolFuzz's fuzzer degrades to type-based Faker generation here.
+  State this as a limitation of applying ToolFuzz to MCP.
+- **Correctness positives need manual inspection** (as the authors did) before any count is compared;
+  otherwise report raw counts next to the authors' own 46% FDR. The executed-only view is a pre-filter.
+- Deviation: gpt-4.1 for every ToolFuzz LLM role (same model as ToFu's arm) instead of GPT-4o/4o-mini;
+  per-tool call caps recorded in every index row.
