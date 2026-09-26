@@ -40,6 +40,17 @@ if [ "$TOFU_SANDBOX" = bwrap ]; then
     fi
 fi
 
+# JS targets are built for node 22; a non-sourced shell defaults to system node
+# (v18 on the PSU PC) and every node config fails at startup while run_eval still
+# records ok=True. Refuse to launch on the wrong node (2026-09-26 bad probe).
+NODE_WANT="${TOFU_NODE_MAJOR:-22}"
+if command -v node >/dev/null; then
+    NV=$(node -v 2>/dev/null); case "$NV" in v${NODE_WANT}.*) : ;; *)
+        echo "node $NV but need v${NODE_WANT}.x -- run: source ./.tofu_env.sh (or nvm use ${NODE_WANT})"; exit 1 ;; esac
+else
+    echo "node not on PATH -- source ./.tofu_env.sh first"; exit 1
+fi
+
 PRIO="Benchmarks/extraction/corpus_reachable_configs.txt"
 UNSAFE="Benchmarks/extraction/set_e2_unsafe_repos.txt"
 [ -f "$PRIO" ] || { echo "missing $PRIO"; exit 1; }

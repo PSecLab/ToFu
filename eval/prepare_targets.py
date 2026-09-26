@@ -559,6 +559,27 @@ def main():
                          "scratch -- use after item 86 to move Python venvs onto "
                          f"TOFU_TARGET_PYTHON={TARGET_PYTHON}.")
     a = ap.parse_args()
+    # Target venvs must match the harness interpreter (in-process import). Building
+    # under bare `python3` in a shell that never sourced .tofu_env.sh gave 3.12
+    # venvs against a 3.13 harness + node v18 (2026-09-26); every target then
+    # failed at runner start. Warn loudly rather than silently mis-build.
+    _hv = os.path.join(ROOT, ".venv", "bin", "python")
+    if os.path.exists(_hv):
+        import subprocess as _sp
+        try:
+            _hp = _sp.run([_hv, "-c", "import sys;print(f\"{sys.version_info.major}.{sys.version_info.minor}\")"],
+                          capture_output=True, text=True, timeout=15).stdout.strip()
+        except Exception:
+            _hp = ""
+        if _hp and _hp != TARGET_PYTHON:
+            log(f"!! TARGET_PYTHON={TARGET_PYTHON} but harness .venv is {_hp}. Target venvs "
+                f"will not import in-process. Run with: TOFU_TARGET_PYTHON={_hp} .venv/bin/python "
+                f"eval/prepare_targets.py ...  (aborting; set TOFU_ALLOW_PYTHON_MISMATCH=1 to override)")
+            if not os.environ.get("TOFU_ALLOW_PYTHON_MISMATCH"):
+                sys.exit(2)
+    import shutil as _shutil
+    if not _shutil.which("node"):
+        log("!! node not on PATH -- source ./.tofu_env.sh (node 22) before preparing JS targets")
     if a.redo and not (a.only_repo or a.only_lang or a.only_repos_file):
         log("--redo needs --only-repo, --only-lang or --only-repos-file (refusing to re-prepare the whole corpus)"); sys.exit(2)
 
