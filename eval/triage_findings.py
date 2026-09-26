@@ -12,9 +12,12 @@ set into a ranked, de-duplicated list of *reportable* candidates by:
      selection and so are not evidence of a targeted vulnerability.
   2. SEVERITY PICK -- a hit is labelled by its highest-severity real class.
   3. DEDUP -- count distinct (repo, tool, class); one tool = one vuln.
-  4. CONFIDENCE TIER -- exec_success_rate is the fraction of executions the tool
-     SWALLOWED the malicious input. >= --strong (default 0.5) = high-confidence
-     (fires consistently); any success>0 = the full candidate set.
+  4. REACHABILITY (descriptive only) -- exec_success_rate is the fraction of ALL
+     of the tool's executions that returned a non-error response. It is reported
+     per candidate but never tiers or filters: the oracle already requires the
+     tool to accept the flagged input, so how often it rejects other fuzz inputs
+     says nothing about a given alert. (A former ">=0.5 = high-confidence" tier was
+     withdrawn 2026-09-26.)
 
 These are CANDIDATES, not hand-verified. The mandatory layer is NOT subtracted
 (do that before any LLM-selection/RQ2-RQ3 claim). A human sample-triage is still
@@ -65,7 +68,6 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--arm", default="gpt41-corpus")
     ap.add_argument("--index", default=None, help="override index path")
-    ap.add_argument("--strong", type=float, default=0.5, help="high-confidence success threshold")
     ap.add_argument("--write", default=None, help="also write the enumerated list to this markdown path")
     a = ap.parse_args()
 
@@ -89,17 +91,13 @@ def main():
             best[key] = (sr, cls[1], (r.get("commit") or "")[:10])
 
     by_class_all = collections.Counter()
-    by_class_strong = collections.Counter()
     for (repo, tool, cls), (sr, cwe, commit) in best.items():
         by_class_all[cls] += 1
-        if sr >= a.strong:
-            by_class_strong[cls] += 1
 
     total_all = sum(by_class_all.values())
-    total_strong = sum(by_class_strong.values())
     repos = len({k[0] for k in best})
     print(f"index: {os.path.relpath(idx, ROOT)}  oracle-hits: {len(fnd)}")
-    print(f"{'class':22} {'CWE':8} {'succ>=%.1f' % a.strong:>9} {'any':>6}")
+    print(f"{'class':22} {'CWE':8} {'candidates':>10}")
     order = []
     seen = set()
     for _, (cls, cwe) in REAL:
@@ -107,9 +105,9 @@ def main():
             seen.add(cls); order.append((cls, cwe))
     for cls, cwe in order:
         if by_class_all.get(cls):
-            print(f"{cls:22} {cwe:8} {by_class_strong.get(cls,0):>9} {by_class_all.get(cls,0):>6}")
+            print(f"{cls:22} {cwe:8} {by_class_all.get(cls,0):>10}")
     print(f"{'-'*47}")
-    print(f"{'TOTAL REAL':22} {'':8} {total_strong:>9} {total_all:>6}   across {repos} repos")
+    print(f"{'TOTAL REAL':22} {'':8} {total_all:>10}   across {repos} repos")
 
     if a.write:
         cwe_of = {cls: cwe for _, (cls, cwe) in REAL}
@@ -117,7 +115,7 @@ def main():
         with open(a.write, "w") as f:
             f.write(f"# ToFu real-vulnerability candidates ({a.arm})\n\n")
             f.write(f"**{total_all} distinct repo::tool::class across {repos} repos** "
-                    f"({total_strong} high-confidence at succ>={a.strong}). Auto-triaged by "
+                    f"(succ column = tool exec-success rate, reachability only). Auto-triaged by "
                     f"eval/triage_findings.py; robustness/mandatory-layer classes excluded. "
                     f"POTENTIAL/unconfirmed -- hand-verify before any published figure.\n\n")
             cur = None

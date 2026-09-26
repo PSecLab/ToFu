@@ -23,7 +23,7 @@ static tools "work" only because they never execute.
 ## 2. ToFu headline (full set_e2, 2026-09-22, post re-run)
 - 481 repos fuzzed, **5,551/6,153 configs ok (90%)**, 0 crashes (after item-91 cwd
   + $TMUX isolation + 16-repo unsafe-skip).
-- **627 real-vuln candidates / 299 high-confidence (succ≥0.5) / 157 repos.**
+- **627 real-vuln candidates / 157 repos.** (A former "299 high-confidence (succ≥0.5)" tier is withdrawn: tool-level exec-success rate is reachability, not evidence about a given alert (the oracle already requires per-input success), so it is no longer used to tier or filter candidates. Quality = hand-verified precision, owed.)
 - By security class (any-succ): log-injection 135, ssrf 199, insecure-temp-file 142,
   path-traversal 121, reflected-xss 21, os-command-injection 7, hardcoded-creds 2.
 - The auto-triage classifier (eval/triage_findings.py) filters oracle hits →
@@ -39,7 +39,7 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 ## 4. Baseline comparison (full set_e2) — units differ, NOT one leaderboard
 | tool | repos covered | repos flagged | findings | axis | full corpus? |
 |---|---|---|---|---|---|
-| **ToFu** | 481 | **157** | 627 candidates (299 hi) | runtime silent-bug | ✅ |
+| **ToFu** | 481 | **157** | 627 candidates | runtime silent-bug | ✅ |
 | CodeQL sec-extended | 482 | 154 | 1,037 | static SAST | ✅ |
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |

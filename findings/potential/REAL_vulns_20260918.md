@@ -1,5 +1,8 @@
 # ToFu real-vulnerability candidates from set_e2 (2026-09-18)
 
+> **NOTE 2026-09-26:** the "high-confidence (succ≥0.5)" tier used below is withdrawn — tool-level exec-success rate is reachability, not evidence about a given alert (the oracle already requires per-input success), so it is no longer used to tier or filter candidates. Candidate totals below are unaffected; see findings/RESULTS_SUMMARY.md.
+
+
 **257 distinct repo::tool::class candidates across 81 repos** (of 450 oracle hits;
 robustness/mandatory-layer noise excluded). Each is a ToFu silent-bug: an adversarial
 input in an *exploitable* class tripped a sanitizer AND the tool returned success.

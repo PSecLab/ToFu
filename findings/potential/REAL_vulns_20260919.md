@@ -1,5 +1,8 @@
 # ToFu real-vulnerability candidates (gpt41-corpus)
 
+> **NOTE 2026-09-26:** the "high-confidence (succ≥0.5)" tier used below is withdrawn — tool-level exec-success rate is reachability, not evidence about a given alert (the oracle already requires per-input success), so it is no longer used to tier or filter candidates. Candidate totals below are unaffected; see findings/RESULTS_SUMMARY.md.
+
+
 **600 distinct repo::tool::class across 148 repos** (281 high-confidence at succ>=0.5). Auto-triaged by eval/triage_findings.py; robustness/mandatory-layer classes excluded. POTENTIAL/unconfirmed -- hand-verify before any published figure.
 
 

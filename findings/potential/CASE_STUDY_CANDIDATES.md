@@ -30,7 +30,7 @@ C1–C4 the paper wants to land.
 - **Adds:** the **largest class (SSRF, 199)** — currently unrepresented in the
   case study — and a **fully ToFu-exclusive** repo. H2H: ToFu **13 (13 hi)**,
   viper n/a, **codeql 0, cisco 0, sonnet-5 0, toolfuzz –**. Nobody else found it.
-- **Story:** 7 tools all succ=1.000 → whole-server SSRF surface, all high-conf.
+- **Story:** 7 tools all succ=1.000 → whole-server SSRF surface.
   Strongest "ToFu catches what static + LLM-audit both miss" narrative → C1/C2
   (semantic properties from metadata: a URL arg implies scheme/destination limits)
   and directly supports the miss-analysis / complementary-coverage claim.

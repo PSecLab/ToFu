@@ -1,5 +1,8 @@
 # Baseline comparison — full set_e2 corpus — 6 tools — 2026-09-19
 
+> **NOTE 2026-09-26:** the "high-confidence (succ≥0.5)" tier used below is withdrawn — tool-level exec-success rate is reachability, not evidence about a given alert (the oracle already requires per-input success), so it is no longer used to tier or filter candidates. Candidate totals below are unaffected; see findings/RESULTS_SUMMARY.md.
+
+
 > **UPDATE 2026-09-22 (see rerun_results_20260922.md):** after the reachability
 > re-run + 2 new oracles, ToFu totals are now **627 candidates / 299 high-conf /
 > 157 repos** (was 600/281/148); new reflected-xss class = 21 (18 hi). vanilla-

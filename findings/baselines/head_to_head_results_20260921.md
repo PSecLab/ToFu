@@ -1,5 +1,8 @@
 # Head-to-head (H2H) results + holistic review — 2026-09-21
 
+> **NOTE 2026-09-26:** the "high-confidence (succ≥0.5)" tier used below is withdrawn — tool-level exec-success rate is reachability, not evidence about a given alert (the oracle already requires per-input success), so it is no longer used to tier or filter candidates. Candidate totals below are unaffected; see findings/RESULTS_SUMMARY.md.
+
+
 The **H2H** subset = 45 repos ToFu flagged (all classes), stratified by bug-count
 (15 hi / 15 mid / 15 lo), chosen to be ToFu-dominant vs CodeQL/Cisco. Viper +
 Cisco(YARA+LLM) were then run on the *same* repos. This measures **what ToFu

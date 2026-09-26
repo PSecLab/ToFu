@@ -34,10 +34,10 @@ Why the other ~197 still return 0 (from the run's error grouping):
   these STAY in the denominator, not an exclusion. Worth schema-aware seeds later.
 
 ## New candidates (all net-new: these repos produced 0 in the corpus run)
-**56 candidates, 4 high-confidence (succ≥0.5), across 16 repos.**
+**56 candidates across 16 repos.**
 By class: ssrf 28, log-injection 12, reflected-xss 9, insecure-temp-file 5, path-traversal 2.
 **9 come from the new tracers** (reflected-xss) — impossible to find before they were added.
-High-confidence: korean-spell `fix_korean_spell` (reflected-xss, 1.00),
+Examples: korean-spell `fix_korean_spell` (reflected-xss, 1.00),
 sql-analyzer `lint_sql` (reflected-xss, 0.58) + `get_all_column_references` (0.56),
 office `write_docx` (path-traversal, 0.68).
 
@@ -50,7 +50,7 @@ office `write_docx` (path-traversal, 0.68).
   Ananto's laptop (`~/pseclab/ToFu_repo24_results/recover-pc/`); gitignored.
 
 ## Candidates (full)
-| repo | tool | class | succ | new-tracer |
+| repo | tool | class | tool exec-success rate (reachability, not a filter) | new-tracer |
 |---|---|---|---|---|
 | winterjung/mcp-korean-spell | `fix_korean_spell` | reflected-xss | 1.00 | yes |
 | famano/mcp-server-office | `write_docx` | path-traversal | 0.68 |  |
