@@ -96,7 +96,25 @@ def make_cfg(base, target, slug, skip_codeql, codeql_bin, rounds):
     cq["query_pack_root"] = os.path.join(VDIR, "ql")
     cq["enabled"] = not skip_codeql
     if cq["language"] == "python":
-        cq["queries"] = [q.replace("jsql/", "pyql/") for q in cq.get("queries", [])]
+        # item 95: the pyql pack does NOT mirror the jsql filename stems, so a
+        # dir-only jsql/->pyql/ swap points codeql at nonexistent .ql files ->
+        # `codeql database analyze` exits 2 -> no report.json -> "Anchor
+        # enrichment skipped: report not found" on EVERY python repo. Map stems
+        # explicitly (verified against Benchmarks/Viper-MCP/ql/pyql/src/).
+        _PYQL = {
+            "jsql/src/CommandInjectionFromRequest.ql": "pyql/src/CommandInjectionFromMcp.ql",
+            "jsql/src/FileAccessFromRequest.ql":       "pyql/src/PathInjectionFromMcp.ql",
+            "jsql/src/RequestForgeryFromRequest.ql":   "pyql/src/RequestForgeryFromMcp.ql",
+        }
+        mapped, missing = [], []
+        for q in cq.get("queries", []):
+            m = _PYQL.get(q, q.replace("jsql/", "pyql/"))
+            mapped.append(m)
+            if not os.path.isfile(os.path.join(cq["query_pack_root"], m)):
+                missing.append(m)
+        cq["queries"] = mapped
+        if missing:
+            print(f"[run_viper] WARNING python query pack missing: {missing}", flush=True)
     cfg.setdefault("fuzz", {})["rounds"] = rounds
     cfg.setdefault("logging", {})["file"] = os.path.join(resdir, "fuzzer.log")
     out = cfg.setdefault("output", {})
