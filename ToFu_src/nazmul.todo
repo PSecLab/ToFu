@@ -397,3 +397,33 @@ finished ones into the archive.
   of rewritten history. Candidate totals unchanged (627 / 129 / 56).
 - Paper: report whole candidate counts + hand-verified precision (owed); the rate may
   appear only as a reachability description, never as confidence.
+
+## item 18 (2026-09-26): triage undercount + sanitizer-table audit (appendix)
+- Appendix sanitizer section rewritten (ToFu_20260922/appendix.tex): 74 sanitizers in 3
+  tables (tab:sanitizers / -contract / -health), old CWE-only table kept commented.
+  Gate audit from fuzzer._run_sanitizers: 10 mandatory, 1 always (check_temp_file_leak),
+  35 evidence-gated (fire unselected), 27 selection-only, 1 never invoked.
+- DEAD SANITIZER: check_har_url_path_security is registered/LLM-selectable but never
+  called (param typed Any -> string loop skips it; strict HAR contract omits it).
+- CWE FIX NEEDED: registry cites CWE-533 for check_introspection_temp_file_leak; MITRE
+  4.20 marks 533 DEPRECATED (server log files). Triage already uses CWE-377. Fix string in
+  src/sanitizers/__init__.py.
+- LLM hallucinated names: llm_n_dropped>0 in 8 of 4,452 configs (10 names). sec4_design
+  "no such cases" is false as written; report the 0.18%.
+- TRIAGE UNDERCOUNT (index tofu_runs_e2_20260922.jsonl, dry run, NOT applied):
+  (a) severity-pick labels each hit with one class; counting all classes a hit carries:
+      627 -> 735 any, hi 299 -> 344.  (b) unmapped introspection exploit classes (cmd/code/
+      sql/path-trav/sensitive-file/upload/symlink/markitdown): +47 any, +29 succ>0, +23 hi.
+      (c) hygiene (perms/weak-hash/sensitive-logging): +156, 106 of them sensitive-data-
+      logging with succ==0 -> noise.
+  Evidence check: only 22 of the 47 tier-A entries still have a same-run log (n_exec match;
+  rest lost 09-24, item 14). Reading those 22: ~6 plausible (sensitive-path open from the
+  argument; one run-code-by-design repo), ~8 no-provenance FPs (library-internal exec/open,
+  tool's own storage dir, fixed internal command), rest duplicates or succ==0.
+  => do NOT expand the map blindly. Needs sink-provenance (sink arg contains fuzzed value).
+- TO DOUBLE-CHECK: tab:sink-families -- DataAmplification sits in the low-specificity
+  column but its patterns are specific (zipfile/tarfile/gzip/zlib/...); probe-validity
+  lists only nine low-spec families. Node/TS column measures sink presence only: tracers
+  are Python-only. Source report lives only in a worktree
+  (.claude/worktrees/infallible-boyd-e1485d/Claude outputs/distribution_report.txt) --
+  commit it to findings/ so the table is traceable. Numbers verified against it.

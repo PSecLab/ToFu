@@ -1,0 +1,135 @@
+==============================================================================
+EXTRACTED 1778 repos (1404 with >=1 detected tool registration)
+==============================================================================
+
+[A] TOOLS PER REPO (n=1404)
+    total tools discovered : 24194
+    median 6 | mean 17.2 | max 918
+       1-2 tools:  358  ############
+       3-5 tools:  313  ###########
+      6-10 tools:  259  #########
+     11-20 tools:  209  #######
+       21+ tools:  265  #########
+
+[B] BY LANGUAGE
+    python  repos= 597  tools=10130  median_tools=6
+    node    repos= 807  tools=14064  median_tools=6
+
+[C] SINK FAMILIES ACTUALLY PRESENT IN SOURCE (n=1404 tooled repos)
+    family                      repos      %    py  node
+    SensitiveDataLogging         1071  76.3%   433   638
+    LogInjection                 1048  74.6%   510   538
+    NetworkExecution              841  59.9%   345   496
+    FileAccess                    761  54.2%   355   406
+    FileWrite                     592  42.2%   208   384
+    BlockingEventLoopCall         500  35.6%   180   320
+    UnrestrictedIPBinding         454  32.3%   155   299
+    CommandExecution              450  32.1%   184   266
+    ReDoS                         346  24.6%   185   161
+    CodeExecution                 344  24.5%   145   199
+    LoopCondition                 302  21.5%   166   136
+    WeakPRNG                      292  20.8%    98   194
+    TempFileLeak                  267  19.0%   130   137
+    SQLExecution                  240  17.1%   121   119
+    UnverifiedCodeDownload        227  16.2%   103   124
+    DataAmplification             168  12.0%    65   103
+    WeakHash                      115   8.2%    54    61
+    NonceReuse                     76   5.4%    19    57
+    Deserialization                61   4.3%    24    37
+    XXE                            49   3.5%    30    19
+    SSLCertValidation              45   3.2%    25    20
+    families with ZERO repos: none
+
+[D] DISTINCT SINK FAMILIES PER REPO
+     0 families:   38  #
+     1 families:  110  ###
+     2 families:  176  #####
+     3 families:  195  ######
+     4 families:  157  #####
+     5 families:  125  ####
+     6 families:  116  ###
+     7 families:  104  ###
+     8 families:   74  ##
+     9 families:   53  #
+    10 families:   46  #
+    11 families:   35  #
+    12 families:   33  #
+    13 families:   34  #
+    14 families:   27  
+    15 families:   12  
+    16 families:   19  
+    17 families:   17  
+    18 families:   14  
+    19 families:   13  
+    20 families:    3  
+    21 families:    3  
+
+[E] SET A -- seeded stratified draw, seed=20260909, n=50
+    strata (lang, tool-tier) -> allocated / available
+      ('node', 'high')        12 /  316
+      ('node', 'low')          7 /  203
+      ('node', 'mid')         10 /  288
+      ('python', 'high')       8 /  234
+      ('python', 'low')        6 /  155
+      ('python', 'mid')        7 /  208
+    Set A sink coverage: 20/21 families present in corpus
+    families MISSED by Set A: ['Deserialization']
+
+[F] SET B CANDIDATES -- rarest families and their best carrier repos
+    SSLCertValidation          (45 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    XXE                        (49 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    Deserialization            (61 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    NonceReuse                 (76 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    WeakHash                   (115 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    DataAmplification          (168 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    UnverifiedCodeDownload     (227 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+    SQLExecution               (240 repos) -> n8n-io/n8n(103313*), trycua/cua(8397*), derisk-ai/derisk(380*)
+
+    Set A written to set_a.json | fingerprint aa6f0cffff64
+
+#### SET B ####
+
+families Set A leaves thin (<=3 repos):
+   SSLCertValidation          setA=1
+   WeakHash                   setA=2
+   NonceReuse                 setA=1
+   UnverifiedCodeDownload     setA=3
+   XXE                        setA=3
+   Deserialization            setA=0
+
+candidate pool (3-40 tools, <=60k LOC, not in Set A): 870
+
+SET B: 8 repos
+   DMontgomery40/mcp-3D-printer-server              node      67* tools= 23 covers=SSLCertValidation,WeakHash,XXE
+   PraneshASP/foundry-mcp-server                    node     126* tools= 16 covers=SSLCertValidation,UnverifiedCodeDownload
+   Softeria/ms-365-mcp-server                       node      61* tools= 10 covers=Deserialization,NonceReuse,UnverifiedCodeDownload
+   StuMason/coolify-mcp                             node      11* tools=  9 covers=Deserialization,NonceReuse,UnverifiedCodeDownload
+   adrianco/meGPT                                   python   258* tools=  6 covers=SSLCertValidation,UnverifiedCodeDownload,WeakHash,XXE
+   alexander-zuev/supabase-mcp-server               python   714* tools= 12 covers=NonceReuse,WeakHash
+   baidubce/app-builder                             python   532* tools= 11 covers=Deserialization,UnverifiedCodeDownload,XXE
+   nnquant/qmt-mcp-server                           python    22* tools=  4 covers=Deserialization
+
+COMBINED COVERAGE (Set A + Set B), repos per family:
+   FileAccess                 A= 29  A+B= 37
+   FileWrite                  A= 22  A+B= 28
+   CommandExecution           A= 11  A+B= 17
+   SQLExecution               A=  4  A+B=  7
+   CodeExecution              A=  6  A+B= 10
+   NetworkExecution           A= 28  A+B= 34
+   TempFileLeak               A=  9  A+B= 13
+   LogInjection               A= 39  A+B= 47
+   SensitiveDataLogging       A= 33  A+B= 40
+   SSLCertValidation          A=  1  A+B=  4
+   UnrestrictedIPBinding      A= 17  A+B= 22
+   ReDoS                      A= 11  A+B= 17
+   BlockingEventLoopCall      A= 18  A+B= 23
+   WeakHash                   A=  2  A+B=  5
+   WeakPRNG                   A=  9  A+B= 13
+   NonceReuse                 A=  1  A+B=  4
+   UnverifiedCodeDownload     A=  3  A+B=  8
+   XXE                        A=  3  A+B=  6
+   DataAmplification          A=  7  A+B= 10
+   LoopCondition              A=  8  A+B= 11
+   Deserialization            A=  0  A+B=  4
+
+written set_b.json
