@@ -30,10 +30,27 @@ for d in .ssh .aws .gnupg .kube .docker .config/gcloud .config/gh; do [ -d "$REA
 for f in "$ROOT"/.env*; do [ -f "$f" ] && M="$M --ro-bind /dev/null $f"; done
 HOMEBIND="--bind $VH/.codeql $VH/.codeql"; [ "$VH" != "$REAL_HOME" ] && HOMEBIND="--bind $VH $VH --setenv HOME $VH"
 
-run_sbx() {   # run one sandboxed run_viper with the given args
+# Viper instruments PYTHON targets by writing mcp_fuzzer_hook_auto.pth into the
+# target venv. The real targets must stay pristine (ToFu fuzzes them too), and this
+# bwrap (0.9) has no overlay, so each repo gets a throwaway COPY bound over its own
+# path: Viper sees the normal path and writes into the copy; the copy is deleted after.
+work_binds() {   # $1 = comma list of repos, $2 = work dir  -> prints bwrap bind args
+  local r slug
+  mkdir -p "$2"
+  IFS=, read -r -a _rs <<< "$1"
+  for r in "${_rs[@]}"; do
+    slug="${r//\//__}"
+    [ -d "$ROOT/eval/targets/$slug" ] || continue
+    cp -a --reflink=auto "$ROOT/eval/targets/$slug" "$2/$slug" 2>/dev/null || continue
+    printf -- "--bind %s %s " "$2/$slug" "$ROOT/eval/targets/$slug"
+  done
+}
+
+run_sbx() {   # $1 = extra bwrap args (string), rest = run_viper args
+  local extra="$1"; shift
   bwrap --die-with-parent --ro-bind / / --dev /dev --tmpfs /dev/shm --proc /proc --tmpfs /tmp $M \
     --bind "$ROOT/eval/viper_runs" "$ROOT/eval/viper_runs" \
-    --bind "$ROOT/eval/state/viper_runs.jsonl" "$ROOT/eval/state/viper_runs.jsonl" $HOMEBIND \
+    --bind "$ROOT/eval/state/viper_runs.jsonl" "$ROOT/eval/state/viper_runs.jsonl" $HOMEBIND $extra \
     -- "$ROOT/.venv/bin/python" eval/run_viper.py --codeql "$CODEQL" "$@"
 }
 
@@ -47,10 +64,17 @@ while [ $# -gt 0 ]; do
   case "$1" in --only) ONLY="$2"; shift 2 ;; --only=*) ONLY="${1#--only=}"; shift ;; *) REST+=("$1"); shift ;; esac
 done
 echo "viper(sbx): codeql=$($CODEQL version 2>/dev/null | head -1) home=$VH parallel=$PAR threads=$TOT"
+WORKROOT="$ROOT/.viper_work"
 if [ "$PAR" -le 1 ] || [ -z "$ONLY" ]; then
   export CODEQL_THREADS="${CODEQL_THREADS:-$TOT}"
-  [ -n "$ONLY" ] && exec_args=(--only "$ONLY") || exec_args=()
-  run_sbx "${exec_args[@]}" "${REST[@]}"; exit $?
+  if [ -n "$ONLY" ]; then
+    EX=$(work_binds "$ONLY" "$WORKROOT/s0")
+    run_sbx "$EX" --only "$ONLY" "${REST[@]}"; rc=$?
+  else
+    echo "  (no --only: targets stay read-only; python targets cannot be instrumented)"
+    run_sbx "" "${REST[@]}"; rc=$?
+  fi
+  rm -rf "$WORKROOT"; exit $rc
 fi
 export CODEQL_THREADS=$(( TOT / PAR > 0 ? TOT / PAR : 1 ))
 IFS=, read -r -a REPOS <<< "$ONLY"
@@ -59,9 +83,11 @@ for ((k=0; k<PAR; k++)); do
   part=""; for ((i=k; i<${#REPOS[@]}; i+=PAR)); do part="${part:+$part,}${REPOS[$i]}"; done
   [ -z "$part" ] && continue
   echo "  shard $k: $part  (CODEQL_THREADS=$CODEQL_THREADS)"
-  run_sbx --only "$part" "${REST[@]}" > "$ROOT/eval/viper_runs/.shard$k.log" 2>&1 &
+  EX=$(work_binds "$part" "$WORKROOT/s$k")
+  run_sbx "$EX" --only "$part" "${REST[@]}" > "$ROOT/eval/viper_runs/.shard$k.log" 2>&1 &
   pids+=($!)
 done
 rc=0; for p in "${pids[@]}"; do wait "$p" || rc=1; done
+rm -rf "$WORKROOT"
 echo "viper(sbx): all shards done rc=$rc  (logs: eval/viper_runs/.shard*.log)"
 exit $rc

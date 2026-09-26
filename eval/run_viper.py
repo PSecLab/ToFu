@@ -226,6 +226,9 @@ def main():
     base = load_yaml(BASE_CFG)
     done = {r["repo"] for r in read_jsonl(RUNS) if not r.get("test_agent")}
     ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
+    # prepared.jsonl can hold a repo twice (re-prepared on another machine); keep the
+    # latest row so a repo is never run -- and billed -- twice.
+    ready = list({t["repo"]: t for t in ready}.values())
     if a.only:
         # comma-separated substrings; explicit targeting BYPASSES the done-set so
         # named repos re-run (subset runs to save LLM budget).
