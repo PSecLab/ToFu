@@ -367,3 +367,19 @@ finished ones into the archive.
   genuine. Phase II hits=0 only because the check ran --rounds 1 (H2H uses 10).
   Evidence: VM eval/viper_verify_openags__paper-search-mcp/ (+ .log, .row.json, .runlog).
   Next: run Viper (10 rounds) on the 10 python H2H repos that were n/a.
+
+## item 16 (2026-09-26): PC recovery probe of the 231 "unsuccessful" repos
+- Report: findings/recover_pc_20260926/REPORT.md. Re-prepared the 231 repos with 0
+  reachable tools in the corpus run (correct env: harness py3.13 + node22), fuzzed
+  60s sandboxed on the PC's open egress. Arm gpt41-recover-pc.
+- Executability recovered: 155/218 repos executed >=1 tool; 21 repos (58 tools)
+  returned success (vs VM's 0). Rest still 0: (a) creds/backends required
+  (Discord/Ableton/Graphlit/InvalidCredentials) = real exclusions; (b) tool rejects
+  our seeds on a required id ("Board ID required") = seed-quality, STAYS in denominator.
+- New candidates (all net-new, these repos gave 0 before): 56 (4 hi-conf) in 16 repos;
+  ssrf 28, log-inj 12, reflected-xss 9, temp-file 5, path-trav 2. 9 from the new
+  tracers (reflected-xss). Top: korean-spell fix_korean_spell reflected-xss succ=1.0.
+- Guards added (0d05c93): run_corpus_sbx refuses non-v22 node; prepare_targets aborts
+  on python-harness mismatch. Bad first probe quarantined (recover-pc-badenv).
+- PENDING: VM sandboxed sweep gpt41-corpus-sbx (250 reachable repos) still running;
+  merge its new-tracer catches into a combined report when done.
