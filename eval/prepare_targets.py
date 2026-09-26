@@ -559,8 +559,8 @@ def main():
                          "scratch -- use after item 86 to move Python venvs onto "
                          f"TOFU_TARGET_PYTHON={TARGET_PYTHON}.")
     a = ap.parse_args()
-    if a.redo and not (a.only_repo or a.only_lang):
-        log("--redo needs --only-repo or --only-lang (refusing to re-prepare the whole corpus)"); sys.exit(2)
+    if a.redo and not (a.only_repo or a.only_lang or a.only_repos_file):
+        log("--redo needs --only-repo, --only-lang or --only-repos-file (refusing to re-prepare the whole corpus)"); sys.exit(2)
 
     for d in (TGTDIR, CFGDIR, STATE): os.makedirs(d, exist_ok=True)
 
@@ -586,9 +586,14 @@ def main():
         # scope: --only-repo substrings and/or --only-lang (lang comes from the
         # sampling-set rows, which is the same source `todo` is built from).
         pats = [x.strip().lower() for x in (a.only_repo or "").split(",") if x.strip()]
+        want_file = set()
+        if a.only_repos_file:
+            want_file = {w.strip() for w in open(a.only_repos_file).read().replace("\n", ",").split(",")
+                         if w.strip() and not w.strip().startswith("#")}
         lang_of = {r["repo"]: r["lang"] for r in sel}
         redo = [k for k in done
                 if (not pats or any(pt in k.lower() for pt in pats))
+                and (not want_file or k in want_file)
                 and (not a.only_lang or lang_of.get(k) == a.only_lang)]
         for k in redo: done.pop(k, None)
         log(f"--redo: re-preparing {len(redo)} already-recorded repo(s): {redo}")
