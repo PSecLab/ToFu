@@ -537,6 +537,8 @@ def main():
     ap.add_argument("--only-set", choices=["a","b","d","e","host","full"], default=None,
                     help="host = the 41 repos that prepared READY on the host (set_host.json); reproduces the host executable corpus in the sandbox")
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--only-repos-file", default=None,
+                    help="file of exact repo names (one per line / comma); prepare ONLY these")
     ap.add_argument("--only-repo", default=None,
                     help="comma-separated substrings; prepare only repos matching one")
     ap.add_argument("--only-lang", choices=["python","node"], default=None,
@@ -593,6 +595,11 @@ def main():
     todo = [r for r in sel if r["repo"] not in done]
     if a.only_lang:
         todo = [r for r in todo if r["lang"] == a.only_lang]
+    if a.only_repos_file:
+        want = {w.strip() for w in open(a.only_repos_file).read().replace("\n", ",").split(",")
+                if w.strip() and not w.strip().startswith("#")}
+        todo = [r for r in todo if r["repo"] in want]
+        log(f"--only-repos-file: {len(todo)} repos to prepare")
     if a.only_repo:
         pats = [x.strip().lower() for x in a.only_repo.split(",") if x.strip()]
         todo = [r for r in todo if any(pt in r["repo"].lower() for pt in pats)]

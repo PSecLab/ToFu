@@ -55,4 +55,15 @@ echo
 # sandbox: it contains filesystem damage but not process/CPU-load hazards.
 SKIP_ARG=""
 [ -z "${TOFU_FUZZ_UNSAFE:-}" ] && [ -f "$UNSAFE" ] && SKIP_ARG="--skip-repos-file $UNSAFE"
-exec ./eval/run_arm_gpt41.sh --priority-configs-file "$PRIO" $SKIP_ARG "$@"
+
+# CORPUS_MODE: priority (default) = full corpus, reachable configs first;
+#              reachable = ONLY the reachable configs; none = neither (caller
+#              passes its own --only-repos-file etc. via "$@", e.g. PC recovery probe).
+case "${CORPUS_MODE:-priority}" in
+  priority)  ORDER_ARG="--priority-configs-file $PRIO" ;;
+  reachable) ORDER_ARG="--only-configs-file $PRIO" ;;
+  none)      ORDER_ARG="" ;;
+  *) echo "bad CORPUS_MODE=${CORPUS_MODE}"; exit 1 ;;
+esac
+echo "   CORPUS_MODE=${CORPUS_MODE:-priority}"
+exec ./eval/run_arm_gpt41.sh $ORDER_ARG $SKIP_ARG "$@"

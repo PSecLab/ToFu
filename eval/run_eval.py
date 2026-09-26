@@ -673,6 +673,8 @@ def main():
                          "_repo matches one run FIRST. Ordering only -- nothing is dropped. "
                          "Use with Benchmarks/extraction/set_e2_repos.txt to fuzz the "
                          "bug-bearing (tier-1) repos before the log/network-only tail.")
+    ap.add_argument("--only-repos-file", default=None,
+                    help="file of exact repo names; run ONLY configs whose _repo is listed")
     ap.add_argument("--skip-repos-file", default=None,
                     help="file with a repo list (comma/newline separated); configs whose "
                          "_repo matches one are SKIPPED. Use with set_e2_unsafe_repos.txt to "
@@ -745,6 +747,13 @@ def main():
         missing = want - {os.path.splitext(f)[0] for f in all_cfg}
         log(f"--only-configs-file: {len(all_cfg)} configs kept"
             + (f", {len(missing)} listed but not found in eval/configs" if missing else ""))
+
+    if a.only_repos_file and os.path.exists(a.only_repos_file):
+        raw = open(a.only_repos_file).read()
+        want = {p.strip() for p in raw.replace("\n", ",").split(",") if p.strip() and not p.strip().startswith("#")}
+        before = len(all_cfg)
+        all_cfg = [f for f in all_cfg if _repo_of(f) in want]
+        log(f"--only-repos-file: kept {len(all_cfg)} of {before} configs ({len(want)} repos listed)")
 
     if a.skip_repos_file and os.path.exists(a.skip_repos_file):
         raw = open(a.skip_repos_file).read()
