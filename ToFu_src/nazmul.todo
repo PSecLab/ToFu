@@ -343,3 +343,19 @@ finished ones into the archive.
   Settle via a sandboxed 60 s corpus re-run (~11 h on the PC, 12 workers).
 - Sandbox still allows reads anywhere (file-context-server read a harness file): mask $HOME
   and .env* before the next campaign.
+
+## item 95 update (2026-09-26): Viper python codeql path FIXED + verified (5df1e2a)
+- Root cause confirmed: run_viper.py swapped only jsql/->pyql/ dirs; pyql stems are
+  *FromMcp (PathInjection, not FileAccess) -> analyze exit 2 on every python repo.
+- Verified on meilisearch/meilisearch-mcp (VM, bwrap-sandboxed, niced): analyze ran with
+  pyql/src/{CommandInjection,PathInjection,RequestForgery}FromMcp.ql, "CodeQL analyze
+  completed successfully", report.json produced, anchor enrichment completed, Phase II ran.
+  Evidence: VM eval/viper_verify_meilisearch__meilisearch-mcp/ (+ .log). H2H index untouched.
+- TO DOUBLE-CHECK: that repo gave anchor_count=0, 0 vulns, tools={} ("No target call chains
+  from CodeQL; using single generic target"). pyql has no McpToolRootsForAnchor /
+  JsFunctionCallEdgesForAnchor equivalent, so python anchors may be structurally partial.
+  One repo can't separate "clean" from "gap": run a positive control (a python repo with a
+  ToFu-confirmed path traversal, e.g. openags/paper-search-mcp download_*) before trusting a
+  python Viper column.
+- For a sandboxed full Viper run: bind eval/viper_runs (whole dir, run_viper writes
+  <slug>.log beside each result dir) + eval/state/viper_runs.jsonl + ~/.codeql writable.
