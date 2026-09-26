@@ -329,3 +329,17 @@ finished ones into the archive.
   temp file, log write) but none can be the silent-success oracle. By class (succ==0): ssrf
   129, insecure-temp-file 63, log-injection 49, path-traversal 6, os-cmd-inj 1, creds 1.
   Decide the headline definition before the paper cites 627.
+
+## item 15 (2026-09-26): repo24 deep campaign finished -- RQ4 result
+- Report: findings/repo24_20260926/REPORT.md (numbers regenerate via analyze_rq4.py).
+- 34 repos (VM 10 + PC 24), 398 tools, 408 of 816 worker-h used; 26 repos all_saturated,
+  8 budget_exhausted. 129 candidates (98 hi-conf), unconfirmed.
+- RQ4: 64 candidates not in the 60 s corpus run, but 63 of 64 come from the two oracles
+  added after it (reflected-xss, data-exfiltration) and 44 of 64 appeared within 60 s.
+  Only 1 is a pure budget effect (kanban mcp_kanban_comment_manager, log-injection).
+  116 of 157 first appearances within 60 s, 2 after 1 h. => short budget suffices.
+- TO DOUBLE-CHECK: 59 corpus-only candidates (30 insecure-temp-file) -- hypothesis: shared
+  /tmp across concurrent configs in the unsandboxed corpus run made cross-config "leaks".
+  Settle via a sandboxed 60 s corpus re-run (~11 h on the PC, 12 workers).
+- Sandbox still allows reads anywhere (file-context-server read a harness file): mask $HOME
+  and .env* before the next campaign.
