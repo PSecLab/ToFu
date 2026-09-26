@@ -23,7 +23,7 @@ so a bug in the parser can never destroy a campaign's data again. If the
 parser is fixed or extended, re-derive every record from eval/runs/*.log
 instead of re-running the campaign.
 """
-import argparse, importlib.util, json, os, platform, re, shutil, signal, subprocess, sys, threading, time, uuid
+import argparse, glob, importlib.util, json, os, platform, re, shutil, signal, subprocess, sys, threading, time, uuid
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -116,15 +116,42 @@ def _abort(signum, frame):
     sys.stderr.flush()
     os._exit(130)
 
+# Credential-bearing paths masked (made unreadable) inside the sandbox. The
+# sandbox blocks WRITES everywhere but / is read-bindable, so a fuzzed target
+# could still read secrets and exfiltrate over its (intentional) network access:
+# 2026-09-24 file-context-server::read_context read a harness file. We keep the
+# deny-list targeted rather than whitelisting / (484 diverse targets read many
+# system paths; node/uv/python live under the real $HOME on the PSU PC, so a
+# blanket $HOME tmpfs would break exec).
+_HOME_SECRETS = (".ssh", ".aws", ".gnupg", ".kube", ".docker", ".config/gcloud",
+                 ".config/gh", ".netrc", ".git-credentials", ".bash_history",
+                 ".zsh_history", ".python_history")
+
+
+def _sandbox_masks():
+    """(dirs, files) to overmount as empty/blocked inside the sandbox."""
+    home = os.path.expanduser("~")            # parent's real HOME (child's is redirected)
+    dirs = [os.path.join(home, s) for s in _HOME_SECRETS]
+    files = list(glob.glob(os.path.join(ROOT, ".env*")))   # .env, .env.campaign-hidden, .env.bak*
+    return dirs, files
+
+
 def _sandbox_cmd(cmd, writable):
     """TOFU_SANDBOX=bwrap: run the fuzzer (and the target it spawns) with the whole
-    filesystem read-only, a private /tmp, and only this config's own directories
-    writable. Changing cwd (item 91) could not stop a target from following a
-    path out of its scratch dir: on 2026-09-24 newtype-01/obsidian-mcp
-    manage_folder removed eval/configs, eval/runs and 36 tracked files mid-campaign."""
+    filesystem read-only, a private /tmp, only this config's own directories
+    writable, and credential paths masked unreadable. Changing cwd (item 91) could
+    not stop a target from following a path out of its scratch dir: on 2026-09-24
+    obsidian-mcp manage_folder removed eval/configs and 36 tracked files."""
     args = ["bwrap", "--die-with-parent", "--ro-bind", "/", "/",
             "--dev", "/dev", "--tmpfs", "/dev/shm", "--proc", "/proc", "--tmpfs", "/tmp"]
-    for d in writable:
+    dirs, files = _sandbox_masks()
+    for d in dirs:                            # hide secret dirs behind an empty tmpfs
+        if os.path.isdir(d):
+            args += ["--tmpfs", d]
+    for f in files:                           # blank out .env* (the OpenAI key lives here)
+        if os.path.isfile(f):
+            args += ["--ro-bind", "/dev/null", f]
+    for d in writable:                        # writable binds LAST so they win over masks
         if d and os.path.isdir(d):
             args += ["--bind", d, d]
     return args + ["--"] + cmd
@@ -651,6 +678,9 @@ def main():
                          "_repo matches one are SKIPPED. Use with set_e2_unsafe_repos.txt to "
                          "exclude host-control targets (process kill/spawn, tmux, FS delete) "
                          "that crash the harness when fuzzed without a sandbox.")
+    ap.add_argument("--priority-configs-file", default=None,
+                    help="file of exact config names to schedule FIRST (ordering only). "
+                         "Used by run_corpus_sbx.sh for the reachable-first sweep.")
     ap.add_argument("--only-configs-file", default=None,
                     help="file of exact config names (eval/configs basenames, one per "
                          "line or comma-separated); run ONLY those. Exact, tool-level, "
@@ -733,6 +763,18 @@ def main():
         head = [f for f in all_cfg if _repo_of(f).lower() in prio]
         tail = [f for f in all_cfg if _repo_of(f).lower() not in prio]
         all_cfg = head + tail
+
+    if a.priority_configs_file:
+        # exact config-name priority (tool-level): the listed configs run FIRST, the
+        # rest follow. Ordering only, nothing dropped -- resumable and complete.
+        # Used by run_corpus_sbx.sh to fuzz the reachable tools before the long tail.
+        raw = open(a.priority_configs_file).read()
+        want = {(w[:-5] if w.endswith(".json") else w).strip()
+                for w in raw.replace("\n", ",").split(",") if w.strip() and not w.strip().startswith("#")}
+        head = [f for f in all_cfg if os.path.splitext(f)[0] in want]
+        tail = [f for f in all_cfg if os.path.splitext(f)[0] not in want]
+        all_cfg = head + tail
+        log(f"--priority-configs-file: {len(head)} configs first, then {len(tail)}")
         log(f"--priority-repos-file: {len(head)} configs first, then {len(tail)}")
 
     done = done_set()
