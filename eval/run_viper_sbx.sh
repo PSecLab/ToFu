@@ -54,6 +54,36 @@ run_sbx() {   # $1 = extra bwrap args (string), rest = run_viper args
     -- "$ROOT/.venv/bin/python" eval/run_viper.py --codeql "$CODEQL" "$@"
 }
 
+# LLM record/replay cache (eval/llm_cache_proxy.py). Viper calls gpt-4.1 live with no
+# cache of its own; routing OPENAI_BASE_URL through the proxy makes repeat runs free and
+# exact (identical requests replay byte-for-byte) and logs real token usage per call.
+# VIPER_LLM_CACHE: rw (default) | ro (replay only, misses refused -> zero spend) | off.
+CACHE_MODE="${VIPER_LLM_CACHE:-rw}"
+if [ "$CACHE_MODE" != off ]; then
+  CDIR="$ROOT/eval/state/viper_llm_cache"; mkdir -p "$CDIR"
+  UPSTREAM="${OPENAI_BASE_URL:-https://api.openai.com/v1}"
+  PPORT=$("$ROOT/.venv/bin/python" -c "import socket;s=socket.socket();s.bind(('127.0.0.1',0));print(s.getsockname()[1])")
+  "$ROOT/.venv/bin/python" "$ROOT/eval/llm_cache_proxy.py" --port "$PPORT" --cache-dir "$CDIR" \
+      --upstream "$UPSTREAM" --mode "$CACHE_MODE" > "$CDIR/_proxy.log" 2>&1 &
+  PROXY_PID=$!
+  trap 'kill $PROXY_PID 2>/dev/null' EXIT INT TERM
+  for _ in $(seq 50); do "$ROOT/.venv/bin/python" -c "import socket;socket.create_connection(('127.0.0.1',$PPORT),1)" 2>/dev/null && break; sleep 0.2; done
+  export OPENAI_BASE_URL="http://127.0.0.1:$PPORT/v1"
+  export NO_PROXY="127.0.0.1,localhost${NO_PROXY:+,$NO_PROXY}" no_proxy="127.0.0.1,localhost${no_proxy:+,$no_proxy}"
+  LSTART=$(wc -l < "$CDIR/_ledger.jsonl" 2>/dev/null || echo 0)
+  echo "llm cache: mode=$CACHE_MODE proxy=127.0.0.1:$PPORT -> $UPSTREAM  ($(find "$CDIR" -name '*.json' | wc -l) cached responses)"
+fi
+cache_report() {
+  [ "$CACHE_MODE" = off ] && return
+  "$ROOT/.venv/bin/python" - "$CDIR/_ledger.jsonl" "$LSTART" <<'PYR'
+import json, sys
+rows = [json.loads(l) for l in open(sys.argv[1]).readlines()[int(sys.argv[2]):] if l.strip()]
+hit = sum(r.get("hit") for r in rows); miss = len(rows) - hit
+pt = sum(r.get("prompt_tokens") or 0 for r in rows); ct = sum(r.get("completion_tokens") or 0 for r in rows)
+print(f"llm cache this run: {len(rows)} calls, {hit} replayed, {miss} upstream; upstream tokens in={pt} out={ct}")
+PYR
+}
+
 # Parallelism. run_viper.py is serial and Viper calls codeql without --threads (1
 # thread), so by default this uses ~1 core. VIPER_PARALLEL=N runs N sandboxed shards
 # over the --only list concurrently; CODEQL_THREADS (honored by the codeql CLI) splits
@@ -74,7 +104,7 @@ if [ "$PAR" -le 1 ] || [ -z "$ONLY" ]; then
     echo "  (no --only: targets stay read-only; python targets cannot be instrumented)"
     run_sbx "" "${REST[@]}"; rc=$?
   fi
-  rm -rf "$WORKROOT"; exit $rc
+  rm -rf "$WORKROOT"; cache_report; exit $rc
 fi
 export CODEQL_THREADS=$(( TOT / PAR > 0 ? TOT / PAR : 1 ))
 IFS=, read -r -a REPOS <<< "$ONLY"
@@ -90,4 +120,5 @@ done
 rc=0; for p in "${pids[@]}"; do wait "$p" || rc=1; done
 rm -rf "$WORKROOT"
 echo "viper(sbx): all shards done rc=$rc  (logs: eval/viper_runs/.shard*.log)"
+cache_report
 exit $rc
