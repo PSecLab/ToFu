@@ -1,6 +1,6 @@
 # ToFu — consolidated results + comparisons (source of truth for the paper)
 
-Last updated 2026-09-22. Every number traces to committed indices in
+Last updated 2026-09-26. Every number traces to committed indices in
 findings/baselines/*.jsonl and the docs cited per section. This is the single
 headline reference; the dated docs hold the detail.
 
@@ -19,6 +19,30 @@ headline reference; the dated docs hold the detail.
 
 Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu —
 static tools "work" only because they never execute.
+
+## 1b. Sandboxed re-runs (2026-09-26) — READ THESE FOR THE CURRENT NUMBERS
+Three campaigns after the sandbox + the two new tracers (reflected-xss, exfil) landed.
+All under bubblewrap; no confidence tier (item 17: success rate = reachability only).
+Each has its own report with per-repo tables + regen scripts; candidates unconfirmed.
+
+- **Reachable corpus, sandboxed** (`findings/corpus_sbx_20260926/REPORT.md`, arm
+  gpt41-corpus-sbx): the 1,481 reachable configs (250 repos) on current oracles.
+  **413 candidates / 123 repos** (reflected-xss 189, path-trav 94, log-inj 73, ssrf 48,
+  cmd-inj 4, exfil 4, temp-file 1). vs the 09-22 run on the same configs: +183 new
+  (175 from the new tracers), −140 gone — of which **77 insecure-temp-file were
+  shared-/tmp false positives** the private-/tmp sandbox removes (class 78→1).
+- **24h deep budget** (`findings/repo24_20260926/REPORT.md`, RQ4): 34 repos, 129
+  candidates; only 1 attributable to budget alone (rest are oracle-extension); bugs
+  surface early (116/157 first-appearances within 60 s). Long budget ≈ saturation.
+- **Recovery of dead repos** (`findings/recover_pc_20260926/REPORT.md`): the 231 repos
+  with 0 reachable tools in 09-22, re-prepared on the PC's open egress. 21 repos / 58
+  tools recovered to success; 56 net-new candidates (9 from new tracers). Confirms the
+  482→249 drop is creds/backends, with a minority of schema-gated seed misses.
+
+**For the eval writer:** the corpus-scale headline is now the sandboxed sweep (413 on
+the reachable set) plus these three reports. The 627 below is the pre-sandbox 09-22
+number (kept for provenance/comparison, includes the temp-file FPs now known to be
+shared-/tmp artefacts).
 
 ## 2. ToFu headline (full set_e2, 2026-09-22, post re-run)
 - 481 repos fuzzed, **5,551/6,153 configs ok (90%)**, 0 crashes (after item-91 cwd

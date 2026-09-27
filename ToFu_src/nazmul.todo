@@ -427,3 +427,15 @@ finished ones into the archive.
   are Python-only. Source report lives only in a worktree
   (.claude/worktrees/infallible-boyd-e1485d/Claude outputs/distribution_report.txt) --
   commit it to findings/ so the table is traceable. Numbers verified against it.
+
+## item 18 (2026-09-26): VM sandboxed corpus sweep done -- new-tracer catches + temp-file FP proof
+- Report: findings/corpus_sbx_20260926/REPORT.md (arm gpt41-corpus-sbx). 1,481 reachable
+  configs / 250 repos, 60s, bubblewrap. 1,403 executed. 413 candidates / 123 repos:
+  reflected-xss 189, path-trav 94, log-inj 73, ssrf 48, cmd-inj 4, exfil 4, temp-file 1.
+- vs 09-22 same configs (370): +183 new (175 from new tracers reflected-xss/exfil),
+  -140 gone. Of the 140: 77 insecure-temp-file => shared /tmp across 5 concurrent
+  unsandboxed configs faked cross-config temp leaks; private-/tmp sandbox removes them
+  (class 78->1). This CONFIRMS the item-16 hypothesis. Remaining 59 gone = minority, per-case.
+- Combined 09-26 picture in RESULTS_SUMMARY sec 1b: corpus_sbx (413) + repo24 (RQ4) +
+  recover_pc (231 dead repos). Diff per candidate: findings/corpus_sbx_20260926/diff.json.
+- For eval writer: sandboxed sweep is the current corpus headline; 627 is pre-sandbox 09-22.
