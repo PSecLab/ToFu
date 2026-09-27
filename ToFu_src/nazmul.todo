@@ -472,3 +472,25 @@ finished ones into the archive.
   tools that ran but returned 0 success; SSRF-dial/file-read legit; temp-file FPs out)
   + 29 deep (14 60s-reachable, 15 >60s). RESULTS_SUMMARY sec 1a is the headline.
 - Called "bugs" (Ananto's call); a sample hand-verify is optional future work, not a gate.
+
+## item 20 (2026-09-26): ToFu vs Viper H2H at 648 + SSRF introspection tracer FP (backend dial)
+- findings/baselines/h2h_tofu_vs_viper_20260926.{md,json,py} (py regenerates; asserts |U|=648).
+  On the 45 H2H repos: ToFu 33 repos / 266 bugs; Viper static 11 (154 flows), sink hits 9,
+  confirmed 2 distinct. All 11 Viper-static repos ToFu-flagged; both Viper-confirmed path
+  traversals ToFu-flagged same class. ToFu-exclusive (no CodeQL/Cisco/Viper) 15 repos.
+- 498 -> 648 added +103 on the H2H set, ALL from the introspection-on-errored slice (item 19).
+  63 on ocean-zhc/dolphinscheduler-mcp alone -> checked the instrument.
+- FINDING: check_introspection_ssrf (src/sanitizers/introspection.py:555) fires on ANY connect
+  to loopback/private ranges; it does not check the host is input-derived. 140 of the 648
+  (all ssrf) rest ONLY on it (no check_url_* oracle): 91 introspection-on-errored, 49 in the
+  60s sandboxed sweep. Every one of the 47 with a surviving log (VM eval/runs/gpt41-corpus-sbx)
+  shows ONE fixed host:port per repo across thousands of calls = the server's own default
+  backend: meilisearch 127.0.0.1:7700, freecad 9875 (freecad_client.py:27 default), dolphinscheduler
+  12345, trino/searxng 8080, iotdb 6667, obsidian REST 27124, v0-mcp 9222, blender 9876,
+  aws-samples S3 169.254.169.254:80 (boto3 IMDS credential lookup). Not attacker-controlled.
+  The other 93 have no surviving log (09-22 logs overwritten) but are the same repos.
+- Impact: 648 includes ~140 likely tracer FPs (-> ~508 if all dropped). H2H doc reports both
+  columns; RESULTS_SUMMARY sec 1a NOT changed (headline is Ananto's call).
+- TO DOUBLE-CHECK: (a) whether to drop backend-dial SSRF from the headline or gate the tracer
+  on the host appearing in the tool input (outcome-divergence style); (b) the 93 log-less keys;
+  (c) item 19's "SSRF-dial legit" wording -- legit only when the dialed host came from input.
