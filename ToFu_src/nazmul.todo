@@ -535,3 +535,23 @@ finished ones into the archive.
   then run_corpus_sbx.sh CORPUS_MODE=none --only-repos-file <shard> (sandboxed, 60s).
 - ALSO recover 38 silent-0-exec sbx rows (item 20): mcp-gsc "No module named google" (13 real
   SSRF via check_url_* at 09-22), obsidian socket, 7 wiped targets -> re-prepare + re-run.
+
+## item 23 (2026-09-27): PRECISION of the 508 headline -- LOW. Read before citing any bug count.
+- findings/labels_20260927/: stratified seeded sample of 98 of 508 (census of small classes;
+  only bugs with surviving evidence: 466/508). Labelled from evidence + code at pinned commit,
+  read-only, 6 sub-agents + coordinator reconciliation (RUBRIC.md lists every override).
+- Weighted over 507 (creds unlabelled): STRICT 12% +-6% (~61 bugs) bug-exists view;
+  3% +-2% (~14) alert-grounded view. LENIENT (TP+TP-low) 30% +-8% / 21% +-7%.
+- Per class (bug-exists strict/lenient): reflected-xss 5%/14%, log-inj 20%/35%, path-trav 6%/56%,
+  ssrf 44%/44%, temp-file 0/17%, cmd-inj 0/50%, exfil 0/0.
+- ROOT CAUSES (instrument defects, fixable):
+  (1) check_reflected_output fires on template-brace echoes ({{, ${) with no markup, into plain
+      text/JSON/errors -- 32/37 xss FP. Fix: require real markup; brace-only is not reflection.
+  (2) log-injection: CR/LF comes from the tool's own tracebacks / pydantic / pretty JSON / remote
+      error pages, not from the input -- most of 13/20 FP. Fix: require the CR/LF to be in the input
+      (provenance, same as the strict SSRF rule).
+  (3) outcome oracle on tools that bailed out early (not connected, missing binary/creds) --
+      input never reached the sink. Fix: require evidence the sink was reached.
+  (4) data-exfiltration: tool's own credential file + its own API call (FP), and downloaded-file
+      writes misclassified as exfil (really uncontained writes).
+- DO NOT cite "508 bugs" as bugs. Cite candidates + measured precision, or fix (1)-(3) and re-run.

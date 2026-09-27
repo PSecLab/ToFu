@@ -1,0 +1,93 @@
+[
+ {
+  "id": 56,
+  "label": "FP",
+  "reason": "imageUrl is read via fs.readFileSync as a local path, never dialed; run also aborted early on missing HELIUS_RPC_URL.",
+  "code_ref": "src/create-token.ts:54"
+ },
+ {
+  "id": 57,
+  "label": "FP",
+  "reason": "Handler only echoes image_url back in JSON; no network request is made with it.",
+  "code_ref": "pinterest-mcp-server.ts:501"
+ },
+ {
+  "id": 58,
+  "label": "FP",
+  "reason": "redirectUri only placed into a Linear OAuth authorize URL string/token request body; server never dials it.",
+  "code_ref": "src/auth.ts:59"
+ },
+ {
+  "id": 59,
+  "label": "TP",
+  "reason": "Caller url fetched via axios with no host restriction, response returned, config token sent; evidence shows external fetch.",
+  "code_ref": "index.ts:789"
+ },
+ {
+  "id": 60,
+  "label": "FP",
+  "reason": "imageUrl is a container image reference forwarded to Cloud Run API; never dialed by server; run failed on missing credentials.",
+  "code_ref": "tools/register-tools.js:583"
+ },
+ {
+  "id": 61,
+  "label": "FP",
+  "reason": "object_url is only parsed, query-appended and signed, then returned as text; no request is made.",
+  "code_ref": "src/mcp_server/core/media_processing/utils.py:13"
+ },
+ {
+  "id": 62,
+  "label": "TP",
+  "reason": "[coordinator] Unrestricted server-side fetch of caller URL (no host check); loopback dial seen in an earlier run log, not this sample log.",
+  "code_ref": "src/web_browser_mcp_server/server.py:92",
+  "basis": "code-only"
+ },
+ {
+  "id": 63,
+  "label": "TP",
+  "reason": "siteUrl dialed via axios POST with basic-auth, no restriction; evidence shows ECONNREFUSED to loopback, proving the dial.",
+  "code_ref": "src/index.ts:176"
+ },
+ {
+  "id": 64,
+  "label": "TP",
+  "reason": "Caller url dialed via axios with token, no restriction; evidence shows ECONNREFUSED to loopback 8080.",
+  "code_ref": "index.ts:910"
+ },
+ {
+  "id": 85,
+  "label": "TP-low",
+  "reason": "Tool mkdtemp dir never removed in default html mode (leak real); dir is 0700 random-named, so permission risk limited.",
+  "code_ref": "mindmap_mcp_server/server.py:30"
+ },
+ {
+  "id": 86,
+  "label": "FP",
+  "reason": "/tmp/matplotlib-* created by a dependency import (mediapipe/matplotlib), not by the tool; repo has no temp-file code.",
+  "code_ref": ""
+ },
+ {
+  "id": 87,
+  "label": "FP",
+  "reason": "/tmp/matplotlib-* created by a dependency import (mediapipe/matplotlib), not by the tool; repo has no temp-file code.",
+  "code_ref": ""
+ },
+ {
+  "id": 88,
+  "label": "FP",
+  "reason": "/tmp/matplotlib-* created by a dependency import (mediapipe/matplotlib), not by the tool; repo has no temp-file code.",
+  "code_ref": ""
+ },
+ {
+  "id": 89,
+  "label": "FP",
+  "reason": "/tmp/matplotlib-* created by a dependency import (mediapipe/matplotlib), not by the tool; repo has no temp-file code.",
+  "code_ref": ""
+ },
+ {
+  "id": 90,
+  "label": "FP",
+  "reason": "/tmp/matplotlib-* created by a dependency import (mediapipe/matplotlib), not by the tool; repo has no temp-file code.",
+  "code_ref": ""
+ }
+]
