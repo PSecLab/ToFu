@@ -20,6 +20,31 @@ headline reference; the dated docs hold the detail.
 Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu —
 static tools "work" only because they never execute.
 
+## 1a. CONSOLIDATED current candidates (2026-09-26, all sandboxed runs, deduped)
+Union of the three campaigns by distinct (repo, tool, class), all under bubblewrap,
+current oracles, no confidence tier. **Candidates, unconfirmed** (hand-verified
+precision owed).
+
+- **498 candidates across 143 repos / 497 tools.**
+- By class: reflected-xss 222, path-traversal 101, log-injection 85, ssrf 76,
+  insecure-temp-file 6, os-command-injection 4, data-exfiltration 4.
+- **By fuzz budget** (a candidate can be seen at both): 469 at **60 s/tool**
+  (corpus_sbx reachable + recover_pc), 129 at **24 h/repo** (repo24 deep), 100 at both.
+  29 appear only in the 24 h runs, but that is **mostly scope, not budget**: 10 are
+  in repos the 60 s sweep never covered (unsafe-skipped e.g. obsidian, or not in the
+  reachable set) and 19 are tools/classes whose 60 s coverage differed. The
+  controlled same-config budget test (findings/repo24_20260926) attributes **only ~1
+  candidate to the long budget alone**; the rest of the deep run's "new" are the new
+  tracers. Report the long budget as a saturation/efficiency result, not a bug-count driver.
+
+### Reconciliation with the pre-sandbox 627 (2026-09-22 full corpus)
+Not a fall in detection — different scope + FP removal:
+- 627 = 370 on the 1,481 reachable configs + **257 on configs with 0 successful
+  execution / unsafe-skipped / dead repos** (weak: the tool never really ran).
+- On the identical 1,481 reachable configs, sandboxed: **370 → 413 (UP)** (+183 new,
+  mostly new tracers; −140 gone, of which **77 were shared-/tmp temp-file false
+  positives**, class 142→6 corpus-wide, removed by the private-/tmp sandbox).
+
 ## 1b. Sandboxed re-runs (2026-09-26) — READ THESE FOR THE CURRENT NUMBERS
 Three campaigns after the sandbox + the two new tracers (reflected-xss, exfil) landed.
 All under bubblewrap; no confidence tier (item 17: success rate = reachability only).
