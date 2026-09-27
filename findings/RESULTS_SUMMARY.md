@@ -28,22 +28,33 @@ precision owed).
 - **498 candidates across 143 repos / 497 tools.**
 - By class: reflected-xss 222, path-traversal 101, log-injection 85, ssrf 76,
   insecure-temp-file 6, os-command-injection 4, data-exfiltration 4.
-- **By fuzz budget** (a candidate can be seen at both): 469 at **60 s/tool**
-  (corpus_sbx reachable + recover_pc), 129 at **24 h/repo** (repo24 deep), 100 at both.
-  29 appear only in the 24 h runs, but that is **mostly scope, not budget**: 10 are
-  in repos the 60 s sweep never covered (unsafe-skipped e.g. obsidian, or not in the
-  reachable set) and 19 are tools/classes whose 60 s coverage differed. The
-  controlled same-config budget test (findings/repo24_20260926) attributes **only ~1
-  candidate to the long budget alone**; the rest of the deep run's "new" are the new
-  tracers. Report the long budget as a saturation/efficiency result, not a bug-count driver.
+- **By fuzz budget** (from each bug's first-appearance time on the stitched tool
+  clock, not just which run saw it): **483 within 60 s**, **15 genuinely required
+  >60 s** (111 s up to 4,202 s; e.g. ddukbg/github-enterprise-mcp::list-workflows).
+  Of the 29 that show only in the 24 h runs, 14 first appeared <=60 s (60 s-reachable;
+  missing from the 60 s sweep only because those exact configs were unsafe-skipped or
+  outside the reachable set) and 15 first appeared >60 s (the real long-budget wins).
+  So the 24 h budget adds 15 candidates over 60 s. (An earlier "~1 from budget" figure
+  compared against the pre-sandbox 09-22 corpus, which lacked the reflected-xss tracer;
+  15 is the current-oracle number. Most bugs still surface within 60 s -- efficiency
+  holds -- but the long budget is not zero.)
 
-### Reconciliation with the pre-sandbox 627 (2026-09-22 full corpus)
-Not a fall in detection — different scope + FP removal:
-- 627 = 370 on the 1,481 reachable configs + **257 on configs with 0 successful
-  execution / unsafe-skipped / dead repos** (weak: the tool never really ran).
-- On the identical 1,481 reachable configs, sandboxed: **370 → 413 (UP)** (+183 new,
-  mostly new tracers; −140 gone, of which **77 were shared-/tmp temp-file false
-  positives**, class 142→6 corpus-wide, removed by the private-/tmp sandbox).
+### Internal provenance only -- NOT paper narrative (paper reports the final method + number, not our phases)
+The pre-sandbox 09-22 run reported 627. The change to the current numbers is:
+- **Scope/definition.** The sandboxed sweep counts candidates only on tools that
+  RETURNED SUCCESS >=1 (the reachable denominator). 09-22 also counted 249 candidates
+  on tools that executed but errored on every input (n_exec>0, n_exec_success=0); a
+  tracer still fired -- often legitimately (e.g. 129 SSRF = the introspection tracer
+  caught the outbound dial to an internal host before the connection failed). These
+  are NOT junk; the sandboxed count simply excludes them, so it is CONSERVATIVE.
+  Decision owed: keep the success>=1 gate (current 498) or also credit
+  introspection-observed hits on tools that only error.
+- **FP removal.** insecure-temp-file went 142 -> 6 corpus-wide: the unsandboxed run
+  shared one /tmp across 5 concurrent configs, so a config flagged temp files другие
+  configs left. The private-/tmp sandbox removes these harness artefacts.
+- On the identical 1,481 reachable configs, sandboxed vs 09-22: 370 -> 413.
+- The paper should state only the final result (498 candidates / 143 repos, sandboxed,
+  on tools driven to success), not this delta.
 
 ## 1b. Sandboxed re-runs (2026-09-26) — READ THESE FOR THE CURRENT NUMBERS
 Three campaigns after the sandbox + the two new tracers (reflected-xss, exfil) landed.

@@ -36,6 +36,12 @@ the 60 s corpus comparison). Candidates are auto-triaged (`eval/triage_findings.
 Classes — VM: path-traversal 21, reflected-xss 4, log-injection 2, data-exfiltration 2.
 PC: reflected-xss 73, log-injection 18, path-traversal 8, data-exfiltration 1.
 
+
+> **CORRECTION 2026-09-26:** the "~1 candidate from budget" below compares against the
+> pre-sandbox 09-22 corpus (no reflected-xss tracer). Against the current-oracle 60 s
+> sandboxed sweep, first-appearance times show **15 candidates required >60 s**; 14 more
+> 24 h-only ones were 60 s-reachable (scope). See RESULTS_SUMMARY.md 1a.
+
 ## RQ4 — what did the long budget add?
 Compared per (repo, tool, class) with the 60 s corpus run on the same repos:
 
