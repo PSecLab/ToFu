@@ -439,3 +439,20 @@ finished ones into the archive.
 - Combined 09-26 picture in RESULTS_SUMMARY sec 1b: corpus_sbx (413) + repo24 (RQ4) +
   recover_pc (231 dead repos). Diff per candidate: findings/corpus_sbx_20260926/diff.json.
 - For eval writer: sandboxed sweep is the current corpus headline; 627 is pre-sandbox 09-22.
+
+## item 16 (2026-09-26): Viper python H2H column filled + Viper metric CORRECTED
+- Python Viper on the 10 H2H python repos (PSU PC, 10 rounds, bwrap, LLM record/replay cache):
+  two fixes were required -- 5df1e2a (pyql query stems) and 8e144a6 (launch venv console
+  scripts via the venv python; Viper only injects its python hook when startup_command[0] is
+  python -- first run had hook_injected=False on 9/10, quarantined as
+  eval/state/quarantine-2026-09-26-viper-py-nohook on the PC).
+- Spend (ledger, measured): invalid run 871 upstream calls / 1,865,554 in / 99,201 out tokens;
+  valid run 357 upstream / 589,664 in / 46,416 out (1,247 of 1,604 calls replayed from cache).
+- METRIC CORRECTION: the H2H Viper column ("23 of 35") used n_hit_markers-or-oracle-events-or-
+  max_oracle_hits. n_hit_markers (Viper's confirmed verdict) is 0 on every run, so it fell
+  through to max_oracle_hits_in_round = ~10 x tool calls observed (activity, not findings).
+  Corrected: confirmed exploits 0/45; static Phase I taint flows 11/45 (node 10, python 1).
+  Table: findings/baselines/viper_h2h_corrected_20260926.md (+ .json).
+- TO DOUBLE-CHECK / TO FIX: every place that quotes the old Viper column -- RESULTS_SUMMARY §4
+  row (38/5/12) and §5, head_to_head_per_repo_20260922.md, the two 10-repo H2H tables given in
+  chat, sec6_eval.tex baselines/H2H text, CASE_STUDY_CANDIDATES "viper also flags" lines.
