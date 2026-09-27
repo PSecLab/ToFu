@@ -1,5 +1,10 @@
 # Head-to-head, per repo — 45 ToFu-flagged repos — 2026-09-22
 
+> **2026-09-26: the `viper` column below is withdrawn** — it counted `oracle.json` lines incl. the `hook_init`
+> marker (hook loaded), not findings, and python was n/a (since fixed, item 95). Viper's real results on these
+> 45 repos: static 11, runtime sink 9, confirmed 2 — `viper_h2h_corrected_20260926.md`. Current ToFu-vs-Viper
+> table at the 648 headline: `h2h_tofu_vs_viper_20260926.md`.
+
 > **2026-09-23: the `toolfuzz` column is withdrawn** — it counted ToolFuzz prompt-set *tests*, not failures (see toolfuzz_method_20260923.md). Replaced by the H2H-45 re-run.
 
 

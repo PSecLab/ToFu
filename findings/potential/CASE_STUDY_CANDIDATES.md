@@ -30,6 +30,9 @@ C1–C4 the paper wants to land.
 - **Adds:** the **largest class (SSRF, 199)** — currently unrepresented in the
   case study — and a **fully ToFu-exclusive** repo. H2H: ToFu **13 (13 hi)**,
   viper n/a, **codeql 0, cisco 0, sonnet-5 0, toolfuzz –**. Nobody else found it.
+  *2026-09-26:* Viper (python now works) = 0 static, 3 runtime sink hits, 0 confirmed. **These 13 are NOT in
+  the 648**: the sandboxed sweep never executed mcp-gsc (`Failed to start runner: No module named 'google'`,
+  18/18 tools, recorded ok=True). Re-run mcp-gsc sandboxed before using it as a case study (item 20).
 - **Story:** 7 tools all succ=1.000 → whole-server SSRF surface.
   Strongest "ToFu catches what static + LLM-audit both miss" narrative → C1/C2
   (semantic properties from metadata: a URL arg implies scheme/destination limits)
@@ -93,9 +96,9 @@ methodology (item 91).
 
 - **PhialsBasement/CMD-MCP-Server :: `execute_command`** (CWE-78, succ 1.000) —
   clean command-injection oracle demo; but viper also flags (cmd-inj is viper's
-  lane), so not exclusive.
+  lane), so not exclusive. *2026-09-26 recount:* Viper = 0 static, 1 runtime sink hit, 0 confirmed.
 - **joshrutkowski/applescript-mcp :: `iterm_run` + `finder_search_files`**
-  (CWE-78 + CWE-22, both 1.000) — repo *everyone* flags (viper 4, codeql 2,
+  (CWE-78 + CWE-22, both 1.000) — repo *everyone* flags (viper 4 [recount: 0 static, 3 sink, 0 confirmed], codeql 2,
   toolfuzz 32, sonnet 21): a triangulation/agreement example if the paper wants
   a "all tools agree, ToFu adds runtime evidence" contrast.
 - **antoinebou12/uml-mcp :: `list_diagram_types`** (CWE-117 CRLF log-injection) —

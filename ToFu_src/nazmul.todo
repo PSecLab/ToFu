@@ -494,3 +494,18 @@ finished ones into the archive.
 - TO DOUBLE-CHECK: (a) whether to drop backend-dial SSRF from the headline or gate the tracer
   on the host appearing in the tool input (outcome-divergence style); (b) the 93 log-less keys;
   (c) item 19's "SSRF-dial legit" wording -- legit only when the dialed host came from input.
+- item 20 addendum -- SILENT 0-EXEC ROWS in the sandboxed sweep (the codebase's known failure mode):
+  38 rows / 10 repos of runs.gpt41-corpus-sbx.jsonl have n_exec=None, ok=True, 0 hits. First ERROR
+  line of each VM log: AminForou/mcp-gsc 18x "Failed to start runner: No module named 'google'"
+  (ran fine 09-22 at 100% success, 13 SSRF via check_url_* oracles); newtype-01/obsidian-mcp 8x JS
+  "did not signal SOCKET_READY within 25s"; 7 repos "No such file or directory: eval/targets/<repo>"
+  (34892002/bilibili-mcp-js, AbdelStark/bitcoin-mcp, 3mdistal/css-mcp-server, Alec2435/amazon-fresh-server,
+  8bitgentleman/activitywatch-mcp-*, 7gugu/whistle-mcp -- all early-alphabet: item-14 wipe remnant?);
+  Alec2435/python_mcp bad python-local shim; openags 2 rows with no runner error.
+- Effect: 15 bugs the 09-22 run found on tools that RETURNED SUCCESS are absent from 648 only because
+  their sandboxed re-run never executed (mcp-gsc 13, obsidian 2). Also 63 total 09-22 success>0 bugs
+  are absent from 648 (31 re-ran with no hit, 10 re-ran with 0 success, 7 not in sbx, 15 no-exec).
+- H2H: "Viper hits where ToFu 0" (bilibili, mcp-gsc) are these instrument failures, not ToFu misses.
+- TO DOUBLE-CHECK / TO FIX: (a) run_eval must record ok=False when the runner never starts / n_exec is
+  None; (b) restore the 7 missing VM targets + fix mcp-gsc google import under the sandbox, then re-run
+  those 38 configs sandboxed (Ananto's Terminal); (c) the 31 "re-ran, no hit" -- oracle change or loss?

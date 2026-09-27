@@ -103,7 +103,7 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
 | ToolFuzz (H2H re-run, 2026-09-25) | 31 of H2H-45 (298 tools) | 8 tools genuine crash | 51 tools runtime (own def.), 8 crash; correctness 35 by formula → **0** genuine (all were tool errors) | tool-doc robustness/correctness (diff axis) | ❌ H2H only |
-| Viper-MCP | 38 | 5 | 12 | static taint, 3 classes (node-only) | ❌ partial |
+| Viper-MCP (H2H re-run, 2026-09-26) | 45 of H2H-45 (35 node + 10 python) | 11 static · 9 runtime sink · **2 confirmed** | 154 static taint flows; 2 distinct hit-judge-confirmed vulns | CodeQL taint + LLM runtime agent, 3 classes | ❌ H2H only |
 
 Overlap (full): ToFu∩CodeQL 37, ToFu∩Cisco 14, vanilla∩ToFu 107 (100 ToFu-only /
 107 vanilla-only, 47 vanilla-exclusive). Complementary, not redundant.
@@ -111,11 +111,15 @@ ToFu flags the 2nd-most repos (157), behind only the unverified LLM audit (214),
 ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
 
 ## 5. Head-to-head (45 ToFu-flagged repos, all tools same set)
-ToFu 45/579 · CodeQL 11/111 · Viper 23-of-35/45 · Cisco 3/13. **16 ToFu-exclusive.**
+ToFu 45/579 · CodeQL 11/111 · Viper 11/45 static (2 confirmed) · Cisco 3/13. **16 ToFu-exclusive.**
+> **2026-09-26, at the 648 headline:** `baselines/h2h_tofu_vs_viper_20260926.md` (regen script alongside):
+> ToFu 33/45 repos, 266 bugs (142 excl. backend-dial SSRF, item 20); Viper static 11, sink 9, confirmed 2
+> (both ToFu-flagged, same class); 15 ToFu-exclusive vs CodeQL+Cisco+Viper. ToFu's 0 on mcp-gsc /
+> bilibili / (obsidian 8 tools) is a sandboxed-sweep runner failure recorded ok=True, not a miss.
 > **CORRECTION 2026-09-26 (recounted from Viper's own outputs) — the Viper figure above is not a finding count.**
 > It counted `oracle.json` lines incl. the `hook_init` marker (hook loaded = 1). Viper's real results on all 45
 > H2H repos: **confirmed 2** (memory-bank-mcp path traversal; paper-search), **runtime sink hits 9**,
-> **static taint flows 11**. See `baselines/viper_h2h_corrected_20260926.md`; recheck the §4 Viper row too.
+> **static taint flows 11**. See `baselines/viper_h2h_corrected_20260926.md`. §4 Viper row updated.
 (ToFu-selected → demonstrates unique catches, not blanket superiority.)
 Per-repo breakdown of all 45 (every tool, incl. ToolFuzz+vanilla columns):
 head_to_head_per_repo_20260922.md — after security-class triage: ToFu 30/45 repos,

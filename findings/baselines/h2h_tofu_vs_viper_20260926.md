@@ -29,10 +29,11 @@ confirmed = distinct vulns with a Viper hit-judge verdict (`sink_reached && effe
 
 - **Overlap:** 11 of 11 Viper-static repos are also ToFu-flagged; Viper-static-only = 0. ToFu flags 22 repos Viper's static stage misses (21 excl. backend-dial).
 - **Viper-confirmed bugs vs ToFu:** openags/paper-search-mcp (arxivsearcher.download_pdf -> path_traversal@84; ToFu: data-exfiltration, log-injection, path-traversal, reflected-xss); movibe/memory-bank-mcp (initialize_memory_bank -> path_traversal@19; ToFu: log-injection, path-traversal).
-- **Viper runtime hits where ToFu reports 0:** 34892002/bilibili-mcp-js (2), AminForou/mcp-gsc (3), PhialsBasement/CMD-MCP-Server (1, unsafe-skipped) — sink observations, not confirmed exploits; worth a manual look.
+- **Viper runtime hits where ToFu reports 0:** 34892002/bilibili-mcp-js (2; ToFu sbx runner failed 1/1 tools), AminForou/mcp-gsc (3; ToFu sbx runner failed 18/18 tools), PhialsBasement/CMD-MCP-Server (1; ToFu unsafe-skipped). Sink observations, not confirmed exploits. **None is a clean ToFu miss:** each ToFu 0 is an instrument gap (see next bullet) or the unsafe-skip.
+- **ToFu instrument failures on this set (NOT clean zeros):** sandboxed-sweep rows with no executions recorded (mostly `Failed to start runner` in the log) yet stored `ok=True`, 0 hits: openags/paper-search-mcp (sbx runner failed 2/36 tools: n_exec not recorded; no runner-start error in log); newtype-01/obsidian-mcp (sbx runner failed 8/8 tools: JS server did not signal SOCKET_READY within 25s; the 09-22 run found 2 bugs on these tools, dropped from 648 only by this failure); 34892002/bilibili-mcp-js (sbx runner failed 1/1 tools: target dir missing on VM); AminForou/mcp-gsc (sbx runner failed 18/18 tools: Failed to start runner: No module named 'google'; the 09-22 run found 13 bugs on these tools, dropped from 648 only by this failure).
 - **ToFu-exclusive** (no CodeQL / Cisco / Viper signal): 15 repos — prathammanocha/wordpress-mcp-server, maoxiaoke/mcp-media-processor, AzDeltaQQ/Mcp-Reasoning-Server, gdli6177/mcp-prompt-server, rishijatia/fantasy-pl-mcp, bradrisse/kanban-mcp, RegiByte/todo-list-mcp, meilisearch/meilisearch-mcp, neka-nat/freecad-mcp, Augmented-Nature/Augmented-Nature-ChEMBL-MCP-Server, fireproof-storage/mcp-database-server, revit-mcp/revit-mcp, vinayak-mehta/mcp-browser-use, yokingma/time-mcp, alaturqua/mcp-trino-python. Excl. backend-dial: 14 (drops alaturqua/mcp-trino-python).
 - **No tool flags anything:** 6 repos.
-- ToFu covered 44/45 (PhialsBasement/CMD-MCP-Server on the unsafe-skip list).
+- ToFu unsafe-skip list: PhialsBasement/CMD-MCP-Server.
 - ToFu classes on this set: ssrf 146, path-traversal 58, reflected-xss 41, log-injection 15, data-exfiltration 4, os-command-injection 1, hardcoded-creds 1.
 - Viper models 3 classes (command injection, path traversal, SSRF); ToFu's reflected-xss / log-injection /
   data-exfiltration candidates have no Viper counterpart by design — part of why ToFu-only is large.
@@ -40,7 +41,7 @@ confirmed = distinct vulns with a Viper hit-judge verdict (`sink_reached && effe
 ## Per repo
 | repo | lang | ToFu bugs | ToFu excl. backend-dial | ToFu classes | CodeQL | Cisco | Viper static | Viper sink hits | Viper confirmed |
 |---|---|---|---|---|---|---|---|---|---|
-| openags/paper-search-mcp | python | **23** | 23 | data-exfiltration, log-injection, path-traversal, reflected-xss | 9 | 0 | 35 | 0 | **1** (arxivsearcher.download_pdf -> path_traversal@84; 1 verdict(s)) |
+| openags/paper-search-mcp | python | **23** ⚠ sbx runner failed 2/36 tools | 23 | data-exfiltration, log-injection, path-traversal, reflected-xss | 9 | 0 | 35 | 0 | **1** (arxivsearcher.download_pdf -> path_traversal@84; 1 verdict(s)) |
 | prathammanocha/wordpress-mcp-server | node | **13** | 13 | ssrf | 0 | 0 | 0 | 0 | 0 |
 | maoxiaoke/mcp-media-processor | node | **10** | 10 | path-traversal | 0 | 0 | 0 | 0 | 0 |
 | AzDeltaQQ/Mcp-Reasoning-Server | node | **8** | 8 | reflected-xss | 0 | 0 | 0 | 0 | 0 |
@@ -57,7 +58,7 @@ confirmed = distinct vulns with a Viper hit-judge verdict (`sink_reached && effe
 | dazeb/cline-mcp-memory-bank | node | **4** | 4 | path-traversal | 0 | 0 | 11 | 0 | 0 |
 | dazeb/Cline-Memory-Bank | node | **4** | 4 | path-traversal | 0 | 0 | 11 | 0 | 0 |
 | joshrutkowski/applescript-mcp | node | **3** | 3 | os-command-injection, path-traversal | 2 | 0 | 0 | 3 | 0 |
-| newtype-01/obsidian-mcp | node | **3** | 3 | path-traversal | 1 | 0 | 41 | 0 | 0 |
+| newtype-01/obsidian-mcp | node | **3** ⚠ sbx runner failed 8/8 tools (09-22: 2) | 3 | path-traversal | 1 | 0 | 41 | 0 | 0 |
 | bradrisse/kanban-mcp | node | **2** | 2 | log-injection, reflected-xss | 0 | 0 | 0 | 0 | 0 |
 | davidteren/claude-server | node | **2** | 2 | log-injection | 0 | 0 | 5 | 0 | 0 |
 | IncomeStreamSurfer/roo-code-memory-bank-mcp-server | node | **2** | 2 | path-traversal | 0 | 0 | 5 | 0 | 0 |
@@ -73,10 +74,10 @@ confirmed = distinct vulns with a Viper hit-judge verdict (`sink_reached && effe
 | WilliamCloudQi/matlab-mcp-server | node | **1** | 1 | path-traversal | 0 | 0 | 4 | 4 | 0 |
 | yokingma/time-mcp | node | **1** | 1 | reflected-xss | 0 | 0 | 0 | 0 | 0 |
 | alaturqua/mcp-trino-python | python | **20** | 0 | ssrf | 0 | 0 | 0 | 0 | 0 |
-| 34892002/bilibili-mcp-js | node | 0 | 0 | – | 0 | 0 | 0 | 2 | 0 |
+| 34892002/bilibili-mcp-js | node | 0 ⚠ sbx runner failed 1/1 tools | 0 | – | 0 | 0 | 0 | 2 | 0 |
 | alioshr/memory-bank-mcp | node | 0 | 0 | – | 0 | 0 | 0 | 0 | 0 |
 | aliyun/alibabacloud-dms-mcp-server | python | 0 | 0 | – | 0 | 1 | 0 | 0 | 0 |
-| AminForou/mcp-gsc | python | 0 | 0 | – | 0 | 0 | 0 | 3 | 0 |
+| AminForou/mcp-gsc | python | 0 ⚠ sbx runner failed 18/18 tools (09-22: 13) | 0 | – | 0 | 0 | 0 | 3 | 0 |
 | Antonytm/mcp-sitecore-server | node | 0 | 0 | – | 4 | 7 | 0 | 0 | 0 |
 | doggybee/mcp-server-ccxt | node | 0 | 0 | – | 0 | 0 | 0 | 0 | 0 |
 | graphlit/graphlit-mcp-server | node | 0 | 0 | – | 0 | 0 | 0 | 0 | 0 |

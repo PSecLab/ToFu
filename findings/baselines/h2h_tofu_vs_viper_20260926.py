@@ -43,6 +43,27 @@ for p in (F("corpus_sbx_20260926", "runs.gpt41-corpus-sbx.jsonl"), F("recover_pc
 backend_dial = {k for k in U if k[2] == "ssrf" and "check_introspection_ssrf" in ssrf_sans[k]
                 and not any(x.startswith("check_url") for x in ssrf_sans[k])}
 
+# Sandboxed-sweep rows that never executed (n_exec None: "Failed to start runner" in the log) are
+# recorded ok=True with 0 hits -- an instrument failure, not a clean result. Surface them per repo.
+sbx_rows = load(F("corpus_sbx_20260926", "runs.gpt41-corpus-sbx.jsonl"))
+noexec = collections.Counter(r["repo"] for r in sbx_rows if r.get("n_exec") is None)
+sbx_tools = collections.Counter(r["repo"] for r in sbx_rows)
+NOEXEC_WHY = {  # first ERROR line of the VM logs (eval/runs/gpt41-corpus-sbx/*.log), 2026-09-26
+    "AminForou/mcp-gsc": "Failed to start runner: No module named 'google'",
+    "newtype-01/obsidian-mcp": "JS server did not signal SOCKET_READY within 25s",
+    "34892002/bilibili-mcp-js": "target dir missing on VM",
+}
+# bugs the 09-22 run found on tools that RETURNED SUCCESS but are absent from U only because the
+# sandboxed re-run of that tool never executed
+lost_noexec = collections.defaultdict(set)
+sk = {(r["repo"], r["tool"]): r for r in sbx_rows}
+for r in load(F("baselines", "tofu_runs_e2_20260922.jsonl")):
+    if r.get("ok") and r.get("finding_hits") and (r.get("n_exec_success") or 0) > 0:
+        c = g["classify"](r.get("triggered_sanitizers"))
+        k = (r.get("repo"), r.get("tool"), c[0]) if c else None
+        if k and k not in U and c[0] != "insecure-temp-file" and sk.get(k[:2], {}).get("n_exec", 0) is None:
+            lost_noexec[k[0]].add(k)
+
 bugs = collections.defaultdict(set)
 for repo, tool, cls in U:
     if repo in h2h:
@@ -54,7 +75,11 @@ for repo, h in h2h.items():
     b = bugs.get(repo, set())
     bx = {(t, c) for t, c in b if (repo, t, c) not in backend_dial}
     rows.append(dict(repo=repo, lang=h["lang"],
-                     tofu_status="unsafe-skipped" if repo in unsafe else ("ran" if repo in ran else "not-run"),
+                     tofu_status="unsafe-skipped" if repo in unsafe else (
+                         f"sbx runner failed {noexec[repo]}/{sbx_tools[repo]} tools" if noexec.get(repo) else
+                         ("ran" if repo in ran else "not-run")),
+                     sbx_noexec_why=NOEXEC_WHY.get(repo, "n_exec not recorded; no runner-start error in log") if noexec.get(repo) else None,
+                     lost_0922=len(lost_noexec.get(repo, ())),
                      tofu=len(b), tofu_tools=len({t for t, _ in b}), tofu_classes=sorted({c for _, c in b}),
                      tofu_x=len(bx), tofu_x_classes=sorted({c for _, c in bx}),
                      codeql=h.get("codeql"), cisco=h.get("cisco"),
@@ -78,6 +103,8 @@ tally = {
     "tofu_only(vs viper_static)": n(lambda r: r["tofu"] > 0 and r["v_static"] == 0),
     "viper_static_only": n(lambda r: r["tofu"] == 0 and r["v_static"] > 0),
     "viper_sink_where_tofu0": [r["repo"] for r in rows if r["tofu"] == 0 and r["v_sink"] > 0],
+    "tofu_sbx_runner_failed": [r["repo"] for r in rows if r["tofu_status"].startswith("sbx runner failed")],
+    "lost_0922_bugs_noexec": sum(r["lost_0922"] for r in rows),
     "tofu_exclusive(vs codeql+cisco+viper)": [r["repo"] for r in rows if r["tofu"] > 0 and not stat(r)],
     "no_tool_flags": [r["repo"] for r in rows if r["tofu"] == 0 and not stat(r)],
     "tofu_x>0": n(lambda r: r["tofu_x"] > 0), "tofu_x_bugs_total": sum(r["tofu_x"] for r in rows),
@@ -122,16 +149,21 @@ md = [
  "- **Viper-confirmed bugs vs ToFu:** " + "; ".join(
      f"{r['repo']} ({', '.join(r['v_chains'])}; ToFu: {', '.join(r['tofu_classes']) or 'none'})" for r in conf) + ".",
  "- **Viper runtime hits where ToFu reports 0:** " + (", ".join(
-     f"{r['repo']} ({r['v_sink']}{', unsafe-skipped' if r['tofu_status'] == 'unsafe-skipped' else ''})"
+     f"{r['repo']} ({r['v_sink']}; ToFu {r['tofu_status'] if r['tofu_status'] != 'ran' else 'ran'})"
      for r in rows if r["repo"] in T["viper_sink_where_tofu0"]) or "none")
-     + " — sink observations, not confirmed exploits; worth a manual look.",
+     + ". Sink observations, not confirmed exploits. **None is a clean ToFu miss:** each ToFu 0 is an"
+     " instrument gap (see next bullet) or the unsafe-skip.",
+ "- **ToFu instrument failures on this set (NOT clean zeros):** sandboxed-sweep rows with no executions"
+ " recorded (mostly `Failed to start runner` in the log) yet stored `ok=True`, 0 hits: " + "; ".join(
+     f"{r['repo']} ({r['tofu_status']}: {r['sbx_noexec_why']}"
+     + (f"; the 09-22 run found {r['lost_0922']} bugs on these tools, dropped from 648 only by this failure" if r["lost_0922"] else "")
+     + ")" for r in rows if r["repo"] in T["tofu_sbx_runner_failed"]) + ".",
  f"- **ToFu-exclusive** (no CodeQL / Cisco / Viper signal): {len(T['tofu_exclusive(vs codeql+cisco+viper)'])} repos — "
  + ", ".join(T["tofu_exclusive(vs codeql+cisco+viper)"]) + ". "
  f"Excl. backend-dial: {len(T['tofu_x_exclusive(vs codeql+cisco+viper)'])} (drops "
  + ", ".join(sorted(set(T["tofu_exclusive(vs codeql+cisco+viper)"]) - set(T["tofu_x_exclusive(vs codeql+cisco+viper)"]))) + ").",
  f"- **No tool flags anything:** {len(T['no_tool_flags'])} repos.",
- f"- ToFu covered {T['tofu_ran']}/45 (" + ", ".join(r["repo"] for r in rows if r["tofu_status"] != "ran")
- + " on the unsafe-skip list).",
+ "- ToFu unsafe-skip list: " + ", ".join(r["repo"] for r in rows if r["tofu_status"] == "unsafe-skipped") + ".",
  "- ToFu classes on this set: " + ", ".join(f"{c} {k}" for c, k in T["tofu_by_class"].items()) + ".",
  "- Viper models 3 classes (command injection, path traversal, SSRF); ToFu's reflected-xss / log-injection /",
  "  data-exfiltration candidates have no Viper counterpart by design — part of why ToFu-only is large.", "",
@@ -141,6 +173,8 @@ md = [
 ]
 for r in rows:
     t = f"**{r['tofu']}**" if r["tofu"] else ("0 (unsafe-skipped)" if r["tofu_status"] == "unsafe-skipped" else "0")
+    if r["tofu_status"].startswith("sbx runner failed"):
+        t += f" ⚠ {r['tofu_status']}" + (f" (09-22: {r['lost_0922']})" if r["lost_0922"] else "")
     vc = (f"**{r['v_confirmed']}** ({'; '.join(r['v_chains'])}; {r['v_confirmed_entries']} verdict(s))"
           if r["v_confirmed"] else "0")
     md.append(f"| {r['repo']} | {r['lang']} | {t} | {r['tofu_x']} | {', '.join(r['tofu_classes']) or '–'} | {r['codeql']} | "
