@@ -802,7 +802,7 @@ class MCPDifferentialFuzzer:
 
         net_calls = getattr(res, "network_connections", [])
         if "check_introspection_ssrf" in self.selected_sanitizer_names or net_calls:
-            ssrf_triggered, ssrf_err = check_introspection_ssrf(net_calls)
+            ssrf_triggered, ssrf_err = check_introspection_ssrf(net_calls, generated_arguments)
             if ssrf_triggered:
                 triggered_by.append("check_introspection_ssrf")
                 err_details += ssrf_err

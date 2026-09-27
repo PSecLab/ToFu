@@ -522,3 +522,16 @@ finished ones into the archive.
 - sec4 C4 paragraph: no re-run wording; cites reflected-output = 222 of 508.
 - OWED: hand-labelled precision (two % NOTE placeholders in sec6 RQ2/RQ3); RQ3 funnel uses the
   sandboxed sweep (184,406 alerts / 579 configs -> 388 bugs at the strict rule).
+
+## item 22 (2026-09-27): SSRF tracer input-gated + corpus expansion (923 never-fuzzed repos)
+- FIX: check_introspection_ssrf(network_connections, tool_input) now fires only when the
+  contacted internal host appears in the fuzzed input (attacker-controlled). Suppresses the
+  140 backend-dial FPs at the source (item 20/21) for all FUTURE runs; tool_input=None keeps
+  old behavior. fuzzer passes generated_arguments. Test: tests/test_ssrf_input_gated.py.
+- COUNTS: repos fuzzed so far 481; executed >=1 tool successfully 273. set_full tool-exposing
+  corpus = 1404 => 923 NEVER fuzzed (497 node, 426 python). Biggest lever to raise #bugs.
+- EXPANSION: Benchmarks/extraction/corpus_never_fuzzed_repos.txt (923) split PC 648 / VM 275
+  (_pc.txt/_vm.txt, by idle-core ratio 12:5). Plan: prepare_targets --only-repos-file <shard>
+  then run_corpus_sbx.sh CORPUS_MODE=none --only-repos-file <shard> (sandboxed, 60s).
+- ALSO recover 38 silent-0-exec sbx rows (item 20): mcp-gsc "No module named google" (13 real
+  SSRF via check_url_* at 09-22), obsidian socket, 7 wiped targets -> re-prepare + re-run.

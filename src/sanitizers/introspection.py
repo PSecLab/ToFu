@@ -1,3 +1,4 @@
+import json
 """
 Introspection Sanitizers / Behavior Monitors for MCP targets.
 Rather than analyzing input strings before/after execution, these sanitizers inspect
@@ -552,16 +553,32 @@ class CodeExecutionTracer:
             builtins.exec = self._orig_exec
 
 
-def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str]:
+def check_introspection_ssrf(network_connections: List[dict], tool_input=None) -> Tuple[bool, str]:
     """
     Introspection Sanitizer for Server-Side Request Forgery / SSRF (CWE-918).
     Monitors execution for outgoing network socket connections to private, internal, or loopback IP ranges
     (127.0.0.1, localhost, 169.254.169.254 metadata API, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16).
-    
-    :param network_connections: List of network connection records captured during tool execution.
+
+    SSRF requires an ATTACKER-CONTROLLED destination. When ``tool_input`` is given, the
+    connection only counts if the contacted host actually appears in the fuzzed input;
+    otherwise it is the server dialling its OWN default backend (e.g. a client whose base
+    URL is 127.0.0.1:7700, or boto3's 169.254.169.254 IMDS credential lookup) and is NOT
+    SSRF. This removes the backend-dial false positives (2026-09-26: 140 of them rested
+    only on this tracer). Passing tool_input=None keeps the old unconditional behaviour.
+
+    :param network_connections: connection records captured during tool execution.
+    :param tool_input: the fuzzed arguments for this execution (dict/str), or None.
     """
     if not network_connections:
         return False, ""
+
+    input_s = ""
+    if tool_input is not None:
+        try:
+            input_s = json.dumps(tool_input, default=str)
+        except Exception:
+            input_s = str(tool_input)
+        input_s = input_s.lower()
 
     internal_host_patterns = [
         "127.0.0.1", "localhost", "0.0.0.0", "::1", "169.254.169.254", "metadata.google.internal",
@@ -578,6 +595,10 @@ def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str
         
         for pattern in internal_host_patterns:
             if host == pattern or host.startswith(pattern):
+                # attacker-controlled destination check: the host must have come from the
+                # fuzzed input, else it is the tool's own hardcoded/default backend (not SSRF)
+                if tool_input is not None and host.lower() not in input_s:
+                    continue
                 return True, (
                     f"Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! "
                     f"Target host: '{host}' (port: {port})."
