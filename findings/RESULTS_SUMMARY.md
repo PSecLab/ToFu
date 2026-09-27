@@ -113,11 +113,10 @@ ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
 
 ## 5. Head-to-head (45 ToFu-flagged repos, all tools same set)
 ToFu 45/579 · CodeQL 11/111 · Viper 23-of-35/45 · Cisco 3/13. **16 ToFu-exclusive.**
-> **CORRECTION 2026-09-26 — Viper figure above is NOT a finding count.** "Viper 23-of-35" came from a
-> fallback that counted Viper's hook *activity* (`max_oracle_hits_in_round` ≈ 10 × observed tool calls).
-> Viper's own confirmed exploits are **0 on all 45 H2H repos**; its static (Phase I) taint flows are
-> non-zero on **11 of 45** (10 node, 1 python). Python rows now exist (PC run, item-95 fix). Use
-> `baselines/viper_h2h_corrected_20260926.md`; also recheck the Viper row in §4 before quoting it.
+> **CORRECTION 2026-09-26 (recounted from Viper's own outputs) — the Viper figure above is not a finding count.**
+> It counted `oracle.json` lines incl. the `hook_init` marker (hook loaded = 1). Viper's real results on all 45
+> H2H repos: **confirmed 2** (memory-bank-mcp path traversal; paper-search), **runtime sink hits 9**,
+> **static taint flows 11**. See `baselines/viper_h2h_corrected_20260926.md`; recheck the §4 Viper row too.
 (ToFu-selected → demonstrates unique catches, not blanket superiority.)
 Per-repo breakdown of all 45 (every tool, incl. ToolFuzz+vanilla columns):
 head_to_head_per_repo_20260922.md — after security-class triage: ToFu 30/45 repos,

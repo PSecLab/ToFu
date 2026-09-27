@@ -174,13 +174,24 @@ def one(target, base, skip_codeql, codeql_bin, rounds, timeout, test_agent):
             # results land one level down, <fuzz_results>/<repo_slug>/*.json
             files = [os.path.join(d, f) for d, _, fs in os.walk(fr) for f in fs]
             rec["n_result_files"] = len(files)
-            hits = 0
+            # Viper's CONFIRMED verdicts live in triggered_vulnerability_prompts.json: one
+            # entry per prompt its hit judge accepted (hit_judge.sink_reached &&
+            # effect_success). The previous string search ('"vulnerable": true',
+            # "exploit_success") matched nothing Viper writes, so it was 0 on every run.
+            conf, chains = 0, set()
             for fp in files:
+                if os.path.basename(fp) != "triggered_vulnerability_prompts.json":
+                    continue
                 try:
-                    txt = open(fp, errors="ignore").read().lower()
-                    hits += txt.count('"vulnerable": true') + txt.count("exploit_success")
+                    for e in json.load(open(fp)):
+                        hj = (e or {}).get("hit_judge") or {}
+                        if hj.get("sink_reached") and hj.get("effect_success"):
+                            conf += 1
+                            if e.get("target_call_chain"): chains.add(e["target_call_chain"])
                 except Exception: pass
-            rec["n_hit_markers"] = hits
+            rec["n_confirmed"] = conf
+            rec["n_confirmed_distinct"] = len(chains)
+            rec["n_hit_markers"] = conf          # kept for old readers; now = confirmed
             an = os.path.join(fr, slug, "anomalies.json")
             if os.path.exists(an):
                 try: rec["n_anomalies"] = len(json.load(open(an)))
@@ -205,6 +216,9 @@ def one(target, base, skip_codeql, codeql_bin, rounds, timeout, test_agent):
             max_hits = max(hits) if hits else 0
             hook_seen = "hook_init" in txt
         rec["n_oracle_events_on_disk"] = len(ev)
+        # sink hits = hook observations EXCLUDING the hook_init marker (counting that line
+        # made every repo whose hook merely loaded score >= 1 in the old H2H column)
+        rec["n_sink_events"] = sum(1 for l in ev if '"hook_init"' not in l)
         rec["max_oracle_hits_in_round"] = max_hits
         rec["hook_injected"] = (any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0)
     except subprocess.TimeoutExpired as e:
