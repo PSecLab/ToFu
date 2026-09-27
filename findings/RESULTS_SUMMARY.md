@@ -20,24 +20,23 @@ headline reference; the dated docs hold the detail.
 Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu —
 static tools "work" only because they never execute.
 
-## 1a. CONSOLIDATED current candidates (2026-09-26, all sandboxed runs, deduped)
-Union of the three campaigns by distinct (repo, tool, class), all under bubblewrap,
-current oracles, no confidence tier. **Candidates, unconfirmed** (hand-verified
-precision owed).
+## 1a. CONSOLIDATED bug count (2026-09-26, all sandboxed campaigns, deduped)  [HEADLINE]
+Union of every sandboxed campaign, distinct (repo, tool, class); budget = each bug's
+earliest fuzz budget. Regenerate: `python3 findings/union_20260926/analyze_union.py`
+(full report: findings/union_20260926/REPORT.md). insecure-temp-file shared-/tmp
+artefacts excluded (private-/tmp sandbox removes them).
 
-- **498 candidates across 143 repos / 497 tools.**
-- By class: reflected-xss 222, path-traversal 101, log-injection 85, ssrf 76,
-  insecure-temp-file 6, os-command-injection 4, data-exfiltration 4.
-- **By fuzz budget** (from each bug's first-appearance time on the stitched tool
-  clock, not just which run saw it): **483 within 60 s**, **15 genuinely required
-  >60 s** (111 s up to 4,202 s; e.g. ddukbg/github-enterprise-mcp::list-workflows).
-  Of the 29 that show only in the 24 h runs, 14 first appeared <=60 s (60 s-reachable;
-  missing from the 60 s sweep only because those exact configs were unsafe-skipped or
-  outside the reachable set) and 15 first appeared >60 s (the real long-budget wins).
-  So the 24 h budget adds 15 candidates over 60 s. (An earlier "~1 from budget" figure
-  compared against the pre-sandbox 09-22 corpus, which lacked the reflected-xss tracer;
-  15 is the current-oracle number. Most bugs still surface within 60 s -- efficiency
-  holds -- but the long budget is not zero.)
+- **648 bugs · 154 repos · 647 tools.**
+- By budget: **633 at 60 s/tool**, **15 required >60 s** (24 h deep run; first-appearance
+  111 s–4,202 s). ~98% surface within 60 s.
+- By class: reflected-xss 222, ssrf 182, log-injection 122, path-traversal 106,
+  temp-file 6, os-command-injection 5, data-exfiltration 4, hardcoded-creds 1.
+- Built from: 469 (60 s sandboxed reachable + recovered dead repos) + 150 net-new
+  introspection-observed on tools that executed-but-errored (09-22, 60 s; SSRF dial /
+  file read etc. fire legitimately; temp-file FPs excluded) + 29 from the 24 h deep run
+  (14 were 60 s-reachable, 15 needed >60 s).
+- Detection: outcome-divergence (sanitizer-flagged input accepted) or introspection
+  (tracer observed the dangerous op: SSRF dial, /etc/passwd read, temp-file write).
 
 ### Internal provenance only -- NOT paper narrative (paper reports the final method + number, not our phases)
 The pre-sandbox 09-22 run reported 627. The change to the current numbers is:
