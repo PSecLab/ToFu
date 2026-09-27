@@ -21,6 +21,15 @@ Framing: 482→249 drop is repo-side (creds/backends/runtime errors), not ToFu �
 static tools "work" only because they never execute.
 
 ## 1a. CONSOLIDATED bug count (2026-09-26, all sandboxed campaigns, deduped)  [HEADLINE]
+> **PAPER HEADLINE = 508 bugs · 147 repos · 507 tools (Ananto's decision, 2026-09-27).**
+> The 648 below minus the 140 SSRF bugs that rest only on `check_introspection_ssrf` (host not
+> taken from the input: the server dialling its own default backend, item 20). Strict rule: an SSRF
+> counts only when the contacted host came from the fuzzed input. 60 s: 493 (97%), >60 s: 15.
+> Classes: reflected-xss 222, log-inj 122, path-trav 106, ssrf 42, temp-file 6, cmd-inj 5, exfil 4,
+> creds 1. Regenerate: backend_dial set in findings/baselines/h2h_tofu_vs_viper_20260926.py.
+> Baseline overlaps at 508 (ToFu-only/both/baseline-only): CodeQL 85/61/91, Cisco 128/18/30,
+> Sonnet-5 72/75/137. The 14 host-set issues (§3) are dropped from the paper.
+
 Union of every sandboxed campaign, distinct (repo, tool, class); budget = each bug's
 earliest fuzz budget. Regenerate: `python3 findings/union_20260926/analyze_union.py`
 (full report: findings/union_20260926/REPORT.md). insecure-temp-file shared-/tmp
