@@ -32,6 +32,14 @@ class SeedProvenanceError(RuntimeError):
     """TOFU_REQUIRE_LLM_SEEDS is set but no LLM-generated seeds are available."""
 
 
+def _no_llm() -> bool:
+    """TOFU_NO_LLM: skip BOTH LLM calls (selection + seed-gen). Selection returns the
+    always-on BASE_MANDATORY_SANITIZERS; seeds come from the deterministic local
+    fallback mapping. Zero API cost -- used by the no-LLM executability/first-pass probe
+    so LLM spend only happens on tools that actually execute."""
+    return os.environ.get("TOFU_NO_LLM", "").strip().lower() not in ("", "0", "false", "no")
+
+
 def _require_llm_seeds() -> bool:
     """Strict seed provenance (per-repo deep campaign): use cached seeds only when
     they are tagged seeds_provenance == "llm"; regenerate anything else live; and
@@ -748,6 +756,9 @@ class LLMHandler:
     def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict,
                        selected_sanitizers: list = None) -> list:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
+        if _no_llm():
+            logging.info(f"NO_LLM seed-gen (fallback mapping) tool={tool_name}")
+            return self._local_fallback_mapping(input_schema, self._load_seed_bank(), selected_sanitizers)
         cached = self._cache_load()
         if (cached is not None and cached.get("seeds") is not None and _require_llm_seeds()
                 and cached.get("seeds_provenance") != "llm"):
@@ -944,7 +955,11 @@ Strict Instructions:
     def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> tuple:
         """Selects sanitizing functions and their behavioral rules based on docstrings/schemas."""
         logging.info(f"Selecting relevant sanitizers for '{tool_name}'...")
-
+        if _no_llm():
+            from .sanitizers import BASE_MANDATORY_SANITIZERS
+            sel = [x for x in BASE_MANDATORY_SANITIZERS if x in available_sanitizers]
+            logging.info(f"NO_LLM selection (mandatory only) tool={tool_name} n_selected={len(sel)}")
+            return sel, {}
         cached = self._cache_load()
         if cached is not None and cached.get("selected_sanitizers") is not None:
             sel = [x for x in cached["selected_sanitizers"] if x in available_sanitizers]

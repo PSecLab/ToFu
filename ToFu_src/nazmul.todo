@@ -555,3 +555,12 @@ finished ones into the archive.
   (4) data-exfiltration: tool's own credential file + its own API call (FP), and downloaded-file
       writes misclassified as exfil (really uncontained writes).
 - DO NOT cite "508 bugs" as bugs. Cite candidates + measured precision, or fix (1)-(3) and re-run.
+## item 23 (2026-09-27): TOFU_NO_LLM probe -> LLM only on executable tools (cost control)
+- Actual state (checked): recovery NOT started; expansion prep NOT done (PC 6/648, VM 1/275).
+- TOFU_NO_LLM (src/llm.py): skips BOTH LLM calls -> selection = BASE_MANDATORY only, seeds =
+  local fallback mapping. $0. Evidence-gated introspection tracers (path/ssrf-input-gated/
+  reflected/exfil/temp/log) still fire, so the probe finds many bugs for free + the executable set.
+- WORKFLOW to avoid wasted LLM $: (1) prep sandboxed (no LLM). (2) TOFU_NO_LLM probe, short
+  budget, arm gpt41-<m>-probe. (3) eval/select_executable.py --arm <probe> -> executable config
+  list. (4) full LLM pass with --only-configs-file <list>. LLM spend only on tools that run.
+- Est: ~$400 unfiltered -> if ~55% executable, LLM pass ~$220-260 + probe $0.
