@@ -69,6 +69,18 @@ def make_cfg(base, target, slug, skip_codeql, codeql_bin, rounds):
     ms["repo_path"] = target.get("cwd")
     ms["transport"] = "stdio"
     ms["startup_command"] = [target["command"]] + list(target.get("args", []))
+    # Viper installs its Python runtime hook ONLY when startup_command[0] is a python
+    # interpreter (instrumentation.py _iter_candidate_python_binaries). Most python
+    # configs launch a venv console script (e.g. .venv/bin/paper-search-mcp), so Viper
+    # never recognised them as python, installed no hook, and Phase II was blind
+    # (2026-09-26 PC: hook_injected=False on 9/10, all hits 0). Run the SAME console
+    # script through its venv interpreter: same server, same entry point, and Viper's
+    # own instrumentation now engages.
+    cmd0 = target.get("command") or ""
+    if target.get("lang") == "python" and not os.path.basename(cmd0).startswith("python"):
+        vpy = os.path.join(os.path.dirname(cmd0), "python")
+        if os.path.isfile(cmd0) and os.path.exists(vpy):
+            ms["startup_command"] = [vpy, cmd0] + list(target.get("args", []))
     ms["timeout"] = 30
     ms["interaction_log_path"] = os.path.join(resdir, "interactions.jsonl")
     model = os.environ.get("VIPER_MODEL", "gpt-4.1")
