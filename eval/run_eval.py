@@ -136,19 +136,54 @@ def _sandbox_masks():
     return dirs, files
 
 
+# toolchain dirs under $HOME that a blanked $HOME must re-expose read-only
+_HOME_TOOLCHAIN = (".nvm", ".local", ".volta", ".asdf", ".rustup", ".cargo")
+_HOME_WRITABLE_CACHE_ENVS = ("XDG_CACHE_HOME", "UV_CACHE_DIR", "npm_config_cache",
+                             "PLAYWRIGHT_BROWSERS_PATH")
+
+
+def home_mask_args(writable):
+    """bwrap args that hide $HOME. If nothing we need lives under $HOME (PC: repo is
+    /scratch/tofu), blank the WHOLE home with a tmpfs and re-bind only the toolchain
+    (~/.nvm, ~/.local, ...) read-only + any writable caches that sit under home --
+    default-deny, so an unlisted secret is hidden too. If the repo or a writable dir
+    IS under $HOME (VM: ~/toolfuzzer), a blank would hide them, so fall back to the
+    per-dir secret deny-list."""
+    home = os.path.abspath(os.path.expanduser("~"))
+    if not (home and os.path.isdir(home)):
+        return []
+    protect = [os.path.abspath(ROOT)] + [os.path.abspath(d) for d in writable if d]
+    blank_ok = not any((p + os.sep).startswith(home + os.sep) or p == home for p in protect)
+    args = []
+    if blank_ok:
+        args += ["--tmpfs", home]
+        for sub in _HOME_TOOLCHAIN:
+            d = os.path.join(home, sub)
+            if os.path.isdir(d):
+                args += ["--ro-bind", d, d]
+        for env in _HOME_WRITABLE_CACHE_ENVS:
+            d = os.environ.get(env)
+            if d and os.path.isdir(d) and os.path.abspath(d).startswith(home + os.sep):
+                args += ["--bind", d, d]
+    else:
+        for sub in _HOME_SECRETS:                     # repo under $HOME -> targeted masks
+            d = os.path.join(home, sub)
+            if os.path.isdir(d):
+                args += ["--tmpfs", d]
+    return args
+
+
 def _sandbox_cmd(cmd, writable):
     """TOFU_SANDBOX=bwrap: run the fuzzer (and the target it spawns) with the whole
-    filesystem read-only, a private /tmp, only this config's own directories
-    writable, and credential paths masked unreadable. Changing cwd (item 91) could
-    not stop a target from following a path out of its scratch dir: on 2026-09-24
-    obsidian-mcp manage_folder removed eval/configs and 36 tracked files."""
+    filesystem read-only, a private /tmp, $HOME hidden, .env* blanked, and only this
+    config's own directories writable. cwd isolation (item 91) could not stop a target
+    following a path out of its scratch dir: 2026-09-24 obsidian-mcp manage_folder
+    removed eval/configs and 36 tracked files."""
     args = ["bwrap", "--die-with-parent", "--ro-bind", "/", "/",
             "--dev", "/dev", "--tmpfs", "/dev/shm", "--proc", "/proc", "--tmpfs", "/tmp"]
-    dirs, files = _sandbox_masks()
-    for d in dirs:                            # hide secret dirs behind an empty tmpfs
-        if os.path.isdir(d):
-            args += ["--tmpfs", d]
-    for f in files:                           # blank out .env* (the OpenAI key lives here)
+    args += home_mask_args(writable)          # hide $HOME (blank, or targeted on the VM)
+    _, files = _sandbox_masks()
+    for f in files:                           # blank .env* wherever the repo lives
         if os.path.isfile(f):
             args += ["--ro-bind", "/dev/null", f]
     for d in writable:                        # writable binds LAST so they win over masks
@@ -510,11 +545,21 @@ def one(cfgfile, budget, prov):
     # the run stopped on purpose. Its measurements are valid and it must not be
     # counted as an error.
     stopped_early = bool(rec.get("stopped_early"))
-    failed = timed_out or (rc != 0 and not stopped_early) or harness_err is not None
+    # CLAUDE.md failure mode: a run whose target never started (no EXEC_SUMMARY -> n_exec
+    # is None) but exited 0 was being recorded ok=True with 0 findings, so done_set()
+    # skipped it forever (2026-09-26: 36 such rows -- mcp-gsc missing dep, wiped targets,
+    # JS socket hang). Zero executions is not a clean run.
+    no_execution = ("n_exec" in rec and rec.get("n_exec") is None
+                    and not stopped_early and not timed_out and harness_err is None)
+    if no_execution:
+        rec["no_execution"] = True
+    failed = timed_out or (rc != 0 and not stopped_early) or harness_err is not None or no_execution
     rec.update(returncode=rc, seconds=round(time.time() - t0, 1),
                timed_out=timed_out, ok=not failed)
     if harness_err:
         rec["harness_error"] = harness_err
+    if no_execution and not rec.get("error"):
+        rec["error"] = "runner never executed the tool (0 executions); not a clean run"
     if timed_out:
         rec["error"] = f"timeout after {budget + _grace}s"
     elif stopped_early:

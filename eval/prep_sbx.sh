@@ -25,10 +25,21 @@ W=(--bind "$ROOT/eval/targets" "$ROOT/eval/targets" \
 for d in "${XDG_CACHE_HOME:-}" "${UV_CACHE_DIR:-}" "${npm_config_cache:-}" "${PLAYWRIGHT_BROWSERS_PATH:-}"; do
     [ -n "$d" ] && mkdir -p "$d" && W+=(--bind "$d" "$d")
 done
-M=()
-for s in .ssh .aws .gnupg .kube .docker .netrc .git-credentials .config/gcloud .config/gh; do
-    [ -d "$HOME/$s" ] && M+=(--tmpfs "$HOME/$s")
+# hide the WHOLE $HOME. Safe here only if the repo + writable dirs are OUTSIDE $HOME
+# (PC: /scratch/tofu). If the repo is under $HOME (VM: ~/toolfuzzer), a blank would
+# hide it, so fall back to a secret deny-list. Re-bind the toolchain (nvm/uv) read-only.
+M=(); HOME_ABS=$(cd "$HOME" && pwd)
+case "$ROOT/" in "$HOME_ABS"/*) BLANK=0 ;; *) BLANK=1 ;; esac
+for d in "${XDG_CACHE_HOME:-}" "${UV_CACHE_DIR:-}" "${npm_config_cache:-}" "${PLAYWRIGHT_BROWSERS_PATH:-}"; do
+    case "${d:-x}/" in "$HOME_ABS"/*) BLANK=0 ;; esac   # a needed cache under $HOME -> cannot blank
 done
+if [ "$BLANK" = 1 ]; then
+    M+=(--tmpfs "$HOME")
+    for sub in .nvm .local .volta .asdf .rustup .cargo; do [ -d "$HOME/$sub" ] && M+=(--ro-bind "$HOME/$sub" "$HOME/$sub"); done
+else
+    for sub in .ssh .aws .gnupg .kube .docker .netrc .git-credentials .config/gcloud .config/gh; do
+        [ -d "$HOME/$sub" ] && M+=(--tmpfs "$HOME/$sub"); done
+fi
 for f in "$ROOT"/.env "$ROOT"/.env.* ; do [ -f "$f" ] && M+=(--ro-bind /dev/null "$f"); done
 
 echo "== sandboxed prepare_targets (network on; targets/configs/state/caches writable; secrets masked) =="
