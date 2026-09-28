@@ -15,7 +15,14 @@ export TOOLFUZZ_CACHE_DB="$R/eval/state_tf/toolfuzz_llm_cache.sqlite"
 export TOOLFUZZ_OUT="$R/eval/toolfuzz_runs"
 # key lives in a ToolFuzz-only file (repo24 never reads it; masked inside bwrap)
 export TOOLFUZZ_ENV_FILE="$R/eval/state_tf/openai.env"
-export TOOLFUZZ_TOFU_INDEX="$R/findings/baselines/tofu_runs_e2_20260922.jsonl"
+# ToFu's own index decides --executable-only and the ToFu side of the comparison.
+# Default: the sandboxed 60s headline runs (corpus-sbx + recover-pc) that define the
+# 251-repo set (nazmul.todo item 25); falls back to the 09-22 snapshot.
+if [ -f "$R/eval/state_tf/tofu_sbx_index.jsonl" ]; then
+  export TOOLFUZZ_TOFU_INDEX="${TOOLFUZZ_TOFU_INDEX:-$R/eval/state_tf/tofu_sbx_index.jsonl}"
+else
+  export TOOLFUZZ_TOFU_INDEX="${TOOLFUZZ_TOFU_INDEX:-$R/findings/baselines/tofu_runs_e2_20260922.jsonl}"
+fi
 export SHARDS="${SHARDS:-3}" NICE="${NICE:-19}"
 
 # Never fuzz a repo that a repo24 campaign on this host is fuzzing right now
@@ -25,8 +32,23 @@ SKIP="$R/eval/state_tf/skip_now.txt"
 UNSAFE=Benchmarks/extraction/set_e2_unsafe_repos.txt
 [ -s "$UNSAFE" ] || { echo "missing $UNSAFE -- refusing to run without the unsafe-repo skip list"; exit 1; }
 cat "$UNSAFE" > "$SKIP"
-for f in $(ps -eo args | awk '/[r]un_repo24.py/ {for(i=1;i<=NF;i++) if($i=="--repos-file") print $(i+1)}'); do
-  [ -f "$f" ] && { echo; cat "$f"; } >> "$SKIP" && echo "avoiding repos of running repo24: $f"
-done
+# ...and never a repo that ANY running ToFu campaign (run_repo24.py / run_eval.py,
+# e.g. the ablation) is fuzzing: its repo list, or the repos behind its config list.
+ps -eo args | awk '/[r]un_repo24.py|[r]un_eval.py/' | python3 -c '
+import sys, json, os
+out = []
+for line in sys.stdin:
+    a = line.split()
+    for i, x in enumerate(a[:-1]):
+        f = a[i + 1]
+        if not os.path.isfile(f): continue
+        if x in ("--repos-file", "--priority-repos-file"):
+            out += open(f).read().replace(",", "\n").split(); print("avoiding repos of running campaign:", f, file=sys.stderr)
+        elif x == "--only-configs-file":
+            for c in open(f).read().split():
+                try: out.append(json.load(open(os.path.join("eval/configs", c)))["_repo"])
+                except Exception: pass
+            print("avoiding repos behind running campaign configs:", f, file=sys.stderr)
+print("\n".join(out))' >> "$SKIP"
 export SKIP_FILE="$SKIP"
 exec ./eval/run_toolfuzz_h2h.sh "$@"

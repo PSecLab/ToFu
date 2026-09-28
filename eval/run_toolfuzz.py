@@ -96,7 +96,9 @@ def executable_tools():
     for l in open(TOFU_IDX):
         try: r = json.loads(l)
         except Exception: continue
-        if r.get("ok") and (r.get("exec_success_rate") or 0) > 0:
+        # "executable" is the index's explicit verdict; exec_success_rate is stored
+        # rounded to 3 decimals, so a tool with 1 success in 10k execs reads 0.0.
+        if r.get("ok") and (r.get("executable") == "yes" or (r.get("exec_success_rate") or 0) > 0):
             ex.add(((r.get("repo") or "").lower(), r.get("tool")))
     return ex
 
