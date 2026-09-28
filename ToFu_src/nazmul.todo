@@ -663,3 +663,18 @@ finished ones into the archive.
   one is weidwonder/terminal-mcp-server, on the unsafe-skip list). "508 bugs in the 251" is wrong as stated.
 - TO DOUBLE-CHECK: hand-verify the 10 Viper-confirmed chains; paper-search not re-confirmed this run;
   45 upstream HTTP 400s unexplained.
+
+## item 28 (2026-09-28): dataset denominator = EXECUTED set (417), not the 251
+- Benchmarks/extraction/build_executed_set.py -> executed_repos.txt (417) + executed_succ_repos.txt (273).
+  Definition: repo where ToFu executed >= 1 tool call in a headline campaign (corpus-sbx, recover-pc,
+  repo24/-b, e2 09-22). 481 attempted -> 417 executed -> 273 with >= 1 successful call.
+  ablation_251_repos.txt (>= 1 successful call in the 60 s sandboxed sweeps only) is a strict subset.
+- Why: every 648/508 bug comes from an executed tool (introspection fires on errored calls), so the
+  headline is drawn from the 417. All 648-flagged repos and all 45 H2H repos are inside it; with the
+  251 as denominator, 10 flagged repos / 19 bugs and 9 of the 45 H2H repos fell outside.
+- Baseline coverage of the sets (ok runs): Sonnet-5 251/251, 417/417; CodeQL 249/251, 414/417
+  (matlab-mcp-server analyze failed, CircleCI never run); Cisco 247/251, 404/417 (4 stdio-connect /
+  pydantic errors); Viper c251 244/251 and 0 of the 166 added repos; ToolFuzz committed snapshot 31.
+- TO DOUBLE-CHECK: paper sec6 says "starts 408"; this script gives 417 executed. 408 came from an
+  earlier source set -- reconcile before changing the text. weidwonder/terminal-mcp-server (unsafe-skip
+  list) is in the 417 only via the unsandboxed e2 run.
