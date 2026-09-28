@@ -22,8 +22,9 @@ import os, sys, json, time, fcntl, hashlib, sqlite3, threading
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "eval", "state")
-COUNTER = os.environ.get("TOOLFUZZ_CALLS_FILE", os.path.join(STATE, "toolfuzz_llm_calls.json"))
-CACHE_DB = os.environ.get("TOOLFUZZ_CACHE_DB", os.path.join(STATE, "toolfuzz_llm_cache.sqlite"))
+# absolute at import time (the runner chdirs into ToolFuzz right after importing us)
+COUNTER = os.path.abspath(os.environ.get("TOOLFUZZ_CALLS_FILE", os.path.join(STATE, "toolfuzz_llm_calls.json")))
+CACHE_DB = os.path.abspath(os.environ.get("TOOLFUZZ_CACHE_DB", os.path.join(STATE, "toolfuzz_llm_cache.sqlite")))
 
 
 class LLMBudgetExceeded(BaseException):

@@ -47,6 +47,12 @@ INDEX    = os.environ.get("TOOLFUZZ_INDEX", os.path.join(ROOT, "eval", "state", 
 # ToFu's run index decides --executable-only; the committed snapshot works on any host
 TOFU_IDX = os.environ.get("TOOLFUZZ_TOFU_INDEX", os.path.join(ROOT, "eval", "state", "runs.gpt41-corpus.jsonl"))
 
+# env paths may be repo-relative; we chdir into ToolFuzz below, so anchor them now
+_abs = lambda p: p if os.path.isabs(p) else os.path.join(ROOT, p)
+PREPARED, OUT, INDEX, TOFU_IDX = map(_abs, (PREPARED, OUT, INDEX, TOFU_IDX))
+if os.environ.get("TOOLFUZZ_ENV_FILE"):
+    os.environ["TOOLFUZZ_ENV_FILE"] = _abs(os.environ["TOOLFUZZ_ENV_FILE"])
+
 # budget knobs (recorded in every row)
 RT_MAX_EXAMPLES = int(os.environ.get("TOOLFUZZ_RT_MAX_EXAMPLES", "3"))
 RT_MAX_PROMPTS  = int(os.environ.get("TOOLFUZZ_RT_MAX_PROMPTS", "1"))
