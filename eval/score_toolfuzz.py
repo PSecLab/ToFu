@@ -54,13 +54,21 @@ ENV = re.compile(r"fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|getaddrinfo|Con
                  r"API[ _-]?key|not configured|authenticat|unauthori[sz]ed|\b401\b|\b403\b|credential|"
                  r"No active project|not connected|No frontend client|AppleScript|osascript|Base URL|"
                  r"No model registered|Name or service not known|Network is unreachable|ETIMEDOUT|timed out|"
-                 r"status code 5\d\d|timeout of \d+\s*ms|not initiali[sz]ed|Make sure .{0,80}exists", re.I)
+                 r"status code 5\d\d|timeout of \d+\s*ms|not initiali[sz]ed|Make sure .{0,80}exists|"
+                 # upstream service / host environment unavailable or refusing (not the tool's logic)
+                 r"name resolution|Errno -3|Could not connect to|ensure .{0,40} is running|HTTP 4\d\d|"
+                 r"status code 4\d\d|\b451\b|\b429\b|rate limit|414 URI Too Long|anomaly in the request|"
+                 r"Executable doesn't exist|Browser not installed|All connection attempts failed|is not set", re.I)
 REJECT = re.compile(r"validation error|Input validation|Invalid (argument|input|param|request|value)|-32602|"
                     r"Field required|is required|required (field|property|parameter|argument)|missing required|"
                     r"should be a valid|must (be|provide|specify|contain)|Supply exactly|Access denied|"
                     r"outside (of )?(the )?(permitted|allowed)|not allowed|not permitted|not found|does not exist|"
                     r"No such file|unsupported|Unknown (tool|action|command|option|type)|Expected .{0,40}(got|received)|"
-                    r"\"success\":\s*false", re.I)
+                    r"\"success\":\s*false|"
+                    # handled refusals seen on the H2H-273 run (2026-09-28)
+                    r"no .{0,40}found matching|Invalid [a-z ]{0,30}(name|format|id|uuid)|invalid_enum_value|"
+                    r"invalid_string|Missing mandatory|Please provide|syntax error|only supported for|does not match|"
+                    r"are required|cannot exceed|provide revises|is empty|failed validation|potentially unsafe", re.I)
 CRASH = re.compile(r"TypeError|AttributeError|KeyError|IndexError|ReferenceError|RangeError|Cannot read propert|"
                    r"is not a function|undefined is not|of undefined|of null|NoneType|UnboundLocalError|"
                    r"ZeroDivision|Traceback|Maximum call stack|RecursionError|JSONDecodeError|Unexpected token|"
@@ -71,6 +79,12 @@ CRASH = re.compile(r"TypeError|AttributeError|KeyError|IndexError|ReferenceError
 
 def classify(msg):
     m = msg or ""
+    # Every error the TOOL raises reaches ToolFuzz as ToolException (make_sync in
+    # run_toolfuzz.py normalises all tool failures). Any other exception class was
+    # raised by ToolFuzz / the agent itself (e.g. an IndexError in ToolFuzz's own
+    # extract_error) -> HARNESS, never a tool crash.
+    if m.startswith("<class '") and not m.startswith("<class 'langchain_core.tools.base.ToolException'>"):
+        return "HARNESS"
     for name, rx in (("HARNESS", HARNESS), ("ENV", ENV), ("REJECT", REJECT), ("CRASH", CRASH)):
         if rx.search(m):
             return name
@@ -118,6 +132,10 @@ def score_tool(slug, tool):
             r["tf_runtime"] += 1
         if c == "CRASH":
             r["tf_crash"] += 1; r["crash_msgs"].add(msg.replace("\n", " ")[:200])
+            # kind from the FULL message (the OS error often sits past the excerpt)
+            r.setdefault("crash_kinds", collections.Counter())[
+                "file-name-length (unvalidated arg reaches a filesystem call)"
+                if re.search(r"ENAMETOOLONG|Errno 36|File name too long", msg) else "other"] += 1
         if c == "UNCLASS":
             r["unclass_msgs"].add(msg.replace("\n", " ")[:200])
     try:

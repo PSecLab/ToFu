@@ -111,7 +111,8 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 | CodeQL sec-extended | 482 | 154 | 1,037 | static SAST | ✅ |
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
-| ToolFuzz (H2H re-run, 2026-09-25) | 31 of H2H-45 (298 tools) | 8 tools genuine crash | 51 tools runtime (own def.), 8 crash; correctness 35 by formula → **0** genuine (all were tool errors) | tool-doc robustness/correctness (diff axis) | ❌ H2H only |
+| ToolFuzz (H2H-273, 2026-09-28) | 266 = H2H-273 minus 7 unsafe; 1,516 / 1,585 executed tools (258 repos) | **14 tools / 10 repos genuine crash** (all 14 also ToFu-flagged) | runtime own-def 194 tools / 76 repos (triggers: ENV 86 · REJECT 92 · CRASH 14 · HARNESS 8); correctness 114 by formula → **0** with a real output | tool-doc robustness/correctness (diff axis) | H2H-273 dynamic set |
+| ~~ToolFuzz (H2H-45 re-run, 2026-09-25)~~ superseded by H2H-273 | 31 of H2H-45 (298 tools) | 8 tools genuine crash | | | |
 | Viper-MCP (c251, 2026-09-28) | 266 = H2H-273 minus 7 unsafe (259 ok) | 48 static · 118 runtime sink · **11 confirmed** | 340 static taint flows; 11 distinct hit-judge-confirmed chains (4 on repos where ToFu reports 0) | CodeQL taint + LLM runtime agent, 3 classes | H2H-273 dynamic set |
 | ~~Viper-MCP (H2H-45 re-run, 2026-09-26)~~ superseded by c251 | 45 | 11 static · 9 sink · 2 confirmed | | | |
 
@@ -125,6 +126,12 @@ ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
 > 266 repos (273 minus 7 unsafe), 259 ok, hook proven on all: Viper static 48, sink 118, confirmed 11;
 > ToFu (508 on the 266) 139 repos / 493 bugs; Viper-confirmed where ToFu reports 0: 4 (code/command-exec tools).
 > The H2H-45 figures below are superseded.
+>
+> **ToolFuzz on the H2H-273 set (2026-09-28): `findings/toolfuzz_h2h273_20260928/REPORT.md`** (per-repo / per-tool JSON, regen script).
+> 266 repos, the 1,585 tools ToFu executed; ToolFuzz completed 1,516 (8 servers not loadable by its MCP bridge).
+> Genuine crashes 14 tools / 10 repos, all on tools ToFu also flags (12 are file-name-length errors on path-handling tools, 2 a missing-scheme type error);
+> correctness 0 once only real outputs count. ToFu (508) on the tools ToolFuzz completed: 428 tools / 129 repos, 380 ToolFuzz-silent.
+> Report ToolFuzz's own 46% correctness FDR next to any ToolFuzz correctness figure.
 
 ToFu 45/579 · CodeQL 11/111 · Viper 11/45 static (2 confirmed) · Cisco 3/13. **16 ToFu-exclusive.**
 > **2026-09-26, at the 648 headline:** `baselines/h2h_tofu_vs_viper_20260926.md` (regen script alongside):

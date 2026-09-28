@@ -694,3 +694,17 @@ finished ones into the archive.
   reports the 266: 259 ok, hook proven 259/259; Viper static 48, sink 118, confirmed 11 chains / 11 repos;
   ToFu (508 on the 266) 139 repos / 493 bugs; Viper-confirmed where ToFu 0: 4 (new: Alec2435/python_mcp
   python_repl, eval/system). RESULTS_SUMMARY sec 4/5 Viper row -> c251; h2h_tofu_vs_viper_20260926 marked superseded.
+
+## item 28 (2026-09-28): ToolFuzz over the H2H-273 dynamic set -- DONE, reported
+- Report: findings/toolfuzz_h2h273_20260928/REPORT.md; paper brief PAPER_NOTES.md; regen
+  analyze_toolfuzz_273.py (ToFu side = the 508 headline, loaded exactly as the Viper c251 report).
+- 266 repos / 1,585 ToFu-executed tools; ToolFuzz completed 1,516 (VM; 296 merged from the PSU H2H
+  run, identical config). Not completed: 48 tools on 8 servers ToolFuzz's MCP bridge cannot load,
+  15 ToolFuzz internal errors (8 of them "maximum recursion depth"), 5 timeouts, 1 not run.
+- Genuine crashes 14 tools / 10 repos, all ToFu-flagged; correctness 0 with a real output (114 by
+  formula were all tool errors). ToFu 428 flagged tools / 129 repos, 380 ToolFuzz-silent.
+- Classifier: all 43 unclassified triggers hand-labelled; non-ToolException -> HARNESS rule (a
+  mermaid-validator IndexError came from ToolFuzz's own extract_error, not the tool).
+- Ops lessons: launcher now traps SIGHUP (closing the tmux window orphaned 4 shards); env paths are
+  anchored to the repo root (runner chdirs into ToolFuzz); prep_sbx.sh on the VM needs UV_CACHE_DIR /
+  npm_config_cache / XDG_CACHE_HOME set or installs fail read-only.
