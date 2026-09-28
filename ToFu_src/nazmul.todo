@@ -644,3 +644,11 @@ finished ones into the archive.
   check_reflected_output (google_workspace_mcp::manage_document_comment) has 0/500 successful execs,
   and the string loop runs only on successes. Also latent on the "LLM selection failed -> all
   sanitizers" fallback path. PC campaign started at be2529b; needs the fix before allsan starts.
+- 2026-09-28 04:48 allsan fixed MID-CAMPAIGN (Ananto's call): PC fast-forwarded be2529b/e07ed6e ->
+  f608f20 at abl-full row 217 (eval/state/abl_commit_boundary.txt on PC). The only runner change
+  in that range is a92dc8a (src/fuzzer.py), unreachable in full/nollmseeds/mandatory/nollm/noseeds
+  (see above), so abl-full rows 1-217 (be2529b) and 218+ (f608f20) are behaviour-identical.
+  Re-smoke on f608f20: allsan 2/2 ok, full 60s, 0 SANITIZER_ERROR, 0 live LLM; alerts 291 / 1380
+  vs 41 / 13 under LLM selection. No quarantine/re-run of allsan needed any more.
+- CORRECTION: the sanitizer registry is len(AVAILABLE_SANITIZERS) = 73 at runtime (allsan logs
+  n_selected=73), NOT 80 as written in item 25 (a line-range grep over-counted).
