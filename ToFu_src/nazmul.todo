@@ -712,3 +712,15 @@ finished ones into the archive.
   correctness failures as ToolFuzz counts them (verified with its tool_stats.py). The "14 genuine crashes" /
   "0 correctness with a real output" figures above were our own diagnostics, NOT ToolFuzz results; do not
   report them. Final: runtime 200 tools / 77 repos; correctness 114 tools / 52 repos (342 / 3,441 prompts).
+
+## item 28 (2026-09-28): ABLATION RESULTS -- findings/ablation_20260928/REPORT.md
+- 6 arms x 1,672 configs complete, 0 live LLM calls, switches verified per row (eval/ablation_check.py).
+- bugs: full 408 | nollmseeds 369 | mandatory 303 | nollm 286 | noseeds 223 | allsan 928 raw.
+- LLM seeds' measurable effect = REACH: 1,450 vs 1,328 tools executed (+64 py, +58 js).
+- LLM selection's effect = CLASSES: without it path-traversal 95->0, ssrf 24->0/4; what remains
+  is reflected-xss + log-injection (evidence-gated, run regardless of selection; lowest precision).
+- allsan: exec/s unchanged (45.9 vs 45.7) -> the "per-exec cost" defense of selection is NOT
+  supported; the defense must rest on precision of allsan's +535 tools (log-injection 492).
+- Oracle: tracer adds 61 Python bugs (outcome-only 347); tracers-only 85 (all Python; JS 0 by
+  construction); no success gate: same 408 total but 51 swapped, JS 254->290.
+- OPEN: no repeat runs -> run-to-run noise of `full` unknown (one more full arm ~2.6h would give it).
