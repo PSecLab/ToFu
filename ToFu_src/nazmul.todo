@@ -604,3 +604,20 @@ finished ones into the archive.
   either and its headline tool ran 3,071 successful execs, so PUPPETEER_SKIP_DOWNLOAD=1 matches
   the VM environment. Follow-up (not done): prepare_targets should put a known bun on PATH and
   surface npm stderr instead of --silent.
+
+## item 26 (2026-09-28): Viper over the 251 executed repos -- campaign c251 prepared (VM)
+- Set = Benchmarks/extraction/ablation_251_repos.txt (230 corpus-sbx + 21 recover-pc; all 251
+  prepared + targets present on the VM). Tag c251: index eval/state/viper_runs.c251.jsonl,
+  outputs eval/viper_runs/c251/ (old eval/viper_runs/<slug> outputs untouched).
+- REUSED 26 old node runs (09-13/09-20, 10 rounds, gpt-4.1) via eval/viper_reuse_runs.py: only
+  those whose own outputs prove the hook ran (hook_init / sink hit). NOT reused: 19 node runs with
+  no hook evidence + 2 failed -> re-run. 225 repos to run.
+- WHY 19 had no evidence: Viper's engine truncates oracle.json between rounds (_clear_oracle),
+  erasing the hooks' hook_init line. Both hooks now also append a never-cleared
+  <oracle>.hook_init sidecar (537e127); run_viper records n_hook_inits.
+- TO DOUBLE-CHECK: the 09-26 H2H Viper column on those 19 (incl. dazeb x2, mcp-media-processor,
+  wordpress, MCP-Facebook, time-mcp, todo-list, revit) is unproven -- replace with c251 numbers.
+- Sandbox fix f2242e3: private writable HOME per sandbox (todo-list-mcp SQLite failed on the
+  read-only real home). Smoke (tag smoke251, 1 round): node todo-list ok, 2 hook marks;
+  python meilisearch ok, 1 hook mark; real targets untouched; work copies cleaned.
+- If any of the 21 recover-pc repos fail on the VM, re-run them on the PC after the ablation.
