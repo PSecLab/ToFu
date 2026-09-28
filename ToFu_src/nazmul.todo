@@ -652,3 +652,14 @@ finished ones into the archive.
   vs 41 / 13 under LLM selection. No quarantine/re-run of allsan needed any more.
 - CORRECTION: the sanitizer registry is len(AVAILABLE_SANITIZERS) = 73 at runtime (allsan logs
   n_selected=73), NOT 80 as written in item 25 (a line-range grep over-counted).
+- item 26 RESULT (2026-09-28): findings/viper_c251_20260928/REPORT.md (+ analyze_viper_c251.py regen).
+  251/251 have a row, 244 ok (7 failed: 6 server-init, 1 timeout), hook proven on 244/244.
+  Viper static 45 repos (295 flows), sink hits 110, CONFIRMED 10 repos / 10 chains (21 verdicts).
+  ToFu (508 restricted to the 251) 137 repos. Confirmed vs ToFu: 7 ToFu-flagged (same tool on 5),
+  3 ToFu 0: peakmojo/applescript-mcp, recursechat/mcp-server-apple-shortcuts, yonaka15/mcp-pyodide
+  (code/command-exec tools). Spend (fresh 225): 19,804 upstream calls, 27.5M in / 2.43M out tokens.
+- TO DOUBLE-CHECK: the 508 is NOT all on the 251 -- 489 bugs / 137 repos inside, 19 bugs / 10 repos
+  outside (11 from 60s rows on repos with 0 successful execs, 5 introspection-on-errored, 3 deep run;
+  one is weidwonder/terminal-mcp-server, on the unsafe-skip list). "508 bugs in the 251" is wrong as stated.
+- TO DOUBLE-CHECK: hand-verify the 10 Viper-confirmed chains; paper-search not re-confirmed this run;
+  45 upstream HTTP 400s unexplained.
