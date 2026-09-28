@@ -7,6 +7,12 @@
 #
 #   ./eval/run_viper_sbx.sh --only "a/b,c/d"           # named repos, 10 rounds
 #   ./eval/run_viper_sbx.sh --only a/b --rounds 1      # smoke
+#   VIPER_TAG=c251 VIPER_PARALLEL=4 VIPER_THREADS=4 \
+#     ./eval/run_viper_sbx.sh --repos-file Benchmarks/extraction/ablation_251_repos.txt
+#       campaign mode: own index eval/state/viper_runs.<tag>.jsonl + outputs
+#       eval/viper_runs/<tag>/; RESUMABLE (re-run the same command: repos with an ok row
+#       are skipped); Ctrl-C safe (partial repo is re-run cleanly); `touch
+#       eval/viper_runs/<tag>/STOP` = finish the current repos, then stop.
 set -u
 cd "$(dirname "$0")/.." || exit 1
 ROOT=$PWD
@@ -23,7 +29,9 @@ CODEQL="${VIPER_CODEQL:-}"
 [ -z "$CODEQL" ] && for c in "$ROOT/tools/codeql/codeql" "$REAL_HOME/codeql/codeql"; do [ -x "$c" ] && { CODEQL=$c; break; }; done
 [ -x "$CODEQL" ] || { echo "codeql not found (set VIPER_CODEQL)"; exit 1; }
 VH="${VIPER_HOME:-$ROOT/.viper_home}"; [ -d "$VH/.codeql" ] || VH=$REAL_HOME   # VM: packs live in ~/.codeql
-mkdir -p "$ROOT/eval/viper_runs"; touch "$ROOT/eval/state/viper_runs.jsonl"
+TAG="${VIPER_TAG:-}"; export VIPER_TAG="$TAG"
+IDX="$ROOT/eval/state/viper_runs${TAG:+.$TAG}.jsonl"
+mkdir -p "$ROOT/eval/viper_runs${TAG:+/$TAG}"; touch "$IDX"
 
 M=""
 for d in .ssh .aws .gnupg .kube .docker .config/gcloud .config/gh; do [ -d "$REAL_HOME/$d" ] && M="$M --tmpfs $REAL_HOME/$d"; done
@@ -50,7 +58,7 @@ run_sbx() {   # $1 = extra bwrap args (string), rest = run_viper args
   local extra="$1"; shift
   bwrap --die-with-parent --ro-bind / / --dev /dev --tmpfs /dev/shm --proc /proc --tmpfs /tmp $M \
     --bind "$ROOT/eval/viper_runs" "$ROOT/eval/viper_runs" \
-    --bind "$ROOT/eval/state/viper_runs.jsonl" "$ROOT/eval/state/viper_runs.jsonl" $HOMEBIND $extra \
+    --bind "$IDX" "$IDX" $HOMEBIND $extra \
     -- "$ROOT/.venv/bin/python" eval/run_viper.py --codeql "$CODEQL" "$@"
 }
 
@@ -66,7 +74,7 @@ if [ "$CACHE_MODE" != off ]; then
   "$ROOT/.venv/bin/python" "$ROOT/eval/llm_cache_proxy.py" --port "$PPORT" --cache-dir "$CDIR" \
       --upstream "$UPSTREAM" --mode "$CACHE_MODE" > "$CDIR/_proxy.log" 2>&1 &
   PROXY_PID=$!
-  trap 'kill $PROXY_PID 2>/dev/null' EXIT INT TERM
+  trap 'kill $PROXY_PID 2>/dev/null' EXIT
   for _ in $(seq 50); do "$ROOT/.venv/bin/python" -c "import socket;socket.create_connection(('127.0.0.1',$PPORT),1)" 2>/dev/null && break; sleep 0.2; done
   export OPENAI_BASE_URL="http://127.0.0.1:$PPORT/v1"
   export NO_PROXY="127.0.0.1,localhost${NO_PROXY:+,$NO_PROXY}" no_proxy="127.0.0.1,localhost${no_proxy:+,$no_proxy}"
@@ -89,12 +97,91 @@ PYR
 # over the --only list concurrently; CODEQL_THREADS (honored by the codeql CLI) splits
 # VIPER_THREADS (default 12) across them. Each shard logs to eval/viper_runs/.shard<k>.log.
 PAR="${VIPER_PARALLEL:-1}"; TOT="${VIPER_THREADS:-12}"
-ONLY=""; REST=()
+ONLY=""; RFILE=""; REST=()
 while [ $# -gt 0 ]; do
-  case "$1" in --only) ONLY="$2"; shift 2 ;; --only=*) ONLY="${1#--only=}"; shift ;; *) REST+=("$1"); shift ;; esac
+  case "$1" in --only) ONLY="$2"; shift 2 ;; --only=*) ONLY="${1#--only=}"; shift ;;
+    --repos-file) RFILE="$2"; shift 2 ;; --repos-file=*) RFILE="${1#--repos-file=}"; shift ;;
+    *) REST+=("$1"); shift ;; esac
 done
-echo "viper(sbx): codeql=$($CODEQL version 2>/dev/null | head -1) home=$VH parallel=$PAR threads=$TOT"
-WORKROOT="$ROOT/.viper_work"
+echo "viper(sbx): codeql=$($CODEQL version 2>/dev/null | head -1) home=$VH parallel=$PAR threads=$TOT tag=${TAG:-<none>} index=${IDX#$ROOT/}"
+WORKROOT="$ROOT/.viper_work${TAG:+.$TAG}"
+
+# ---- campaign mode: --repos-file (exact names, resumable, one sandbox + one target copy per repo)
+if [ -n "$RFILE" ]; then
+  [ -n "$TAG" ] || { echo "--repos-file needs VIPER_TAG (keeps campaign outputs separate)"; exit 1; }
+  [ -f "$RFILE" ] || { echo "no such repos file: $RFILE"; exit 1; }
+  OUTD="$ROOT/eval/viper_runs/$TAG"; STOPF="$OUTD/STOP"; rm -f "$STOPF"
+  TODO="$OUTD/.todo"
+  "$ROOT/.venv/bin/python" - "$RFILE" "$IDX" "$ROOT/eval/state/prepared.jsonl" > "$TODO" <<'PYT'
+import json, sys
+want = [l.strip() for l in open(sys.argv[1]) if l.strip() and not l.startswith("#")]
+done = set()
+for l in open(sys.argv[2]):
+    try:
+        r = json.loads(l)
+        if r.get("ok") and not r.get("test_agent"): done.add(r["repo"])
+    except Exception: pass
+ready = set()
+for l in open(sys.argv[3]):
+    try:
+        t = json.loads(l)
+        if t.get("status") == "ready": ready.add(t["repo"])
+    except Exception: pass
+miss = [r for r in want if r not in ready]
+if miss: print(f"WARNING {len(miss)} not prepared here (skipped): {miss[:8]}", file=sys.stderr)
+for r in want:
+    if r in ready and r not in done: print(r)
+print(f"campaign: listed {len(want)}  ok-done {len(done & set(want))}  todo "
+      f"{sum(1 for r in want if r in ready and r not in done)}", file=sys.stderr)
+PYT
+  mapfile -t REPOS < "$TODO"
+  [ "${#REPOS[@]}" -eq 0 ] && { echo "nothing to do (all listed repos have an ok row in ${IDX#$ROOT/})"; cache_report; exit 0; }
+  export CODEQL_THREADS=$(( TOT / PAR > 0 ? TOT / PAR : 1 ))
+  shard() {   # $1 = shard index; runs its repos one at a time, each in its own sandbox
+    local k=$1 i r
+    for ((i=k; i<${#REPOS[@]}; i+=PAR)); do
+      [ -f "$STOPF" ] && { echo "STOP file seen -- shard $k stopping"; break; }
+      r="${REPOS[$i]}"
+      EX=$(work_binds "$r" "$WORKROOT/s$k")
+      run_sbx "$EX" --only "$r" --exact "${REST[@]}"
+      rm -rf "$WORKROOT/s$k"
+    done
+  }
+  pids=()
+  on_int() {
+    trap - INT TERM
+    echo; echo "viper(sbx): interrupted -- stopping shards (finished repos are kept; re-run the same command to resume)"
+    for p in "${pids[@]}"; do pkill -TERM -P "$p" 2>/dev/null; kill "$p" 2>/dev/null; done
+    wait 2>/dev/null; rm -rf "$WORKROOT"; cache_report; exit 130
+  }
+  trap on_int INT TERM
+  echo "  ${#REPOS[@]} repos over $PAR shard(s), CODEQL_THREADS=$CODEQL_THREADS; logs eval/viper_runs/$TAG/.shard<k>.log"
+  for ((k=0; k<PAR && k<${#REPOS[@]}; k++)); do
+    shard "$k" > "$OUTD/.shard$k.log" 2>&1 &
+    pids+=($!)
+  done
+  rc=0; for p in "${pids[@]}"; do wait "$p" || rc=1; done
+  trap - INT TERM
+  rm -rf "$WORKROOT"
+  "$ROOT/.venv/bin/python" - "$IDX" "$RFILE" <<'PYS'
+import json, sys, collections
+want = {l.strip() for l in open(sys.argv[2]) if l.strip()}
+last = {}
+for l in open(sys.argv[1]):
+    try: r = json.loads(l); last[r["repo"]] = r
+    except Exception: pass
+rows = [r for k, r in last.items() if k in want]
+ok = [r for r in rows if r.get("ok")]
+print(f"viper campaign: {len(rows)}/{len(want)} repos have a row, {len(ok)} ok, "
+      f"{sum(1 for r in rows if not r.get('ok'))} failed")
+print(f"  static>0 {sum(1 for r in ok if (r.get('n_static') or 0) > 0)}  "
+      f"sink>0 {sum(1 for r in ok if (r.get('n_sink_events') or 0) > 0)}  "
+      f"confirmed>0 {sum(1 for r in ok if (r.get('n_confirmed_distinct') or 0) > 0)}  "
+      f"hook not injected {sum(1 for r in ok if not r.get('hook_injected'))}")
+PYS
+  echo "viper(sbx): campaign pass done rc=$rc -- re-run the same command to retry failed/unfinished repos"
+  cache_report; exit $rc
+fi
 if [ "$PAR" -le 1 ] || [ -z "$ONLY" ]; then
   export CODEQL_THREADS="${CODEQL_THREADS:-$TOT}"
   if [ -n "$ONLY" ]; then

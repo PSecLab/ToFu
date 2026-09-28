@@ -32,8 +32,12 @@ import argparse, copy, json, os, shutil, subprocess, sys, time
 ROOT  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE = os.path.join(ROOT, "eval", "state")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
-RUNS  = os.path.join(STATE, "viper_runs.jsonl")
-OUT   = os.path.join(ROOT, "eval", "viper_runs")
+# VIPER_TAG=<name> isolates a campaign: its own index (eval/state/viper_runs.<tag>.jsonl)
+# and outputs (eval/viper_runs/<tag>/<slug>), so a new campaign never overwrites the
+# outputs an earlier table was counted from.
+TAG   = os.environ.get("VIPER_TAG", "").strip()
+RUNS  = os.path.join(STATE, f"viper_runs.{TAG}.jsonl" if TAG else "viper_runs.jsonl")
+OUT   = os.path.join(ROOT, "eval", "viper_runs", TAG) if TAG else os.path.join(ROOT, "eval", "viper_runs")
 VDIR  = os.path.join(ROOT, "Benchmarks", "Viper-MCP")
 VPY   = os.environ.get("VIPER_PY") or os.path.join(VDIR, ".venv", "bin", "python")  # sandbox: /opt/viper-venv/bin/python
 BASE_CFG = os.path.join(VDIR, "config.yaml")
@@ -64,6 +68,10 @@ def dump_yaml(obj, path):
 def make_cfg(base, target, slug, skip_codeql, codeql_bin, rounds):
     cfg = copy.deepcopy(base)
     resdir = os.path.join(OUT, slug)
+    if TAG and os.path.isdir(resdir):
+        # a tagged campaign re-runs a repo only when it has no ok row (interrupted or
+        # failed); clear the partial outputs so stale verdicts never mix into the count
+        shutil.rmtree(resdir)
     os.makedirs(resdir, exist_ok=True)
     ms = cfg.setdefault("mcp_server", {})
     ms["repo_path"] = target.get("cwd")
@@ -192,6 +200,13 @@ def one(target, base, skip_codeql, codeql_bin, rounds, timeout, test_agent):
             rec["n_confirmed"] = conf
             rec["n_confirmed_distinct"] = len(chains)
             rec["n_hit_markers"] = conf          # kept for old readers; now = confirmed
+        # Phase I static taint flows (CodeQL report written by Viper)
+        import glob as _glob
+        rep = _glob.glob(os.path.join(resdir, "codeql_output", "*", "report.json"))
+        if rep:
+            try: rec["n_static"] = len(json.load(open(rep[0])).get("vulnerabilities", []))
+            except Exception: pass
+        if os.path.isdir(fr):
             an = os.path.join(fr, slug, "anomalies.json")
             if os.path.exists(an):
                 try: rec["n_anomalies"] = len(json.load(open(an)))
@@ -243,6 +258,9 @@ def main():
     ap.add_argument("--rounds", type=int, default=int(os.environ.get("VIPER_ROUNDS", "10")))
     ap.add_argument("--timeout", type=int, default=1800, help="per-server seconds (paper: ~15 min)")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--repos-file", default=None,
+                    help="exact repo names, one per line; RESUMABLE: repos with an ok row in the index are skipped")
+    ap.add_argument("--exact", action="store_true", help="--only entries are exact repo names, not substrings")
     ap.add_argument("--only", default=None,
                     help="comma-separated substrings; run ONLY repos matching one "
                          "(bypasses the done-set, for budget-limited subset runs)")
@@ -255,11 +273,23 @@ def main():
     # prepared.jsonl can hold a repo twice (re-prepared on another machine); keep the
     # latest row so a repo is never run -- and billed -- twice.
     ready = list({t["repo"]: t for t in ready}.values())
-    if a.only:
-        # comma-separated substrings; explicit targeting BYPASSES the done-set so
-        # named repos re-run (subset runs to save LLM budget).
-        pats = [p.strip().lower() for p in a.only.split(",") if p.strip()]
-        ready = [t for t in ready if any(p in t["repo"].lower() for p in pats)]
+    if a.repos_file:
+        want = [l.strip() for l in open(a.repos_file) if l.strip() and not l.startswith("#")]
+        by = {t["repo"]: t for t in ready}
+        missing = [r for r in want if r not in by]
+        if missing:
+            log(f"WARNING {len(missing)} listed repos not prepared/ready here: {missing[:10]}")
+        ok_done = {r["repo"] for r in read_jsonl(RUNS) if r.get("ok") and not r.get("test_agent")}
+        ready = [by[r] for r in want if r in by and r not in ok_done]
+    elif a.only:
+        # comma-separated substrings (or exact names with --exact); explicit targeting
+        # BYPASSES the done-set so named repos re-run (subset runs to save LLM budget).
+        pats = [p.strip() for p in a.only.split(",") if p.strip()]
+        if a.exact:
+            ready = [t for t in ready if t["repo"] in set(pats)]
+        else:
+            pats = [p.lower() for p in pats]
+            ready = [t for t in ready if any(p in t["repo"].lower() for p in pats)]
     elif not a.test_agent:
         ready = [t for t in ready if t["repo"] not in done]
     if a.limit: ready = ready[:a.limit]
@@ -270,7 +300,8 @@ def main():
         rec = one(t, base, skip_cq, a.codeql, a.rounds, a.timeout, a.test_agent)
         with open(RUNS, "a") as f: f.write(json.dumps(rec) + "\n")
         tag = "OK  " if rec.get("ok") else "ERR "
-        log(f"{tag}[{i}/{len(ready)}] {t['repo']} {rec['seconds']}s hits={rec.get('n_hit_markers','-')} {rec.get('error','')[:90]}")
+        log(f"{tag}[{i}/{len(ready)}] {t['repo']} {rec['seconds']}s static={rec.get('n_static','-')} "
+            f"sink={rec.get('n_sink_events','-')} confirmed={rec.get('n_confirmed_distinct','-')} {rec.get('error','')[:90]}")
     log(f"index -> {RUNS}   logs -> {OUT}")
 
 if __name__ == "__main__":
