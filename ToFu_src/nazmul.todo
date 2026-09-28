@@ -595,3 +595,12 @@ finished ones into the archive.
   confusion, and 5 seed-bank payloads per string field (6 banks, 52 payloads; category from the
   selected sanitizers, else arg-name keywords). Code: src/llm.py _local_fallback_mapping.
 - TODO paper: sanitizer registry is 80 (AVAILABLE_SANITIZERS), not 74/75 -- check what the paper says.
+- 2026-09-28 PC prep: 193/200 ready, 7 skipped. Fixed sandboxed, now 1,672/1,672 prepared:
+  6 x "needs-bun" (build script calls bun, PC has none on PATH). VM had used the bun 1.4.2 that
+  b-open-io/bsv-mcp installs as an npm dep; same binary exists on PC -> re-prepped with
+  PATH=eval/targets/b-open-io__bsv-mcp/node_modules/.bin:$PATH. No new download.
+  ruan11223344/McpDocServer: `npm --silent` hid the error; real cause = puppeteer postinstall
+  fetches Chrome from the repo's .npmrc mirror (npmmirror) -> 404. VM has no puppeteer Chrome
+  either and its headline tool ran 3,071 successful execs, so PUPPETEER_SKIP_DOWNLOAD=1 matches
+  the VM environment. Follow-up (not done): prepare_targets should put a known bun on PATH and
+  surface npm stderr instead of --silent.
