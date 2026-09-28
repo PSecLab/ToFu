@@ -375,7 +375,13 @@ def main():
              "rt_max_prompts": RT_MAX_PROMPTS, "ct_sets": CT_SETS, "ct_max_prompts": CT_MAX_PROMPTS,
              "max_calls_per_tool": guard.MAX_PER_TOOL, "sandbox": SANDBOX}
 
-    ready = [t for t in (json.loads(l) for l in open(PREPARED)) if t.get("status") == "ready"]
+    # latest prepared row per repo wins (a --redo appends a new row)
+    latest = {}
+    for l in open(PREPARED):
+        try: t = json.loads(l)
+        except Exception: continue
+        latest[t["repo"].lower()] = t
+    ready = [t for t in latest.values() if t.get("status") == "ready"]
     only = load_list(a.repos_file)
     if only is not None:
         ready = [t for t in ready if t["repo"].lower() in only]
