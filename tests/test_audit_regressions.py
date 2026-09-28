@@ -45,10 +45,19 @@ def test_no_undefined_names_anywhere():
 
     buf = io.StringIO()
     reporter = pyflakes.reporter.Reporter(buf, buf)
-    for sub in ("src", "eval", "targets", "tests"):
+    # Prune third-party trees BEFORE linting, not only after: on a prepared
+    # machine eval/targets/ holds ~250 clones + their .venvs, and one deeply
+    # nested generated file raised RecursionError inside pyflakes, failing this
+    # test for code that is not ours (PSU PC, 2026-09-28 ablation smoke).
+    SKIP_DIRS = {"targets", ".venv", "venv", "node_modules", "site-packages",
+                 "runs", "state", "sandbox", "__pycache__", ".git"}
+    for sub in ("src", "eval", "tests"):
         d = os.path.join(ROOT, sub)
-        if os.path.isdir(d):
-            pyflakes.api.checkRecursive([d], reporter)
+        for dp, dns, fns in os.walk(d):
+            dns[:] = [x for x in dns if x not in SKIP_DIRS]
+            for fn in fns:
+                if fn.endswith(".py"):
+                    pyflakes.api.checkPath(os.path.join(dp, fn), reporter)
 
     # eval/targets/ holds CLONED THIRD-PARTY REPOS and, since item 51, a
     # per-target .venv full of their site-packages. Their lint findings are not
