@@ -87,7 +87,7 @@ if [ "$NCACHE" -lt "$NWANT" ] && [ -z "${ABL_ALLOW_CACHE_MISS:-}" ]; then
     exit 1
 fi
 if [ -z "${ABL_SKIP_TESTS:-}" ]; then
-    .venv/bin/python -m pytest tests/ -q -x >eval/state/abl_pytest.log 2>&1 \
+    .venv/bin/python -m pytest tests/ -q -x -p no:warnings --basetemp=eval/state/pytest_tmp/abl >eval/state/abl_pytest.log 2>&1 \
         || { tail -20 eval/state/abl_pytest.log; echo "ABORT: tests fail"; rm -f eval/state/abl_pytest.log; exit 1; }
     tail -1 eval/state/abl_pytest.log; rm -f eval/state/abl_pytest.log
 fi
