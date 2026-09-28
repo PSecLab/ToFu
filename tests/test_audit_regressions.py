@@ -45,19 +45,20 @@ def test_no_undefined_names_anywhere():
 
     buf = io.StringIO()
     reporter = pyflakes.reporter.Reporter(buf, buf)
-    # Prune third-party trees BEFORE linting, not only after: on a prepared
-    # machine eval/targets/ holds ~250 clones + their .venvs, and one deeply
-    # nested generated file raised RecursionError inside pyflakes, failing this
-    # test for code that is not ours (PSU PC, 2026-09-28 ablation smoke).
-    SKIP_DIRS = {"targets", ".venv", "venv", "node_modules", "site-packages",
-                 "runs", "state", "sandbox", "__pycache__", ".git"}
-    for sub in ("src", "eval", "tests"):
-        d = os.path.join(ROOT, sub)
-        for dp, dns, fns in os.walk(d):
-            dns[:] = [x for x in dns if x not in SKIP_DIRS]
-            for fn in fns:
-                if fn.endswith(".py"):
-                    pyflakes.api.checkPath(os.path.join(dp, fn), reporter)
+    # Lint exactly the files git tracks under src/ eval/ tests/ = ToFu's own code.
+    # A directory deny-list kept leaking clones: on the prepared PSU PC,
+    # eval/targets/ made pyflakes raise RecursionError on a nested third-party
+    # file, then eval/targets_tf/ (ToolFuzz clones) surfaced their own undefined
+    # names (2026-09-28 ablation smoke). Untracked files are not ours.
+    import subprocess
+    try:
+        files = subprocess.run(["git", "-C", ROOT, "ls-files", "--", "src", "eval", "tests"],
+                               capture_output=True, text=True, check=True).stdout.split()
+    except (OSError, subprocess.CalledProcessError):
+        pytest.skip("not a git checkout")
+    for rel in files:
+        if rel.endswith(".py") and os.path.isfile(os.path.join(ROOT, rel)):
+            pyflakes.api.checkPath(os.path.join(ROOT, rel), reporter)
 
     # eval/targets/ holds CLONED THIRD-PARTY REPOS and, since item 51, a
     # per-target .venv full of their site-packages. Their lint findings are not
