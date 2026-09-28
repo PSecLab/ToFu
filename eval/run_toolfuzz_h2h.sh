@@ -75,7 +75,7 @@ done
 rc=0
 for p in "${PIDS[@]}"; do wait "$p" || rc=$?; done
 [ "$rc" = 3 ] && echo "LLM budget cap reached ($TOOLFUZZ_MAX_CALLS). Raise TOOLFUZZ_MAX_CALLS and re-run to resume."
-"$TFPY" eval/score_toolfuzz.py --repos-file "$REPOS_FILE" \
-    --write "findings/baselines/toolfuzz_h2h_scored_$(date +%Y%m%d).md" > /dev/null \
-  && echo "scored -> findings/baselines/toolfuzz_h2h_scored_$(date +%Y%m%d).md"
+SCORED="findings/baselines/toolfuzz_$(basename "${REPOS_FILE%.*}")_scored_$(date +%Y%m%d).md"
+"$TFPY" eval/score_toolfuzz.py --repos-file "$REPOS_FILE" --write "$SCORED" > /dev/null \
+  && echo "scored -> $SCORED"
 exit $rc
