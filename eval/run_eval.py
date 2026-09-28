@@ -229,6 +229,11 @@ def provenance(budget, workers):
         "llm_reasoning": os.environ.get("TOFU_LLM_REASONING", "none"),
         "llm_max_tokens": os.environ.get("TOFU_LLM_MAX_TOKENS", "4096"),
         "js_cov_slots": os.environ.get("TOFU_JS_COV_SLOTS", "10000"),
+        # Ablation switches (eval/run_ablation.sh). Recorded per row so an arm's
+        # index proves which stage was removed, not just the arm's name.
+        "ablation": {k: os.environ[k] for k in (
+            "TOFU_NO_LLM", "TOFU_NO_LLM_SEEDS", "TOFU_NO_SEEDS", "TOFU_NO_LLM_SANITIZERS",
+            "TOFU_ORACLE_SHADOW", "TOFU_LLM_CACHE_READONLY") if os.environ.get(k)},
         "python": f"{v.major}.{v.minor}.{v.micro}",
         "platform": f"{platform.system()}-{platform.machine()}",
     }
@@ -261,6 +266,9 @@ _RE_SEED_HIT = re.compile(r"LLM_SEEDGEN_CACHE_HIT\b[^\n]*?n_seeds=(\d+)"
 _RE_EXEC = re.compile(
     r"EXEC_SUMMARY tool=(\S+) n_exec=(\d+) n_success=(\d+) success_rate=([\d.]+)")
 _RE_EXEC_ERR = re.compile(r"EXEC_ERROR n=(\d+) detail=(.+)")
+# Oracle ablation (TOFU_ORACLE_SHADOW): input sanitizers that would have fired on a
+# FAILED execution without the silent-success gate. Never counted as findings.
+_RE_SHADOW = re.compile(r"ORACLE_SHADOW_UNGATED tool=\S+ names=([A-Za-z0-9_,]+)")
 
 
 def parse_log(out: str) -> dict:
@@ -283,6 +291,10 @@ def parse_log(out: str) -> dict:
     rec["triggered_sanitizers"] = sorted(fired)
     rec["finding_classes"] = len(sets)          # distinct sanitizer-set signatures
     rec["finding_signatures"] = [list(s) for s in sorted(sets)]
+    shadow = {tuple(sorted(set(m.group(1).split(",")))) for m in _RE_SHADOW.finditer(out)}
+    if shadow:
+        rec["shadow_ungated_signatures"] = [list(s) for s in sorted(shadow)]
+        rec["shadow_ungated_sanitizers"] = sorted({n for s in shadow for n in s})
 
     # Did the LLM stage actually run? Without this the campaign degrades
     # silently to the deterministic fallback while the logs look healthy.

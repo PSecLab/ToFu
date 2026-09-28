@@ -40,6 +40,40 @@ def _no_llm() -> bool:
     return os.environ.get("TOFU_NO_LLM", "").strip().lower() not in ("", "0", "false", "no")
 
 
+# ---- ablation switches (eval/run_ablation.sh). Each removes ONE LLM stage and
+# holds the other fixed (cached), so a delta is attributable to that stage.
+def _flag(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() not in ("", "0", "false", "no")
+
+
+def _no_llm_seeds() -> bool:
+    """TOFU_NO_LLM_SEEDS: seeds come from the deterministic local fallback mapping
+    (schema boundaries + seed-bank payloads); sanitizer selection is unchanged."""
+    return _no_llm() or _flag("TOFU_NO_LLM_SEEDS")
+
+
+def _no_llm_sanitizers():
+    """TOFU_NO_LLM_SANITIZERS=mandatory|all: skip LLM selection. 'mandatory' = only
+    BASE_MANDATORY_SANITIZERS; 'all' = every AVAILABLE_SANITIZERS entry. Returns the
+    mode or None. A value that is neither is an error, never silently ignored --
+    a typo would otherwise run the full-ToFu arm under an ablation's name."""
+    if _no_llm():
+        return "mandatory"
+    v = os.environ.get("TOFU_NO_LLM_SANITIZERS", "").strip().lower()
+    if v in ("", "0", "false", "no"):
+        return None
+    if v not in ("mandatory", "all"):
+        raise ValueError(f"TOFU_NO_LLM_SANITIZERS={v!r}: expected 'mandatory' or 'all'")
+    return v
+
+
+def _cache_readonly() -> bool:
+    """TOFU_LLM_CACHE_READONLY: replay the cache but never write it. Ablation arms
+    run after the full arm; a miss in one of them must not change what later arms
+    replay."""
+    return _flag("TOFU_LLM_CACHE_READONLY")
+
+
 def _require_llm_seeds() -> bool:
     """Strict seed provenance (per-repo deep campaign): use cached seeds only when
     they are tagged seeds_provenance == "llm"; regenerate anything else live; and
@@ -740,7 +774,7 @@ class LLMHandler:
     def _cache_update(self, **kv):
         """Merge keys into this config's cache file, atomically. Best-effort."""
         p = self._cache_path()
-        if not p:
+        if not p or _cache_readonly():
             return
         try:
             os.makedirs(os.path.dirname(p), exist_ok=True)
@@ -756,7 +790,7 @@ class LLMHandler:
     def generate_seeds(self, tool_name: str, tool_description: str, input_schema: dict,
                        selected_sanitizers: list = None) -> list:
         """Generate fuzzing seeds by letting the LLM select and adapt payloads from a seed bank."""
-        if _no_llm():
+        if _no_llm_seeds():
             logging.info(f"NO_LLM seed-gen (fallback mapping) tool={tool_name}")
             return self._local_fallback_mapping(input_schema, self._load_seed_bank(), selected_sanitizers)
         cached = self._cache_load()
@@ -955,10 +989,15 @@ Strict Instructions:
     def select_sanitizers(self, tool_name: str, tool_description: str, input_schema: dict, available_sanitizers: dict) -> tuple:
         """Selects sanitizing functions and their behavioral rules based on docstrings/schemas."""
         logging.info(f"Selecting relevant sanitizers for '{tool_name}'...")
-        if _no_llm():
+        mode = _no_llm_sanitizers()
+        if mode == "mandatory":
             from .sanitizers import BASE_MANDATORY_SANITIZERS
             sel = [x for x in BASE_MANDATORY_SANITIZERS if x in available_sanitizers]
             logging.info(f"NO_LLM selection (mandatory only) tool={tool_name} n_selected={len(sel)}")
+            return sel, {}
+        if mode == "all":
+            sel = list(available_sanitizers.keys())
+            logging.info(f"NO_LLM selection (all sanitizers) tool={tool_name} n_selected={len(sel)}")
             return sel, {}
         cached = self._cache_load()
         if cached is not None and cached.get("selected_sanitizers") is not None:

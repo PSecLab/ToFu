@@ -564,3 +564,34 @@ finished ones into the archive.
   budget, arm gpt41-<m>-probe. (3) eval/select_executable.py --arm <probe> -> executable config
   list. (4) full LLM pass with --only-configs-file <list>. LLM spend only on tools that run.
 - Est: ~$400 unfiltered -> if ~55% executable, LLM pass ~$220-260 + probe $0.
+
+## item 25 (2026-09-28): ABLATION campaign built (eval/run_ablation.sh) -- PSU PC, 12 workers
+- SET: exactly the 251 repos that executed (>=1 successful exec) in the 60s sandboxed headline
+  runs = 230 from gpt41-corpus-sbx + 21 from gpt41-recover-pc (disjoint). Their 1,672 configs
+  (1,461 executed). Lists: Benchmarks/extraction/ablation_251_{repos,configs}.txt. No more, no less.
+- Both headline indices predate the SSRF input gate (b4601ca) -> they are NOT the baseline. The
+  `full` arm is re-run fresh on current code; every arm is compared to it.
+- ARMS (same configs, 60s, bwrap): full (+shadow oracle), nollmseeds, mandatory, nollm, noseeds,
+  allsan. 2x2 LLM grid = {full, nollmseeds, mandatory, nollm}. Oracle ablations (tracers-only,
+  outcome-only, sanitizers-only) derived post hoc from `full` (eval/ablation_report.py).
+- Switches: TOFU_NO_LLM_SEEDS, TOFU_NO_SEEDS (empty corpus -> input_parser FDP path),
+  TOFU_NO_LLM_SANITIZERS=mandatory|all (bad value raises; validated outside the fuzzer's
+  fall-back-to-ALL except), TOFU_ORACLE_SHADOW (logs ORACLE_SHADOW_UNGATED = input sanitizers
+  that would fire on FAILED execs; never reported), TOFU_LLM_CACHE_READONLY. Recorded per row
+  in runs.*.jsonl "ablation". tests/test_ablation_flags.py (6).
+- LLM cost ~$0: dedicated replay cache eval/state/llm_cache_ablation on PC, seeded 2026-09-28
+  with 1,672 entries (VM corpus-sbx cache; PC's own for the 238 recover-pc configs). Only `full`
+  may write it. Seed cache is not keyed on the sanitizer list, so `mandatory`/`allsan` replay the
+  full arm's seeds -> seeds held fixed, only the oracle side varies (and vice versa).
+- PC PREP GAP: PC has 542/1,672 configs. 200 repos need sandboxed prep first:
+  Benchmarks/extraction/ablation_pc_prep_repos.txt. run_ablation.sh aborts until prepared.
+- Est wall ~2.5-3h/arm @12w (VM corpus-sbx mean 67s/config) -> ~16h for six arms.
+- PREVIEW ONLY (pre-gate headline rows, NOT evidence): on these 1,672 configs tracers-only keeps
+  118 of 434 (repo,tool) bugs (all Python), outcome-only keeps 351 (loses 83, mostly Python).
+- Precision caveat (item 23) applies to every arm equally; if the tracer fixes (1)-(3) land, the
+  ablation must be re-run after them.
+- TODO paper: describe the deterministic fallback seed generator (sec4/impl): schema defaults
+  (enum[0], 1, true, [], {}, "test"), per-field boundaries, enum members + 1 out-of-enum, type
+  confusion, and 5 seed-bank payloads per string field (6 banks, 52 payloads; category from the
+  selected sanitizers, else arg-name keywords). Code: src/llm.py _local_fallback_mapping.
+- TODO paper: sanitizer registry is 80 (AVAILABLE_SANITIZERS), not 74/75 -- check what the paper says.

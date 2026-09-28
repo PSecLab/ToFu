@@ -9,7 +9,7 @@ import time
 import logging
 import glob
 
-from .llm import LLMHandler, SeedProvenanceError
+from .llm import LLMHandler, SeedProvenanceError, _no_llm_sanitizers, _flag
 from .client import MCPInspector
 from . import sanitizers
 from .runners import PythonRunner, JSRunner
@@ -27,6 +27,20 @@ logger = logging.getLogger(__name__)
 def _keep_corpus() -> bool:
     """Opt-in corpus persistence across runs of the same tool (TOFU_KEEP_CORPUS)."""
     return os.environ.get("TOFU_KEEP_CORPUS", "").strip().lower() not in ("", "0", "false", "no")
+
+
+def _no_seeds() -> bool:
+    """TOFU_NO_SEEDS (ablation): start libFuzzer from an EMPTY corpus -- no LLM seeds,
+    no fallback seeds. Inputs are then schema-conforming values built from raw bytes
+    by input_parser (FuzzedDataProvider path)."""
+    return _flag("TOFU_NO_SEEDS")
+
+
+def _oracle_shadow() -> bool:
+    """TOFU_ORACLE_SHADOW (ablation): also evaluate the input sanitizers on FAILED
+    executions and log what WOULD have fired without the silent-success gate. Logged
+    only (ORACLE_SHADOW_UNGATED), never reported -- the run's findings are unchanged."""
+    return _flag("TOFU_ORACLE_SHADOW")
 
 _STR_CONTRACT_CACHE = {}
 
@@ -888,6 +902,9 @@ class MCPDifferentialFuzzer:
                     triggered_by.append(s_name)
             err_details += string_err
 
+        if _oracle_shadow() and not getattr(res, "success", False):
+            self._log_shadow_ungated(generated_arguments, res)
+
         sanitizer_triggered = bool(triggered_by)
         return sanitizer_triggered, triggered_by, err_details
 
@@ -966,9 +983,24 @@ class MCPDifferentialFuzzer:
                 return True, err
         return False, ""
 
-    def _check_string_sanitizers(self, generated_arguments: dict, res: any) -> tuple[bool, list[str], str]:
-        """Checks string inputs against selected security vulnerability checkers."""
-        if not res.success:
+    def _log_shadow_ungated(self, generated_arguments: dict, res: any) -> None:
+        """Oracle ablation: which input sanitizers would fire on this FAILED execution
+        if the silent-success gate were removed. One line per new signature per tool."""
+        try:
+            hit, names, _ = self._check_string_sanitizers(generated_arguments, res, gate=False)
+        except Exception as e:
+            logger.debug(f"shadow oracle failed: {e}")
+            return
+        sig = tuple(sorted(set(names))) if hit else ()
+        seen = self.__dict__.setdefault("_shadow_sigs", set())
+        if sig and sig not in seen:
+            seen.add(sig)
+            logger.info(f"ORACLE_SHADOW_UNGATED tool={self.target_tool_name} names={','.join(sig)}")
+
+    def _check_string_sanitizers(self, generated_arguments: dict, res: any, gate: bool = True) -> tuple[bool, list[str], str]:
+        """Checks string inputs against selected security vulnerability checkers.
+        gate=False (shadow oracle only) evaluates them on a failed execution too."""
+        if gate and not res.success:
             return False, [], ""
 
         triggered_by = []
@@ -1137,6 +1169,11 @@ class MCPDifferentialFuzzer:
 
         self.target_tool_name = tool
         self.target_tool_desc = t_desc
+        # Validate the ablation switch OUTSIDE the try below: its except falls back
+        # to ALL sanitizers, so a bad TOFU_NO_LLM_SANITIZERS would silently become
+        # the all-sanitizers arm.
+        _no_llm_sanitizers()
+        self._shadow_sigs = set()
         if self.override_rules:
             self.selected_sanitizer_names = list(self.override_rules.keys())
             self.selected_sanitizer_rules = dict(self.override_rules)
@@ -1172,7 +1209,10 @@ class MCPDifferentialFuzzer:
 
     def _setup_corpus_seeds(self) -> None:
         """Generates the initial fuzzing corpus via LLM or uses predefined seeds."""
-        if self.predefined_seeds:
+        if _no_seeds():
+            seeds = []
+            logger.info(f"NO_SEEDS empty initial corpus tool={self.target_tool_name}")
+        elif self.predefined_seeds:
             seeds = self.predefined_seeds
         else:
             # Pass the SELECTED sanitizers so seed generation draws from their
