@@ -47,14 +47,14 @@ HIDDEN=""
 
 PIDS=()
 cleanup() {
-  trap - INT TERM EXIT
+  trap - INT TERM HUP EXIT
   for p in "${PIDS[@]}"; do kill -INT "$p" 2>/dev/null; done
   sleep 2
   for p in "${PIDS[@]}"; do kill -TERM "$p" 2>/dev/null; done
   [ -n "$HIDDEN" ] && [ -f "$HIDDEN" ] && mv "$HIDDEN" .env
   echo; python3 eval/toolfuzz_llm_guard.py status
 }
-trap cleanup INT TERM EXIT
+trap cleanup INT TERM HUP EXIT
 
 # Protect any co-located campaign: every ToolFuzz process (and each target server
 # it spawns, by inheritance) is the kernel OOM killer's FIRST choice, runs at NICE
