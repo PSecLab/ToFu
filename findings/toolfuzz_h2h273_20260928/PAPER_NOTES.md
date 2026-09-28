@@ -45,7 +45,13 @@ Regenerate: `python3 findings/toolfuzz_h2h273_20260928/analyze_toolfuzz_273.py`.
   its documentation implies. Compare per tool and per axis; never add the counts.
 
 ## Caveats the paper should state
-- ToolFuzz's own 46% correctness FDR (above).
+- ToolFuzz's own 46% correctness FDR (above). **Where it comes from:** only Table 3 of Milev et al. 2025 (ToolFuzz
+  row: 1,156 erroneous prompts, 622 TP / 534 FP, FDR 46%). The prose never states 46%; it calls the rate "low"
+  (abstract; Appendix C / Figure 5), says the checks bring it "to an acceptable level" (§4.2), and that ToolFuzz
+  "reduces FDR by 45%" vs its prompt-engineering baselines (FDR 92% / 91%) (§5.2). It applies to correctness
+  failures only; the authors state runtime detection has no false positives. Suggested wording: "ToolFuzz's own
+  evaluation measures a 46% false-discovery rate for its correctness failures (Table 3), which the authors report
+  as an improvement over their prompt-engineering baselines (91–92%)." Do not write that the authors admit a 46% error.
 - ToolFuzz's taint-guided argument generation works in-process on Python tools; over MCP the server is a
   separate process, so argument generation falls back to type-based (Faker) values.
 - Budget-capped configuration for cost (above); the ToolFuzz authors used GPT-4o / GPT-4o-mini, ToFu's
