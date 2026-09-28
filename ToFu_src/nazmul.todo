@@ -635,3 +635,12 @@ finished ones into the archive.
 - Estimate (from H2H: ~16 calls, ~12.4k in / 1.3k out tokens per tool, gpt-4.1-mini): ~1.2k new
   tools -> ~19k calls, ~$8-10; ~6 h at nice 19 on the PC; counter is cumulative (4,708 so far) ->
   run with TOOLFUZZ_MAX_CALLS=30000.
+- 2026-09-28 arm smoke (2 configs x 5 read-only arms, run_eval direct, DUMMY API key so any live
+  call would 401; ablsmoke-* indices): nollmseeds / mandatory / nollm / noseeds behave as designed
+  (fallback seeds / mandatory selection / NO_SEEDS marker, 0 live LLM calls, cache unchanged).
+  allsan was BROKEN: string loop called check_reflected_output(val) -> TypeError -> target exit
+  after 3 execs. Fixed a92dc8a (two-arg sanitizers excluded from the one-arg loop; per-call
+  try/except + SANITIZER_ERROR). No-op for every other arm: the only cached LLM selection holding
+  check_reflected_output (google_workspace_mcp::manage_document_comment) has 0/500 successful execs,
+  and the string loop runs only on successes. Also latent on the "LLM selection failed -> all
+  sanitizers" fallback path. PC campaign started at be2529b; needs the fix before allsan starts.
