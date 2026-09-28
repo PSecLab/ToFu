@@ -621,3 +621,17 @@ finished ones into the archive.
   read-only real home). Smoke (tag smoke251, 1 round): node todo-list ok, 2 hook marks;
   python meilisearch ok, 1 hook mark; real targets untouched; work copies cleaned.
 - If any of the 21 recover-pc repos fail on the VM, re-run them on the PC after the ablation.
+
+## item 27 (2026-09-28): ToolFuzz over the 251 executed repos -- prepared, waits for the ablation
+- Set = Benchmarks/extraction/ablation_251_repos.txt (same as items 25/26). Executed tools taken
+  from the sandboxed headline indexes (corpus-sbx VM + recover-pc PC), merged on the PC into
+  eval/state_tf/tofu_sbx_index.jsonl: 1,461 executed configs / 250 unique repos = item 25 exactly.
+- FIX: "executed" must use the index's `executable == "yes"`; exec_success_rate is stored rounded
+  to 3 decimals (1 success in 10k execs reads 0.0) -> the rate-only filter found 1,423 / 248 repos.
+  The H2H ToolFuzz run (item 16) used the rate filter on the 09-22 snapshot; its 298 tools stay
+  valid, and the 251 run fills in what it missed.
+- psu_toolfuzz_run.sh now skips repos of ANY running ToFu campaign (run_eval.py / run_repo24.py,
+  incl. --only-configs-file). With the ablation running it skips all 251 -> launch after it ends.
+- Estimate (from H2H: ~16 calls, ~12.4k in / 1.3k out tokens per tool, gpt-4.1-mini): ~1.2k new
+  tools -> ~19k calls, ~$8-10; ~6 h at nice 19 on the PC; counter is cumulative (4,708 so far) ->
+  run with TOOLFUZZ_MAX_CALLS=30000.

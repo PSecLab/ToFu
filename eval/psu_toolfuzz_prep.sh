@@ -9,7 +9,7 @@ set -uo pipefail
 R=/scratch/tofu
 cd "$R" || exit 1
 source "$R/.tofu_env.sh"
-REPOS_FILE="${1:-Benchmarks/extraction/tofu_executable_repos.txt}"
+REPOS_FILE="${1:-Benchmarks/extraction/ablation_251_repos.txt}"
 [ -s "$REPOS_FILE" ] || { echo "missing $REPOS_FILE"; exit 1; }
 command -v bwrap >/dev/null || { echo "bwrap required -- refusing to run untrusted builds unsandboxed"; exit 1; }
 export PATH="$R/.cache/bun-linux-x64:$HOME/.local/bin:$PATH"     # bun + uv (executed, never written)
