@@ -169,7 +169,7 @@ PYT
   rm -rf "$WORKROOT"
   "$ROOT/.venv/bin/python" - "$IDX" "$RFILE" <<'PYS'
 import json, sys, collections
-want = {l.strip() for l in open(sys.argv[2]) if l.strip()}
+want = {l.strip() for l in open(sys.argv[2]) if l.strip() and not l.startswith("#")}
 last = {}
 for l in open(sys.argv[1]):
     try: r = json.loads(l); last[r["repo"]] = r

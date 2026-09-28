@@ -112,7 +112,8 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
 | ToolFuzz (H2H re-run, 2026-09-25) | 31 of H2H-45 (298 tools) | 8 tools genuine crash | 51 tools runtime (own def.), 8 crash; correctness 35 by formula → **0** genuine (all were tool errors) | tool-doc robustness/correctness (diff axis) | ❌ H2H only |
-| Viper-MCP (H2H re-run, 2026-09-26) | 45 of H2H-45 (35 node + 10 python) | 11 static · 9 runtime sink · **2 confirmed** | 154 static taint flows; 2 distinct hit-judge-confirmed vulns | CodeQL taint + LLM runtime agent, 3 classes | ❌ H2H only |
+| Viper-MCP (c251, 2026-09-28) | 266 = H2H-273 minus 7 unsafe (259 ok) | 48 static · 118 runtime sink · **11 confirmed** | 340 static taint flows; 11 distinct hit-judge-confirmed chains (4 on repos where ToFu reports 0) | CodeQL taint + LLM runtime agent, 3 classes | H2H-273 dynamic set |
+| ~~Viper-MCP (H2H-45 re-run, 2026-09-26)~~ superseded by c251 | 45 | 11 static · 9 sink · 2 confirmed | | | |
 
 Overlap (full): ToFu∩CodeQL 37, ToFu∩Cisco 14, vanilla∩ToFu 107 (100 ToFu-only /
 107 vanilla-only, 47 vanilla-exclusive). Complementary, not redundant.
@@ -120,6 +121,11 @@ ToFu flags the 2nd-most repos (157), behind only the unverified LLM audit (214),
 ahead of CodeQL (154) — and ToFu's are runtime-evidence-gated.
 
 ## 5. Head-to-head (45 ToFu-flagged repos, all tools same set)
+> **Viper on the H2H-273 set (2026-09-28): `findings/viper_c251_20260928/REPORT.md`** (per-repo: `per_repo.json`).
+> 266 repos (273 minus 7 unsafe), 259 ok, hook proven on all: Viper static 48, sink 118, confirmed 11;
+> ToFu (508 on the 266) 139 repos / 493 bugs; Viper-confirmed where ToFu reports 0: 4 (code/command-exec tools).
+> The H2H-45 figures below are superseded.
+
 ToFu 45/579 · CodeQL 11/111 · Viper 11/45 static (2 confirmed) · Cisco 3/13. **16 ToFu-exclusive.**
 > **2026-09-26, at the 648 headline:** `baselines/h2h_tofu_vs_viper_20260926.md` (regen script alongside):
 > ToFu 33/45 repos, 266 bugs (142 excl. backend-dial SSRF, item 20); Viper static 11, sink 9, confirmed 2
