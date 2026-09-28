@@ -742,3 +742,20 @@ finished ones into the archive.
   5 = wordpress-mcp-server SSRF: LLM selected check_introspection_ssrf (Python-only tracer) for a JS
   target, not the input-side check_url_* that fired -> language-aware selection = future work.
 - TODO: +129 configs (266 set) allsan reports not yet labelled; full arm's 408 not labelled here.
+- item 26 CHECK vs the Viper paper (Sun et al. 2026, arXiv 2605.21392v2, read in full 2026-09-28):
+  (a) our "confirmed" (hit_judge effect_success) == their end-to-end-exploitable bar (validator stage
+      effect_observed, sec 5.2; hit_judge.py: effect_success true only for effect_observed). OK.
+  (b) SCOPE MISMATCH: sec 2.2 "tools designed to perform privileged operations (e.g. a shell-execution
+      tool ...) are not considered vulnerable". Our 11 confirmed are raw hit-judge output with no such
+      filter; python_repl, applescript_execute, pyodide_execute, run_process, run_python_code look
+      by-design -> Viper's own definition would not count them. Needs manual pass before quoting 11.
+  (c) 6 of 11 chains have no Phase I chain ("none"/"No static findings") = artifact's general-target
+      fallback, not the anchored-chain pipeline the paper describes.
+  (d) PROTOCOL DEVIATIONS: paper uses GPT-5.4 (scan + RQ2) and per-role temps (agent 0.7, generator
+      0.4/0.7, mutators 0.5/0.6, scheduler 0.1, scorer 0.2, validator 0.1); we ran gpt-4.1 at T=0 for
+      all roles. RQ4 shows the analytical model dominates (TP 20..88). Paper mean 926 s/server; ours
+      ~190-260 s at the artifact default of 10 rounds.
+  (e) 3 of the paper's own CVE repos are in our 266: pixelsock/directus-mcp (SSRF), pskill9/website-
+      downloader (CMDi), WilliamCloudQi/matlab-mcp-server (path trav). Our Viper run confirmed 0 of 3
+      (commits may differ from their pinned vulnerable ones -- unchecked). ToFu flags directus (ssrf)
+      and matlab (path-traversal), 0 on website-downloader. => our Viper numbers likely UNDER-state Viper.
