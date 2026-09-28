@@ -67,6 +67,13 @@ def _takes_a_string(fn) -> bool:
     sanitizers predate the annotations, and excluding them would silently
     disable the real checks -- the precise failure this codebase keeps having.
     Only a parameter annotated as something other than `str` is skipped.
+
+    The caller passes ONE positional argument, so a sanitizer with a second
+    required positional parameter is not a string contract either:
+    check_reflected_output(tool_input, tool_output) raised TypeError and killed
+    the fuzz target after 3 execs once every sanitizer was selected (ablation
+    arm allsan, PSU PC 2026-09-28). It is evaluated on its own evidence-gated
+    path in _run_sanitizers, so excluding it here loses nothing.
     """
     cached = _STR_CONTRACT_CACHE.get(fn)
     if cached is None:
@@ -76,7 +83,11 @@ def _takes_a_string(fn) -> bool:
                 cached = False
             else:
                 ann = params[0].annotation
-                cached = ann is inspect.Parameter.empty or ann is str or ann == "str"
+                P = inspect.Parameter
+                extra_required = any(
+                    p.default is P.empty and p.kind in (P.POSITIONAL_ONLY, P.POSITIONAL_OR_KEYWORD)
+                    for p in params[1:])
+                cached = (ann is P.empty or ann is str or ann == "str") and not extra_required
         except (TypeError, ValueError):
             cached = True
         _STR_CONTRACT_CACHE[fn] = cached
@@ -1047,12 +1058,23 @@ class MCPDifferentialFuzzer:
                 if sanitizer_fn and _takes_a_string(sanitizer_fn):
                     rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
                     triggered = False
-                    if sanitizer_name == "check_blocked_command_bypass":
-                        triggered = sanitizer_fn(val, blocked_commands=rule.get("blocked_commands"))
-                    elif sanitizer_name == "check_directory_jailbreak_write":
-                        triggered = sanitizer_fn(val, allowed_dirs=rule.get("allowed_directories"))
-                    else:
-                        triggered = sanitizer_fn(val)
+                    # One broken sanitizer must not kill the fuzz target (an
+                    # uncaught exception here ends the libFuzzer run). Logged
+                    # once per sanitizer per tool so it stays visible.
+                    try:
+                        if sanitizer_name == "check_blocked_command_bypass":
+                            triggered = sanitizer_fn(val, blocked_commands=rule.get("blocked_commands"))
+                        elif sanitizer_name == "check_directory_jailbreak_write":
+                            triggered = sanitizer_fn(val, allowed_dirs=rule.get("allowed_directories"))
+                        else:
+                            triggered = sanitizer_fn(val)
+                    except Exception as e:
+                        seen = self.__dict__.setdefault("_sanitizer_errors", set())
+                        if sanitizer_name not in seen:
+                            seen.add(sanitizer_name)
+                            logger.error(f"SANITIZER_ERROR tool={getattr(self, 'target_tool_name', '?')} "
+                                         f"sanitizer={sanitizer_name} {type(e).__name__}: {e}")
+                        continue
 
                     # Some sanitizers return bool, others (bool, detail). A
                     # 2-tuple is ALWAYS truthy -- (False, '') included -- so a

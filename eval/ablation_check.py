@@ -86,6 +86,9 @@ def check(prefix, arm, head, n_avail):
     }[arm]
     for e in exp:
         if c[e] != n - c["nolog"]: bad.append(f"marker {e}: {c[e]}/{n - c['nolog']} logs")
+    if c["ok"] < n: bad.append(f"{n - c['ok']} of {n} rows ok=False (runner error/crash) -- read their logs")
+    crash = [k for k, r in R.items() if (r.get("n_exec") or 0) and r.get("n_exec") < 50 and not r.get("stopped_early")]
+    if crash: bad.append(f"{len(crash)} rows ended after <50 execs (target died?): {crash[:3]}")
     if arm != "full" and c["live_llm"]: bad.append(f"LIVE LLM CALL in {c['live_llm']} logs of a read-only arm")
     if arm == "full" and c["live_llm"]: bad.append(f"note: {c['live_llm']} live LLM calls (cache miss)")
     if arm == "full" and n >= 50 and not c["shadow"]: bad.append("no shadow lines in >=50 rows: TOFU_ORACLE_SHADOW not effective")

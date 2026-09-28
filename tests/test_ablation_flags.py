@@ -93,3 +93,23 @@ def test_shadow_line_round_trips_and_is_not_a_finding(monkeypatch, caplog):
     rec = _run_eval().parse_log("\n".join(lines))
     assert rec["shadow_ungated_sanitizers"] == ["check_path_traversal"]
     assert rec["finding_hits"] == 0 and rec["triggered_sanitizers"] == []
+
+
+def test_two_arg_sanitizer_is_not_a_string_contract():
+    fz = pytest.importorskip("src.fuzzer")
+    from src import sanitizers
+    assert not fz._takes_a_string(sanitizers.check_reflected_output)
+    assert fz._takes_a_string(sanitizers.check_path_traversal)
+
+
+def test_all_sanitizers_selected_does_not_raise():
+    """allsan arm: every AVAILABLE_SANITIZERS name in the string loop on a successful
+    execution must neither raise nor kill the target (2026-09-28 TypeError)."""
+    fz = pytest.importorskip("src.fuzzer")
+    from src import sanitizers
+    f = object.__new__(fz.MCPDifferentialFuzzer)
+    f.selected_sanitizer_names = list(sanitizers.AVAILABLE_SANITIZERS)
+    f.selected_sanitizer_rules, f.target_tool_name = {}, "t"
+    res = types.SimpleNamespace(success=True, result="ok", error=None)
+    for v in ("../../etc/passwd", "http://127.0.0.1/", "a\r\nb", "x" * 5000, ""):
+        f._check_string_sanitizers({"path": v, "url": v, "cmd": v}, res)
