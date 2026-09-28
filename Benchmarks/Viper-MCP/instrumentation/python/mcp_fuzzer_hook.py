@@ -430,4 +430,12 @@ def install() -> None:
     _patch_dynamic_execution()
     _patch_fastmcp_compat()
     log_event("hook_init", {"pid": os.getpid(), "python": sys.version.split()[0]})
+    # PATCH (ToFu): sidecar "<oracle log>.hook_init" marker. The engine truncates the oracle
+    # log between rounds, erasing the hook_init line; the sidecar is never cleared, so hook
+    # injection stays provable on runs with no sink hit.
+    try:
+        with _ORIGINAL_OPEN(str(_LOG_PATH) + ".hook_init", "a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"pid": os.getpid(), "python": sys.version.split()[0]}) + "\n")
+    except Exception:
+        pass
     _INSTALLED = True

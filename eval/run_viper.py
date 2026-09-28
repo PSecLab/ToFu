@@ -235,7 +235,12 @@ def one(target, base, skip_codeql, codeql_bin, rounds, timeout, test_agent):
         # made every repo whose hook merely loaded score >= 1 in the old H2H column)
         rec["n_sink_events"] = sum(1 for l in ev if '"hook_init"' not in l)
         rec["max_oracle_hits_in_round"] = max_hits
-        rec["hook_injected"] = (any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0)
+        # sidecar written by our hook patch (node_hook.js / mcp_fuzzer_hook.py): the engine
+        # truncates oracle.json between rounds, so its hook_init line can vanish
+        side = op + ".hook_init"
+        rec["n_hook_inits"] = sum(1 for l in open(side, errors="ignore") if l.strip()) if os.path.exists(side) else 0
+        rec["hook_injected"] = (any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0
+                                or rec["n_hook_inits"] > 0)
     except subprocess.TimeoutExpired as e:
         out = ((e.stdout or b"").decode(errors="ignore") + "\n" + (e.stderr or b"").decode(errors="ignore"))
         rec.update(ok=False, error=f"timeout after {timeout}s")

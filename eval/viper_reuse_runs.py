@@ -54,7 +54,9 @@ def recount(resdir, slug):
     c["n_oracle_events_on_disk"] = len(ev)
     c["n_sink_events"] = sum(1 for l in ev if '"hook_init"' not in l)
     c["max_oracle_hits_in_round"] = max_hits
-    c["hook_injected"] = any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0
+    side = op + ".hook_init"   # sidecar marker (hook patch 2026-09-28; absent on older runs)
+    c["n_hook_inits"] = sum(1 for l in open(side, errors="ignore") if l.strip()) if os.path.exists(side) else 0
+    c["hook_injected"] = any('"hook_init"' in l for l in ev) or hook_seen or max_hits > 0 or c["n_hook_inits"] > 0
     return c
 
 

@@ -490,3 +490,10 @@ log('hook_init', {
   cwd: process.cwd(),
   logFile: LOG_DIR,
 });
+// PATCH (ToFu): sidecar "<oracle log>.hook_init" marker. The engine truncates the oracle
+// log between rounds (_clear_oracle), which erases this hook_init line, so a run with no
+// sink hit looked identical to a run whose hook never loaded. The sidecar is never cleared.
+try {
+  originalFsAppendFileSync(LOG_DIR + '.hook_init',
+    JSON.stringify({ timestamp: new Date().toISOString(), pid: process.pid, node: process.version }) + '\n');
+} catch (e) { /* marker is best-effort; never break the target */ }
