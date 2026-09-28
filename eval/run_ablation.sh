@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# ToFu ablation campaign: the SAME 1,672 configs (the 251 repos that executed in the
-# 60s sandboxed headline runs) under six arms, each removing one ToFu stage. PSU PC,
+# ToFu ablation campaign: the SAME 1,801 configs (the 266-repo H2H dynamic set = 273 minus the 7
+# host-control servers no dynamic tool runs; 251 executed in the 60s sandboxed sweeps + 15 that
+# succeeded only in the 09-22 run) under six arms, each removing one ToFu stage. PSU PC,
 # 12 workers, 60s/tool, bubblewrap sandbox (via run_corpus_sbx.sh). Resumable and
 # Ctrl-C-safe: each arm has its own index, done configs are skipped on re-run.
 #
@@ -24,7 +25,7 @@
 set -u
 cd "$(dirname "$0")/.." || exit 1
 
-CFG="${ABL_CONFIGS:-Benchmarks/extraction/ablation_251_configs.txt}"
+CFG="${ABL_CONFIGS:-Benchmarks/extraction/ablation_266_configs.txt}"
 ALL_ARMS="full nollmseeds mandatory nollm noseeds allsan"
 ARMS="${ABL_ARMS:-$ALL_ARMS}"
 PREFIX="${ABL_PREFIX:-abl}"

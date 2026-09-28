@@ -74,7 +74,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--state", default=os.path.join(ROOT, "eval", "state"))
     ap.add_argument("--prefix", default="abl")
-    ap.add_argument("--configs", default=os.path.join(ROOT, "Benchmarks", "extraction", "ablation_251_configs.txt"))
+    ap.add_argument("--configs", default=os.path.join(ROOT, "Benchmarks", "extraction", "ablation_266_configs.txt"))
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
     want = {os.path.splitext(l.strip())[0] for l in open(a.configs) if l.strip() and not l.startswith("#")}
