@@ -87,9 +87,20 @@ executions/s in every arm.
 | reported bugs | 408 | 928 |
 | tools shared / new / lost | — | 393 / 535 / 15 |
 
-**PENDING — do not write conclusions from Table C yet.** Every All-sanitizers report is being
-labelled true/false positive. That labelling decides the paper claim: the precision of the 535
-additional reports, and how many of them are real bugs Full ToFu missed (its false negatives).
+**Labelled (census of all 928 reports; `allsan_labels/REPORT.md`).**
+
+| All-sanitizers reports | n | real (strict) | real (lenient) | false positives |
+|---|---|---|---|---|
+| all | 928 | 42 (4.5%) | 182 (19.6%) | 746 |
+| on tools Full ToFu also flagged | 393 | 29 (7.4%) | 129 (32.8%) | 264 |
+| on tools Full ToFu did not flag | 535 | 13 (2.4%) | 53 (9.9%) | 482 (90.1%) |
+
+Strict = TP; lenient = TP + TP-low (real but low impact or the tool's documented purpose).
+**Full ToFu's false negatives** relative to All-sanitizers: 13 real bugs (strict; 53 lenient) on
+tools Full ToFu did not flag, in 5 repositories. The largest group, 5 SSRF bugs in one
+WordPress server, traces to a selection gap: for a JavaScript target the LLM chose the runtime
+SSRF tracer, which only exists for Python targets, instead of the input-side URL sanitizer.
+Enabling every sanitizer buys those 13 at the cost of 482 false reports (~37 per real bug).
 
 ### Table D — oracle ablation (from the Full ToFu run)
 
@@ -117,15 +128,21 @@ additional reports, and how many of them are real bugs Full ToFu missed (its fal
    those 185 bugs without an LLM (No LLM seeds: 369 vs No seeds: 223).
 5. **The runtime tracer contributes bugs no outcome check sees.** Removing it loses 61 bugs, all
    Python (Table D).
-6. **Selection is not about speed.** Enabling all 73 sanitizers leaves throughput unchanged
-   (45.9 vs 45.7 exec/s). Do NOT argue that selection saves execution time.
+6. **Selection is about precision, not speed.** Enabling all 73 sanitizers leaves throughput
+   unchanged (45.9 vs 45.7 exec/s), so do NOT argue that selection saves time. It more than
+   doubles the reports (928 vs 408), but 90% of the additional reports are false positives: 13 real
+   bugs (strict) for 482 false reports (Table C).
+7. **Selection has a measurable miss.** Full ToFu misses 13 real bugs that All-sanitizers finds;
+   5 are one server's SSRF, missed because the LLM chose a Python-only tracer for a JavaScript
+   target. State this as a limitation / future work (language-aware selection).
 
 ## 4. Caveats to state
 
 - One run per arm. Run-to-run variation is being measured with two additional Full ToFu runs;
   until then, report the −10% of "No LLM seeds" as indicative (the per-tool churn is visible
   in the shared/new/lost columns).
-- Table C conclusions wait for the true/false-positive labelling.
+- Labelling (Table C) is by LLM agents applying a fixed rubric to run evidence + source at the
+  fuzzed commit, with coordinator spot-checks; say so in the methodology.
 - Counts are reported bugs under the same rule as the main evaluation; precision applies to
   every arm equally.
 
