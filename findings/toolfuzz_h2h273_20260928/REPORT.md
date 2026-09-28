@@ -1,98 +1,70 @@
-# ToolFuzz on the H2H-273 dynamic set vs ToFu (2026-09-28)
+# ToolFuzz on the H2H-273 dynamic set (2026-09-28)
 
-**Set:** `Benchmarks/extraction/h2h_273_dynamic_repos.txt` (266 repos = the H2H-273 minus the 7 unsafe host-control servers). **Tools:** the 1585 tools ToFu executed successfully on them (`tofu_exec_index_273.jsonl`). ToolFuzz is given exactly these tools.
+Reported exactly as ToolFuzz reports: **runtime failures** and **correctness failures**, in ToolFuzz's
+units (Milev et al. 2025, Tables 1–3; criteria from its `tool_stats.py`). Nothing else is counted.
 
-> Units differ. ToFu bugs are runtime silent-bug candidates (distinct repo×tool×class, the 508 headline).
-> ToolFuzz reports test outcomes, counted with ToolFuzz's own criteria (its `tool_stats.py`): a *runtime
-> failure* is an agent prompt that drove the tool into an error; a *correctness failure* needs argument AND
-> output inconsistency across paraphrases AND an LLM-judge score ≤ 5/10. ToolFuzz targets tool-documentation
-> errors, not security (Milev et al. 2025). Compare per tool, per axis — never one summed count.
+**Set:** `Benchmarks/extraction/h2h_273_dynamic_repos.txt` (266 repos = H2H-273 minus the 7 unsafe host-control servers). **Tools:** the 1585 tools ToFu executed successfully on them (`tofu_exec_index_273.jsonl`); ToolFuzz was given exactly these.
 
 ## Coverage
 
 | status | tools |
 |---|---|
 | ok | 1516 |
-| not run (server not loadable) | 48 |
-| ToolFuzz internal error | 15 |
+| not run (server not loadable by ToolFuzz's MCP bridge) | 48 |
+| ToolFuzz error | 15 |
 | timeout (600 s) | 5 |
 | not run | 1 |
 
-ToolFuzz completed **1516 / 1585 tools** (95.6%) in 258 / 266 repos; 296 of them are merged from the PSU H2H run (identical configuration). Repos ToolFuzz could not load at all: `AppiumTestDistribution/mcp-appium-gestures`, `ProgramComputer/NASA-MCP-server`, `T1nker-1220/memories-with-lessons-mcp-server`, `alexatnordnet/mcp-google-custom-search-server`, `gerred/mcp-server-replicate`, `renyumeng1/mcp_scholar`, `teddyzxcv/ntfy-mcp`, `tomekkorbak/oura-mcp-server`.
+ToolFuzz completed **1516 / 1585 tools** in 258 / 266 repos (296 of them run on the PSU PC with the identical configuration and merged). Servers ToolFuzz's MCP bridge could not load: `AppiumTestDistribution/mcp-appium-gestures`, `ProgramComputer/NASA-MCP-server`, `T1nker-1220/memories-with-lessons-mcp-server`, `alexatnordnet/mcp-google-custom-search-server`, `gerred/mcp-server-replicate`, `renyumeng1/mcp_scholar`, `teddyzxcv/ntfy-mcp`, `tomekkorbak/oura-mcp-server`.
 
-## Runtime failures by class (all triggers, before per-tool dedup)
+## Runtime failures (ToolFuzz §4.1; Tables 1–2 units)
 
-| class | triggers | meaning |
-|---|---|---|
-| HARNESS | 8 | ToolFuzz / MCP-bridge error (non-ToolException or disconnect), not the tool |
-| ENV | 86 | upstream service / credential / host app unavailable |
-| REJECT | 92 | the tool correctly refused the input |
-| CRASH | 14 | unhandled internal error leaking out (robustness bug) |
-| UNCLASS | 2 | cause not evident from the text; not counted |
+| erroneous prompts | tested prompts | unique errors (tool × error) | vulnerable tools | repos |
+|---|---|---|---|---|
+| **200** | 517 | 200 | **200** | **77** |
 
-## Headline (tools ToolFuzz completed)
+Excluded: 2 trigger(s) whose exception was raised inside ToolFuzz's own code, not by the tool (not a tool execution error under the paper's definition).
 
-| | tools | repos |
-|---|---|---|
-| ToolFuzz runtime failure, its own definition (HARNESS removed; incl. ENV/REJECT) | 194 | 76 |
-| ToolFuzz genuine crash (CRASH class) | **14** | **10** |
-| ToolFuzz correctness failure, code formula | 114 | 52 |
-| ToolFuzz correctness failure, tool actually executed | **0** | **0** |
-| **ToFu (508 headline) bugs on these tools** | **428** (429 bugs) | **129** |
+## Correctness failures (ToolFuzz §4.2; Table 3 units)
 
-ToFu has 493 of its 508 bugs on these 266 repos; 429 sit on tools ToolFuzz completed. The 7 excluded unsafe repos carry 0 ToFu bugs.
+| erroneous prompts | total prompts | faulty tools | repos | TP / FP |
+|---|---|---|---|---|
+| **342** | 3441 | **114** | **52** | not inspected |
 
-**Correctness, formula vs executed:** ToolFuzz stores a tool that throws during a correctness prompt as output
-`Tool FAILURE` with judge score 0, so its code formula counts tool errors as correctness failures. The paper
-defines correctness failures as incorrect results; the executed-only row keeps only runs where the tool returned
-a real (non-error) output.
+ToolFuzz's paper separates true from false positives by manual inspection (its own FDR is **46%**, Table 3).
+This run has no manual inspection, so these are ToolFuzz's raw erroneous prompts.
 
-## Overlap on the same tools
+## Any ToolFuzz failure (runtime or correctness)
 
-- ToFu-flagged tools that ToolFuzz flagged for anything (runtime own-def or executed correctness): **48 / 428**; as a genuine crash: **14**.
-- ToolFuzz crash tools that ToFu also flags: 14 / 14; ToFu's class on them: path-traversal 12, log-injection 2.
-- ToFu-only tools (ToFu bug, ToolFuzz nothing): 380.
+**237 tools** in **92 repos**.
 
-## ToolFuzz genuine crashes (for manual confirmation)
+## Comparison with ToFu on the same tools (context)
 
-Crash tools by kind: file-name-length (unvalidated arg reaches a filesystem call): 12; other: 2.
-
-- `Sheshiyer/framer-plugin-mcp::create_plugin` — <class 'langchain_core.tools.base.ToolException'>McpError: MCP error -32603: Failed to create plugin: ENAMETOOLONG: name too long, mkdir '/scratch/tofu/eval/targets_tf/Sh  *(ToFu: path-traversal)*
-- `Xuanwo/mcp-server-opendal::get_info` — argument 'scheme': 'NoneType' object cannot be converted to 'PyString'  *(ToFu: log-injection)*
-- `Xuanwo/mcp-server-opendal::read` — argument 'scheme': 'NoneType' object cannot be converted to 'PyString'  *(ToFu: path-traversal)*
-- `aaronsb/google-workspace-mcp::manage_workspace` — <class 'langchain_core.tools.base.ToolException'>Error: ENAMETOOLONG: name too long, realpath '/home/mza6485/.tofu_scratch/toolfuzz/aaronsb__google-workspace-mcp/home/.lo  *(ToFu: path-traversal)*
-- `bsmi021/mcp-file-context-server::get_chunk_count` — <class 'langchain_core.tools.base.ToolException'>File operation error: Failed to get chunk count: ENAMETOOLONG: name too long, stat '/home/mza6485/toolfuzzer/eval/targets  *(ToFu: path-traversal)*
-- `davidteren/claude-server::save_conversation_context` — <class 'langchain_core.tools.base.ToolException'>McpError: ENAMETOOLONG: name too long, open '/scratch/tofu/.tofu_scratch/toolfuzz/davidteren__claude-server/home/.claude/  *(ToFu: log-injection)*
-- `famano/mcp-server-office::write_docx` — <class 'langchain_core.tools.base.ToolException'>[Errno 36] File name too long: '27952 Carla Viaduct Port Toddfort, IA 17566 6198 Deleon Motorway Lake Jocelyn, PA 52376 7  *(ToFu: path-traversal)*
-- `movibe/memory-bank-mcp::write_memory_bank_file` — <class 'langchain_core.tools.base.ToolException'>Error writing file 2735 Deborah Bypass Lake Chrischester, MT 37904 614 Ashley Walks North Brandonville, NE 51911 5430 Cod  *(ToFu: path-traversal)*
-- `newtype-01/obsidian-mcp::create_note` — <class 'langchain_core.tools.base.ToolException'>McpError: MCP error -32603: ENAMETOOLONG: name too long, open '/scratch/tofu/eval/targets_tf/newtype-01__obsidian-mcp/vau  *(ToFu: path-traversal)*
-- `newtype-01/obsidian-mcp::manage_folder` — <class 'langchain_core.tools.base.ToolException'>McpError: MCP error -32603: ENAMETOOLONG: name too long, mkdir '/scratch/tofu/eval/targets_tf/newtype-01__obsidian-mcp/va  *(ToFu: path-traversal)*
-- `openags/paper-search-mcp::download_hal` — <class 'langchain_core.tools.base.ToolException'>Error executing tool download_hal: [Errno 36] File name too long: '95458 Jessica Plains Jeffreybury, MA 66066 999 Ryan Ke  *(ToFu: path-traversal)*
-- `openags/paper-search-mcp::download_scihub` — <class 'langchain_core.tools.base.ToolException'>Error executing tool download_scihub: [Errno 36] File name too long: '5744 Jason Ranch Suite 115 East Lori, FM 36759 9697  *(ToFu: path-traversal)*
-- `openags/paper-search-mcp::read_hal_paper` — <class 'langchain_core.tools.base.ToolException'>Error executing tool read_hal_paper: [Errno 36] File name too long: '87692 Brown Walks New Amber, MH 95225 58344 Angel Vi  *(ToFu: path-traversal)*
-- `thomasgazzoni/vsc-mcp::write_file` — <class 'langchain_core.tools.base.ToolException'>Error writing file: ENAMETOOLONG: name too long, open '/home/mza6485/toolfuzzer/eval/targets/thomasgazzoni__vsc-mcp/7837   *(ToFu: path-traversal)*
+- ToFu (508 headline) flags **428** of the tools ToolFuzz completed (429 bugs, 129 repos); ToFu has 493 of its 508 on these 266 repos.
+- Tools flagged by both: **62**; ToolFuzz only: **175**; ToFu only: **366**.
+- Units differ (ToFu: security silent-bug candidates; ToolFuzz: tool-documentation failures). Compare per tool.
 
 ## Cost
 
-- ToolFuzz real LLM calls: VM run **17,076** (tokens 15,163,984 in / 1,554,906 out, 1,307 cache hits) + merged PSU tools **4,621** (3,603,053 in / 367,140 out).
-- Per completed tool: median 16, max 36 calls (cap 40, never hit).
-- ToFu: 2 LLM steps per tool at initialisation (sanitizer selection + seeds), none while fuzzing.
+- Real LLM calls: VM **17,076** (15,163,984 in / 1,554,906 out tokens) + merged PSU tools **4,621**; median 16 per tool, max 36 (cap 40).
 
-## Configuration (recorded in every index row)
+## Verification (three independent counts)
 
-gpt-4.1-mini for every ToolFuzz LLM role (the authors used GPT-4o / GPT-4o-mini); 10 direct fuzz iterations;
-≤ 3 failing inputs per error type, 1 agent prompt each; 1 correctness prompt set × 3 paraphrases; cap 40 calls
-per tool; 600 s per tool; every target server in bwrap (filesystem read-only except its scratch + own dir,
-own PID/IPC namespace). Two ToolFuzz bugs fixed (`PATCH (ToFu)`: literal braces in templates, array schema
-without `items`), plus two harness artefacts (pydantic error recorded as a trigger; results appended across retries).
+| | runtime erroneous / tested prompts | vulnerable tools | correctness erroneous / total prompts | faulty tools |
+|---|---|---|---|---|
+| ToolFuzz's own `tool_stats.py` (executed verbatim on these results) | 202 / 517 | 200 | 342 / 3441 | 114 |
+| counts recorded live in the run index | 202 / 517 | — | 342 / — | — |
+| this report | 200 / 517 | 200 | 342 / 3441 | 114 |
 
-## Caveats for the paper
+The only difference: `tool_stats.py` also counts the 2 trigger(s) raised by ToolFuzz's own code; the tool count is unaffected.
 
-- **ToolFuzz's own correctness FDR is 46%** (Milev et al. 2025, Table 3: authors hand-checked every positive).
-- The paper's "runtime detection has no false positives" holds for LangChain tools, where an error is a crash;
-  MCP servers return errors as protocol replies, hence the ENV / REJECT / CRASH split above.
-- ToolFuzz's taint-guided argument generation is in-process Python only; over MCP the server is a separate
-  process, so it degrades to type-based Faker values.
-- Budget-capped configuration (above) to keep cost small; ToFu's arm used gpt-4.1.
-- Not tested: 7 unsafe repos by design (PhialsBasement/CMD-MCP-Server, SimonB97/win-cli-mcp-server, dnakov/frida-mcp, mobile-next/mobile-mcp, nickgnd/tmux-mcp, r-huijts/xcode-mcp-server, wonderwhy-er/ClaudeComputerCommander); servers ToolFuzz's MCP bridge could not load; 5 timeouts; 15 ToolFuzz internal errors.
+
+## Configuration
+
+ReAct agent over a langchain-MCP bridge; gpt-4.1-mini for every ToolFuzz LLM role (the authors used GPT-4o /
+GPT-4o-mini); 10 fuzz iterations; ≤ 3 failing inputs per error type, 1 agent query each; 1 correctness prompt set
+× 3 synonymous prompts; cap 40 LLM calls and 600 s per tool; every target server in a bwrap sandbox. Two
+ToolFuzz crashes fixed (`PATCH (ToFu)`: literal braces in generated templates; array schema without `items`)
+and two harness artefacts removed (an internal pydantic error recorded as a trigger; results appended across
+retries). Unsafe host-control repos not run: PhialsBasement/CMD-MCP-Server, SimonB97/win-cli-mcp-server, dnakov/frida-mcp, mobile-next/mobile-mcp, nickgnd/tmux-mcp, r-huijts/xcode-mcp-server, wonderwhy-er/ClaudeComputerCommander.
 

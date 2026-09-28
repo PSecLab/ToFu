@@ -105,11 +105,10 @@ Source: findings/baselines/toolfuzz_h2h_20260925/ (index, llm_calls.json, raw pe
   ToolFuzz flagged 16 of them for anything, 8 as a crash.
 
 ## Results — H2H-273 (2026-09-28) — CURRENT; supersedes the H2H-45 section above
-Report: `findings/toolfuzz_h2h273_20260928/REPORT.md` (paper brief: `PAPER_NOTES.md` alongside).
-266 repos, the 1,585 tools ToFu executed; ToolFuzz completed 1,516. Genuine crashes 14 tools / 10 repos
-(12 file-name-length, 2 missing-scheme type error), all on ToFu-flagged tools (12 path traversal, 2 log
-injection). Correctness 114 by code formula, 0 with a real output. ToFu (508) on the completed tools:
-428 tools / 129 repos, 380 of them with no ToolFuzz finding. 21,697 real LLM calls (gpt-4.1-mini).
-Classifier additions this run: non-ToolException exceptions -> HARNESS (they originate in ToolFuzz/the
-agent, e.g. an IndexError in ToolFuzz's extract_error); upstream 4xx/DNS/rate-limit/host-app-missing -> ENV;
-handled validation messages -> REJECT (all 43 previously unclassified triggers hand-checked).
+Report: `findings/toolfuzz_h2h273_20260928/REPORT.md` (paper brief `PAPER_NOTES.md`).
+**Reported only in ToolFuzz's own units** (Ananto, 2026-09-28: "only report the kind of things ToolFuzz
+is designed to report"); the ENV/REJECT/CRASH split and the executed-only correctness view above are
+diagnostics, not ToolFuzz results, and are not reported. Verified with ToolFuzz's `tool_stats.py` run
+verbatim plus the live index counts. 1,516 / 1,585 tools; runtime failures 200 tools / 77 repos (200 of
+517 prompts; 2 ToolFuzz-internal triggers excluded); correctness failures 114 tools / 52 repos (342 of
+3,441 prompts, not hand-checked; ToolFuzz's own FDR 46%). 21,697 real LLM calls (gpt-4.1-mini).
