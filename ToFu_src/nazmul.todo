@@ -731,3 +731,14 @@ finished ones into the archive.
   12 missing repos sandboxed (uv needs a login shell on PC: `bash -lc`); 129 VM cache entries
   copied (no overwrite) -> llm_cache_ablation 1,801. Same code as the campaign (no src change
   since f608f20). Run: `./eval/run_ablation.sh` (defaults to the 266; arms resume, only the 129 run).
+
+## item 29 (2026-09-28): allsan TP/FP CENSUS -- findings/ablation_20260928/allsan_labels/REPORT.md
+- All 928 allsan reports (251 set) labelled, 24 LLM agents, same rubric as item 23 + allsan notes,
+  source at fuzzed commit (185 repos, read only), coordinator spot-checks (crypto-indicators 77 FP ok;
+  wordpress SSRF TP verified in code + log). 0 UNCLEAR.
+- allsan precision: strict 4.5% (42) / lenient 19.6% (182). On the 535 tools only allsan flagged:
+  482 FP (90.1%), 13 TP, 40 TP-low -> ~37 FP per extra strict bug.
+- ToFu FALSE NEGATIVES vs allsan: 13 strict (6 alert-grounded, 7 code-only) / 53 lenient, 5 repos.
+  5 = wordpress-mcp-server SSRF: LLM selected check_introspection_ssrf (Python-only tracer) for a JS
+  target, not the input-side check_url_* that fired -> language-aware selection = future work.
+- TODO: +129 configs (266 set) allsan reports not yet labelled; full arm's 408 not labelled here.
