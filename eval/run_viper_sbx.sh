@@ -36,7 +36,11 @@ mkdir -p "$ROOT/eval/viper_runs${TAG:+/$TAG}"; touch "$IDX"
 M=""
 for d in .ssh .aws .gnupg .kube .docker .config/gcloud .config/gh; do [ -d "$REAL_HOME/$d" ] && M="$M --tmpfs $REAL_HOME/$d"; done
 for f in "$ROOT"/.env*; do [ -f "$f" ] && M="$M --ro-bind /dev/null $f"; done
-HOMEBIND="--bind $VH/.codeql $VH/.codeql"; [ "$VH" != "$REAL_HOME" ] && HOMEBIND="--bind $VH $VH --setenv HOME $VH"
+# Private, writable, per-sandbox HOME inside the tmpfs /tmp: target servers write state
+# under $HOME (e.g. todo-list-mcp's SQLite DB -> "unable to open database file" when HOME
+# was the read-only real home). CodeQL still finds its packs/compile cache via a symlink.
+HOMEBIND="--bind $VH/.codeql $VH/.codeql"; [ "$VH" != "$REAL_HOME" ] && HOMEBIND="--bind $VH $VH"
+HOMEBIND="$HOMEBIND --dir /tmp/vhome --symlink $VH/.codeql /tmp/vhome/.codeql --setenv HOME /tmp/vhome"
 
 # Viper instruments PYTHON targets by writing mcp_fuzzer_hook_auto.pth into the
 # target venv. The real targets must stay pristine (ToFu fuzzes them too), and this
