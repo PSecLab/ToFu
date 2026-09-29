@@ -75,7 +75,10 @@ CISCO_SCANNER_COMMIT = os.environ.get("CISCO_SCANNER_COMMIT", "16e684d8bd8f")  #
 
 STATE = os.path.join(ROOT, "eval", "state")
 PREPARED = os.path.join(STATE, "prepared.jsonl")
-RUNS = os.path.join(STATE, "cisco_runs.jsonl")
+# CISCO_TAG=<name> isolates a campaign: own index (eval/state/cisco_runs.<tag>.jsonl) and raw
+# outputs (eval/cisco_runs/<tag>/), so a new campaign never overwrites an earlier one's evidence.
+TAG = os.environ.get("CISCO_TAG", "").strip()
+RUNS = os.path.join(STATE, f"cisco_runs.{TAG}.jsonl" if TAG else "cisco_runs.jsonl")
 # ToFu index to compare against. Default to the gpt-4.1 arm (runs.gpt41-full)
 # when present so the LLM is held fixed against Cisco+gpt-4.1; override with
 # TOFU_RUNS_INDEX. The bare runs.jsonl (old default arm) is the last resort.
@@ -83,7 +86,7 @@ TOFU_RUNS = os.environ.get("TOFU_RUNS_INDEX") or (
     os.path.join(STATE, "runs.gpt41-full.jsonl")
     if os.path.exists(os.path.join(STATE, "runs.gpt41-full.jsonl"))
     else os.path.join(STATE, "runs.jsonl"))
-OUT = os.path.join(ROOT, "eval", "cisco_runs")
+OUT = os.path.join(ROOT, "eval", "cisco_runs", TAG) if TAG else os.path.join(ROOT, "eval", "cisco_runs")
 
 lock = Lock()
 counter = {"done": 0, "flagged": 0, "errors": 0}
@@ -336,6 +339,7 @@ def one(target, analyzers, with_api, timeout, source_scan):
     rec = {"repo": repo, "set": target.get("set"), "lang": target.get("lang"),
            "commit": target.get("commit"), "started": time.time(),
            "analyzers": analyzers, "api_analyzer": bool(with_api),
+           "llm_model": os.environ.get("CISCO_LLM_MODEL") if ("llm" in analyzers or "behavioral" in analyzers) else None,
            "scanner": scanner_version(),
            "n_tools_expected": target.get("n_tools_probed")}
     try:
@@ -498,6 +502,11 @@ def main():
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--limit", type=int, default=0, help="scan at most N servers")
     ap.add_argument("--set", dest="only_set", default=None, help="restrict to set A or B")
+    ap.add_argument("--repos-file", default=None,
+                    help="exact repo names, one per line ('#' lines ignored); RESUMABLE: repos "
+                         "with an ok row in the index are skipped")
+    ap.add_argument("--exact", action="store_true", help="--only-repo entries are exact repo names")
+    ap.add_argument("--no-summary", action="store_true", help="skip the ToFu-vs-Cisco summary at the end")
     ap.add_argument("--only-repo", default=None,
                     help="comma-separated substrings; scan ONLY servers whose repo matches "
                          "one. Bypasses the done-set so you can re-scan named repos (e.g. to "
@@ -525,7 +534,19 @@ def main():
 
     done = {r["repo"] for r in read_jsonl(RUNS) if r.get("ok")}
     ready = [t for t in read_jsonl(PREPARED) if t.get("status") == "ready"]
-    if a.only_repo:
+    ready = list({t["repo"]: t for t in ready}.values())     # latest prepared row per repo wins
+    if a.repos_file:
+        want = [l.strip() for l in open(a.repos_file) if l.strip() and not l.startswith("#")]
+        by = {t["repo"]: t for t in ready}
+        miss = [r for r in want if r not in by]
+        if miss:
+            log(f"WARNING {len(miss)} listed repos not prepared here: {miss[:8]}")
+        targets = [by[r] for r in want if r in by and r not in done]
+        log(f"--repos-file: {len(want)} listed, {len(want) - len(targets) - len(miss)} already ok, {len(targets)} to scan")
+    elif a.only_repo and a.exact:
+        names = {p.strip() for p in a.only_repo.split(",") if p.strip()}
+        targets = [t for t in ready if t["repo"] in names]
+    elif a.only_repo:
         pats = [p.strip().lower() for p in a.only_repo.split(",") if p.strip()]
         targets = [t for t in ready if any(p in t["repo"].lower() for p in pats)]
         log(f"--only-repo {pats}: {len(targets)} servers (done-set bypassed for re-scan)")
@@ -537,7 +558,7 @@ def main():
         targets = targets[:a.limit]
     if not targets:
         log("nothing to do -- every prepared server is already scanned")
-        return summarize()
+        return None if a.no_summary else summarize()
 
     log(f"scanning {len(targets)} servers, workers={a.workers}, "
         f"timeout={a.timeout}s each")
@@ -556,7 +577,8 @@ def main():
         f"tools, {counter['errors']} errors, {(time.time()-t0)/3600:.2f} h")
     log(f"  raw json -> {OUT}")
     log(f"  index    -> {RUNS}")
-    summarize()
+    if not a.no_summary:
+        summarize()
 
 
 if __name__ == "__main__":
