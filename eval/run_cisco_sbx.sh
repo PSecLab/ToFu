@@ -29,7 +29,10 @@ bwrap --ro-bind / / --tmpfs /tmp -- /bin/true 2>/dev/null || { echo "bwrap canno
 TAG="${CISCO_TAG:-}"; [ -n "$TAG" ] || { echo "set CISCO_TAG (keeps this campaign's outputs separate)"; exit 1; }
 export CISCO_TAG="$TAG"
 export CISCO_LLM_MODEL="${CISCO_LLM_MODEL:-openai/gpt-4.1-mini}"          # llm analyzer (tool descriptions)
-export CISCO_BEHAVIORAL_MODEL="${CISCO_BEHAVIORAL_MODEL:-openai/gpt-4.1}"   # minis break Cisco's batch schema
+# behavioral: gpt-5.4-mini (Ananto: cheaper model). It keeps Cisco's batch response schema
+# (tmux-mcp 2026-09-29: 32/32 analysed, 0 inconclusive) but flagged 0 where gpt-4.1 flagged
+# execute-command HIGH -- lower recall; state it. gpt-4.1-mini/gpt-4o-mini: 20-26/32 inconclusive.
+export CISCO_BEHAVIORAL_MODEL="${CISCO_BEHAVIORAL_MODEL:-openai/gpt-5.4-mini}"
 export CISCO_LLM_TIMEOUT="${CISCO_LLM_TIMEOUT:-120}"
 ANALYZERS="${CISCO_ANALYZERS:-yara,llm,behavioral}"
 TIMEOUT="${CISCO_TIMEOUT:-1800}"

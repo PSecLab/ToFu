@@ -766,3 +766,17 @@ finished ones into the archive.
   and its 11 tools re-run (failed rows in quarantine-abl-*-obsidian-wiped.jsonl). NOTE for the unsafe
   list: obsidian-mcp is self-destructive (manage_folder/delete_note on its own tree). 5 live LLM calls
   in full (VM cache entries without seeds). PAPER_RESULTS.md / tables.tex rewritten on the 266.
+
+## item 27 (2026-09-29): Cisco yara+llm+behavioral campaign prepared (VM, tag c273)
+- eval/run_cisco_sbx.sh (bwrap per repo, private HOME, target copy, LLM ledger) over
+  Benchmarks/extraction/h2h_273_repos.txt. llm analyzer gpt-4.1-mini; behavioral gpt-5.4-mini (cheap).
+- SILENT-ZERO #1: in `stdio` mode the scanner never runs behavioral on source -- placeholder SAFE rows
+  (smoke: 85 LLM calls = 85 tools). SILENT-ZERO #2: the `behavioral` subcommand drops VULNERABILITY
+  rows. Fixed by eval/cisco_behavioral.py (direct BehavioralCodeAnalyzer, THREAT+VULNERABILITY kept).
+- Model check on tmux-mcp behavioral: gpt-4.1 -> execute-command HIGH VULNERABILITY; gpt-4.1-mini 23-26/32
+  inconclusive (drops required `summary` field); gpt-4o-mini 20/32 inconclusive; gpt-5-mini and
+  gpt-5.4-mini 32/32 SAFE, 0 inconclusive, 0 flagged. Cheap run = lower recall; report the model.
+- Extractor gap: memory-bank-mcp 8 functions for 15 tools (initialize_memory_bank not analysed).
+- Cisco AI Defense `api` analyzer: laptop .env CISCO_API_KEY (36 chars) -> 401 Unauthorized on
+  us/eu/ap inspect endpoints (30/30 each), and mcp-scanner STILL EXITS 0 on 401 (silent). Not usable
+  yet; key not copied to the VM. TO DOUBLE-CHECK: key type (inspection vs management API key).
