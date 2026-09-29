@@ -5,18 +5,19 @@
 \begin{table}[t]
 \centering
 \caption{Ablation of ToFu's LLM stages and seeds on 1,801 tools from 266 MCP servers (60\,s per tool).
-``Executed'' counts tools with at least one successful call.}
+``Executed'' counts tools with at least one successful call. Full ToFu: mean $\pm$ SD over three
+independent runs (range 427--436); other configurations: one run each.}
 \label{tab:ablation-stages}
 \small
 \begin{tabular}{lrrrr}
 \toprule
 Configuration & Executed & Bugs & Servers & $\Delta$ \\
 \midrule
-Full ToFu                    & 1,507 & \textbf{436} & 136 & --- \\
-No LLM seeds                 & 1,371 & 396 & 129 & $-9\%$ \\
-No LLM sanitizer selection   & 1,501 & 311 & 103 & $-29\%$ \\
-No LLM (both off)            & 1,369 & 293 & 100 & $-33\%$ \\
-No seeds (empty corpus)      & 1,258 & 244 &  93 & $-44\%$ \\
+Full ToFu (3 runs)           & 1,502 & \textbf{430}\,$\pm$\,5 & 136 & --- \\
+No LLM seeds                 & 1,371 & 396 & 129 & $-8\%$ \\
+No LLM sanitizer selection   & 1,501 & 311 & 103 & $-28\%$ \\
+No LLM (both off)            & 1,369 & 293 & 100 & $-32\%$ \\
+No seeds (empty corpus)      & 1,258 & 244 &  93 & $-43\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -75,6 +76,22 @@ Sanitizer $\wedge$ (success $\vee$ tracer) (ToFu) & \textbf{436} & 169 & 267 \\
 Tracers only                                       &  87 &  86 & 1$^\dagger$ \\
 No tracer (sanitizer $\wedge$ success)             & 373 & 107 & 266 \\
 No success requirement                             & 450 & 132 & 318 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Run-to-run variation of Full ToFu over three independent 60\,s runs on the same 1,801 tools.
+342 bugs are found by all three runs, 507 by at least one (pairwise Jaccard 0.75--0.81).}
+\label{tab:ablation-repeats}
+\small
+\begin{tabular}{lrrrr}
+\toprule
+ & Run 1 & Run 2 & Run 3 & Mean $\pm$ SD \\
+\midrule
+Bugs            &   436 &   428 &   427 & 430.3 $\pm$ 4.9 \\
+Tools executed  & 1,507 & 1,503 & 1,495 & 1,501.7 \\
 \bottomrule
 \end{tabular}
 \end{table}

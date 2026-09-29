@@ -1,7 +1,8 @@
 # Ablation study — paper-ready results (for the writing agent)
 
 Every number below is recomputed by `python3 findings/ablation_20260928/paper_numbers.py`
-(stage + oracle tables, output `paper_numbers.json`) and
+(stage + oracle tables, output `paper_numbers.json`), `repeat_numbers.py` (Full ToFu repeats,
+Table E, output `repeat_numbers.json`) and
 `python3 findings/ablation_20260928/allsan_labels/aggregate.py` (Table C, output
 `allsan_labels/allsan_label_summary.json`) from the committed indices in this directory.
 LaTeX tables: `tables.tex`. Write the paper as "we did X, the result is Y"; the section
@@ -66,16 +67,18 @@ LaTeX tables: `tables.tex`. Write the paper as "we did X, the result is Y"; the 
 
 ### Table A — LLM stages (2×2) and seeds
 
-| arm | tools executed | bugs | servers | Δ vs full | tools shared / new / lost vs full |
+| arm | tools executed | bugs | servers | Δ vs full mean | tools shared / new / lost vs full run 1 |
 |---|---|---|---|---|---|
-| Full ToFu | 1,507 | **436** | 136 | — | — |
-| No LLM seeds | 1,371 | 396 | 129 | −40 (−9%) | 345 / 51 / 91 |
-| No LLM selection | 1,501 | 311 | 103 | −125 (−29%) | 266 / 45 / 170 |
-| No LLM (both off) | 1,369 | 293 | 100 | −143 (−33%) | 245 / 48 / 191 |
-| No seeds | 1,258 | 244 | 93 | −192 (−44%) | 213 / 31 / 223 |
+| Full ToFu (3 runs) | 1,502 (1,495–1,507) | **430 ± 5** (427–436) | 136 † | — | — |
+| No LLM seeds | 1,371 | 396 | 129 | −34 (−8%) | 345 / 51 / 91 |
+| No LLM selection | 1,501 | 311 | 103 | −119 (−28%) | 266 / 45 / 170 |
+| No LLM (both off) | 1,369 | 293 | 100 | −137 (−32%) | 245 / 48 / 191 |
+| No seeds | 1,258 | 244 | 93 | −186 (−43%) | 213 / 31 / 223 |
 
-"Tools executed" = tools with ≥1 successful call (of 1,801). Median throughput is 43.1–46.1
-executions/s in every arm.
+"Tools executed" = tools with ≥1 successful call (of 1,801). Full ToFu = mean ± SD over three
+independent runs (range in parentheses); every other arm is one run. Median throughput is
+43.1–46.1 executions/s in every arm. † servers and the shared/new/lost columns, and Tables B–D,
+use Full run 1 (436 bugs) as the reference.
 
 ### Table B — bugs by class
 
@@ -112,6 +115,20 @@ reflected XSS 1. The SSRF group traces to a selection gap: for a JavaScript targ
 the runtime SSRF tracer, which only exists for Python targets, instead of the input-side URL
 sanitizer. Enabling every sanitizer buys those 13 at the cost of 486 false reports (~37 per real bug).
 
+### Table E — run-to-run variation of Full ToFu (three independent 60 s runs)
+
+| | run 1 | run 2 | run 3 | mean ± SD |
+|---|---|---|---|---|
+| bugs | 436 | 428 | 427 | 430.3 ± 4.9 |
+| tools executed | 1,507 | 1,503 | 1,495 | 1,501.7 |
+| path traversal / SSRF / reflected XSS / log injection | 100 / 38 / 207 / 80 | 102 / 40 / 196 / 81 | 100 / 46 / 189 / 83 | |
+
+Bugs found by all three runs: 342; by exactly two: 100; by only one: 65; by any: 507. Pairwise
+Jaccard overlap of the bug sets: 0.75–0.81. The total is stable (±1%), which bug-tool pairs are
+found varies: a single 60 s run is a sample of what the fuzzer can reach. Every ablation arm lies
+outside the Full ToFu range (427–436); the smallest effect, No LLM seeds (396), is 34 bugs
+(~7 SD) below the Full mean.
+
 ### Table D — oracle ablation (from the Full ToFu run)
 
 | oracle | bugs | Python | JavaScript | tools shared / new / lost vs full |
@@ -127,7 +144,7 @@ credential-pattern check on the tool's output.
 ## 3. Claims the data supports
 
 1. **The LLM is not all of ToFu.** With both LLM stages removed (zero LLM cost), ToFu still
-   reports 293 bugs, 67% of the full system (Table A).
+   reports 293 bugs, 68% of the full system (mean of three Full runs; Table A).
 2. **LLM seeds buy reach.** Without them, 136 fewer tools execute successfully even once
    (1,507 → 1,371; 64 Python, 72 JavaScript) and 40 fewer bugs are found.
 3. **LLM sanitizer selection buys bug classes, not volume.** Without selection, path traversal
@@ -159,9 +176,10 @@ credential-pattern check on the tool's output.
   "Full ToFu in the ablation is a single fresh 60 s run; the headline aggregates all campaigns."
   (Recompute: `python3 findings/ablation_20260928/headline_vs_ablation.py`.)
 
-- One run per arm. Run-to-run variation is being measured with two additional Full ToFu runs;
-  until then, report the −9% of "No LLM seeds" as indicative (the per-tool churn is visible in
-  the shared/new/lost columns).
+- Full ToFu was run three times (Table E); the other arms once each. Every arm's difference from
+  Full is far outside Full's own run-to-run range, so the conclusions do not depend on one run.
+  Per-bug identity varies between runs (Jaccard 0.75–0.81), so compare totals and classes, not
+  individual bugs, across arms.
 - Counts in Tables A, B, D are reported bugs under the same rule as the main evaluation. Only
   the All-sanitizers reports are labelled (Table C); Full ToFu's own 436 are not labelled here.
 
@@ -174,6 +192,9 @@ credential-pattern check on the tool's output.
   change since f608f20). Earlier 251-only numbers live in `ablation_report_20260928.md`.
 - Commits: abl-full rows 1–217 at be2529b, later rows f608f20 / e310654. The only runner change
   (a92dc8a, All-sanitizers crash fix) is unreachable in every other arm (`abl_commit_boundary.txt`).
+- Full repeats: `eval/run_full_repeats.sh`, 2026-09-28 ~21:30 to 2026-09-29 02:59, commit c821e98 (no runner
+  change since e310654), indices runs.abl-r2-full / runs.abl-r3-full, 0 live LLM calls, log
+  `full_repeats.log`; numbers `repeat_numbers.py` -> `repeat_numbers.json`.
 - newtype-01/obsidian-mcp deleted its own target directory while being fuzzed (inside the
   sandbox; nothing outside it was touched), so it could not start in nollm/noseeds/allsan. It was
   re-prepared before each of those three arms and its 11 tools re-run; the failed rows are kept
