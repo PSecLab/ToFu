@@ -406,14 +406,21 @@ def one(target, analyzers, with_api, timeout, source_scan):
             bout = os.path.join(OUT, slug + ".behavioral.json")
             src = target.get("cwd") or ROOT
             try:
+                benv = build_env(analyzers, with_api)
+                # behavioral needs a model that keeps Cisco's batch response schema: gpt-4.1-mini and
+                # gpt-4o-mini drop the required `summary` field -> functions routed to "errored"
+                # (tmux-mcp 2026-09-29: 26/32 inconclusive, 0 flagged; gpt-4.1: execute-command HIGH).
+                benv["MCP_SCANNER_LLM_MODEL"] = os.environ.get("CISCO_BEHAVIORAL_MODEL") or benv["MCP_SCANNER_LLM_MODEL"]
                 bp = subprocess.run([os.path.join(VBIN, "python"), os.path.join(ROOT, "eval", "cisco_behavioral.py"),
-                                     src, bout], cwd=ROOT, env=build_env(analyzers, with_api),
+                                     src, bout], cwd=ROOT, env=benv,
                                     capture_output=True, timeout=timeout)
                 if os.path.exists(bout):
                     b = json.load(open(bout))
                     rec["behavioral"] = {k: b.get(k) for k in ("n_analyzed_functions", "n_rows", "n_flagged",
                                          "flagged_by_class", "flagged_by_severity", "flagged_tools", "seconds", "error")}
                     rec["behavioral"]["raw"] = os.path.relpath(bout, ROOT)
+                    rec["behavioral"]["model"] = benv["MCP_SCANNER_LLM_MODEL"]
+                    rec["behavioral"]["n_inconclusive"] = sum(1 for r in b.get("rows", []) if (r.get("severity") or "").upper() == "UNKNOWN")
                     if b.get("error"):
                         rec["ok"] = False
                         rec["error"] = "behavioral: " + b["error"][:180]

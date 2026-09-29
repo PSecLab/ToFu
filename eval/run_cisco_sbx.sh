@@ -28,7 +28,8 @@ bwrap --ro-bind / / --tmpfs /tmp -- /bin/true 2>/dev/null || { echo "bwrap canno
 
 TAG="${CISCO_TAG:-}"; [ -n "$TAG" ] || { echo "set CISCO_TAG (keeps this campaign's outputs separate)"; exit 1; }
 export CISCO_TAG="$TAG"
-export CISCO_LLM_MODEL="${CISCO_LLM_MODEL:-openai/gpt-4.1-mini}"
+export CISCO_LLM_MODEL="${CISCO_LLM_MODEL:-openai/gpt-4.1-mini}"          # llm analyzer (tool descriptions)
+export CISCO_BEHAVIORAL_MODEL="${CISCO_BEHAVIORAL_MODEL:-openai/gpt-4.1}"   # minis break Cisco's batch schema
 export CISCO_LLM_TIMEOUT="${CISCO_LLM_TIMEOUT:-120}"
 ANALYZERS="${CISCO_ANALYZERS:-yara,llm,behavioral}"
 TIMEOUT="${CISCO_TIMEOUT:-1800}"
@@ -92,7 +93,7 @@ while [ $# -gt 0 ]; do
     *) REST+=("$1"); shift ;; esac
 done
 [ -n "$RFILE" ] && [ -f "$RFILE" ] || { echo "need --repos-file <list>"; exit 1; }
-echo "cisco(sbx): tag=$TAG analyzers=$ANALYZERS model=$CISCO_LLM_MODEL parallel=$PAR timeout=${TIMEOUT}s index=${IDX#$ROOT/}"
+echo "cisco(sbx): tag=$TAG analyzers=$ANALYZERS llm=$CISCO_LLM_MODEL behavioral=$CISCO_BEHAVIORAL_MODEL parallel=$PAR timeout=${TIMEOUT}s index=${IDX#$ROOT/}"
 
 STOPF="$OUTD/STOP"; rm -f "$STOPF"; TODO="$OUTD/.todo"
 "$ROOT/.venv/bin/python" - "$RFILE" "$IDX" "$ROOT/eval/state/prepared.jsonl" > "$TODO" <<'PYT'
@@ -164,7 +165,7 @@ for r in ok:
 print(f"cisco campaign: {len(rows)}/{len(want)} repos have a row, {len(ok)} ok, {len(rows) - len(ok)} failed; "
       f"yara/llm flagged {sum(1 for r in ok if r.get('n_tools_flagged'))} (per analyzer {dict(by)}); "
       f"behavioral flagged {sum(1 for r in ok if (r.get('behavioral') or {}).get('n_flagged'))} "
-      f"(repos per class {dict(bc)}); behavioral analyzed 0 functions on "
+      f"(repos per class {dict(bc)}); inconclusive functions {sum((r.get('behavioral') or {}).get('n_inconclusive') or 0 for r in ok)}; behavioral analyzed 0 functions on "
       f"{sum(1 for r in ok if r.get('behavioral') and not r['behavioral'].get('n_analyzed_functions'))}")
 PYS
 echo "cisco(sbx): pass done rc=$rc -- re-run the same command to retry failed/unfinished repos"
