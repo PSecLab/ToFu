@@ -349,13 +349,15 @@ def one(target, analyzers, with_api, timeout, source_scan):
         # belong to the subparser. The README's own example is
         #   mcp-scanner --stdio-timeout 180 stdio --stdio-command uvx ...
         # Getting this backwards makes argparse reject the whole call.
+        # behavioral is NOT run through `stdio`: there the scanner never reads source and emits
+        # placeholder SAFE rows (0 LLM calls, 2026-09-29). It runs separately below on the source
+        # via eval/cisco_behavioral.py, which also keeps the VULNERABILITY rows the CLI drops.
+        stdio_analyzers = [x for x in analyzers if x != "behavioral"] or ["yara"]
         cmd = [CLI,
-               "--analyzers", ",".join(analyzers),
+               "--analyzers", ",".join(stdio_analyzers),
                "--stdio-timeout", str(min(timeout, 300)),
                "--format", "raw",
                "--output", outfile]
-        if source_scan and "behavioral" in analyzers:
-            cmd += ["--source-path", target.get("cwd", ROOT)]
         cmd += ["stdio",
                 "--stdio-command", target["command"],
                 "--stderr-file", errfile]
@@ -400,6 +402,27 @@ def one(target, analyzers, with_api, timeout, source_scan):
         else:
             tail = [l for l in out.splitlines() if l.strip()][-1:] or ["no output"]
             rec.update(ok=False, error=tail[-1][:200])
+        if source_scan and "behavioral" in analyzers:
+            bout = os.path.join(OUT, slug + ".behavioral.json")
+            src = target.get("cwd") or ROOT
+            try:
+                bp = subprocess.run([os.path.join(VBIN, "python"), os.path.join(ROOT, "eval", "cisco_behavioral.py"),
+                                     src, bout], cwd=ROOT, env=build_env(analyzers, with_api),
+                                    capture_output=True, timeout=timeout)
+                if os.path.exists(bout):
+                    b = json.load(open(bout))
+                    rec["behavioral"] = {k: b.get(k) for k in ("n_analyzed_functions", "n_rows", "n_flagged",
+                                         "flagged_by_class", "flagged_by_severity", "flagged_tools", "seconds", "error")}
+                    rec["behavioral"]["raw"] = os.path.relpath(bout, ROOT)
+                    if b.get("error"):
+                        rec["ok"] = False
+                        rec["error"] = "behavioral: " + b["error"][:180]
+                else:
+                    rec["ok"] = False
+                    rec["error"] = "behavioral produced no output: " + (bp.stderr.decode(errors="ignore").strip().splitlines() or ["?"])[-1][:180]
+            except subprocess.TimeoutExpired:
+                rec["ok"] = False
+                rec["error"] = f"behavioral timeout after {timeout}s"
         rec["seconds"] = round(time.time() - t0, 1)
         with lock:
             counter["done"] += 1

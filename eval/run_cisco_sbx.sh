@@ -157,8 +157,15 @@ by = collections.Counter()
 for r in ok:
     for a, n in (r.get("findings_by_analyzer") or {}).items():
         if n: by[a] += 1
+bc = collections.Counter()
+for r in ok:
+    for c, n in ((r.get("behavioral") or {}).get("flagged_by_class") or {}).items():
+        if n: bc[c] += 1
 print(f"cisco campaign: {len(rows)}/{len(want)} repos have a row, {len(ok)} ok, {len(rows) - len(ok)} failed; "
-      f"flagged {sum(1 for r in ok if r.get('n_tools_flagged'))}; repos flagged per analyzer {dict(by)}")
+      f"yara/llm flagged {sum(1 for r in ok if r.get('n_tools_flagged'))} (per analyzer {dict(by)}); "
+      f"behavioral flagged {sum(1 for r in ok if (r.get('behavioral') or {}).get('n_flagged'))} "
+      f"(repos per class {dict(bc)}); behavioral analyzed 0 functions on "
+      f"{sum(1 for r in ok if r.get('behavioral') and not r['behavioral'].get('n_analyzed_functions'))}")
 PYS
 echo "cisco(sbx): pass done rc=$rc -- re-run the same command to retry failed/unfinished repos"
 cache_report; exit $rc
