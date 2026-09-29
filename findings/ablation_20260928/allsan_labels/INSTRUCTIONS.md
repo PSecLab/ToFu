@@ -51,6 +51,10 @@ target code.
 - **data-exfiltration**: a sensitive file chosen by the input is read and its content is
   sent to an outbound destination in the same call.
 
+- **hardcoded-creds** (added 2026-09-28): TP if the source contains a real credential/secret
+  literal used for authentication (API key, token, password) that ships with the server; FP if it
+  is a placeholder, example, test fixture, or the value came from the caller / environment.
+
 ## Coordinator decisions carried over from the 2026-09-27 study
 - Template-brace-only echoes (no markup) into plain text/JSON/errors/generated code = FP.
 - A label may rest on code when the alert itself was incidental but the code confirms the same

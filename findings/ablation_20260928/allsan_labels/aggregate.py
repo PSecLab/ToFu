@@ -3,9 +3,12 @@
 allsan TP/TP-low on a tool the full arm did not flag, or flagged with a different class."""
 import collections, glob, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-E = {x["id"]: x for x in json.load(open(os.path.join(HERE, "allsan_evidence.json")))}
+E = {}
+for fn in ("allsan_evidence.json", "allsan_evidence15.json"):   # 251 set (ids 1-928) + 15 added repos (ids 1001+)
+    if os.path.exists(os.path.join(HERE, fn)):
+        E.update({x["id"]: x for x in json.load(open(os.path.join(HERE, fn)))})
 L = {}
-for f in sorted(glob.glob(os.path.join(HERE, "labels", "g*.json"))):
+for f in sorted(glob.glob(os.path.join(HERE, "labels", "*.json"))):
     for x in json.load(open(f)): L[x["id"]] = x
 missing = sorted(set(E) - set(L)); extra = sorted(set(L) - set(E))
 out = {"n_items": len(E), "n_labelled": len(L), "missing": missing, "extra": extra}

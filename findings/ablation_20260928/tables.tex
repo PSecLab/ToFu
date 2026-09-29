@@ -1,21 +1,22 @@
-% Ablation tables -- numbers from findings/ablation_20260928/paper_numbers.py (do not hand-edit numbers)
+% Ablation tables -- 266 servers / 1,801 tools (H2H-273 minus 7 host-control servers).
+% Numbers from paper_numbers.py and allsan_labels/aggregate.py (do not hand-edit numbers).
 % Requires \usepackage{booktabs}
 
 \begin{table}[t]
 \centering
-\caption{Ablation of ToFu's LLM stages and seeds on 1,672 tools from 251 MCP servers (60\,s per tool).
+\caption{Ablation of ToFu's LLM stages and seeds on 1,801 tools from 266 MCP servers (60\,s per tool).
 ``Executed'' counts tools with at least one successful call.}
 \label{tab:ablation-stages}
 \small
 \begin{tabular}{lrrrr}
 \toprule
-Configuration & Executed & Bugs & Repos & $\Delta$ \\
+Configuration & Executed & Bugs & Servers & $\Delta$ \\
 \midrule
-Full ToFu                    & 1,450 & \textbf{408} & 130 & --- \\
-No LLM seeds                 & 1,328 & 369 & 124 & $-10\%$ \\
-No LLM sanitizer selection   & 1,455 & 303 &  98 & $-26\%$ \\
-No LLM (both off)            & 1,321 & 286 &  96 & $-30\%$ \\
-No seeds (empty corpus)      & 1,209 & 223 &  89 & $-45\%$ \\
+Full ToFu                    & 1,507 & \textbf{436} & 136 & --- \\
+No LLM seeds                 & 1,371 & 396 & 129 & $-9\%$ \\
+No LLM sanitizer selection   & 1,501 & 311 & 103 & $-29\%$ \\
+No LLM (both off)            & 1,369 & 293 & 100 & $-33\%$ \\
+No seeds (empty corpus)      & 1,258 & 244 &  93 & $-44\%$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -25,42 +26,23 @@ No seeds (empty corpus)      & 1,209 & 223 &  89 & $-45\%$ \\
 \caption{Bugs by class per configuration.}
 \label{tab:ablation-classes}
 \small
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Class & Full & No LLM seeds & No LLM sel. & No LLM & No seeds \\
+Class & Full & No LLM seeds & No LLM sel. & No LLM & No seeds & All san. \\
 \midrule
-Path traversal        &  95 &  85 &   0 &   0 &   1 \\
-SSRF                  &  24 &  27 &   4 &   0 &  27 \\
-OS command injection  &   4 &   2 &   0 &   0 &   2 \\
-Reflected XSS         & 200 & 189 & 230 & 226 & 117 \\
-Log injection         &  80 &  63 &  64 &  56 &  73 \\
-Data exfiltration     &   4 &   2 &   4 &   2 &   1 \\
-Insecure temp file    &   1 &   1 &   1 &   2 &   2 \\
+Path traversal         & 100 &  91 &   0 &   0 &   1 & 169 \\
+SSRF                   &  38 &  43 &   4 &   0 &  42 &  58 \\
+OS command injection   &   4 &   2 &   0 &   0 &   2 &  38 \\
+Reflected XSS          & 207 & 194 & 237 & 233 & 122 & 193 \\
+Log injection          &  80 &  63 &  64 &  56 &  73 & 496 \\
+Data exfiltration      &   4 &   2 &   4 &   2 &   1 &   4 \\
+Insecure temp file     &   2 &   1 &   1 &   2 &   2 &   1 \\
+Hard-coded credentials &   1 &   0 &   1 &   0 &   1 &   1 \\
 \midrule
-Total                 & 408 & 369 & 303 & 286 & 223 \\
+Total                  & 436 & 396 & 311 & 293 & 244 & 960 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-\begin{table}[t]
-\centering
-\caption{Oracle ablation, recomputed from the Full ToFu run. $^\dagger$No tracer exists for
-out-of-process JavaScript targets (0 by construction).}
-\label{tab:ablation-oracle}
-\small
-\begin{tabular}{lrrr}
-\toprule
-Oracle & Bugs & Python & JavaScript \\
-\midrule
-Sanitizer $\wedge$ (success $\vee$ tracer) (ToFu) & \textbf{408} & 154 & 254 \\
-Tracers only                                       &  85 &  85 & 0$^\dagger$ \\
-No tracer (sanitizer $\wedge$ success)             & 347 &  93 & 254 \\
-No success requirement                             & 408 & 118 & 290 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-% All-sanitizers precision: see PAPER_RESULTS.md Table C (census, allsan_labels/REPORT.md)
 
 \begin{table}[t]
 \centering
@@ -72,9 +54,27 @@ Real = true positive (strict); lenient adds low-impact / documented-purpose find
 \toprule
 All-sanitizers reports & $n$ & Real & Real (lenient) & False pos. \\
 \midrule
-All                                  & 928 & 42 & 182 & 746 \\
-On tools ToFu also flagged           & 393 & 29 & 129 & 264 \\
-On tools ToFu did not flag           & 535 & 13 &  53 & 482 \\
+All                            & 960 & 47 & 188 & 772 \\
+On tools ToFu also flagged     & 421 & 34 & 135 & 286 \\
+On tools ToFu did not flag     & 539 & 13 &  53 & 486 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Oracle ablation, recomputed from the Full ToFu run. $^\dagger$No runtime tracer exists for
+out-of-process JavaScript targets; the single row is a credential-pattern check on tool output.}
+\label{tab:ablation-oracle}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Oracle & Bugs & Python & JavaScript \\
+\midrule
+Sanitizer $\wedge$ (success $\vee$ tracer) (ToFu) & \textbf{436} & 169 & 267 \\
+Tracers only                                       &  87 &  86 & 1$^\dagger$ \\
+No tracer (sanitizer $\wedge$ success)             & 373 & 107 & 266 \\
+No success requirement                             & 450 & 132 & 318 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -1,22 +1,26 @@
 # Ablation study — paper-ready results (for the writing agent)
 
 Every number below is recomputed by `python3 findings/ablation_20260928/paper_numbers.py`
-from the committed indices `runs.abl-*.jsonl` in this directory (output: `paper_numbers.json`).
+(stage + oracle tables, output `paper_numbers.json`) and
+`python3 findings/ablation_20260928/allsan_labels/aggregate.py` (Table C, output
+`allsan_labels/allsan_label_summary.json`) from the committed indices in this directory.
 LaTeX tables: `tables.tex`. Write the paper as "we did X, the result is Y"; the section
 "Internal provenance" at the bottom is NOT paper material.
 
 ## 1. Setup (what to say in the methodology)
 
-- **Targets.** The 251 MCP server repositories on which ToFu executed at least one tool call
-  successfully in the main 60 s evaluation; all 1,672 tools (configs) of those repositories.
+- **Targets.** The 273-repository head-to-head set. As for every dynamic tool in the comparison
+  (ToFu, Viper, ToolFuzz), the 7 host-control servers (shell/terminal, tmux, Frida, device and
+  desktop control) are not executed, leaving **266 MCP servers and all 1,801 of their tools**.
   Every arm runs on exactly this set.
 - **Budget and platform.** 60 s of fuzzing per tool, 12 parallel workers, one Linux host
   (16 threads, 32 GB), every target inside a bubblewrap filesystem sandbox.
 - **Holding the other stage fixed.** LLM output (gpt-4.1, temperature 0, fixed seed) is recorded
   once and replayed. When one LLM stage is removed, the other stage receives exactly the LLM
   output of the full configuration, so each difference is attributable to the removed stage.
-  No arm made a live LLM call.
-- **Bug counting.** Same rule as the main results: one bug per (repository, tool), classed by the
+  Only the full configuration may call the LLM (it did for 5 tools with no recorded seeds); no
+  ablated arm made a live LLM call.
+- **Bug counting.** Same rule as the main results: one bug per (server, tool), classed by the
   most severe security-relevant sanitizer that fired.
 - **Arms.**
   | arm | LLM seeds | LLM sanitizer selection | notes |
@@ -46,92 +50,99 @@ LaTeX tables: `tables.tex`. Write the paper as "we did X, the result is Y"; the 
   bug when a sanitizer flags the input AND the tool returns success, OR when the runtime tracer
   observes the dangerous operation. We recompute the bug set with (a) tracers only, (b) the
   tracer removed (sanitizer + success only), (c) the success requirement removed (every
-  sanitizer fire counts; failed executions included). The tracer exists only for Python targets
-  (in-process); JavaScript targets run out of process, so tracers-only is 0 for JS **by
-  construction** — say so in the table, do not present it as a finding.
+  sanitizer fire counts; failed executions included). The runtime tracer exists only for Python
+  targets (in-process); JavaScript targets run out of process, so tracers-only is ~0 for JS **by
+  construction** (the single JS row is a credential-pattern check on the tool's output, not a
+  runtime observation) — say so in the table, do not present it as a finding.
+- **Labelling the All-sanitizers reports (Table C).** Every report (census, 960) was labelled
+  TP / TP-low / FP from its run evidence (triggering input, tool output, sanitizer analysis) and
+  the server's source at the fuzzed commit, never by re-running targets. Rubric per class (e.g.
+  log injection needs CR/LF from the caller's argument to reach a logger; path traversal needs the
+  argument to reach a file operation without containment). TP-low = real but low impact, or the
+  tool's documented purpose. Labelling was LLM-assisted with a fixed rubric and author
+  spot-checks; state this.
 
 ## 2. Results
 
 ### Table A — LLM stages (2×2) and seeds
 
-| arm | tools executed | bugs | repos | Δ vs full | tools shared / new / lost vs full |
+| arm | tools executed | bugs | servers | Δ vs full | tools shared / new / lost vs full |
 |---|---|---|---|---|---|
-| Full ToFu | 1,450 | **408** | 130 | — | — |
-| No LLM seeds | 1,328 | 369 | 124 | −39 (−10%) | 321 / 48 / 87 |
-| No LLM selection | 1,455 | 303 | 98 | −105 (−26%) | 259 / 44 / 149 |
-| No LLM (both off) | 1,321 | 286 | 96 | −122 (−30%) | 239 / 47 / 169 |
-| No seeds | 1,209 | 223 | 89 | −185 (−45%) | 195 / 28 / 213 |
+| Full ToFu | 1,507 | **436** | 136 | — | — |
+| No LLM seeds | 1,371 | 396 | 129 | −40 (−9%) | 345 / 51 / 91 |
+| No LLM selection | 1,501 | 311 | 103 | −125 (−29%) | 266 / 45 / 170 |
+| No LLM (both off) | 1,369 | 293 | 100 | −143 (−33%) | 245 / 48 / 191 |
+| No seeds | 1,258 | 244 | 93 | −192 (−44%) | 213 / 31 / 223 |
 
-"Tools executed" = tools with ≥1 successful call (of 1,672). Median throughput is 44.6–46.3
+"Tools executed" = tools with ≥1 successful call (of 1,801). Median throughput is 43.1–46.1
 executions/s in every arm.
 
 ### Table B — bugs by class
 
 | class | Full | No LLM seeds | No LLM selection | No LLM | No seeds | All sanitizers |
 |---|---|---|---|---|---|---|
-| path traversal | 95 | 85 | 0 | 0 | 1 | 148 |
-| SSRF | 24 | 27 | 4 | 0 | 27 | 58 |
+| path traversal | 100 | 91 | 0 | 0 | 1 | 169 |
+| SSRF | 38 | 43 | 4 | 0 | 42 | 58 |
 | OS command injection | 4 | 2 | 0 | 0 | 2 | 38 |
-| reflected XSS | 200 | 189 | 230 | 226 | 117 | 187 |
-| log injection | 80 | 63 | 64 | 56 | 73 | 492 |
+| reflected XSS | 207 | 194 | 237 | 233 | 122 | 193 |
+| log injection | 80 | 63 | 64 | 56 | 73 | 496 |
 | data exfiltration | 4 | 2 | 4 | 2 | 1 | 4 |
-| insecure temp file | 1 | 1 | 1 | 2 | 2 | 1 |
-| **total** | **408** | **369** | **303** | **286** | **223** | **928** |
+| insecure temp file | 2 | 1 | 1 | 2 | 2 | 1 |
+| hard-coded credentials | 1 | 0 | 1 | 0 | 1 | 1 |
+| **total** | **436** | **396** | **311** | **293** | **244** | **960** |
 
-### Table C — All sanitizers enabled
+### Table C — All sanitizers enabled (every report labelled)
 
 | | Full ToFu (LLM selection) | All 73 sanitizers |
 |---|---|---|
-| tools executed | 1,450 | 1,456 |
-| median executions/s | 45.7 | 45.9 |
-| reported bugs | 408 | 928 |
-| tools shared / new / lost | — | 393 / 535 / 15 |
-
-**Labelled (census of all 928 reports; `allsan_labels/REPORT.md`).**
+| tools executed | 1,507 | 1,512 |
+| median executions/s | 43.1 | 43.5 |
+| reported bugs | 436 | 960 |
 
 | All-sanitizers reports | n | real (strict) | real (lenient) | false positives |
 |---|---|---|---|---|
-| all | 928 | 42 (4.5%) | 182 (19.6%) | 746 |
-| on tools Full ToFu also flagged | 393 | 29 (7.4%) | 129 (32.8%) | 264 |
-| on tools Full ToFu did not flag | 535 | 13 (2.4%) | 53 (9.9%) | 482 (90.1%) |
+| all | 960 | 47 (4.9%) | 188 (19.6%) | 772 |
+| on tools Full ToFu also flagged | 421 | 34 (8.1%) | 135 (32.1%) | 286 |
+| **on tools Full ToFu did not flag** | **539** | **13 (2.4%)** | **53 (9.8%)** | **486 (90.2%)** |
 
-Strict = TP; lenient = TP + TP-low (real but low impact or the tool's documented purpose).
+Strict = TP; lenient = TP + TP-low.
 **Full ToFu's false negatives** relative to All-sanitizers: 13 real bugs (strict; 53 lenient) on
-tools Full ToFu did not flag, in 5 repositories. The largest group, 5 SSRF bugs in one
-WordPress server, traces to a selection gap: for a JavaScript target the LLM chose the runtime
-SSRF tracer, which only exists for Python targets, instead of the input-side URL sanitizer.
-Enabling every sanitizer buys those 13 at the cost of 482 false reports (~37 per real bug).
+tools Full ToFu did not flag, in 5 servers: SSRF 5 (one WordPress server), log injection 7,
+reflected XSS 1. The SSRF group traces to a selection gap: for a JavaScript target the LLM chose
+the runtime SSRF tracer, which only exists for Python targets, instead of the input-side URL
+sanitizer. Enabling every sanitizer buys those 13 at the cost of 486 false reports (~37 per real bug).
 
 ### Table D — oracle ablation (from the Full ToFu run)
 
 | oracle | bugs | Python | JavaScript | tools shared / new / lost vs full |
 |---|---|---|---|---|
-| Full: sanitizer ∧ (success ∨ tracer) | 408 | 154 | 254 | — |
-| Tracers only | 85 | 85 | 0 † | 85 / 0 / 323 |
-| No tracer (sanitizer ∧ success) | 347 | 93 | 254 | 347 / 0 / 61 |
-| No success requirement | 408 | 118 | 290 | 357 / 51 / 51 |
+| Full: sanitizer ∧ (success ∨ tracer) | 436 | 169 | 267 | — |
+| Tracers only | 87 | 86 | 1 † | 87 / 0 / 349 |
+| No tracer (sanitizer ∧ success) | 373 | 107 | 266 | 373 / 0 / 63 |
+| No success requirement | 450 | 132 | 318 | 383 / 67 / 53 |
 
-† No tracer exists for JavaScript targets; 0 by construction.
+† No runtime tracer exists for out-of-process JavaScript targets; the single row is a
+credential-pattern check on the tool's output.
 
 ## 3. Claims the data supports
 
 1. **The LLM is not all of ToFu.** With both LLM stages removed (zero LLM cost), ToFu still
-   reports 286 bugs, 70% of the full system (Table A).
-2. **LLM seeds buy reach.** Without them, 122 fewer tools execute successfully even once
-   (1,450 → 1,328; 64 Python, 58 JavaScript) and 39 fewer bugs are found.
+   reports 293 bugs, 67% of the full system (Table A).
+2. **LLM seeds buy reach.** Without them, 136 fewer tools execute successfully even once
+   (1,507 → 1,371; 64 Python, 72 JavaScript) and 40 fewer bugs are found.
 3. **LLM sanitizer selection buys bug classes, not volume.** Without selection, path traversal
-   drops 95 → 0, SSRF 24 → 4 and command injection 4 → 0 (Table B). The bugs that remain are
+   drops 100 → 0, SSRF 38 → 4 and command injection 4 → 0 (Table B). The bugs that remain are
    almost entirely reflected XSS and log injection, whose checks run on every call regardless
    of selection.
-4. **Seeds matter more than either LLM stage alone.** An empty corpus loses 45% of the bugs and
-   241 executing tools. With LLM selection kept in both, the deterministic seeds recover 146 of
-   those 185 bugs without an LLM (No LLM seeds: 369 vs No seeds: 223).
-5. **The runtime tracer contributes bugs no outcome check sees.** Removing it loses 61 bugs, all
-   Python (Table D).
+4. **Seeds matter more than either LLM stage alone.** An empty corpus loses 44% of the bugs and
+   249 executing tools. With LLM selection kept in both, the deterministic seeds recover 152 of
+   those 192 bugs without an LLM (No LLM seeds: 396 vs No seeds: 244).
+5. **The runtime tracer contributes bugs no outcome check sees.** Removing it loses 63 bugs,
+   62 of them Python (Table D).
 6. **Selection is about precision, not speed.** Enabling all 73 sanitizers leaves throughput
-   unchanged (45.9 vs 45.7 exec/s), so do NOT argue that selection saves time. It more than
-   doubles the reports (928 vs 408), but 90% of the additional reports are false positives: 13 real
-   bugs (strict) for 482 false reports (Table C).
+   unchanged (43.5 vs 43.1 exec/s), so do NOT argue that selection saves time. It more than
+   doubles the reports (960 vs 436), but 90% of the additional reports are false positives:
+   13 real bugs (strict) for 486 false reports (Table C).
 7. **Selection has a measurable miss.** Full ToFu misses 13 real bugs that All-sanitizers finds;
    5 are one server's SSRF, missed because the LLM chose a Python-only tracer for a JavaScript
    target. State this as a limitation / future work (language-aware selection).
@@ -139,18 +150,24 @@ Enabling every sanitizer buys those 13 at the cost of 482 false reports (~37 per
 ## 4. Caveats to state
 
 - One run per arm. Run-to-run variation is being measured with two additional Full ToFu runs;
-  until then, report the −10% of "No LLM seeds" as indicative (the per-tool churn is visible
-  in the shared/new/lost columns).
-- Labelling (Table C) is by LLM agents applying a fixed rubric to run evidence + source at the
-  fuzzed commit, with coordinator spot-checks; say so in the methodology.
-- Counts are reported bugs under the same rule as the main evaluation; precision applies to
-  every arm equally.
+  until then, report the −9% of "No LLM seeds" as indicative (the per-tool churn is visible in
+  the shared/new/lost columns).
+- Counts in Tables A, B, D are reported bugs under the same rule as the main evaluation. Only
+  the All-sanitizers reports are labelled (Table C); Full ToFu's own 436 are not labelled here.
 
 ## Internal provenance (not paper material)
 
-- PSU PC, 2026-09-28 04:28–~17:50, tmux `ablation`, `eval/run_ablation.sh`; health checks
-  `eval/ablation_check.py` (switches recorded per row, cache hits, 0 live LLM calls).
-- Commits: abl-full rows 1–217 at be2529b, all later rows at f608f20. The only runner change
-  between them (a92dc8a, All-sanitizers crash fix) is unreachable in every other arm
-  (`abl_commit_boundary.txt`, nazmul.todo items 25/28).
-- Replay cache `eval/state/llm_cache_ablation` (PC): 1,672 entries, never written during the campaign.
+- PSU PC, 2026-09-28, tmux `ablation`, `eval/run_ablation.sh`; health checks
+  `eval/ablation_check.py` (switches recorded per row, cache hits, 0 live LLM calls in ablated arms).
+- Scope history: first run on the 251 repos / 1,672 tools; extended the same day with the 15
+  repos / 129 tools that complete the 266 dynamic set (same code, commit e310654, no `src/`
+  change since f608f20). Earlier 251-only numbers live in `ablation_report_20260928.md`.
+- Commits: abl-full rows 1–217 at be2529b, later rows f608f20 / e310654. The only runner change
+  (a92dc8a, All-sanitizers crash fix) is unreachable in every other arm (`abl_commit_boundary.txt`).
+- newtype-01/obsidian-mcp deleted its own target directory while being fuzzed (inside the
+  sandbox; nothing outside it was touched), so it could not start in nollm/noseeds/allsan. It was
+  re-prepared before each of those three arms and its 11 tools re-run; the failed rows are kept
+  in `quarantine-abl-*-obsidian-wiped.jsonl`.
+- ToolFuzz shards from another session ran on the same PC until 04:29–04:43, overlapping the
+  first ~15 min of abl-full (LLM-bound, low CPU).
+- Replay cache `eval/state/llm_cache_ablation` (PC): 1,801 entries.

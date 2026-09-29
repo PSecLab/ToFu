@@ -1,0 +1,1402 @@
+[
+ {
+  "repo": "3mdistal/css-mcp-server",
+  "tool": "write_to_memory",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "9e37d085f922e9db1fd94090bf99d76131e5dd7b",
+  "config": "3mdistal__css-mcp-server__write_to_memory",
+  "target": "/scratch/tofu/eval/targets/3mdistal__css-mcp-server",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_reflected_output"
+  ],
+  "n_exec": 2560,
+  "n_success": 2554,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'concept': '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'known': False}",
+    "output": "{'content': [{'type': 'text', 'text': 'Memory updated successfully for concept: {{{{{{{{{{{{{{{{{{{{{{{{{{{{{'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   },
+   {
+    "input": "{'concept': '{{{{{{{{{{{{{\"{{{{{{{{{{{{{{{', 'known': False}",
+    "output": "{'content': [{'type': 'text', 'text': 'Memory updated successfully for concept: {{{{{{{{{{{{{\"{{{{{{{{{{{{{{{'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   }
+  ],
+  "n_ev": 2,
+  "id": 1001
+ },
+ {
+  "repo": "AbdelStark/bitcoin-mcp",
+  "tool": "validate_address",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "0bedf2053d6ac9a3d6ec3860582736fcd3589658",
+  "config": "AbdelStark__bitcoin-mcp__validate_address",
+  "target": "/scratch/tofu/eval/targets/AbdelStark__bitcoin-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_reflected_output"
+  ],
+  "n_exec": 3072,
+  "n_success": 1807,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'address': '${7*7}'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Address ${7*7} is invalid'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   },
+   {
+    "input": "{'address': '{{{{{{{{{{{{'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Address {{{{{{{{{{{{ is invalid'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   },
+   {
+    "input": "{'address': '{{{\\x03\\x04\\x04\\x04\\x04\\x04\\x04{{'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Address {{{\\x03\\x04\\x04\\x04\\x04\\x04\\x04{{ is invalid'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1002
+ },
+ {
+  "repo": "Alec2435/python_mcp",
+  "tool": "python_repl",
+  "cls": "log-injection",
+  "lang": "python",
+  "commit": "9aee64bcca5b439355eb4e42b44e2c48dbf6da8c",
+  "config": "Alec2435__python_mcp__python_repl",
+  "target": "/scratch/tofu/eval/targets/Alec2435__python_mcp",
+  "triggered": [
+   "check_file_access",
+   "check_introspection_code_injection",
+   "check_introspection_command_injection",
+   "check_introspection_incomplete_cleanup",
+   "check_introspection_path_traversal",
+   "check_introspection_sensitive_data_logging",
+   "check_introspection_sensitive_file_access",
+   "check_introspection_sql_injection",
+   "check_introspection_temp_file_leak",
+   "check_invalid_json",
+   "check_log_injection",
+   "check_resource_exhaustion",
+   "check_temp_file_leak"
+  ],
+  "n_exec": 512,
+  "n_success": 512,
+  "full_class": "insecure-temp-file",
+  "full_triggered": [
+   "check_file_access",
+   "check_introspection_code_injection",
+   "check_introspection_command_injection",
+   "check_introspection_incomplete_cleanup",
+   "check_introspection_path_traversal",
+   "check_introspection_sensitive_data_logging",
+   "check_introspection_sensitive_file_access",
+   "check_introspection_sql_injection",
+   "check_introspection_temp_file_leak",
+   "check_resource_exhaustion"
+  ],
+  "evidence": [
+   {
+    "input": "",
+    "output": "",
+    "analysis": "[Sequence Step 1/1] Introspection Code Injection Alert (CWE-94): Dynamic code evaluation detected! Invoked via 'eval': 'import pickle; pickle.loads(b'cos",
+    "sanitizers": "['check_introspection_code_injection', 'check_log_injection']"
+   },
+   {
+    "input": "{'code': '\"code\": \"2/0\", \"sevvvvvvvvvvvvvvvvode\": \"2/0\", vvrvvssi\\x11\\r_id\": \"sess7', 'session_id': ''}",
+    "output": "'NOTE THE USER DOES NOT SEE THIS OUTPUT, MAKE SURE TO FORMAT IT APPROPRIATELY IN YOUR RESPONSE TO THE USER\\n\\nTraceback (most recent call last):\\n  File \"/scratch/tofu/eval/targets/Alec2435__python_mcp/src/python_local/server.py\", line 31, in execute\\n    result = eval(code, self.locals)\\n  File \"/scratch/tofu/src/sanitizers/introspection.py\", line 526, in traced_eval\\n    return tracer_self._orig_eval(source, globals)\\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\\n  File \"<string>\", line ",
+    "analysis": "[Sequence Step 1/1] Introspection Code Injection Alert (CWE-94): Dynamic code evaluation detected! Invoked via 'eval': '\"code\": \"2/0\", \"sevvvvvvvvvvvvvvvvode\": \"2/0\", vvrvvssi\u0011",
+    "sanitizers": "['check_introspection_code_injection', 'check_log_injection']"
+   },
+   {
+    "input": "{'code': '\"code\": \"open()\\x00\\x00\\x00\\x00d()\", \"sessi\\n\\x11 \\x16d\": \"sess0', 'session_id': ''}",
+    "output": "'NOTE THE USER DOES NOT SEE THIS OUTPUT, MAKE SURE TO FORMAT IT APPROPRIATELY IN YOUR RESPONSE TO THE USER\\n\\nTraceback (most recent call last):\\n  File \"/scratch/tofu/eval/targets/Alec2435__python_mcp/src/python_local/server.py\", line 31, in execute\\n    result = eval(code, self.locals)\\n  File \"/scratch/tofu/src/sanitizers/introspection.py\", line 526, in traced_eval\\n    return tracer_self._orig_eval(source, globals)\\n           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^\\nSyntaxError: source code",
+    "analysis": "[Sequence Step 1/1] Introspection Code Injection Alert (CWE-94): Dynamic code evaluation detected! Invoked via 'eval': '\"code\": \"open()\u0000\u0000\u0000\u0000d()\", \"sessi",
+    "sanitizers": "['check_introspection_code_injection', 'check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1003
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "add_site",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__add_site",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00'}",
+    "output": "'Safety: add_site is a destructive operation that modifies your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '../../../../etc/passwd'}",
+    "output": "'Safety: add_site is a destructive operation that modifies your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as m",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "'Safety: add_site is a destructive operation that modifies your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1004
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "batch_url_inspection",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__batch_url_inspection",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 4096,
+  "n_success": 4096,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'sc-domain:example.com', 'urls': 'file:///etc/passwd\\nfile://C:/windows/win.ini'}",
+    "output": "\"Error performing batch inspection: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/tar",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection']"
+   },
+   {
+    "input": "{'site_url': 'ftp://example.com/', 'urls': 'http://192.168.1.1:8080\\nhttp://example.com/../../../../etc/shadow'}",
+    "output": "\"Error performing batch inspection: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/tar",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'urls': '../../../../etc/passwd\\n..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini\\n/etc/passwd\\x00'}",
+    "output": "\"Error performing batch inspection: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/tar",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1005
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "check_indexing_issues",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__check_indexing_issues",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 4096,
+  "n_success": 4096,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'https://example.com/', 'urls': 'file:///etc/passwd'}",
+    "output": "\"Error checking indexing issues: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/target",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'http://127.0.0.1:8080', 'urls': 'https://example.com/../../../../etc/passwd'}",
+    "output": "\"Error checking indexing issues: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/target",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'sc-domain:example.com', 'urls': '../../../../etc/passwd\\n..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini\\n/etc/passwd\\x00'}",
+    "output": "\"Error checking indexing issues: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/target",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1006
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "compare_search_periods",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__compare_search_periods",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 4096,
+  "n_success": 4088,
+  "full_class": null,
+  "full_triggered": [
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '../../../../etc/passwd', 'period1_start': '2023-05-01', 'period1_end': '2023-05-31', 'period2_start': '2023-06-01', 'period2_end': '2023-06-30', 'dimensions': 'device', 'limit': 1000000}",
+    "output": "\"Error comparing search periods: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/target",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 1,
+  "id": 1007
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "delete_site",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__delete_site",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 4096,
+  "n_success": 4096,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00'}",
+    "output": "'Safety: delete_site permanently removes a property from your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '../../../../etc/passwd'}",
+    "output": "'Safety: delete_site permanently removes a property from your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as m",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "'Safety: delete_site permanently removes a property from your GSC account. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip",
+    "sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1008
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "delete_sitemap",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__delete_sitemap",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3582,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_strict_url_security_contract",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '/etc/passwd\\x00'}",
+    "output": "'Safety: delete_sitemap permanently removes a sitemap from GSC. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '../../../../etc/passwd'}",
+    "output": "'Safety: delete_sitemap permanently removes a sitemap from GSC. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "'Safety: delete_sitemap permanently removes a sitemap from GSC. Set GSC_ALLOW_DESTRUCTIVE=true in your environment to enable add/delete tools.'",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1009
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_advanced_search_analytics",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_advanced_search_analytics",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3072,
+  "n_success": 3062,
+  "full_class": null,
+  "full_triggered": [
+   "check_invalid_json"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00', 'start_date': '2023-07-01', 'end_date': '2023-07-31', 'dimensions': 'query,page,device', 'search_type': 'WEB', 'row_limit': 1, 'start_row': 0, 'sort_by': 'clicks', 'sort_direction': 'descending', 'filter_dimension': 'query', 'filter_operator': 'contains', 'filter_expression': 'test', 'filters': 'notAJsonArray', 'data_state': 'all'}",
+    "output": "\"Error retrieving advanced search analytics: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 1,
+  "id": 1010
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_performance_overview",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_performance_overview",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3578,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00', 'days': 28}",
+    "output": "\"Error retrieving performance overview: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '../../../../etc/passwd', 'days': 1000000}",
+    "output": "\"Error retrieving performance overview: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 2,
+  "id": 1011
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_search_analytics",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_search_analytics",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3578,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '../../../../etc/passwd', 'days': 365, 'dimensions': 'country', 'row_limit': 100}",
+    "output": "\"Error retrieving search analytics: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/tar",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'days': 2147483647, 'dimensions': 'date', 'row_limit': 999999}",
+    "output": "\"Error retrieving search analytics: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/tar",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 2,
+  "id": 1012
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_search_by_page_query",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_search_by_page_query",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3576,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'https://example.com/', 'page_url': '/etc/passwd\\x00', 'days': 28, 'row_limit': -100}",
+    "output": "\"Error retrieving page query data: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'page_url': '../../../../../etc/passwd', 'days': 28, 'row_limit': 20}",
+    "output": "\"Error retrieving page query data: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'page_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'days': 2147483647, 'row_limit': 20}",
+    "output": "\"Error retrieving page query data: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1013
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_site_details",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_site_details",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00'}",
+    "output": "\"Error retrieving site details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '../../../../etc/passwd'}",
+    "output": "\"Error retrieving site details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "\"Error retrieving site details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1014
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_sitemap_details",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_sitemap_details",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '/etc/passwd\\x00'}",
+    "output": "\"Error retrieving sitemap details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': 'file:///etc/passwd'}",
+    "output": "\"Error retrieving sitemap details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '../../../../etc/passwd'}",
+    "output": "\"Error retrieving sitemap details: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targ",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1015
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "get_sitemaps",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__get_sitemaps",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00'}",
+    "output": "\"Error retrieving sitemaps: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Ami",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '../../../../etc/passwd'}",
+    "output": "\"Error retrieving sitemaps: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Ami",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "\"Error retrieving sitemaps: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Ami",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1016
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "inspect_url_enhanced",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__inspect_url_enhanced",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd', 'page_url': 'https://example.com/'}",
+    "output": "\"Error inspecting URL: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/AminForo",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'page_url': '/etc/passwd\\x00'}",
+    "output": "\"Error inspecting URL: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/AminForo",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'page_url': '../../../../etc/passwd'}",
+    "output": "\"Error inspecting URL: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/AminForo",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1017
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "list_sitemaps_enhanced",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__list_sitemaps_enhanced",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3584,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': '/etc/passwd\\x00', 'sitemap_index': 'http://127.0.0.1:8500'}",
+    "output": "\"Error retrieving sitemaps: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Ami",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'sc-domain:../../../../etc/passwd', 'sitemap_index': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "\"Error retrieving sitemaps: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Ami",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 2,
+  "id": 1018
+ },
+ {
+  "repo": "AminForou/mcp-gsc",
+  "tool": "submit_sitemap",
+  "cls": "path-traversal",
+  "lang": "python",
+  "commit": "b3f2ab829ebc8f8294440821b4d476d75b5edadd",
+  "config": "AminForou__mcp-gsc__submit_sitemap",
+  "target": "/scratch/tofu/eval/targets/AminForou__mcp-gsc",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 3580,
+  "full_class": "ssrf",
+  "full_triggered": [
+   "check_url_alternative_ip_representations",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "evidence": [
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '/etc/passwd\\x00'}",
+    "output": "\"Error submitting sitemap: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Amin",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '../../../../etc/passwd'}",
+    "output": "\"Error submitting sitemap: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Amin",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'site_url': 'https://example.com/', 'sitemap_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "\"Error submitting sitemap: Authentication failed. Please either:\\n1. Set up OAuth by setting GSC_OAUTH_CLIENT_SECRETS_FILE to an absolute path, or (for clone installs) placing a client_secrets.json file in the script directory, then call the 'reauthenticate' tool to open a browser login window and complete authentication, or\\n2. Set GSC_CREDENTIALS_PATH to an absolute path, or (for clone installs) place a service account credentials file in one of these locations: /scratch/tofu/eval/targets/Amin",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1019
+ },
+ {
+  "repo": "T1nker-1220/memories-with-lessons-mcp-server",
+  "tool": "create_entities",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "7c6a33e6356e58934f89d18a52b610e9749503cc",
+  "config": "T1nker-1220__memories-with-lessons-mcp-server__create_entities",
+  "target": "/scratch/tofu/eval/targets/T1nker-1220__memories-with-lessons-mcp-server",
+  "triggered": [
+   "check_reflected_output",
+   "check_temp_file_leak"
+  ],
+  "n_exec": 2048,
+  "n_success": 1890,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'entities': [{'name': 'entityWithSensitiveErrorLeak', 'entityType': 'errorLeak', 'observations': ['<script>alert(document.cookie)</script>', \"SELECT * FROM users WHERE '1'='1'\"]}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"name\": \"entityWithSensitiveErrorLeak\",\\n    \"entityType\": \"errorLeak\",\\n    \"observations\": [\\n      \"<script>alert(document.cookie)</script>\",\\n      \"SELECT * FROM users WHERE \\'1\\'=\\'1\\'\"\\n    ]\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'entities': [{'name': '{{\"e', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"name\": \"{{\\\\\"e\",\\n    \"entityType\": \"\",\\n    \"observations\": []\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'entities': [{'name': '{{\"l', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}, {'name': '', 'entityType': '', 'observations': []}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"name\": \"{{\\\\\"l\",\\n    \"entityType\": \"\",\\n    \"observations\": []\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1020
+ },
+ {
+  "repo": "T1nker-1220/memories-with-lessons-mcp-server",
+  "tool": "create_lesson",
+  "cls": "hardcoded-creds",
+  "lang": "node",
+  "commit": "7c6a33e6356e58934f89d18a52b610e9749503cc",
+  "config": "T1nker-1220__memories-with-lessons-mcp-server__create_lesson",
+  "target": "/scratch/tofu/eval/targets/T1nker-1220__memories-with-lessons-mcp-server",
+  "triggered": [
+   "check_introspection_hardcoded_credentials",
+   "check_unexpected_crash"
+  ],
+  "n_exec": 3584,
+  "n_success": 61,
+  "full_class": "hardcoded-creds",
+  "full_triggered": [
+   "check_introspection_hardcoded_credentials"
+  ],
+  "evidence": [
+   {
+    "input": "{'lesson': {'name': 'sensitive_data_leak', 'entityType': 'lesson', 'observations': ['Sensitive data in logs'], 'errorPattern': {'type': 'SensitiveDataLeak', 'message': 'API key exposed: AKIAIOSFODNN7EXAMPLE', 'context': 'log file'}, 'metadata': {'severity': 'high', 'environment': {'os': 'Linux', 'nodeVersion': '18.0.0', 'dependencies': {'winston': '3.3.3'}}}, 'verificationSteps': [{'command': \"gre",
+    "output": "{'content': [{'type': 'text', 'text': '{\\n  \"name\": \"sensitive_data_leak\",\\n  \"entityType\": \"lesson\",\\n  \"observations\": [\\n    \"Sensitive data in logs\"\\n  ],\\n  \"errorPattern\": {\\n    \"type\": \"SensitiveDataLeak\",\\n    \"message\": \"API key exposed: AKIAIOSFODNN7EXAMPLE\",\\n    \"context\": \"log file\"\\n  },\\n  \"metadata\": {\\n    \"severity\": \"high\",\\n    \"environment\": {\\n      \"os\": \"Linux\",\\n      \"nodeVersion\": \"18.0.0\",\\n      \"dependencies\": {\\n        \"winston\": \"3.3.3\"\\n      }\\n    },\\n    \"cr",
+    "analysis": "[Sequence Step 1/1] Introspection Hard-coded Credentials Alert (CWE-798): Hard-coded API key or credential secret detected in runtime execution! Secret pattern matched: 'AKIA[0-9A-Z]{16}' (Sample: 'AKIA...MPLE').",
+    "sanitizers": "['check_introspection_hardcoded_credentials']"
+   }
+  ],
+  "n_ev": 1,
+  "id": 1021
+ },
+ {
+  "repo": "T1nker-1220/memories-with-lessons-mcp-server",
+  "tool": "create_relations",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "7c6a33e6356e58934f89d18a52b610e9749503cc",
+  "config": "T1nker-1220__memories-with-lessons-mcp-server__create_relations",
+  "target": "/scratch/tofu/eval/targets/T1nker-1220__memories-with-lessons-mcp-server",
+  "triggered": [
+   "check_reflected_output"
+  ],
+  "n_exec": 2048,
+  "n_success": 1921,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'relations': [{'from': '\"relations\": [{\"from\": \"user\", \"to\": \"admin\", \"relationType\"\"relatioelations\": [{{\"relations\": [{\"from\": \"user\", \"to\": \"ad\"frmin\", \"relationom\": \"user\", T\"t', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"from\": \"\\\\\"relations\\\\\": [{\\\\\"from\\\\\": \\\\\"user\\\\\", \\\\\"to\\\\\": \\\\\"admin\\\\\", \\\\\"relationType\\\\\"\\\\\"relatioelations\\\\\": [{{\\\\\"relations\\\\\": [{\\\\\"from\\\\\": \\\\\"user\\\\\", \\\\\"to\\\\\": \\\\\"ad\\\\\"frmin\\\\\", \\\\\"relationom\\\\\": \\\\\"user\\\\\", T\\\\\"t\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'relations': [{'from': '\"rel{{', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"from\": \"\\\\\"rel{{\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'relations': [{'from': '\"re\\x0f{{', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}, {'from': '', 'to': '', 'relationType': ''}]}",
+    "output": "{'content': [{'type': 'text', 'text': '[\\n  {\\n    \"from\": \"\\\\\"re\\\\u000f{{\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  },\\n  {\\n    \"from\": \"\",\\n    \"to\": \"\",\\n    \"relationType\": \"\"\\n  }\\n]'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1022
+ },
+ {
+  "repo": "T1nker-1220/memories-with-lessons-mcp-server",
+  "tool": "get_lesson_recommendations",
+  "cls": "log-injection",
+  "lang": "node",
+  "commit": "7c6a33e6356e58934f89d18a52b610e9749503cc",
+  "config": "T1nker-1220__memories-with-lessons-mcp-server__get_lesson_recommendations",
+  "target": "/scratch/tofu/eval/targets/T1nker-1220__memories-with-lessons-mcp-server",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection"
+  ],
+  "n_exec": 3584,
+  "n_success": 3553,
+  "full_class": null,
+  "full_triggered": [],
+  "evidence": [
+   {
+    "input": "{'context': '\\n'}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   },
+   {
+    "input": "{'context': '\\r\\x00\\x00'}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   },
+   {
+    "input": "{'context': 'Q\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\r\\x7fQ\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1023
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "create_note",
+  "cls": "path-traversal",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__create_note",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 430,
+  "full_class": "path-traversal",
+  "full_triggered": [
+   "check_path_traversal",
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'content': 'Windows INI file overwrite attempt'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Note created successfully at ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'path': './.../../../etc/passwd', 'content': 'Sensitive note content'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Note created successfully at ./.../../../etc/passwd'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'path': '/etc/passwd\\x01', 'content': 'Null byte injection test'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Note created successfully at /etc/passwd\\x01'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1024
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "delete_note",
+  "cls": "path-traversal",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__delete_note",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 6,
+  "full_class": "path-traversal",
+  "full_triggered": [
+   "check_path_traversal"
+  ],
+  "evidence": [
+   {
+    "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "{'content': [{'type': 'text', 'text': 'Note deleted successfully: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 1,
+  "id": 1025
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "list_notes",
+  "cls": "log-injection",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__list_notes",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection"
+  ],
+  "n_exec": 3072,
+  "n_success": 3072,
+  "full_class": null,
+  "full_triggered": [],
+  "evidence": [
+   {
+    "input": "{'folder': '\\r{\"\\x7ffolder\": [\"/et', 'recursive': False}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_invalid_json', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_invalid_json', 'check_log_injection']"
+   },
+   {
+    "input": "{'folder': '\\r{\"\\x7ffolder\": {\"/et', 'recursive': False}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_invalid_json', 'check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_invalid_json', 'check_log_injection']"
+   },
+   {
+    "input": "{'folder': '\\n', 'recursive': False}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1026
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "manage_folder",
+  "cls": "path-traversal",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__manage_folder",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 221,
+  "full_class": "path-traversal",
+  "full_triggered": [
+   "check_path_traversal"
+  ],
+  "evidence": [
+   {
+    "input": "{'operation': 'create', 'path': '..//....././etc/passwd', 'newPath': ''}",
+    "output": "{'content': [{'type': 'text', 'text': 'Folder created successfully at ..//....././etc/passwd'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'operation': 'create', 'path': '..//....././et!!!!c/passwd', 'newPath': ''}",
+    "output": "{'content': [{'type': 'text', 'text': 'Folder created successfully at ..//....././et!!!!c/passwd'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'operation': 'create', 'path': '\"\\x07penation\": \"create{\"', 'newPath': './../../etc/pasww\", '}",
+    "output": "{'content': [{'type': 'text', 'text': 'Folder created successfully at \"\\x07penation\": \"create{\"'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1027
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "notes_insight",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__notes_insight",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_reflected_output"
+  ],
+  "n_exec": 2048,
+  "n_success": 1811,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'topic': '\"topic\": \"________{{{\", \"maxNotes\": 5, \"maxContextLength\": -100, \"enabl\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00eSummary\": fals', 'maxNotes': 0.0, 'maxContextLength': 0.0, 'enableSummary': False}",
+    "output": "{'content': [{'type': 'text', 'text': '# TRILEMMA-PRINCIPLES Integrated Analysis Framework\\n\\n## Your Role\\nYou are an expert strategic analyst capable of identifying structural constraints and breakthrough solutions. Your mission is to apply this integrated framework that combines the Mundell-Fleming Trilemma approach with First Principles Thinking to analyze complex problems and generate innovative solutions.\\n\\n## Analysis Protocol\\n\\n### LAYER 1: CONSTRAINT IDENTIFICATION (Trilemma Analysis)",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   },
+   {
+    "input": "{'topic': '\"topic\": \"________{{{\", \"maxNotes\": 5, \"maxContextLength\": -100, \"ena\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fbl\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00eSummary\": fals', 'maxNotes': 0.0, 'maxContextLength': 0.0, 'enableSummary': False}",
+    "output": "{'content': [{'type': 'text', 'text': '# TRILEMMA-PRINCIPLES Integrated Analysis Framework\\n\\n## Your Role\\nYou are an expert strategic analyst capable of identifying structural constraints and breakthrough solutions. Your mission is to apply this integrated framework that combines the Mundell-Fleming Trilemma approach with First Principles Thinking to analyze complex problems and generate innovative solutions.\\n\\n## Analysis Protocol\\n\\n### LAYER 1: CONSTRAINT IDENTIFICATION (Trilemma Analysis)",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   },
+   {
+    "input": "{'topic': '\"topic\": \"________{{{\", \"maxNotes\": 0, \"maxContextLength\": -100, \"ena\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fbl\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00eSummary\": fals', 'maxNotes': 0.0, 'maxContextLength': 0.0, 'enableSummary': False}",
+    "output": "{'content': [{'type': 'text', 'text': '# TRILEMMA-PRINCIPLES Integrated Analysis Framework\\n\\n## Your Role\\nYou are an expert strategic analyst capable of identifying structural constraints and breakthrough solutions. Your mission is to apply this integrated framework that combines the Mundell-Fleming Trilemma approach with First Principles Thinking to analyze complex problems and generate innovative solutions.\\n\\n## Analysis Protocol\\n\\n### LAYER 1: CONSTRAINT IDENTIFICATION (Trilemma Analysis)",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_reflected_output', 'check_invalid_json']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1028
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "read_multiple_notes",
+  "cls": "reflected-xss",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__read_multiple_notes",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_reflected_output"
+  ],
+  "n_exec": 3072,
+  "n_success": 3026,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'paths': ['{{{{\"paths\": [{\"note\": \"../../../../etc/passwd\"', '', '', '', '']}",
+    "output": "{'content': [{'type': 'text', 'text': '{{{{\"paths\": [{\"note\": \"../../../../etc/passwd\":\\n\\n\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'paths': ['{{{{\"path [{\"note\": \"../../../../etc/passwd\"', '', '', '', '']}",
+    "output": "{'content': [{'type': 'text', 'text': '{{{{\"path [{\"note\": \"../../../../etc/passwd\":\\n\\n\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   },
+   {
+    "input": "{'paths': ['*{{{{\"path [{\"note\": \"../../../../etc/passwd\"', '', '', '', '']}",
+    "output": "{'content': [{'type': 'text', 'text': '*{{{{\"path [{\"note\": \"../../../../etc/passwd\":\\n\\n\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read\\n---\\n: Error - EISDIR: illegal operation on a directory, read'}]}",
+    "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).",
+    "sanitizers": "['check_reflected_output']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1029
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "read_note",
+  "cls": "path-traversal",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__read_note",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3072,
+  "n_success": 2481,
+  "full_class": "path-traversal",
+  "full_triggered": [
+   "check_path_traversal"
+  ],
+  "evidence": [
+   {
+    "input": "{'path': '/etc/passwd\\x00'}",
+    "output": "{'content': [{'type': 'text', 'text': ''}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'path': '../../../../etc/passwd'}",
+    "output": "{'content': [{'type': 'text', 'text': ''}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   },
+   {
+    "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+    "output": "{'content': [{'type': 'text', 'text': ''}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1030
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "search_vault",
+  "cls": "log-injection",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__search_vault",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection"
+  ],
+  "n_exec": 3072,
+  "n_success": 2530,
+  "full_class": "reflected-xss",
+  "full_triggered": [
+   "check_reflected_output"
+  ],
+  "evidence": [
+   {
+    "input": "{'query': 'q\\x0b\\x1a\\x04]\\x0e\\n\\x1a\\x13ry\"\":: '}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   },
+   {
+    "input": "{'query': 'q\\x0by\\x1a\\x04]\\x0e\\n\\x1a\\x13ry\"\":: '}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   },
+   {
+    "input": "{'query': '))M\\x04]\\x0e\\n\\x1a\\r\\x06\"x \"x\":x'}",
+    "output": "{'content': [{'type': 'text', 'text': '[]'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_log_injection']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1031
+ },
+ {
+  "repo": "newtype-01/obsidian-mcp",
+  "tool": "update_note",
+  "cls": "path-traversal",
+  "lang": "node",
+  "commit": "dc048e47d063e0f0e867e3473f099a9e64a98af1",
+  "config": "newtype-01__obsidian-mcp__update_note",
+  "target": "/scratch/tofu/eval/targets/newtype-01__obsidian-mcp",
+  "triggered": [
+   "check_invalid_json",
+   "check_log_injection",
+   "check_path_traversal",
+   "check_reflected_output",
+   "check_unexpected_crash",
+   "check_url_hostname_canonicalization",
+   "check_url_ssrf_ip_ranges",
+   "check_url_structure_and_parsing"
+  ],
+  "n_exec": 3584,
+  "n_success": 2646,
+  "full_class": "path-traversal",
+  "full_triggered": [
+   "check_path_traversal",
+   "check_reflected_output",
+   "check_unexpected_crash"
+  ],
+  "evidence": [
+   {
+    "input": "{'path': '\"path\": \"../../../../etc/passwd\", \"edits\": [{\"oldText\": \"foo\",./../etc/passwd\", \"editsyRun\": tru', 'edits': [], 'dryRun': False}",
+    "output": "{'content': [{'type': 'text', 'text': 'File \"path\": \"../../../../etc/passwd\", \"edits\": [{\"oldText\": \"foo\",./../etc/passwd\", \"editsyRun\": tru updated successfully'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json']"
+   },
+   {
+    "input": "{'path': '\"path\": \"../../../../etc/passwd\", \"edits\": [{\"oldText\": \"foo\",./../etdText\": \"foo\",./../etc/ tru', 'edits': [], 'dryRun': False}",
+    "output": "{'content': [{'type': 'text', 'text': 'File \"path\": \"../../../../etc/passwd\", \"edits\": [{\"oldText\": \"foo\",./../etdText\": \"foo\",./../etc/ tru updated successfully'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json']"
+   },
+   {
+    "input": "{'path': '\"path\": \"../../../../etc/pxsswd\", \"edits\": [{\"oldText\": \"foo\",./../etdText\": \"foo\",./../etc/ tru', 'edits': [], 'dryRun': False}",
+    "output": "{'content': [{'type': 'text', 'text': 'File \"path\": \"../../../../etc/pxsswd\", \"edits\": [{\"oldText\": \"foo\",./../etdText\": \"foo\",./../etc/ tru updated successfully'}]}",
+    "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception.",
+    "sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_path_traversal', 'check_invalid_json']"
+   }
+  ],
+  "n_ev": 3,
+  "id": 1032
+ }
+]
