@@ -110,6 +110,7 @@ are the confirmed subset; the 627 are the corpus-scale candidate set.
 | **ToFu** | 481 | **157** | 627 candidates | runtime silent-bug | ✅ |
 | CodeQL sec-extended | 482 | 154 | 1,037 | static SAST | ✅ |
 | Cisco MCP Scanner (YARA) | 484 | 50 | 125 | static metadata | ✅ |
+| Cisco MCP Scanner (yara+llm+behavioral, c273, 2026-09-29) | 273 (266 ok) | 46 (yara 29, llm 14, behavioral 11) | 84 yara / 16 llm tools; behavioral 40 VULN + 30 THREAT tools (53 rows in 1 repo; 55% of checks inconclusive on gpt-4.1-mini) | static metadata + LLM + source behavioral | H2H-273 — `findings/cisco_c273_20260929/REPORT.md` |
 | vanilla-claude-sonnet-5 | 484 | 214 | 891 flagged tools | LLM code-audit (unverified) | ✅ |
 | ToolFuzz (H2H-273, 2026-09-28) | 266 = H2H-273 minus 7 unsafe; 1,516 / 1,585 executed tools (258 repos) | runtime 200 tools / 77 repos · correctness 114 tools / 52 repos · either 237 / 92 | runtime 200 erroneous / 517 tested prompts; correctness 342 erroneous / 3,441 prompts (not hand-checked; ToolFuzz's own FDR 46%) | tool-documentation failures (diff axis) | H2H-273 dynamic set |
 | ~~ToolFuzz (H2H-45 re-run, 2026-09-25)~~ superseded by H2H-273 | 31 of H2H-45 (298 tools) | 8 tools genuine crash | | | |
