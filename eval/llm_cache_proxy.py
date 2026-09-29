@@ -20,13 +20,21 @@ measured rather than estimated.
   python3 eval/llm_cache_proxy.py --port 8791 --cache-dir eval/state/viper_llm_cache
   mode (--mode / LLM_CACHE_MODE): rw (default) | ro (miss -> 503, guarantees zero spend)
 """
-import argparse, hashlib, http.client, json, os, sys, threading, time, urllib.parse
+import argparse, hashlib, http.client, json, os, re, sys, threading, time, urllib.parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 VOLATILE = ("user", "stream_options")        # do not affect the answer; excluded from the key
 HOP = {"host", "content-length", "accept-encoding", "connection", "keep-alive",
        "transfer-encoding", "proxy-connection"}
 LOCK = threading.Lock()
+
+
+# Per-request random nonces that do not change the answer, masked in the KEY only (the
+# request is forwarded unchanged). Cisco MCP Scanner wraps every untrusted field in
+# <!---UNTRUSTED_INPUT_START_<32 hex>---> ... _END_<same hex>--->, a fresh nonce per call,
+# so without this no Cisco request ever replays (2026-09-29: 0 of 328 replayed).
+NONCES = [re.compile(r"(UNTRUSTED_INPUT_(?:START|END)_)[0-9a-f]{32}")]
+NORMALIZE = os.environ.get("LLM_CACHE_NORMALIZE_NONCES", "1") != "0"
 
 
 def request_key(path, body):
@@ -37,6 +45,9 @@ def request_key(path, body):
         canon = json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     except Exception:
         canon = body.decode("utf-8", "replace")
+    if NORMALIZE:
+        for rx in NONCES:
+            canon = rx.sub(r"\1<nonce>", canon)
     return hashlib.sha256(f"{path}\n{canon}".encode()).hexdigest()
 
 
