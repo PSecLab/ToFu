@@ -149,6 +149,16 @@ credential-pattern check on the tool's output.
 
 ## 4. Caveats to state
 
+- **Why Full ToFu is 436 here, not the 508 headline.** The ablation's Full ToFu is ONE fresh 60 s
+  run and is compared only against the other ablation arms (same code, budget, host). The 508
+  headline is the deduplicated union of all campaigns (60 s sweeps, 24 h deep runs, and bugs
+  observed on errored calls in an earlier sweep); 492 of the 508 lie on these 266 servers. Of
+  those 492, this single run re-finds 363 tools and adds 73 new ones (436 = 492 − 129 + 73). The
+  129 not re-found: 48 only from the earlier sweep's errored-call observations, 18 only from the
+  24 h runs, 63 from 60 s sweeps that this run did not reproduce (run-to-run variation). Say:
+  "Full ToFu in the ablation is a single fresh 60 s run; the headline aggregates all campaigns."
+  (Recompute: `python3 findings/ablation_20260928/headline_vs_ablation.py`.)
+
 - One run per arm. Run-to-run variation is being measured with two additional Full ToFu runs;
   until then, report the −9% of "No LLM seeds" as indicative (the per-tool churn is visible in
   the shared/new/lost columns).
