@@ -111,6 +111,8 @@ def main():
         base = os.environ.get("TOFU_LLM_BASE_URL", "")
         if "localhost" in base or "127.0.0.1" in base:
             api_key = "ollama"
+        elif os.environ.get("TOFU_NO_LLM", "").strip().lower() not in ("", "0", "false", "no"):
+            api_key = "unused"          # TOFU_NO_LLM: no LLM call is ever made
         else:
             logger.error("No LLM credential. Set OLLAMA_CLOUD_API_KEY, or point "
                          "TOFU_LLM_BASE_URL at a local Ollama daemon.")
