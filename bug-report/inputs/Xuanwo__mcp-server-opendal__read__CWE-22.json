@@ -1,0 +1,42 @@
+{
+ "repo": "Xuanwo/mcp-server-opendal",
+ "tool": "read",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "f49ee92cae7755f78697f899297539a53cfbf9b1",
+ "draft": "Xuanwo__mcp-server-opendal__read__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'uri': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_path_traversal']",
+   "tool_output": "'{\"error\": \"1 validation error for OpendalResource\\\\nuri\\\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value=\\'://\\', input_type=str]\\\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_opendal)! Logged content: 'Failed to read file content: 1 validation error for OpendalResource\\nuri\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='://', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing'.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'uri': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_path_traversal']",
+   "tool_output": "'{\"error\": \"1 validation error for OpendalResource\\\\nuri\\\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value=\\'://\\', input_type=str]\\\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_opendal)! Logged content: 'Failed to read file content: 1 validation error for OpendalResource\\nuri\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='://', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing'.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'uri': 'mys3://../../../../etc/hosts'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'{\"error\": \"argument \\'scheme\\': \\'NoneType\\' object cannot be converted to \\'PyString\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'uri': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_path_traversal']",
+   "tool_output": "'{\"error\": \"1 validation error for OpendalResource\\\\nuri\\\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value=\\'://\\', input_type=str]\\\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_opendal)! Logged content: 'Failed to read file content: 1 validation error for OpendalResource\\nuri\\n  Input should be a valid URL, relative URL without a base [type=url_parsing, input_value='://', input_type=str]\\n    For further information visit https://errors.pydantic.dev/2.13/v/url_parsing'.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

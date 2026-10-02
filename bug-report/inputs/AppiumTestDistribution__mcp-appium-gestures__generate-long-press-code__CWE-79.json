@@ -1,0 +1,35 @@
+{
+ "repo": "AppiumTestDistribution/mcp-appium-gestures",
+ "tool": "generate-long-press-code",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "6bd1aa2642ba7b0905d313d11f378333c4fc5b09",
+ "draft": "AppiumTestDistribution__mcp-appium-gestures__generate-long-press-code__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'language': 'javascript', 'useElement': True, 'elementId': '\"l&: {{', 'x': 0.0, 'y': 0.0, 'duration': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'text': '// For WebdriverIO v9+\\nconst element = $(\\'~\"l&: {{\\');\\nawait element.longPress({ duration: 0 });\\n\\n// For WebdriverIO below v9\\nawait $(\\'~\"l&: {{\\').touchAction(\\'longPress\\');', 'type': 'text'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'language': 'java', 'useElement': True, 'elementId': '\\x00{{\"language\": \"javascript\", \"useElement\": false, \"elem\": 1', 'x': 0.0, 'y': 0.0, 'duration': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'text': '// Using W3C Actions API (recommended)\\nWebElement element = driver.findElement(AppiumBy.accessibilityId(\"\\x00{{\"language\": \"javascript\", \"useElement\": false, \"elem\": 1\"));\\nPoint source = element.getLocation();\\nPointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, \"finger\");\\nSequence sequence = new Sequence(finger, 1);\\n\\n// Move to element, press down, wait, then release\\nsequence.addAction(finger.createPointerMove(Duration.ofMillis(0),\\n        PointerInput.Origin.viewport(), source.x, source.y));\\nsequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));\\n// Hold for 0 milliseconds\\nsequence.addAction(new Pause(finger, Duration.ofMillis(0)));\\nsequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));\\n\\n// Perform the action\\ndriver.perform(Collections.singletonList(sequence));', 'type': 'text'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'language': 'java', 'useElement': True, 'elementId': '\\x00{{\"language\": \"javascript\", \"useELement\": false, \"elem\": 1', 'x': 0.0, 'y': 0.0, 'duration': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'text': '// Using W3C Actions API (recommended)\\nWebElement element = driver.findElement(AppiumBy.accessibilityId(\"\\x00{{\"language\": \"javascript\", \"useELement\": false, \"elem\": 1\"));\\nPoint source = element.getLocation();\\nPointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, \"finger\");\\nSequence sequence = new Sequence(finger, 1);\\n\\n// Move to element, press down, wait, then release\\nsequence.addAction(finger.createPointerMove(Duration.ofMillis(0),\\n        PointerInput.Origin.viewport(), source.x, source.y));\\nsequence.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));\\n// Hold for 0 milliseconds\\nsequence.addAction(new Pause(finger, Duration.ofMillis(0)));\\nsequence.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));\\n\\n// Perform the action\\ndriver.perform(Collections.singletonList(sequence));', 'type': 'text'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

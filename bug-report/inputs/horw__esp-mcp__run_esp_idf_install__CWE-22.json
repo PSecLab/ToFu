@@ -1,0 +1,63 @@
+{
+ "repo": "horw/esp-mcp",
+ "tool": "run_esp_idf_install",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "28afddf9ff41ada117bb45fd49b526d3bf89749e",
+ "draft": "horw__esp-mcp__run_esp_idf_install__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 7,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at /etc/passwd\\x00/install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '../../../../dev/mem'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at ../../../../dev/mem/install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at ../../../../etc/passwd/install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '../../../tmp/; rm -rf /'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at ../../../tmp/; rm -rf /install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': \"['/etc/passwd', '/tmp']\"}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"\\ninstall.sh not found at ['/etc/passwd', '/tmp']/install.sh. Please verify the ESP-IDF path is correct.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '../../../proc/self/environ'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at ../../../proc/self/environ/install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'idf_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'\\ninstall.sh not found at ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini/install.sh. Please verify the ESP-IDF path is correct.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

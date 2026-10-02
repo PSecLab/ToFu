@@ -1,0 +1,1414 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "read_arxiv_paper",
+ "class": "data-exfiltration",
+ "cwe": "CWE-201",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__read_arxiv_paper__CWE-201.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 784,
+ "note": "784 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '/etc/passwd\\x00', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['..///etc/passwd\\x00.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '..///etc/passwd\u0000.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '..///etc/passwd\u0000.pdf' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '../../../../etc/passwd', 'save_path': './downloads'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['./downloads/../../../../etc/passwd.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: './downloads/../../../../etc/passwd.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: './downloads/../../../../etc/passwd.pdf' matching pattern '/etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'http://127.0.0.1:8500', 'save_path': '/tmp/../../root'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_path_traversal']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/../../root/http://127.0.0.1:8500.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><foo>&xxe;</foo>', 'save_path': '/dev/shm'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/dev/shm/<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><foo>&xxe;</foo>.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/dev/shm/<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><foo>&xxe;</foo>.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/dev/shm/<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc/passwd\">]><foo>&xxe;</foo>.pdf' matching pattern '/etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"papaer_id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['..//\"papaer_id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '..//\"papaer_id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '..//\"papaer_id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\....\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\....\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf', '/tmp/..\\\\....\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\....\\..\\..\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\....\\..\\..\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windos\\\\wiwn.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windos\\\\wiwn.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windos\\\\wiwn.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windos\\wiwn.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windos\\wiwn.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\.G.\\\\windos\\\\wiwn.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\.G.\\\\windos\\\\wiwn.ini.pdf', '/tmp/..\\\\..\\\\..\\\\.G.\\\\windos\\\\wiwn.ini.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\.G.\\windos\\wiwn.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\.G.\\windos\\wiwn.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\.G.\\\\windos\\\\[wiwn.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\.G.\\\\windos\\\\[wiwn.ini.pdf', '/tmp/..\\\\..\\\\..\\\\.G.\\\\windos\\\\[wiwn.ini.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\.G.\\windos\\[wiwn.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\.G.\\windos\\[wiwn.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"paper_iD\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\.G.\\\\\\\\windos\\\\\\\\[wiwn.ini\", \"save_path\": \"/tmp', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/\"paper_iD\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\.G.\\\\\\\\windos\\\\\\\\[wiwn.ini\", \"save_path\": \"/tmp.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"paper_id\": \"/etc/passwd', 'save_path': '㩵\\U00103132\\U00103147𣔴\\U00102220\\U00106576\\U00087461𢀺\\U00105c3a\\U00046e69㨢'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㩵\\U00103132\\U00103147𣔴\\U00102220\\U00106576\\U00087461𢀺\\U00105c3a\\U00046e69㨢/\"paper_id\": \"/etc/passwd.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '㩵􃄲􃅇𣔴􂈠􆕶򇑡𢀺􅰺񆹩㨢/\"paper_id\": \"/etc/passwd.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '㩵􃄲􃅇𣔴􂈠􆕶򇑡𢀺􅰺񆹩㨢/\"paper_id\": \"/etc/passwd.pdf' matching pattern '/etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"paper_id\": \"/etc/passwd', 'save_path': '㩵\\U00103132\\U00103147𣔴\\U00101d20𡴝\\U00057661\\U00106170㨢\\U00103a43\\U000e6957\\U00102268'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㩵\\U00103132\\U00103147𣔴\\U00101d20𡴝\\U00057661\\U00106170㨢\\U00103a43\\U000e6957\\U00102268/\"paper_id\": \"/etc/passwd.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '㩵􃄲􃅇𣔴􁴠𡴝񗙡􆅰㨢􃩃󦥗􂉨/\"paper_id\": \"/etc/passwd.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '㩵􃄲􃅇𣔴􁴠𡴝񗙡􆅰㨢􃩃󦥗􂉨/\"paper_id\": \"/etc/passwd.pdf' matching pattern '/etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'save_path': '1111111111111111/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['1111111111111111/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf', '1111111111111111/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '1111111111111111/tmp/..\\..\\..\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '1111111111111111/tmp/..\\..\\..\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"pVaper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/tmp', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/\"pVaper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/tmp.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"pVaper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\window\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\\\\\\\\win.ini\", \"save_path\": \"/tmp', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/\"pVaper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\window\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\\\\\\\\win.ini\", \"save_path\": \"/tmp.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.i&ni', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.i&ni.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.i&ni.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windows\\win.i&ni.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windows\\win.i&ni.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p`per_id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['..//\"p`per_id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '..//\"p`per_id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '..//\"p`per_id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p`per_*id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['..//\"p`per_*id\": \"/etc/passwd\\\\u0000\", \"save_path\": \"../.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '..//\"p`per_*id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '..//\"p`per_*id\": \"/etc/passwd\\u0000\", \"save_path\": \"../.pdf' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\widows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\widows\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\widows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\widows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\widows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\wiwods\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\wiwods\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\wiwods\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\wiwods\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\wiwods\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windos\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windos\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windos\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windos\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windos\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paPer_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windo\\x0fs\\\\\\\\win.ini\", \"save_path\": \"/tmp', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/\"paPer_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windo\\x0fs\\\\\\\\win.ini\", \"save_path\": \"/tmp.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\w.\\\\..i', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\w.\\\\..i.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\w.\\\\..i.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windows\\w.\\..i.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windows\\w.\\..i.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windTjs\\\\w.\\\\..i', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windTjs\\\\w.\\\\..i.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windTjs\\\\w.\\\\..i.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windTjs\\w.\\..i.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windTjs\\w.\\..i.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_id\": ve_path\"\\\\..\\\\\\\\..', 'save_path': '\\U0009775c\\U000a5464\\U00105c5c\\U000e5c5c\\U00102269\\U00106170\\U00095f72㨢\\U00103132\\U000e3620\\U00106173'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0009775c\\U000a5464\\U00105c5c\\U000e5c5c\\U00102269\\U00106170\\U00095f72㨢\\U00103132\\U000e3620\\U00106173/\"paper_id\": ve_path\"\\\\..\\\\\\\\...pdf', '\\U0009775c\\U000a5464\\U00105c5c\\U000e5c5c\\U00102269\\U00106170\\U00095f72㨢\\U00103132\\U000e3620\\U00106173/\"paper_id\": ve_path\"\\\\..\\\\\\\\...pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '򗝜򥑤􅱜󥱜􂉩􆅰򕽲㨢􃄲󣘠􆅳/\"paper_id\": ve_path\"\\..\\\\...pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_iTfd\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/tmp', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/\"paper_iTfd\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/tmp.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"pape0_id\": \"nul\\x06\", \"sa\\x1de_path\": \"{\"papw/.', 'save_path': 'dnl'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['dnl/\"pape0_id\": \"nul\\x06\", \"sa\\x1de_path\": \"{\"papw/..pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf', '/tmp/..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\.\\...\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\.\\...\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '*..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_introspection_temp_file_leak']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/*..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf']! Risk of resource exhaustion / disk leakage.Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/*..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf', '/tmp/*..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/*..\\.\\...\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/*..\\.\\...\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/*..\\\\.\\\\...\\\\..\\\\windows\\\\win.ini.pdf']."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '*..\\\\.\\\\...\\\\.\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_introspection_temp_file_leak']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/*..\\\\.\\\\...\\\\.\\\\windows\\\\win.ini.pdf']! Risk of resource exhaustion / disk leakage.Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/*..\\\\.\\\\...\\\\.\\\\windows\\\\win.ini.pdf', '/tmp/*..\\\\.\\\\...\\\\.\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/*..\\.\\...\\.\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/*..\\.\\...\\.\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/*..\\\\.\\\\...\\\\.\\\\windows\\\\win.ini.pdf']."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '*..\\\\.\\\\...\\\\.RG\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_introspection_temp_file_leak']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/*..\\\\.\\\\...\\\\.RG\\\\windows\\\\win.ini.pdf']! Risk of resource exhaustion / disk leakage.Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/*..\\\\.\\\\...\\\\.RG\\\\windows\\\\win.ini.pdf', '/tmp/*..\\\\.\\\\...\\\\.RG\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/*..\\.\\...\\.RG\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/*..\\.\\...\\.RG\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/*..\\\\.\\\\...\\\\.RG\\\\windows\\\\win.ini.pdf']."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\.%.\\\\..\\\\windows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\.%.\\\\..\\\\windows\\\\win.ini.pdf', '/tmp/..\\\\..\\\\.%.\\\\..\\\\windows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\.%.\\..\\windows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\.%.\\..\\windows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_id\": \"2106.12345\", \"save:_p}}}}}ath2345{\"/ ..\"', 'save_path': ':_path\": \"ndowm32\\\\\\x7f\\x7f\\x7fhT['}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) [':_path\": \"ndowm32\\\\\\x7f\\x7f\\x7fhT[/\"paper_id\": \"2106.12345\", \"save:_p}}}}}ath2345{\"/ ..\".pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\Tjndows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\Tjndows\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\Tjndows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\Tjndows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\Tjndows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\in.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\in.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\windows\\\\in.ini.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\windows\\in.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\windows\\in.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\TDwindows\\\\win.ini', 'save_path': '/tmp'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['/tmp/..\\\\..\\\\..\\\\..\\\\TDwindows\\\\win.ini.pdf', '/tmp/..\\\\..\\\\..\\\\..\\\\TDwindows\\\\win.ini.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/tmp/..\\..\\..\\..\\TDwindows\\win.ini.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/tmp/..\\..\\..\\..\\TDwindows\\win.ini.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\{\"pa', 'save_path': '\\U00107265\\U00102264\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U00107265\\U00102264\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170/\"paper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\{\"pa.pdf', '\\U00107265\\U00102264\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170/\"paper_id\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\{\"pa.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '􇉥􂉤􃈢􂸶􃐳𢀬񗙡􆅰/\"paper_id\": \"..\\\\..\\\\..\\\\{\"pa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.12345', 'save_path': '\\u202c猢癡彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\u202c猢癡彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12345.pdf', '\\u202c猢癡彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12345.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '‬猢癡彥慰桴/\\..\\\\{\"paper_id\": \"2106.12345.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.12345', 'save_path': '\\u202c猢癡彥慐桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\u202c猢癡彥慐桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12345.pdf', '\\u202c猢癡彥慐桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12345.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '‬猢癡彥慐桴/\\..\\\\{\"paper_id\": \"2106.12345.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\":r_id\": \"2106', 'save_path': '㈱㐳∵\\u202c猢癡彥慐桴㨢†㈢〱⸶㈱㐳∵\\u202c猢癡彥慐桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㈱㐳∵\\u202c猢癡彥慐桴㨢†㈢〱⸶㈱㐳∵\\u202c猢癡彥慐桴/\\\\..\\\\\\\\{\"paper_id\":r_id\": \"2106.pdf', '㈱㐳∵\\u202c猢癡彥慐桴㨢†㈢〱⸶㈱㐳∵\\u202c猢癡彥慐桴/\\\\..\\\\\\\\{\"paper_id\":r_id\": \"2106.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '㈱㐳∵‬猢癡彥慐桴㨢†㈢〱⸶㈱㐳∵‬猢癡彥慐桴/\\..\\\\{\"paper_id\":r_id\": \"2106.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\")aper_id\": \"2106.12345', 'save_path': '\\u202c猢癡彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\u202c猢癡彥慰桴/\\\\..\\\\\\\\{\")aper_id\": \"2106.12345.pdf', '\\u202c猢癡彥慰桴/\\\\..\\\\\\\\{\")aper_id\": \"2106.12345.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '‬猢癡彥慰桴/\\..\\\\{\")aper_id\": \"2106.12345.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\")aper_id\": mmmmmmmmmmm', 'save_path': 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..\\\\\\\\{\")aper_id\": mmmmmmmmmmm.pdf', 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..\\\\\\\\{\")aper_id\": mmmmmmmmmmm.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\..\\\\{\")aper_id\": mmmmmmmmmmm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..]\\\\{\")aper_id\": mmmmmmmmmmm', 'save_path': 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..]\\\\{\")aper_id\": mmmmmmmmmmm.pdf', 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..]\\\\{\")aper_id\": mmmmmmmmmmm.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\..]\\{\")aper_id\": mmmmmmmmmmm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm', 'save_path': 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm.pdf', 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\", \"save_path\"/\\..]\\{\")ammmmmmmm mmmmmmmmmmm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm', 'save_path': 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\"; \"save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\"; \"save_path\"/\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm.pdf', 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\"; \"save_path\"/\\\\..]\\\\{\")ammmmmmmm mmmmmmmmmmm.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'mmmmmmmmmmmmmmmmmmmmmmmmm\"2106.12345\"; \"save_path\"/\\..]\\{\")ammmmmmmm mmmmmmmmmmm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf', '彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"paper_id\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.12r_a', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12r_a.pdf', '彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.12r_a.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"paper_id\": \"2106.12r_a.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_ig\": \"2106.12r_a', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paper_ig\": \"2106.12r_a.pdf', '彥慰桴/\\\\..\\\\\\\\{\"paper_ig\": \"2106.12r_a.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"paper_ig\": \"2106.12r_a.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa', 'save_path': '♥灟瑡≨'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['♥灟瑡≨/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf', '♥灟瑡≨/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '♥灟瑡≨/\\..\\\\{\"paper_id\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"-2106.123s', 'save_path': 've&_path\":'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve&_path\":/\\\\..\\\\\\\\{\"paper_id\": \"-2106.123s.pdf', 've&_path\":/\\\\..\\\\\\\\{\"paper_id\": \"-2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've&_path\":/\\..\\\\{\"paper_id\": \"-2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\":-0 16\"2.123s', 'save_path': 've&_path\":'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve&_path\":/\\\\..\\\\\\\\{\"paper_id\":-0 16\"2.123s.pdf', 've&_path\":/\\\\..\\\\\\\\{\"paper_id\":-0 16\"2.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've&_path\":/\\..\\\\{\"paper_id\":-0 16\"2.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pap#r_id\": \"2106.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"pap#r_id\": \"2106.123sa.pdf', '彥慰桴/\\\\..\\\\\\\\{\"pap#r_id\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"pap#r_id\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2105.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2105.123sa.pdf', '彥慰桴/\\\\..\\\\\\\\{\"paper_id\": \"2105.123sa.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"paper_id\": \"2105.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s.pdf', 've_path\"/\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've_path\"/\\..\\\\{\"paper_id\\\": \"2105.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s', 'save_path': 've_erpath\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_erpath\"/\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s.pdf', 've_erpath\"/\\\\..\\\\\\\\{\"paper_id\\\\\": \"2105.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've_erpath\"/\\..\\\\{\"paper_id\\\": \"2105.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '2\\\\..\\\\\\\\{\"paper_id\": \"2106.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/2\\\\..\\\\\\\\{\"paper_id\": \"2106.123s.pdf', 've_path\"/2\\\\..\\\\\\\\{\"paper_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've_path\"/2\\..\\\\{\"paper_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '2\\\\..\\\\\\\\{\\'paper_id\": \"2106.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/2\\\\..\\\\\\\\{\\'paper_id\": \"2106.123s.pdf', 've_path\"/2\\\\..\\\\\\\\{\\'paper_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've_path\"/2\\..\\\\{'paper_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '2\\\\..\\\\\\\\{\\'paper_id\": \\x00\\x00\\x00\\x006.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/2\\\\..\\\\\\\\{\\'paper_id\": \\x00\\x00\\x00\\x006.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '2\\\\..\\\\\\\\{\\'pap\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f er_id\": \\x00\\x00', 'save_path': '\\U000e3600\\U00103332\\U00106576\\U00087461'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U000e3600\\U00103332\\U00106576\\U00087461/2\\\\..\\\\\\\\{\\'pap\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f er_id\": \\x00\\x00.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123sa.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{`\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/\\\\..\\\\\\\\{`\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{`\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123s', 'save_path': 've_pat(\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_pat(\"/\\\\..\\\\\\\\{`\"paper_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00:6.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{`\"paper_i\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.123s', 'save_path': 've_pat(\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_pat(\"/\\\\..\\\\\\\\{`\"paper_i\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{`\"pnper_i\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.123s', 'save_path': 've_pat(\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_pat(\"/\\\\..\\\\\\\\{`\"pnper_i\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa.pdf', '彥慰桴/\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥慰桴/\\..\\\\{\"paperTjd\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa', 'save_path': '彥杰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥杰桴/\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa.pdf', '彥杰桴/\\\\..\\\\\\\\{\"paperTjd\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彥杰桴/\\..\\\\{\"paperTjd\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"2106.123sa', 'save_path': '彥慰桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彥慰桴/\\\\..\\\\\\\\{\"p\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"2106.123s', 'save_path': 've_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve_path\"/\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.123save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.123save_path\"/\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.893save_path\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.893save_path\"/\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.893save_pa-th\"'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f06.893save_pa-th\"/\\\\..\\\\\\\\{\"p\\x00[\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"21\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa', 'save_path': '彡灥桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彡灥桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf', '彡灥桴/\\\\..\\\\\\\\{\"paper_id\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彡灥桴/\\..\\\\{\"paper_id\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"paper_id\": \"21i6.123sa', 'save_path': '彡灥桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彡灥桴/\\\\..\\\\\\\\{\"paper_id\": \"21i6.123sa.pdf', '彡灥桴/\\\\..\\\\\\\\{\"paper_id\": \"21i6.123sa.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '彡灥桴/\\..\\\\{\"paper_id\": \"21i6.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\*\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"21i6.123sa', 'save_path': '彡灥桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['彡灥桴/\\\\..\\\\\\\\*\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"21i6.123sa.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\*\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"21i6.123sa', 'save_path': '\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff彡灥桴'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff\\uffff彡灥桴/\\\\..\\\\\\\\*\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"21i6.123sa.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2105.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s', 'save_path': 've: \"C_id\": \"2105.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve: \"C_id\": \"2105.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s.pdf', 've: \"C_id\": \"2105.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've: \"C_id\": \"2105.123save/\\..\\\\{\"pape%r_id\": \"2105.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2105.1231', 'save_path': '11111111111save: \"C_id\": \"2105.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['11111111111save: \"C_id\": \"2105.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.1231.pdf', '11111111111save: \"C_id\": \"2105.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2105.1231.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '11111111111save: \"C_id\": \"2105.123save/\\..\\\\{\"pape%r_id\": \"2105.1231.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2105\"C_id', 'save_path': '›㈢〱⸵㈱猳癡'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['›㈢〱⸵㈱猳癡/\\\\..\\\\\\\\{\"pape%r_id\": \"2105\"C_id.pdf', '›㈢〱⸵㈱猳癡/\\\\..\\\\\\\\{\"pape%r_id\": \"2105\"C_id.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '›㈢〱⸵㈱猳癡/\\..\\\\{\"pape%r_id\": \"2105\"C_id.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\"e%r_id\": \"21', 'save_path': '㨶\\U00103132\\U0010312e\\U00106173'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㨶\\U00103132\\U0010312e\\U00106173/\\\\..\\\\\\\\{\"pape%r_id\"e%r_id\": \"21.pdf', '㨶\\U00103132\\U0010312e\\U00106173/\\\\..\\\\\\\\{\"pape%r_id\"e%r_id\": \"21.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '㨶􃄲􃄮􆅳/\\..\\\\{\"pape%r_id\"e%r_id\": \"21.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%r_id\"e%r_id\": \"21', 'save_path': '㨶\\U00103132\\U0010312e\\U00106173'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㨶\\U00103132\\U0010312e\\U00106173/\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%r_id\"e%r_id\": \"21.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '楟≤╥彲摩㨢∠ㄲ㘰›㈢〱⸶㈱猳癡'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['楟≤╥彲摩㨢∠ㄲ㘰›㈢〱⸶㈱猳癡/\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '楟≤╥彲摩㨢∠ㄵ㘷›㈢〱⸶㈱猳癡'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['楟≤╥彲摩㨢∠ㄵ㘷›㈢〱⸶㈱猳癡/\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f}\\x7f\\x7f', 'save_path': 'r_id\"e%r_id\": \"5176: \"2106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['r_id\"e%r_id\": \"5176: \"2106.123save/\\\\..\\x1b\\x00\\x00\\x00\\x00\\x00\\x00\\x00%\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f}\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '23save/\\..\\\\{\"pape%r_id\": \"2106.1.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_i :d\"\"2106.1\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save/\\\\..\\\\\\\\{\"pape%r_i :d\"\"2106.1\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f23save/\\\\..\\\\\\\\{\"pape%r_i :d\"\"2106.1\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '23save/\\..\\\\{\"pape%r_i :d\"\"2106.1.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_i :d\"\"21er_id\":', 'save_path': '\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170㨢\\U00103a43\\U00106957\\U0010ffff\\U0010ffff𗌳'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170㨢\\U00103a43\\U00106957\\U0010ffff\\U0010ffff𗌳/\\\\..\\\\\\\\{\"pape%r_i :d\"\"21er_id\":.pdf', '\\U00103222\\U00102e36\\U00103433𢀬\\U00057661\\U00106170㨢\\U00103a43\\U00106957\\U0010ffff\\U0010ffff𗌳/\\\\..\\\\\\\\{\"pape%r_i :d\"\"21er_id\":.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '􃈢􂸶􃐳𢀬񗙡􆅰㨢􃩃􆥗􏿿􏿿𗌳/\\..\\\\{\"pape%r_i :d\"\"21er_id\":.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f106.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f106.123save/\\\\..\\\\\\\\{\"pape%r_id\": \"2\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '106.123save/\\..\\\\{\"pape%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%\\x00\\x00\\x00%\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%\\x00\\x00\\x00%\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%\\x00\\x00\\x00%\": \"21067123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%\\x00\\x00\\x00%\": \"21067123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2', 'save_path': '06.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2.pdf', '06.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123save/\\..\u001f \\\\{\"pape%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2', 'save_path': '07.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2.pdf', '07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '07.123save/\\..\u001f \\\\{\"pape%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r_id\": \"2', 'save_path': '07.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r_id\": \"2.pdf', '07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '07.123save/\\..\u001f \\\\{\"pape]r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r!\\x11d\": \"2', 'save_path': '07.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r!\\x11d\": \"2.pdf', '07.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]r!\\x11d\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '07.123save/\\..\u001f \\\\{\"pape]r!\u0011d\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]WWWWWWWWW', 'save_path': 'WWWWWr!\\x11d\": \"2107.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['WWWWWr!\\x11d\": \"2107.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]WWWWWWWWW.pdf', 'WWWWWr!\\x11d\": \"2107.123save/\\\\..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\\\\\\\{\"pape]WWWWWWWWW.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'WWWWWr!\u0011d\": \"2107.123save/\\..\u001f \\\\{\"pape]WWWWWWWWW.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106indow', 'save_path': '32'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['32/\\\\..\\\\\\\\{\"pape%r_id\": \"2106indow.pdf', '32/\\\\..\\\\\\\\{\"pape%r_id\": \"2106indow.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '32/\\..\\\\{\"pape%r_id\": \"2106indow.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"p=ape%r_id\": \"2106indo', 'save_path': 'm32'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['m32/\\\\..\\\\\\\\{\"p=ape%r_id\": \"2106indo.pdf', 'm32/\\\\..\\\\\\\\{\"p=ape%r_id\": \"2106indo.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'm32/\\..\\\\{\"p=ape%r_id\": \"2106indo.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123\\x10', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123\\x10.pdf', 'ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123\\x10.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\{\"pape%r_id\": \"2106.123\u0010.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\"\\x00\\x00: \"2106.12', 'save_path': '\\x10save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x10save/\\\\..\\\\\\\\{\"pape%r_id\"\\x00\\x00: \"2106.12.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00(106.12', 'save_path': '\\x10save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x10save/\\\\..\\\\\\\\{\"pape%r_i\\x00\\x00\\x00\\x00\\x00\\x00\\x00(106.12.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%rTm\\x00\\x00\\x00\\x00\\x00\\x00\\x00(106.12', 'save_path': '\\x10save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x10save/\\\\..\\\\\\\\{\"pape%rTm\\x00\\x00\\x00\\x00\\x00\\x00\\x00(106.12.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"pape%r_id\": \"2106.123sa', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\\"pape%r_id\": \"2106.123sa.pdf', 've/\\\\..\\\\\\\\\"pape%r_id\": \"2106.123sa.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\\"pape%r_id\": \"2106.123sa.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'Tj\\\\..\\\\\\\\\"pape%r_id\": \"2106.123', 'save_path': 'aave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['aave/Tj\\\\..\\\\\\\\\"pape%r_id\": \"2106.123.pdf', 'aave/Tj\\\\..\\\\\\\\\"pape%r_id\": \"2106.123.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'aave/Tj\\..\\\\\"pape%r_id\": \"2106.123.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'Tj\\\\..\\\\\\\\\"pape%r_id\": 6211.\"023', 'save_path': 'aave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['aave/Tj\\\\..\\\\\\\\\"pape%r_id\": 6211.\"023.pdf', 'aave/Tj\\\\..\\\\\\\\\"pape%r_id\": 6211.\"023.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'aave/Tj\\..\\\\\"pape%r_id\": 6211.\"023.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'Tj\\\\..\\\\\\\\\"pape%r_\\\\id\": 6211.\"02', 'save_path': 'saave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['saave/Tj\\\\..\\\\\\\\\"pape%r_\\\\id\": 6211.\"02.pdf', 'saave/Tj\\\\..\\\\\\\\\"pape%r_\\\\id\": 6211.\"02.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'saave/Tj\\..\\\\\"pape%r_\\id\": 6211.\"02.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'Tj\\\\..\\\\\\\\\"papXe%r_\\\\id\": 6211.\"0', 'save_path': '猳慡敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['猳慡敶/Tj\\\\..\\\\\\\\\"papXe%r_\\\\id\": 6211.\"0.pdf', '猳慡敶/Tj\\\\..\\\\\\\\\"papXe%r_\\\\id\": 6211.\"0.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '猳慡敶/Tj\\..\\\\\"papXe%r_\\id\": 6211.\"0.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.123save/\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.123save/\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file ' \"2106.123save/\\..\\\\{\"pape%r_id\":.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave/\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave/\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file ' \"2106.1WLsave/\\..\\\\{\"pape%r_id\":.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave/\\\\..\\\\\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"2106.1WLsave/\\\\..\\\\\\\\..\\\\\\\\{\"pape%r_id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file ' \"2106.1WLsave/\\..\\\\..\\\\{\"pape%r_id\":.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\p\"p\\\\{ea%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\p\"p\\\\{ea%r_id\": \"2106.123s.pdf', 've/\\\\..\\\\p\"p\\\\{ea%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\p\"p\\{ea%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": ', 'save_path': 'ㄲ㘰ㄮ㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ㄲ㘰ㄮ㌲慳敶/\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": .pdf', 'ㄲ㘰ㄮ㌲慳敶/\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": .pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ㄲ㘰ㄮ㌲慳敶/\\..\\p\\..\\p\"p\\{e\"p\\{ea%r_id\": .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": ', 'save_path': 'ㄲ㘰ㄮ㌲'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ㄲ㘰ㄮ㌲/\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": .pdf', 'ㄲ㘰ㄮ㌲/\\\\..\\\\p\\\\..\\\\p\"p\\\\{e\"p\\\\{ea%r_id\": .pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ㄲ㘰ㄮ㌲/\\..\\p\\..\\p\"p\\{e\"p\\{ea%r_id\": .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..c\\\\{\"pape%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..c\\\\{\"pape%r_id\": \"2106.123s.pdf', 've/\\\\..c\\\\{\"pape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..c\\{\"pape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..c\\\\{\"pape%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2', 'save_path': '06.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123save/\\\\..c\\\\{\"pape%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2.pdf', '06.123save/\\\\..c\\\\{\"pape%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123save/\\..c\\{\"pape%r\u001f _id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2', 'save_path': '06.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2.pdf', '06.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f _id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123save/\\..c\\{\"paqe%r\u001f _id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f\\x1f ', 'save_path': 'id\": \"2106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['id\": \"2106.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f\\x1f .pdf', 'id\": \"2106.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f\\x1f .pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'id\": \"2106.123save/\\..c\\{\"paqe%r\u001f \u001f .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7fTj\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f', 'save_path': ' _id\": \"2106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) [' _id\": \"2106.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7fTj\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f.pdf', ' _id\": \"2106.123save/\\\\..c\\\\{\"paqe%r\\x7f\\x7f\\x7fTj\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file ' _id\": \"2106.123save/\\..c\\{\"paqe%rTj\u001f .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\\\\\\\{', 'save_path': '敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['敶/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\\\\\\\{.pdf', '敶/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\\\\\\\\{.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '敶/\\..\\\\{\"pape%r_id\": \"2106.1\\\\{.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\ape%pe%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\ape%pe%r_id\": \"2106.123s.pdf', 've/\\\\..\\\\\\\\ape%pe%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\ape%pe%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\": \"2106.12', 'save_path': 'save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['save/\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\": \"2106.12.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\"XXXXXXXXXX', 'save_path': '\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U00103222\\U00102e36𗌳'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U00103222\\U00102e36𗌳/\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\"XXXXXXXXXX.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\"XXXXXX,XXX', 'save_path': '\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U00103222\\U00102e36𗌳'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U0010d8d8\\U00103222\\U00102e36𗌳/\\\\..\\\\\\\\ape\\x00\\x00%pe%r_id\"XXXXXX,XXX.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"p{ape%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\\"p{ape%r_id\": \"2106.123s.pdf', 've/\\\\..\\\\\\\\\"p{ape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\\"p{ape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"p{ape%r_id\":*\"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\\"p{ape%r_id\":*\"2106.123s.pdf', 've/\\\\..\\\\\\\\\"p{ape%r_id\":*\"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\\"p{ape%r_id\":*\"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"p{ape%r_id\":*\"0322.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\\"p{ape%r_id\":*\"0322.123s.pdf', 've/\\\\..\\\\\\\\\"p{ape%r_id\":*\"0322.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\\"p{ape%r_id\":*\"0322.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"p{ape%r_id\":z*\"0322.123', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\\"p{ape%r_id\":z*\"0322.123.pdf', 'ave/\\\\..\\\\\\\\\"p{ape%r_id\":z*\"0322.123.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\\"p{ape%r_id\":z*\"0322.123.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\\"p{ape%r_id\":z*=\"0322.12', 'save_path': 'save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['save/\\\\..\\\\\\\\\"p{ape%r_id\":z*=\"0322.12.pdf', 'save/\\\\..\\\\\\\\\"p{ape%r_id\":z*=\"0322.12.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'save/\\..\\\\\"p{ape%r_id\":z*=\"0322.12.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s.pdf', 've/\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\u001c\\{\"pape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s', 'save_path': 'ape%r_id\": \"2106.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ape%r_id\": \"2106.123save/\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s.pdf', 'ape%r_id\": \"2106.123save/\\\\..\\x1c\\\\{\"pape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ape%r_id\": \"2106.123save/\\..\u001c\\{\"pape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\":\\x18\"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\":\\x18\"2106.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\":\\x18\"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\":\u0018\"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":\\x18\"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":\\x18\"2106.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":\\x18\"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%rd\":\u0018\"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":01\\x1826\".123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":01\\x1826\".123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fd\":01\\x1826\".123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%rd\":01\u001826\".123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fe\":01\\x1826\".123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fe\":01\\x1826\".123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r\\x7f\\x7fe\":01\\x1826\".123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%re\":01\u001826\".123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2106Q123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s', 'save_path': 've\\\\\\\\{\"pape%r_id\": \"2106Q1'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve\\\\\\\\{\"pape%r_id\": \"2106Q1/\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf', 've\\\\\\\\{\"pape%r_id\": \"2106Q1/\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've\\\\{\"pape%r_id\": \"2106Q1/\\..\\\\{\"pape%r_id\": \"2106Q123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s', 'save_path': 've\\\\\\\\{\"pape%r_id\": \"_id\": '}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve\\\\\\\\{\"pape%r_id\": \"_id\": /\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf', 've\\\\\\\\{\"pape%r_id\": \"_id\": /\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've\\\\{\"pape%r_id\": \"_id\": /\\..\\\\{\"pape%r_id\": \"2106Q123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s', 'save_path': 've\\\\\\\\{\"pape%r_id\": \"_id\"lllllllllllllllllll: '}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve\\\\\\\\{\"pape%r_id\": \"_id\"lllllllllllllllllll: /\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf', 've\\\\\\\\{\"pape%r_id\": \"_id\"lllllllllllllllllll: /\\\\..\\\\\\\\{\"pape%r_id\": \"2106Q123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've\\\\{\"pape%r_id\": \"_id\"lllllllllllllllllll: /\\..\\\\{\"pape%r_id\": \"2106Q123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.123s.pdf', 've/\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pap..\\\\{\"pape%r_i.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.1\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f/\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.1\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f/\\\\..\\\\\\\\{\"pap..\\\\\\\\{\"pape%r_i.1\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/\\..\\\\{\"pap..\\\\{\"pape%r_i.1.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\106.12345\", \"save_path\": ', 'save_path': '摮'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['摮/\\\\..\\\\106.12345\", \"save_path\": .pdf', '摮/\\\\..\\\\106.12345\", \"save_path\": .pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '摮/\\..\\106.12345\", \"save_path\": .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\106+++++++++++++++.z12345', 'save_path': '\\u202c猢癡彥慰桴㨢∠摮'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\u202c猢癡彥慰桴㨢∠摮/\\\\..\\\\106+++++++++++++++.z12345.pdf', '\\u202c猢癡彥慰桴㨢∠摮/\\\\..\\\\106+++++++++++++++.z12345.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '‬猢癡彥慰桴㨢∠摮/\\..\\106+++++++++++++++.z12345.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p.....', 'save_path': '⸮愮数彲摩'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['⸮愮数彲摩/\"p......pdf', '⸮愮数彲摩/\"p......pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '⸮愮数彲摩/\"p......pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p.....', 'save_path': '⸮愮異彲摩'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['⸮愮異彲摩/\"p......pdf', '⸮愮異彲摩/\"p......pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '⸮愮異彲摩/\"p......pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p.pur_', 'save_path': 'd\":........apur_id'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['d\":........apur_id/\"p.pur_.pdf', 'd\":........apur_id/\"p.pur_.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'd\":........apur_id/\"p.pur_.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"p.:...', 'save_path': '⸮⸮灡牵楟'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['⸮⸮灡牵楟/\"p.:....pdf', '⸮⸮灡牵楟/\"p.:....pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '⸮⸮灡牵楟/\"p.:....pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\x02p.:...', 'save_path': '⸮⸮灡牵楟'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['⸮⸮灡牵楟/\\x02p.:....pdf', '⸮⸮灡牵楟/\\x02p.:....pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '⸮⸮灡牵楟/\u0002p.:....pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \"2', 'save_path': '06.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \"2.pdf', '06.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f \"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123save/\\..\\\\{\"pape%r_id\": \u001f \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2', 'save_path': '06.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2.pdf', '06.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123save/\\..\\\\{\"pape%r_id\": \u001f0\"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2', 'save_path': '05.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['05.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2.pdf', '05.123save/\\\\..\\\\\\\\{\"pape%r_id\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f0\"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '05.123save/\\..\\\\{\"pape%r_id\": \u001f0\"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2107.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2107.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2107.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2107.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%/_id\": \"2107.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%/_id\": \"2107.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"3s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"3s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"3s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2106.1\"3s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"$$', 'save_path': '\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0010a4a4'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0010a4a4/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"$$.pdf', '\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0010a4a4/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1\"$$.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '񊒤񊒤񊒤񊒤񊒤񊒤񊒤񊒤􊒤/\\..\\\\{\"pape%r_id\": \"2106.1\"$$.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$', 'save_path': '\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U00106173'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U00106173/\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf', '\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U0004a4a4\\U00106173/\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '񊒤񊒤񊒤񊒤􆅳/\\..\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$', 'save_path': '\\U0004a4a4\\U0004a4a4𗀢\\U00107265\\U00102264\\U0004a4a4\\U0004a4a4\\U00106173'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\U0004a4a4\\U0004a4a4𗀢\\U00107265\\U00102264\\U0004a4a4\\U0004a4a4\\U00106173/\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf', '\\U0004a4a4\\U0004a4a4𗀢\\U00107265\\U00102264\\U0004a4a4\\U0004a4a4\\U00106173/\\\\..\\\\\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '񊒤񊒤𗀢􇉥􂉤񊒤񊒤􆅳/\\..\\\\{\"\"$$$$$$$$$$$$$$$$$$$$$.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"4212.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ123s.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"421TJ123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ124s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ124s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"421TJ124s.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"421TJ124s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"421T2Js14', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"421T2Js14.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"421T2Js14.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"421T2Js14.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_\\x00\\x00id\": \"421T2Js', 'save_path': '4ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['4ave/\\\\..\\\\\\\\{\"pape%r_\\x00\\x00id\": \"421T2Js.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape_path\": \"ndowm32\\\\\\x7f', 'save_path': '\\x7fe'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm32\\\\\\x7f.pdf', '\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm32\\\\\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'e/\\..\\\\{\"pape_path\": \"ndowm32\\.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x1f 32\\\\\\x7f\\x7f\\x7fe'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x1f 32\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x1f 32\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '\u001f 32\\e/\\..\\\\{\"pape_path\": \"ndowm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x1f 64\\\\\\x7f\\x7f\\x7fe'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x1f 64\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x1f 64\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '\u001f 64\\e/\\..\\\\{\"pape_path\": \"ndowm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x1f 6]4\\\\\\x7f\\x7f\\x7fe'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x1f 6]4\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x1f 6]4\\\\\\x7f\\x7f\\x7fe/\\\\..\\\\\\\\{\"pape_path\": \"ndowm\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '\u001f 6]4\\e/\\..\\\\{\"pape_path\": \"ndowm.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05{\\\\..', 'save_path': '𧭜\\U00057061\\U00106170㨢\\U000f646e\\U0010ff6d\\U0010ffff\\U001036a0\\U0010ff5c'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['𧭜\\U00057061\\U00106170㨢\\U000f646e\\U0010ff6d\\U0010ffff\\U001036a0\\U0010ff5c/\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05{\\\\...pdf', '𧭜\\U00057061\\U00106170㨢\\U000f646e\\U0010ff6d\\U0010ffff\\U001036a0\\U0010ff5c/\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05{\\\\...pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '𧭜񗁡􆅰㨢󶑮􏽭􏿿􃚠􏽜/\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005{\\...pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.s12a', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.s12a.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.s12a.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"2106.s12a.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.\\x00\\x00\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"2106.', 'save_path': '23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23save/\\\\.\\x00\\x00\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"2106..pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.Tj\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"2106.', 'save_path': '23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23save/\\\\.Tj\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"2106..pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.Tj\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"0106.', 'save_path': '23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23save/\\\\.Tj\\x00\\x00.\\\\\\\\{\"pape%r_id\": \"0106..pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s', 'save_path': '45\", \"save_ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['45\", \"save_ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s.pdf', '45\", \"save_ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '45\", \"save_ave/\\..\\\\{\"pape%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s', 'save_path': '45\", \"save_ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['45\", \"save_ave/\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s.pdf', '45\", \"save_ave/\\\\..\\\\\\\\{\"pape%r_id\": \"4212.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '45\", \"save_ave/\\..\\\\{\"pape%r_id\": \"4212.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%', 'save_path': '楟≤›䌢㨢∠ㄲ㘰ㄮ㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['楟≤›䌢㨢∠ㄲ㘰ㄮ㌲慳敶/{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%.pdf', '楟≤›䌢㨢∠ㄲ㘰ㄮ㌲慳敶/{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '楟≤›䌢㨢∠ㄲ㘰ㄮ㌲慳敶/{\\..\\\\{\"pape%r_id\\..\\\\{\"pape%.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%', 'save_path': '楟≤›\\uffff\\uffff∠ㄲ㘰ㄮ㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['楟≤›\\uffff\\uffff∠ㄲ㘰ㄮ㌲慳敶/{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%.pdf', '楟≤›\\uffff\\uffff∠ㄲ㘰ㄮ㌲慳敶/{\\\\..\\\\\\\\{\"pape%r_id\\\\..\\\\\\\\{\"pape%.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '楟≤›￿￿∠ㄲ㘰ㄮ㌲慳敶/{\\..\\\\{\"pape%r_id\\..\\\\{\"pape%.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1?23', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1?23.pdf', 'ave/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1?23.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\{\"pape%r_id\": \"2106.1?23.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r[id\": \"2106.1?23', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\{\"pape%r[id\": \"2106.1?23.pdf', 'ave/\\\\..\\\\\\\\{\"pape%r[id\": \"2106.1?23.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\{\"pape%r[id\": \"2106.1?23.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"\\x00\\x00\\x00\\x002106.', 'save_path': '23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23save/\\\\..\\\\\\\\{\"pape%r_id\": \"\\x00\\x00\\x00\\x002106..pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\":\" \\x00\\x00\\x00\\x002106.', 'save_path': '23save'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23save/\\\\..\\\\\\\\{\"pape%r_id\":\" \\x00\\x00\\x00\\x002106..pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\":\" \\x00\\x00\\x00\\x002106.', 'save_path': '23sav\\x1e'}",
+   "triggered_sanitizers": "['check_introspection_exfil']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23sav\\x1e/\\\\..\\\\\\\\{\"pape%r_id\":\" \\x00\\x00\\x00\\x002106..pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_e%r_id\": \"2106.', 'save_path': '23'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['23/\\\\..\\\\\\\\{\"pape%r_e%r_id\": \"2106..pdf', '23/\\\\..\\\\\\\\{\"pape%r_e%r_id\": \"2106..pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '23/\\..\\\\{\"pape%r_e%r_id\": \"2106..pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpape%re_%r_id\": \"2.123'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpape%re_%r_id\": \"2.123/\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpape%re_%r_id\": \"2.123/\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'pape%re_%r_id\": \"2.123/\\..\\\\{\".pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'save_path': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpapr_id\": \"id\": \"2.123'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpapr_id\": \"id\": \"2.123/\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf', '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpapr_id\": \"id\": \"2.123/\\\\..\\\\\\\\{\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'papr_id\": \"id\": \"2.123/\\..\\\\{\".pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%rth\": \"C:\\\\\\\\_id\": ', 'save_path': 'ㄲ㘰ㄮ㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ㄲ㘰ㄮ㌲慳敶/\\\\..\\\\\\\\{\"pape%rth\": \"C:\\\\\\\\_id\": .pdf', 'ㄲ㘰ㄮ㌲慳敶/\\\\..\\\\\\\\{\"pape%rth\": \"C:\\\\\\\\_id\": .pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ㄲ㘰ㄮ㌲慳敶/\\..\\\\{\"pape%rth\": \"C:\\\\_id\": .pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1Tj2', 'save_path': 'save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['save/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1Tj2.pdf', 'save/\\\\..\\\\\\\\{\"pape%r_id\": \"2106.1Tj2.pdf'] AND made outbound network connection(s) to ['151.101.3.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'save/\\..\\\\{\"pape%r_id\": \"2106.1Tj2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\Tf\\\\{\"pape%r_id\": \"2106.1T', 'save_path': '㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㌲慳敶/\\\\..\\\\Tf\\\\{\"pape%r_id\": \"2106.1T.pdf', '㌲慳敶/\\\\..\\\\Tf\\\\{\"pape%r_id\": \"2106.1T.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '㌲慳敶/\\..\\Tf\\{\"pape%r_id\": \"2106.1T.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\Tf\\\\{\"pape%r_id\": b2106.1T', 'save_path': '㌲慳敶'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['㌲慳敶/\\\\..\\\\Tf\\\\{\"pape%r_id\": b2106.1T.pdf', '㌲慳敶/\\\\..\\\\Tf\\\\{\"pape%r_id\": b2106.1T.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '㌲慳敶/\\..\\Tf\\{\"pape%r_id\": b2106.1T.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.', 'save_path': '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠慳敶灟瑡≨›䌢尺坜湩潤海㈳屜牤'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠慳敶灟瑡≨›䌢尺坜湩潤海㈳屜牤/\\\\..pdf', '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠慳敶灟瑡≨›䌢尺坜湩潤海㈳屜牤/\\\\..pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠慳敶灟瑡≨›䌢尺坜湩潤海㈳屜牤/\\..pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.', 'save_path': '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲摜楲'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲摜楲/\\\\..pdf', '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲摜楲/\\\\..pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲摜楲/\\..pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\.', 'save_path': '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲海㈳屜牤屩牤'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲海㈳屜牤屩牤/\\\\..pdf', '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲海㈳屜牤屩牤/\\\\..pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '屜≻慰数爥楟≤≻慰数彲摩㨢∠ㄲ㘰ㄮ㌲㔴Ⱒ∠獼癡彥慰桴㨢∠㩃屜楗摮睯㍭尲海㈳屜牤屩牤/\\..pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"pape%r_id\": \"21%6.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{\"pape%r_id\": \"21%6.123s.pdf', 've/\\\\..\\\\\\\\{\"pape%r_id\": \"21%6.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{\"pape%r_id\": \"21%6.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"pape%r_id\": \"2', 'save_path': '%6.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['%6.123save/\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"pape%r_id\": \"2.pdf', '%6.123save/\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"pape%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '%6.123save/\\..\\\\{\"pape%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"2ape%r_id\": \"2', 'save_path': '%6.123save'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['%6.123save/\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"2ape%r_id\": \"2.pdf', '%6.123save/\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f..\\\\\\\\{\"2ape%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '%6.123save/\\..\\\\{\"2ape%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{\"papge%r_id\": \"2106.123', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\{\"papge%r_id\": \"2106.123.pdf', 'ave/\\\\..\\\\\\\\{\"papge%r_id\": \"2106.123.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\{\"papge%r_id\": \"2106.123.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..{\"papge%r_id\"&: \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..{\"papge%r_id\"&: \"2106.123s.pdf', 've/\\\\..{\"papge%r_id\"&: \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.131.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..{\"papge%r_id\"&: \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..{\"papge%r_id\"&: \"2105.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..{\"papge%r_id\"&: \"2105.123s.pdf', 've/\\\\..{\"papge%r_id\"&: \"2105.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..{\"papge%r_id\"&: \"2105.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123s', 'save_path': 've'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ve/\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123s.pdf', 've/\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123s.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 've/\\..\\\\{ \"210%r_id\": \"2106.123s.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123x', 'save_path': 'ave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['ave/\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123x.pdf', 'ave/\\\\..\\\\\\\\{ \"210%r_id\": \"2106.123x.pdf'] AND made outbound network connection(s) to ['151.101.195.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file 'ave/\\..\\\\{ \"210%r_id\": \"2106.123x.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2', 'save_path': '06.123xsave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['06.123xsave/\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2.pdf', '06.123xsave/\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '06.123xsave/\\..\\\\{ \"\u001f 210%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2', 'save_path': '05.123xsave'}",
+   "triggered_sanitizers": "['check_introspection_exfil', 'check_introspection_insecure_file_permissions']",
+   "tool_output": "''",
+   "analysis": "[Sequence Step 1/1] Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal file(s) ['05.123xsave/\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2.pdf', '05.123xsave/\\\\..\\\\\\\\{ \"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1f 210%r_id\": \"2.pdf'] AND made outbound network connection(s) to ['151.101.67.42'] in the same call -- a read->send exfiltration path.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '05.123xsave/\\..\\\\{ \"\u001f 210%r_id\": \"2.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification."
+  }
+ ],
+ "truncated": true
+}

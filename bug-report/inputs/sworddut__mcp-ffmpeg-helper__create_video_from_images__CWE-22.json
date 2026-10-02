@@ -1,0 +1,903 @@
+{
+ "repo": "sworddut/mcp-ffmpeg-helper",
+ "tool": "create_video_from_images",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "d68d0104a756750f46f10074098401e34128ff23",
+ "draft": "sworddut__mcp-ffmpeg-helper__create_video_from_images__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 127,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../..//..../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../..//....'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattern\": \"img%0', 'outputPath': 'd.jpg\", \"outputPath\": \"../..//..../../tm', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPattern\": \"img%0 → d.jpg\", \"outputPath\": \"../..//..../../tm\\n\\n/bin/sh: 1: Syntax error: Unterminated quoted string\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../..?../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../..?..'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mpath4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputP', 'outputPath': 't@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../.\"./../tmp/evil.mp4\"T_]\"ramerate\": 0, \"code \"{\"outputP', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: ENOENT: no such file or directory, mkdir \\'t@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../.\".\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputP', 'outputPath': 't@ern\": \"img%03d.jpg\",$\"outputPath\": \"../../../.\"./../tmp/evil.mp4\"T_]\"ramerate\": 0, \"code \"{\"outputP', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: ENOENT: no such file or directory, mkdir \\'t@ern\": \"img%03d.jpg\",$\"outputPath\": \"../../../.\".\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framera0te\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp5', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv40p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx263', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evi*l.mp4', 'framerate': 0, 'codec': 'libx263', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/e$vil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":', 'outputPath': '../../../../../tmp/e$vil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.npg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.npg', 'outputPath': '../../../../../tmp/eiv.lmp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattern\": \"img%03d.npg\", \"outputPa\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fth\": \"../../..{\\x01\\x00\\x00\\x00\\x00\\x00\\x00', 'outputPath': 'ttern& :\"framer/../../fra', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: FFmpeg error: The argument \\'file\\' must be a string without null bytes. Received \\'ffmpeg -framerate 25 -i \"\"inputPattern\": \"img%03d.npg\", \"outputPa\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x7F\\\\x...'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmv/peil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmv/peil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmv'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmv/peil.mp4\", \" framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":', 'outputPath': '../../../../../tmv/peil.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmv'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp8', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputP', 'outputPath': 'ttern\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"outpe\": 25, \"codec\": \"libx264\", \"pixelFormat\"', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputP → ttern\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"outpe\": 25, \"codec\": \"libx264\", \"pixelFormat\"\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputP', 'outputPath': 'ttern\": \"/etc/passwd\\\\u0000\", \"ouutpe\": 2\": \"outpe\": 25, \"codec\": \"libx264\", \"pixelFormat\"', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputP → ttern\": \"/etc/passwd\\\\u0000\", \"ouutpe\": 2\": \"outpe\": 25, \"codec\": \"libx264\", \"pixelFormat\"\\n\\n/bin/sh: 1: Syntax error: Unterminated quoted string\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%05d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx244\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx244', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx244\", \"p,ixelFormat\"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx244', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../@./../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx244\", \"p,ixelFormat\"', 'outputPath': '../@./../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx244', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../@.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv210p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.m*p4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv210p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.m*p4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv210p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'im%0g3d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'im%0g3d.jpg', 'outputPath': '../../../../../tmp/evil.mp8', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'im%0g3d.jpg', 'outputPath': '../../../../../tmp/evil.mp8', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0153319355238601e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0153319355238601e+308, 'codec': 'libx%64', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../.&/../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../.&'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../.&/../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv40p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../.&'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../.&/../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx265', 'pixelFormat': 'yuv40p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../.&'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.\\x1fpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.j]pg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"~./../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '~./../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"~./../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":  → ~./../../../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%0#d.jpg\", \"outputPath\": \"~./../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '~./../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%0#d.jpg\", \"outputPath\": \"~./../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":  → ~./../../../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%06d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0221907675412487e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../.20./../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../.20.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv4`0p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': '\\U000e6f69', 'pixelFormat': 'yuv4`0p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp5', 'framerate': 0, 'codec': '\\U000e6f69', 'pixelFormat': 'yuv4`0p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp5', 'framerate': 0, 'codec': '\\U000e6f69', 'pixelFormat': 'yuv5`0p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp5', 'framerate': 0, 'codec': '', 'pixelFormat': 'yuv5`0p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0571640592540975e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattnre\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormau\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattnre\": \"img%03d.jpg\", \"outputPath\": \"../../..iiii/../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormau', 'outputPath': '../../..iiii/../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../..iiii'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattnre\": \"img%03d.jpg\", \"outputPath\": \"../..?..iiii/../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormau', 'outputPath': '../..?..iiii/../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../..?..iiii'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../.2/tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../.2'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img[[[%03d.jpg', 'outputPath': '../../../../.2/tmp/evil.mp4', 'framerate': -1.0221907675412487e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../.2'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '..../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":  → ..../../../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp8\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '..../../../../tmp/evil.mp8', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp8\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\":  → ..../../../../tmp/evil.mp8\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '/d./../../tmp/evil.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '/d.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '/d./../../tmpevl/i.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '/d.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg&', 'outputPath': '/d./../../tmpevl/i.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '/d.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg&', 'outputPath': '/d./../../tmpevl/i.mp4', 'framerate': 0.0, 'codec': 'libx528', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '/d.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"..//../..../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '..//../..../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '..//../....'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"..//..//../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixp,ixelFormat\": ', 'outputPath': '..//..//../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"..//..//../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixp,ixelFormat\":  → ..//..//../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"*.//..//../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixp,ixelFormat\": ', 'outputPath': '*.//..//../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"*.//..//../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixp,ixelFormat\":  → *.//..//../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '.-/../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img%03d.jpg → .-/../../../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '.-/../&./../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img%03d.jpg → .-/../&./../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%0d.jpg', 'outputPath': '.-/../&./../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img%0d.jpg → .-/../&./../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img@0d.jpg', 'outputPath': '.-/../&./../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img@0d.jpg → .-/../&./../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img@0d.jpg', 'outputPath': '.-/../&./../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img@0d.jpg → .-/../&./../../tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.2402632349048323e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p*', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.3531146294080837e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../#../tmp/evil.mp4', 'framerate': 0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../#..'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p=ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"f.amerate\": 0, \"codec\": \"libx264\", \"p=ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mpt\", \"f.amerate\": 0, \"codec\": \"libx264\", \"p=ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mpt', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mpt\", \"f.amerate\": 0, \"co=ixelFormat\": \"yuv420p\", \"extraOp', 'outputPath': '../../../../../tmp/evil.mpt', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evi,,,,,,,,,,,,,,,,,,,,,,l.mpt\", \"f.amerate\": 0, \"co=ixelFormat', 'outputPath': '../../../../../tmp/evil.mpt', 'framerate': -1.0153319355238601e+308, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPatterl\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPatterl\": \"img%OOOO03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0153319355238601e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPatterl\": \"img%OOOO02d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0153319355238601e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPatterl\": \"img%OOOO02d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0153319355238601e+308, 'codec': 'libx264', 'pixelFormat': 'yuv210p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '/....././../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '/.....'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../%./../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../%.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../%./../tmp/evil.mp4', 'framerate': -1.2402632349048323e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../%.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03od.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tqp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tqp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tqp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fr\\x1f\\x1cerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tm/pveil.mp4\", \"fr\\x1f\\x1cerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tm/pveil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tm'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"imc%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../.../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../...'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../.../../../../tmp/evil.mp3', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../...'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../.../../../../tmp/evil.mp3', 'framerate': -1.0153319355238601e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../...'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': '\\U000e6f69', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': '', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'g%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inpu#Pattern\": \"\\x7f\\x7fg%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inpu#Pattern\": \"\\x7f\\x7fg%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp3\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp3', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inpu#Pattern\": \"\\x7f\\x7fg%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp3\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp3', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yu@420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"i}putPattern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"i}putPattern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -7.88668206668116e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"i}putPattern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"fram;rate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -7.921793260721439e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"m0%i3gd.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../..//tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img%03d.jpg → ../..//tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPattebn\": \"img%03d.jpg\", \"outputPath\": \"../../KQPQQPQQ/tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \"', 'outputPath': '../..//tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPattebn\": \"img%03d.jpg\", \"outputPath\": \"../../KQPQQPQQ/tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"libx264\", \"pixelFormat\": \" → ../..//tmp/evil.mp4\\n\\n/bin/sh: 1: Syntax error: Unterminated quoted string\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evilҒ', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': -1.0571656665170083e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp3\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp3', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/e\\n\\x16\\x13Gmp3\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/emp3', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/e\\n\\x16\\x13Gmp3\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFor?at\": ', 'outputPath': '../../../../../tmp/emp3', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03zd.jpg\", \"outputPath\": \"../../../../../tmp/e\\n\\x16\\x13Gmp3\", \"framerate\": 0, \"codec\": \"libx264\", \"p,ixelFor?at\":', 'outputPath': '../../../../../tmp/emp3', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../.././tmp/evil.mp4', 'framerate': -1.0090249278133437e+308, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: img%03d.jpg → ../../../.././tmp/evil.mp4\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../.;./../.././tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../.;.'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': 'yuv210p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.?jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'img%03d.?jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': 'imo%03d.?jpg', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0.0, 'codec': 'libx264', 'pixelFormat': 'yuv420p', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerat%\": 0, \"codec\": \"libx264\", \"p,ixelFormat\": ', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 2.4192247404049807e+307, 'codec': 'libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%03d.jpg\", \"outputPath\": \"../../../../../tmp/evil.mp4\", \"framerate\": 0, \"codec\": \"`libx264\", \"p,ixelFormat\":', 'outputPath': '../../../../../tmp/evil.mp4', 'framerate': 0, 'codec': '`libx264', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '../../../../../tmp'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPattern': '\"inputPat@ern\": \"img%036d.jpg\", \"outputPath\": \"../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'outputPath': '\\x7f\\x7f\\x7f\\x7f../../../tmp/evil.mp4\", \"framerate\": 0, \"c{\"oinde', 'framerate': 0.0, 'codec': '', 'pixelFormat': '', 'extraOptions': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Video creation completed: \"inputPat@ern\": \"img%036d.jpg\", \"outputPath\": \"../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f → \\x7f\\x7f\\x7f\\x7f../../../tmp/evil.mp4\", \"framerate\": 0, \"c{\"oinde\\n\\n/bin/sh: 1: ffmpeg: not found\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

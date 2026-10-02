@@ -1,0 +1,28 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "download_iacr",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__download_iacr__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '2009/101', 'save_path': '/etc/passwd'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal']",
+   "tool_output": "\"Error downloading PDF: [Errno 17] File exists: '/etc/passwd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '2009/101', 'save_path': '../../../../../tmp'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_introspection_temp_file_leak', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal']",
+   "tool_output": "'../../../../../tmp/iacr_2009_101.pdf'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/iacr_2009_101.pdf']! Risk of resource exhaustion / disk leakage.Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '../../../../../tmp/iacr_2009_101.pdf' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '../../../../../tmp/iacr_2009_101.pdf' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/iacr_2009_101.pdf'].Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

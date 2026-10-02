@@ -1,0 +1,35 @@
+{
+ "repo": "aaronjmars/web3-research-mcp",
+ "tool": "coingecko-search",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "e454995982dae9e47ba38fd8e01ffd23c70cff67",
+ "draft": "aaronjmars__web3-research-mcp__coingecko-search__CWE-79.md",
+ "logs_read": 7,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '${7*7}'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No CoinGecko matches for \"${7*7}\"'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'query': '${7*7n}'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No CoinGecko matches for \"${7*7n}\"'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'query': '\"qu{\"query${7*,z\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No CoinGecko matches for \"\"qu{\"query${7*,z\\x7f\\x7f\"'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

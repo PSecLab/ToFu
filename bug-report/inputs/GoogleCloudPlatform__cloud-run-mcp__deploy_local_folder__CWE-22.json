@@ -1,0 +1,42 @@
+{
+ "repo": "GoogleCloudPlatform/cloud-run-mcp",
+ "tool": "deploy_local_folder",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "560558a78b9d10f30da4b21879dff67379c80668",
+ "draft": "GoogleCloudPlatform__cloud-run-mcp__deploy_local_folder__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'test-project', 'region': 'asia-northeast1', 'service': 'service2', 'folderPath': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'test-project', 'region': 'europe-west1', 'service': 'myservice', 'folderPath': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'test-project', 'region': 'us-central1', 'service': 'service1', 'folderPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'test-project', 'region': 'europe-west1', 'service': 'service8', 'folderPath': '/home/user/project/../../../../var/log'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

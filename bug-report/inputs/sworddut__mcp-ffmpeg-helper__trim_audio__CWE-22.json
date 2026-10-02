@@ -1,0 +1,42 @@
+{
+ "repo": "sworddut/mcp-ffmpeg-helper",
+ "tool": "trim_audio",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "d68d0104a756750f46f10074098401e34128ff23",
+ "draft": "sworddut__mcp-ffmpeg-helper__trim_audio__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputPath': 'output.aac', 'startTime': '0', 'duration': '10', 'endTime': '10', 'format': 'aac'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputPath': 'output.mp3', 'startTime': '00:00:00', 'duration': '00:00:10', 'endTime': '00:00:10', 'format': 'mp3'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'input.mp3', 'outputPath': '../../../../tmp/evil.mp3', 'startTime': '00:00:00', 'duration': '00:00:10', 'endTime': '00:00:10', 'format': 'mp3'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: input.mp3'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': 'output.wav', 'startTime': '00:00:00.000', 'duration': '00:00:05.000', 'endTime': '00:00:05.000', 'format': 'wav'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: /etc/passwd\\x00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

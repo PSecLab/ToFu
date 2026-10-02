@@ -1,0 +1,1414 @@
+{
+ "repo": "qiniu/qiniu-mcp-server",
+ "tool": "image_round_corner",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "52dd33532655721816b3efb61285522ec94c485a",
+ "draft": "qiniu__qiniu-mcp-server__image_round_corner__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2771,
+ "note": "2771 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etc/passwd\\x00', 'radius_x': 'abc', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etc/passwd\\\\x00?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.0.1:8500', 'radius_x': '20', 'radius_y': '20'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'http://127.0.0.1:8500?roundPic%2Fradiusx%2F20%2Fradiusy%2F20'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etc/passwd', 'radius_x': '-10', 'radius_y': '10'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '../../../../etc/passwd?roundPic%2Fradiusx%2F-10%2Fradiusy%2F10'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://localhost:8080', 'radius_x': '!50p', 'radius_y': '!50p'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'http://localhost:8080?roundPic%2Fradiusx%2F%2150p%2Fradiusy%2F%2150p'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://169.254.169.254/latest/meta-data/', 'radius_x': '0', 'radius_y': '0'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'http://169.254.169.254/latest/meta-data/?roundPic%2Fradiusx%2F0%2Fradiusy%2F0'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [SSRF Protection Alert: Cloud Metadata target detected: '169.254.169.254']. Input: 'http://169.254.169.254/latest/meta-data/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'radius_x': '999999', 'radius_y': '999999'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini?roundPic%2Fradiusx%2F999999%2Fradiusy%2F999999'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", 5radius_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", 5radius_x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", 5radius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", 5radxsi_u\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", 5radxsi_u\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", 5radxsi_u\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objobject_url\": \"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objobject_url\": \"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 16 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objobject_url\": \"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 12 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_u\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_', 'radius_x': '\":asswd\\\\u0000\", \"rad', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_?roundPic%2Fradiusx%2F%22%3Aasswd%5Cu0000%22%2C%20%22rad%2Fradiusy%2F%22%3Aasswd%5Cu0000%22%2C%20%22rad\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 12 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objobject_u lr:\"\"http://example.com/image.png\", dxsi_'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object{\"object_', 'radius_x': 'rl\": \"_url\": \"http://example.comhttp://example.', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object{\"object_?roundPic%2Fradiusx%2Frl%22%3A%20%22_url%22%3A%20%22http%3A%2F%2Fexample.comhttp%3A%2F%2Fexample.%2Fradiusy%2Frl%22%3A%20%22_url%22%3A%20%22http%3A%2F%2Fexample.comhttp%3A%2F%2Fexample.\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object{\"object_'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object{\"object_', 'radius_x': 'rl\": \"_url\": \"http:/?example.comhttp://example.', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object{\"object_?roundPic%2Fradiusx%2Frl%22%3A%20%22_url%22%3A%20%22http%3A%2F%3Fexample.comhttp%3A%2F%2Fexample.%2Fradiusy%2Frl%22%3A%20%22_url%22%3A%20%22http%3A%2F%3Fexample.comhttp%3A%2F%2Fexample.\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object{\"object_'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etcpasswd/passwd\\x00', 'radius_x': 'abc', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etcpasswd/passwd\\\\x00?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 17 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etcpasswd/passwd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etcpasswd/passwd\\x00', 'radius_x': '', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etcpasswd/passwd\\\\x00?roundPic%2Fradiusx%2Fdef%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 17 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etcpasswd/passwd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etcpasswd/passwd\\\\u0000\", \"rcdiul\": \"/etc/passwd\\\\u0000\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etcpasswd/passwd\\\\\\\\u0000\", \"rcdiul\": \"/etc/passwd\\\\\\\\u0000\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etcpasswd/passwd\\u0000\", \"rcdiul\": \"/etc/passwd\\u0000\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etcpasswd/passwd\\\\u0000\", \"rcdiul\": \"/etc \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etcpasswd/passwd\\\\\\\\u0000\", \"rcdiul\": \"/etc \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etcpasswd/passwd\\u0000\", \"rcdiul\": \"/etc \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/et,passwd/passwd\\\\u0000\", \"rcdiul\": \"/etc \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/et,passwd/passwd\\\\\\\\u0000\", \"rcdiul\": \"/etc \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/et,passwd/passwd\\u0000\", \"rcdiul\": \"/etc \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\\x00\\x00\\x00\\x00\\x00\\x00\\x00Pradius_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00Pradius_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 55 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\u0000\u0000\u0000\u0000\u0000\u0000\u0000Pradius_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\\x00\\x00\\x00\\x00\\x00\\x00\\x00Pradi@s_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00Pradi@s_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 55 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\u0000\u0000\u0000\u0000\u0000\u0000\u0000Pradi@s_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.c/mmioage.png\", \"radius_x\\x00\\x00\\x00\\x00\\x00\\x00\\x00Pradi@s_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.c/mmioage.png\", \"radius_x\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00Pradi@s_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 55 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.c/mmioage.png\", \"radius_x\u0000\u0000\u0000\u0000\u0000\u0000\u0000Pradi@s_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\\x00\\x00\\x00\\x00\\x00\\x00\\x00Pradi@s_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00Pradi@s_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 55 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\u0000\u0000\u0000\u0000\u0000\u0000\u0000Pradi@s_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\\x00\\x00\\x00\\x00\\x00\\x00\\x00Pradiabc\", \"rad', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00Pradiabc\", \"rad?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 55 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.c/mmioage.pnle.c/mmioagex\u0000\u0000\u0000\u0000\u0000\u0000\u0000Pradiabc\", \"rad'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": di0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": di0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": di0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob&ect_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob&ect_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob&ect_urh\": \"htage.png\", \"radius_x\": \"20\", \"radius_y\": \"\"\", \"radius_y\": di0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", example.com/imag\"radius_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", example.com/imag\"radius_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", example.com/imag\"radius_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"radius_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"radius_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"radius_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"\\x0e\\x1e\\x1b\\x13us_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"\\\\x0e\\\\x1e\\\\x1b\\\\x13us_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 63 (code 0xe) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http:A/example.com/image.png\", example.com/imag\"\u000e\u001e\u001b\u0013us_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\\x0e\\x1e\\x1b\\x13us_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\\\\x0e\\\\x1e\\\\x1b\\\\x13us_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 63 (code 0xe) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\u000e\u001e\u001b\u0013us_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obje`t_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\\x0e\\x1e\\x1b\\x13us_y\": \"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obje`t_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\\\\x0e\\\\x1e\\\\x1b\\\\x13us_y\": \"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 63 (code 0xe) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obje`t_url\": \"thtp:A/example.com/image.png\", example.com/imag\"\u000e\u001e\u001b\u0013us_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": \"20', 'radius_x': '', 'radius_y': '20'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": \"20?roundPic%2Fradiusx%2F20%2Fradiusy%2F20\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http://example.com/image.png\", \"radius_x\": \"\", \"radius_y\": \"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http://example.com/i\"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http://example.com/i\"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http://example.com/i\"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radiu\\x00\\x00x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radiu\\\\x00\\\\x00x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 52 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radiu\u0000\u0000x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radiu\\x00\\x00x\": \"*0\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radiu\\\\x00\\\\x00x\": \"*0\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 52 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radiu\u0000\u0000x\": \"*0\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radiu:\"\\x00x \\x00\"*0\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radiu:\"\\\\x00x \\\\x00\"*0\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 54 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radiu:\"\u0000x \u0000\"*0\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radiu:\"\\x00x \\x00\"*1\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radiu:\"\\\\x00x \\\\x00\"*1\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 54 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radiu:\"\u0000x \u0000\"*1\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radi\"*1\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radi\"*1\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radi\"*1\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http\"objec~_url\": \"http://example.com/i\"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http\"objec~_url\": \"http://example.com/i\"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http\"objec~_url\": \"http://example.com/i\"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http\"objec~_url\": \"http:/', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http\"objec~_url\": \"http:/?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http\"objec~_url\": \"http:/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"ht\"objec~_url\": \"http:/', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"ht\"objec~_url\": \"http:/?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"ht\"objec~_url\": \"http:/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http://example.com/i\"2\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http://example.com/i\"2\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 37 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http://example.com/i\"2\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http://exampl\\\\.com/i\"2\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http://exampl\\\\\\\\.com/i\"2\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 37 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http://exampl\\.com/i\"2\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x16\\x17c~_url\": \"http://exampl\\\\.com/i\"2\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x16\\\\x17c~_url\": \"http://exampl\\\\\\\\.com/i\"2\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x16) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0016\u0017c~_url\": \"http://exampl\\.com/i\"2\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x16\\x17c~_url\": \"http://exampl\\\\.co/\\x00im\"2', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x16\\\\x17c~_url\": \"http://exampl\\\\\\\\.co/\\\\x00im\"2?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x16) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0016\u0017c~_url\": \"http://exampl\\.co/\u0000im\"2'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http:\\x01\\x00//example.com/i\"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http:\\\\x01\\\\x00//example.com/i\"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 20 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http:\u0001\u0000//example.com/i\"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http:\\x01\\x00//example.com/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http:\\\\x01\\\\x00//example.com/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 20 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http:\u0001\u0000//example.com/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"httpom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"httpom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"httpom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}dius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}dius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}dius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ample.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ample.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 29 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_ample.com/image.png\", \"radius_xdius_y\": \"\"}diusy_\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdius_y\": \"\"}diusy_\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdius_y\": \"\"}diusy_\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 32 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdius_y\": \"\"}diusy_\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdiu\"s_y\": \"\"}diusy_\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdiu\"s_y\": \"\"}diusy_\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 32 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_ample.com/image.png\"00\", \"radius_x\", \"radius_xdiu\"s_y\": \"\"}diusy_\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"htppom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"htppom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"htppom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"htppom/NNNNNNNNNNNNNNNNi\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"htppom/NNNNNNNNNNNNNNNNi\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"htppom/NNNNNNNNNNNNNNNNi\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtppom/NNNNNNNNNNNNNNNNi\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtppom/NNNNNNNNNNNNNNNNi\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtppom/NNNNNNNNNNNNNNNNi\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtppom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtppom/NNNN_url\"1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtppom/NNNN_url\"1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtppom/NNNN_url\"1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtppom/NNNN_url\"\\x00\\x00\\x00\\x00\\x001', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtppom/NNNN_url\"\\\\x00\\\\x00\\\\x00\\\\x00\\\\x001?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtppom/NNNN_url\"\u0000\u0000\u0000\u0000\u00001'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\\x02: \\x1ehtppom/NNNN_url\"\\x00\\x00\\x00\\x00\\x001', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\\\\x02: \\\\x1ehtppom/NNNN_url\"\\\\x00\\\\x00\\\\x00\\\\x00\\\\x001?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x2) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\u0002: \u001ehtppom/NNNN_url\"\u0000\u0000\u0000\u0000\u00001'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\\x02: \\x1ehtppom/NNNN_url\\x00\\x00\"\\x00\\x00\\x001', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\\\\x02: \\\\x1ehtppom/NNNN_url\\\\x00\\\\x00\"\\\\x00\\\\x00\\\\x001?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x2) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\u0002: \u001ehtppom/NNNN_url\u0000\u0000\"\u0000\u0000\u00001'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\\x02: \\x1ehtppom/NNNN_url\\x00\\x00\"[\\x00\\x001', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\\\\x02: \\\\x1ehtppom/NNNN_url\\\\x00\\\\x00\"[\\\\x00\\\\x001?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x2) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\u0002: \u001ehtppom/NNNN_url\u0000\u0000\"[\u0000\u00001'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.cct_url\": \"http://example.com/image.png\", \"ra \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.cct_url\": \"http://example.com/image.png\", \"ra \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.cct_url\": \"http://example.com/image.png\", \"ra \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.cct_url\": \"http://example.com/im\"objec~_url\": \\x1e', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.cct_url\": \"http://example.com/im\"objec~_url\": \\\\x1e?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 76 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.cct_url\": \"http://example.com/im\"objec~_url\": \u001e'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.cct_url\": \"http:\\x01\\x00example.com/im\"objec~_url\": \\x1e', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.cct_url\": \"http:\\\\x01\\\\x00example.com/im\"objec~_url\": \\\\x1e?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 46 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.cct_url\": \"http:\u0001\u0000example.com/im\"objec~_url\": \u001e'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http:-/example.cct_url\": \"http:\\x01\\x00example.com/im\"objec~_url\": \\x1e', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http:-/example.cct_url\": \"http:\\\\x01\\\\x00example.com/im\"objec~_url\": \\\\x1e?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 46 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http:-/example.cct_url\": \"http:\u0001\u0000example.com/im\"objec~_url\": \u001e'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":\\x01\\x00/etc/passwd\\\\u0000\", \"radius_x\":\\x7f\\x7f\\x7f\\x7f \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":\\\\x01\\\\x00/etc/passwd\\\\\\\\u0000\", \"radius_x\":\\\\x7f\\\\x7f\\\\x7f\\\\x7f \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 13 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":\u0001\u0000/etc/passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_u\\x1al\":\\x01\\x00/etc/passwd\\\\u0000\", \"radius_x\":\\x7f\\x7f\\x7f\\x7f \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_u\\\\x1al\":\\\\x01\\\\x00/etc/passwd\\\\\\\\u0000\", \"radius_x\":\\\\x7f\\\\x7f\\\\x7f\\\\x7f \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 9 (code 0x1a) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_u\u001al\":\u0001\u0000/etc/passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_u\\x1al\":/\\x00ec/t\\x01passwd\\\\u0000\", \"radius_x\":\\x7f\\x7f\\x7f\\x7f \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_u\\\\x1al\":/\\\\x00ec/t\\\\x01passwd\\\\\\\\u0000\", \"radius_x\":\\\\x7f\\\\x7f\\\\x7f\\\\x7f \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 9 (code 0x1a) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_u\u001al\":/\u0000ec/t\u0001passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"httponm/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"httponm/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"httponm/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": @httponm/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": @httponm/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": @httponm/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~;url\": @httponm/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~;url\": @httponm/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~;url\": @httponm/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~;url\": @htt\\'onm/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~;url\": @htt\\\\\\'onm/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~;url\": @htt'onm/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~;url\": @htt\\'onm/i\"20', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~;url\": @htt\\\\\\'onm/i\"20?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~;url\": @htt'onm/i\"20'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \\x01\\x00#dius_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F#dius_x\": \"20\", \"radius_y\": \"\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 46 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \u0001\u0000#dius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \\x01\\x00#diua_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F#diua_x\": \"20\", \"radius_y\": \"\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 46 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \u0001\u0000#diua_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://\\x00xample.com/image.png\", \\x01\\x00#diua_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://\\\\x00xample.com/image.png\", \\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F#diua_x\": \"20\", \"radius_y\": \"\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 22 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://\u0000xample.com/image.png\", \u0001\u0000#diua_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"http/m/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"http/m/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"http/m/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_urobjec~_url\": \"httpom/i\"21\"l\": \"http/m/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_urobjec~_url\": \"httpom/i\"21\"l\": \"http/m/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_urobjec~_url\": \"httpom/i\"21\"l\": \"http/m/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_urobjec~_url\": \"httpom/i\"40\"l\": \"http/m/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_urobjec~_url\": \"httpom/i\"40\"l\": \"http/m/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_urobjec~_url\": \"httpom/i\"40\"l\": \"http/m/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": \"http/m/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": \"http/m/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 23 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": \"http/m/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": Xhttp/m/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": Xhttp/m/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 23 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_urobjec~_ur;l\": \"httpom/i\"40\"l\": Xhttp/m/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'htppom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 1 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \\x1ehtp/opmNNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'htp/opmNNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 1 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \u001ehtp/opmNNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\x1eht p/opmNNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'ht p/opmNNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u001eht p/opmNNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\x1eht p/opmNNNNNNNNN1\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'ht p/opmNNNNNNNNN1\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u001eht p/opmNNNNNNNNN1\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etc/passwd\\x00', 'radius_x': '', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etc/passwd\\\\x00?roundPic%2Fradiusx%2Fdef%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\",\\x7f\\x7f\\x7f\\x7f \"radius_M\":\"cab ,\" \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\",\\\\x7f\\\\x7f\\\\x7f\\\\x7f \"radius_M\":\"cab ,\" \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 34 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"radius_M\":\"cab ,\" \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/objec~_url\": \\x1ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/objec~_url\": \\\\x1ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 33 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/objec~_url\": \u001ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url;\": \"/etc/objec~_url\": \\x1ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url;\": \"/etc/objec~_url\": \\\\x1ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 34 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url;\": \"/etc/objec~_url\": \u001ehtppom/NNNNNNNNN1\"ab ,\" \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_urlnnnn\": \"httpom/', 'radius_x': '\"', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_urlnnnn\": \"httpom/?roundPic%2Fradiusx%2F%22%2Fradiusy%2F%22\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_urlnnnn\": \"httpom/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"~ocbej_urlnnnn\": \"httpom/', 'radius_x': '\"', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"~ocbej_urlnnnn\": \"httpom/?roundPic%2Fradiusx%2F%22%2Fradiusy%2F%22\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"~ocbej_urlnnnn\": \"httpom/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"~ocbej_url\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'radius_x': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fnnnn\": \"httpom/i\"', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"~ocbej_url\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f?roundPic%2Fradiusx%2F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7Fnnnn%22%3A%20%22httpom%2Fi%22%2Fradiusy%2F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7Fnnnn%22%3A%20%22httpom%2Fi%22\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"~ocbej_url'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"~ocbej_urd\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'radius_x': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fnnnn\": \"httpom/i\"', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"~ocbej_urd\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f?roundPic%2Fradiusx%2F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7Fnnnn%22%3A%20%22httpom%2Fi%22%2Fradiusy%2F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7Fnnnn%22%3A%20%22httpom%2Fi%22\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"~ocbej_urd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\\x01\\x00\\x00\\x00\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\\\\x01\\\\x00\\\\x00\\\\x00\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 63 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\u0001\u0000\u0000\u0000\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"radius_x\": \"abc\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x12_y\\x01\\x00\\x00\\x00\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"radius_x\": \"abc\",\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x12_y\\\\x01\\\\x00\\\\x00\\\\x00\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 53 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"radius_x\": \"abc\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0012_y\u0001\u0000\u0000\u0000\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"ra\\x1c\\x1eus_x\": \"abc\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x12_y\\x01\\x00\\x00\\x00\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"ra\\\\x1c\\\\x1eus_x\": \"abc\",\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x12_y\\\\x01\\\\x00\\\\x00\\\\x00\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 38 (code 0x1c) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"ra\u001c\u001eus_x\": \"abc\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0012_y\u0001\u0000\u0000\u0000\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"ra\\x1c\\x1eus_x\": \"abc\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x12_y\\x01000\", \"ref', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"ra\\\\x1c\\\\x1eus_x\": \"abc\",\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x12_y\\\\x01000\", \"ref?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 38 (code 0x1c) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"ra\u001c\u001eus_x\": \"abc\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0012_y\u0001000\", \"ref'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"ra\\x1c\\x1eus_x\": \"abc\",\\x00\\x00\\x00\\x00\\x00bject_url\": \"htf', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"ra\\\\x1c\\\\x1eus_x\": \"abc\",\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00bject_url\": \"htf?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 38 (code 0x1c) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"ra\u001c\u001eus_x\": \"abc\",\u0000\u0000\u0000\u0000\u0000bject_url\": \"htf'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj#c~_url\": \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2F%2Fradiusy%2F#c~_url\": \\\\x1ehtppom/NNNNNNNNN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj#c~_url\": \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj#c~_url\": \\x1ehtppom/NNNNNNNN((((((((((((((((((((((((((N1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2F%2Fradiusy%2F#c~_url\": \\\\x1ehtppom/NNNNNNNN((((((((((((((((((((((((((N1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj#c~_url\": \u001ehtppom/NNNNNNNN((((((((((((((((((((((((((N1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj#c~_url\": \\x1ehtppom/NNNNNNNN(((((0(((((((((((((((((((((N1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2F%2Fradiusy%2F#c~_url\": \\\\x1ehtppom/NNNNNNNN(((((0(((((((((((((((((((((N1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj#c~_url\": \u001ehtppom/NNNNNNNN(((((0(((((((((((((((((((((N1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj#c~_url\": \\x1ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2F%2Fradiusy%2F#c~_url\": \\\\x1ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj#c~_url\": \u001ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj#c~_urvvvvvvvvvvvvvvvvvl\": \\x1ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2F%2Fradiusy%2F#c~_urvvvvvvvvvvvvvvvvvl\": \\\\x1ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 31 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj#c~_urvvvvvvvvvvvvvvvvvl\": \u001ehtppom/NNNNNN((N(N((0(((((((((((((((((((((N1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etc/passwd\\x00', 'radius_x': 'aac', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etc/passwd\\\\x00?roundPic%2Fradiusx%2Faac%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etc/p]sswd\\x00', 'radius_x': 'aac', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '/etc/p]sswd\\\\x00?roundPic%2Fradiusx%2Faac%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/p]sswd\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \"/etc/p]sswd\\\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\": \"/etc/p]sswd\\\\\\\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"/etc/p]sswd\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": ,/etc/p]sswd\\\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\": ,/etc/p]sswd\\\\\\\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": ,/etc/p]sswd\\u0000\", \"radius_x\": \"aaMc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":d\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":d\\\\\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":d\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":d\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":d\\\\\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":d\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":d\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": radius_\"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":d\\\\\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": radius_\"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":d\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\": radius_\"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":d\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":d\\\\\\\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 22 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":d\\u00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\":d\\\\JJJJJJJJJJJJu00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\":d\\\\\\\\JJJJJJJJJJJJu00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 34 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\":d\\JJJJJJJJJJJJu00,0\"0 \"radius_x\": \"abc\", \"radius_y\"def\"}ius_\"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtppom/NNNNNNNNN0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtppom/NNNNNNNNN0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtppom/NNNNNNNNN0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehtp', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehtp?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehtp'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec@_url\": \\x1ehtp', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec@_url\": \\\\x1ehtp?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec@_url\": \u001ehtp'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec@_url\": ', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec@_url\": ?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec@_url\": '"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj~ct_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"', 'radius_x': '20', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj~ct_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F20%2Fradiusy%2F20\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj~ct_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj~ct_url\"P\\x00\\x00\\x00\\x00\\x00\\x00\\x00//example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj~ct_url\"P\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00//example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 13 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj~ct_url\"P\u0000\u0000\u0000\u0000\u0000\u0000\u0000//example.com/image.png\", \"radius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj~ct_url\"P\\x00\\x00\\x00\\x00\\x00\\x00\\x00//example.com/image.png\", \"radius_x\": \"20\", \"radiss_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj~ct_url\"P\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00//example.com/image.png\", \"radius_x\": \"20\", \"radiss_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 13 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj~ct_url\"P\u0000\u0000\u0000\u0000\u0000\u0000\u0000//example.com/image.png\", \"radius_x\": \"20\", \"radiss_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj~ct_url\"P\\x00\\x00\\x00\\x00\\x00\\x00\\x00//example.com/image.png\", \"radius_x\": \"19\", \"radiss_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj~ct_url\"P\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00//example.com/image.png\", \"radius_x\": \"19\", \"radiss_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 13 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj~ct_url\"P\u0000\u0000\u0000\u0000\u0000\u0000\u0000//example.com/image.png\", \"radius_x\": \"19\", \"radiss_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj~ct_url\"P\\x00\\x00\\x00\\x00\\x00\\x00\\x00//example.com/image.png\", \"radius_x\": \"19\", \"radi9\", \"r \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj~ct_url\"P\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00//example.com/image.png\", \"radius_x\": \"19\", \"radi9\", \"r \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 13 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj~ct_url\"P\u0000\u0000\u0000\u0000\u0000\u0000\u0000//example.com/image.png\", \"radius_x\": \"19\", \"radi9\", \"r \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_trl\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_trl\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_trl\": \"http://example.com/image.png\", \"radius_x\": \"20\"l \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_trl\": \"http://example.rl\": \"http://example.com/image.png\", \"radius_x\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_trl\": \"http://example.rl\": \"http://example.com/image.png\", \"radius_x\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_trl\": \"http://example.rl\": \"http://example.com/image.png\", \"radius_x\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_trl\": \"h@tp://example.rl\": \"http://example.com/image.png\", \"radius_x\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_trl\": \"h@tp://example.rl\": \"http://example.com/image.png\", \"radius_x\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_trl\": \"h@tp://example.rl\": \"http://example.com/image.png\", \"radius_x\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_trl\": \"h@tp://example.rl\": \"hotp://example.com/image.png\", \"radius_x\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_trl\": \"h@tp://example.rl\": \"hotp://example.com/image.png\", \"radius_x\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_trl\": \"h@tp://example.rl\": \"hotp://example.com/image.png\", \"radius_x\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000: \"abc\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000: \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000: \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000: \"abc\", \"ra2ius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000: \"abc\", \"ra2ius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000: \"abc\", \"ra2ius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000: \"abc\", \"ra2iuw_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000: \"abc\", \"ra2iuw_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000: \"abc\", \"ra2iuw_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"/etc/passwd\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def', 'radius_x': 'abc', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"/etc/passwd\\\\\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fdef\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"/etc/passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"/etc/passwd\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"de&', 'radius_x': 'abc', 'radius_y': 'de&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"/etc/passwd\\\\\\\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"de&?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fde&\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"/etc/passwd\\u0000\", \"radius_x\": \"abc\", \"radius_y\": \"de&'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"/etc/passwd\\\\u1615\", \"radius_x\": \"abc\", \"radius_y\": \"de&', 'radius_x': 'abc', 'radius_y': 'de&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"/etc/passwd\\\\\\\\u1615\", \"radius_x\": \"abc\", \"radius_y\": \"de&?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fde&\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"/etc/passwd\\u1615\", \"radius_x\": \"abc\", \"radius_y\": \"de&'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"/etc/passwd\\\\u1615\", \"ardius_x\": \"abc\", \"radius_y\": \"de&', 'radius_x': '', 'radius_y': 'de&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"/etc/passwd\\\\\\\\u1615\", \"ardius_x\": \"abc\", \"radius_y\": \"de&?roundPic%2Fradiusx%2Fde&%2Fradiusy%2Fde&\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"/etc/passwd\\u1615\", \"ardius_x\": \"abc\", \"radius_y\": \"de&'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"/etc/passwd\\\\u16\\x01\\x0015\", \"ardius_x\": \"abc\", \"radius_y\": \"de&', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"/etc/passwd\\\\\\\\u16\\\\x01\\\\x0015\", \"ardius_x\": \"abc\", \"radius_y\": \"de&?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 30 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"/etc/passwd\\u16\u0001\u000015\", \"ardius_x\": \"abc\", \"radius_y\": \"de&'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"radius_x\": \"ab\\x00\\x00\\x00c\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"radius_x\": \"ab\\\\x00\\\\x00\\\\x00c\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 50 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"radius_x\": \"ab\u0000\u0000\u0000c\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/passwd\\\\u0000\", \"radqus_x\": \"ab\\x00\\x00\\x00c\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/passwd\\\\\\\\u0000\", \"radqus_x\": \"ab\\\\x00\\\\x00\\\\x00c\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 50 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/passwd\\u0000\", \"radqus_x\": \"ab\u0000\u0000\u0000c\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/pawsds0\\\\u000\", \"radqus_x\": \"ab\\x00\\x00\\x00c\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/pawsds0\\\\\\\\u000\", \"radqus_x\": \"ab\\\\x00\\\\x00\\\\x00c\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 50 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/pawsds0\\u000\", \"radqus_x\": \"ab\u0000\u0000\u0000c\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/pawsds0\\\\u000\", \"\", \"radius_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/pawsds0\\\\\\\\u000\", \"\", \"radius_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/pawsds0\\u000\", \"\", \"radius_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"/etc/pa \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"/etc/pa \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"/etc/pa \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objek~_url\": \"httpom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objek~_url\": \"httpom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objek~_url\": \"httpom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objek~_url\": \"httpom/i\"\\x01\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objek~_url\": \"httpom/i\"\\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 24 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objek~_url\": \"httpom/i\"\u0001\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objek~_:url\": \"httpom/i\"\\x01\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objek~_:url\": \"httpom/i\"\\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 25 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objek~_:url\": \"httpom/i\"\u0001\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objek~_:url\": ~httpom/i\"\\x01\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objek~_:url\": ~httpom/i\"\\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 25 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objek~_:url\": ~httpom/i\"\u0001\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objek~_:urA\": ~httpom/i\"\\x01\\x00', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objek~_:urA\": ~httpom/i\"\\\\x01\\\\x00?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 25 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objek~_:urA\": ~httpom/i\"\u0001\u0000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~\\x01\\x00_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~\\\\x01\\\\x00_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 7 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~\u0001\u0000_url\": \"htBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBtpom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj', 'radius_x': 'c~\\x01\\x00_url\": \"htBBBBBBBBBB', 'radius_y': '싂싂싂싂싂싂싂싂싂싂싂싂싂灴浯椯'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2Fc~%01%00_url%22%3A%20%22htBBBBBBBBBB%2Fradiusy%2F%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%E7%81%B4%E6%B5%AF%E6%A4%AF\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj', 'radius_x': 'c~\\x01\\x00_url\": \"htBBBBBBBBBBB', 'radius_y': '싂싂싂싂싂싂싂싂싂싂싂싂瓂潰⽭'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?roundPic%2Fradiusx%2Fc~%01%00_url%22%3A%20%22htBBBBBBBBBBB%2Fradiusy%2F%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%EC%8B%82%E7%93%82%E6%BD%B0%E2%BD%AD\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '000', 'radius_x': 'abc', 'radius_y': 'def'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': '000?roundPic%2Fradiusx%2Fabc%2Fradiusy%2Fdef'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '000'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"\"21ec~_url\": \"httpom/i\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"\"21ec~_url\": \"httpom/i\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"\"21ec~_url\": \"httpom/i\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"\"21ec~_url\": \"httpom/h\"21', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"\"21ec~_url\": \"httpom/h\"21?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"\"21ec~_url\": \"httpom/h\"21'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"\"21ec~_url\": \"httpom/h\"21\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"\"21ec~_url\": \"httpom/h\"21\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"\"21ec~_url\": \"httpom/h\"21\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"\"21ec~_url\": \"httpom/\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05h\"21\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"\"21ec~_url\": \"httpom/\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05h\"21\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 22 (code 0x5) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"\"21ec~_url\": \"httpom/\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005h\"21\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"\"21ec~_url\": hto\"ptm/\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05h\"21\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"\"21ec~_url\": hto\"ptm/\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05\\\\x05h\"21\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 22 (code 0x5) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"\"21ec~_url\": hto\"ptm/\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005\u0005h\"21\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehttpom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehttpom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehttpom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehttpom/NNNNNN#NN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehttpom/NNNNNN?roundPic%2Fradiusx%2F%2Fradiusy%2F#NN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehttpom/NNNNNN#NN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\x1ehttpomQ8NNNNN#NN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\x1ehttpomQ8NNNNN?roundPic%2Fradiusx%2F%2Fradiusy%2F#NN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 14 (code 0x1e) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \u001ehttpomQ8NNNNN#NN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_url\": \\\\\\x17\\x0b\\x0b\\x0f\\x10\\x12.8NNNNN#NN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_url\": \\\\\\\\\\\\x17\\\\x0b\\\\x0b\\\\x0f\\\\x10\\\\x12.8NNNNN?roundPic%2Fradiusx%2F%2Fradiusy%2F#NN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 15 (code 0x17) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_url\": \\\u0017\u000b\u000b\u000f\u0010\u0012.8NNNNN#NN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec~_ur\\x01\\x00: \\\\\\x17\\x0b\\x0b\\x0f\\x10\\x12.8NNNNN#NN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec~_ur\\\\x01\\\\x00: \\\\\\\\\\\\x17\\\\x0b\\\\x0b\\\\x0f\\\\x10\\\\x12.8NNNNN?roundPic%2Fradiusx%2F%2Fradiusy%2F#NN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 10 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec~_ur\u0001\u0000: \\\u0017\u000b\u000b\u000f\u0010\u0012.8NNNNN#NN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\"\\x7f\\x7f\\x7f\\x7f0\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\"\\\\x7f\\\\x7f\\\\x7f\\\\x7f0\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 56 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\"0\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radius_x\"\\x7f\\x7f\\x7f\\x7f0#, \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radius_x\"\\\\x7f\\\\x7f\\\\x7f\\\\x7f0?roundPic%2Fradiusx%2F%2Fradiusy%2F#, \"radius_y\": \"\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 56 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radius_x\"0#, \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"\\x7f\\x7f\\x7f\\x7f0#, \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"\\\\x7f\\\\x7f\\\\x7f\\\\x7f0?roundPic%2Fradiusx%2F%2Fradiusy%2F#, \"radius_y\": \"\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 56 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"0#, \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"\"radius_x\"\\x7fdius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"\"radius_x\"\\\\x7fdius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 66 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"hptt://example.com/image.png\", \"radius_x\"\"radius_x\"dius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"hpt\", \"radius_x\"\"radius_x\"\\x7fdius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"hpt\", \"radius_x\"\"radius_x\"\\\\x7fdius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 41 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"hpt\", \"radius_x\"\"radius_x\"dius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectr_\":lu \"http://example.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectr_\":lu \"http://example.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectr_\":lu \"http://example.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectr_\":lu \"http://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectr_\":lu \"http://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectr_\":lu \"http://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectr_\":lu \"htop://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectr_\":lu \"htop://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectr_\":lu \"htop://e+ample.com/image.png\", \"radius_x\": \"20\", \"radils_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectr_\":lu \"htop://e+ample.com/image.pgn\", \"radius_x\": \"20\", \"radils_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectr_\":lu \"htop://e+ample.com/image.pgn\", \"radius_x\": \"20\", \"radils_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectr_\":lu \"htop://e+ample.com/image.pgn\", \"radius_x\": \"20\", \"radils_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"radi:\"xu _s\"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"radi:\"xu _s\"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"radi:\"xu _s\"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.png\", \"ramage.png\", \"radi:\"xu _sy\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.png\", \"ramage.png\", \"radi:\"xu _sy\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.png\", \"ramage.png\", \"radi:\"xu _sy\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"http://example.com/image.: \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"http://example.com/image.: \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"http://example.com/image.: \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o\\x01\\x00bject_url\": \"http://example.com/image.: \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"o\\\\x01\\\\x00bject_url\": \"http://example.com/image.: \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o\u0001\u0000bject_url\": \"http://example.com/image.: \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectject_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"rady\": \"', 'radius_x': '20', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectject_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"rady\": \"?roundPic%2Fradiusx%2F20%2Fradiusy%2F20\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectject_url\": \"http://example.com/image.png\", \"radius_x\": \"20\", \"rady\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectject_url\": \"http://examady\"com/image.png\", \"radius_x\": \"20\", \"rady\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectject_url\": \"http://examady\"com/image.png\", \"radius_x\": \"20\", \"rady\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectject_url\": \"http://examady\"com/image.png\", \"radius_x\": \"20\", \"rady\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectject_url\": \"http://examady\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectject_url\": \"http://examady\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectject_url\": \"http://examady\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objectject_url\": \"http:dmx/aa/ey\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objectject_url\": \"http:dmx/aa/ey\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 17 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objectject_url\": \"http:dmx/aa/ey\"com/image.png\", \"raus_y_x\": \"20\", \"rady\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"h{\"objec~_url\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"h{\"objec~_url\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"h{\"objec~_url\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"h{\"objec~_\\x01\\x00l\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"h{\"objec~_\\\\x01\\\\x00l\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 25 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"h{\"objec~_\u0001\u0000l\": \"httpome.png\", \"radius_x\": \"20\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"h{\"objec~_\\x01\\x00l\": \"httpome.png\", \"radius_x\": \"06\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"h{\"objec~_\\\\x01\\\\x00l\": \"httpome.png\", \"radius_x\": \"06\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 25 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"h{\"objec~_\u0001\u0000l\": \"httpome.png\", \"radius_x\": \"06\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"h{\"objec\"06\", \"radius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"h{\"objec\"06\", \"radius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"h{\"objec\"06\", \"radius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objec\\x02!url\": \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"objec\\\\x02!url\": \\\\x1ehtppom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 6 (code 0x2) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objec\u0002!url\": \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obje\\x1d}^\\n\\r\\x13]E \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obje\\\\x1d}^\\\\x13]E \\\\x1ehtppom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x1d) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obje\u001d}^\n\n\u0013]E \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obje\\x1d}^\\n\\r\\x13]E \\x1ehtp\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00NNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obje\\\\x1d}^\\\\x13]E \\\\x1ehtp\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00NNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x1d) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obje\u001d}^\n\n\u0013]E \u001ehtp\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000NNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obje#}^\\n\\r\\x13]E \\x1ehtp\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00NNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obje?roundPic%2Fradiusx%2F%2Fradiusy%2F#}^\\\\x13]E \\\\x1ehtp\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00NNNNN1\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 8 (code 0xa) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obje#}^\n\n\u0013]E \u001ehtp\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000NNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": ect_url\": \"http://example.com/image.png\", \"radius_x\"adius_y\": \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": ect_url\": \"http://example.com/image.png\", \"radius_x\"adius_y\": \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": ect_url\": \"http://example.com/image.png\", \"radius_x\"adius_y\": \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obo\\x01\\x00bject_url\": \"http://example.com/image.: \"\"}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obo\\\\x01\\\\x00bject_url\": \"http://example.com/image.: \"\"}\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00 \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obo\u0001\u0000bject_url\": \"http://example.com/image.: \"\"}\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obo\\x01\\x00bject_url\": \"http:/image.: \"\"}\\x00\\x00\\x00\\x00age.: \"\"}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obo\\\\x01\\\\x00bject_url\": \"http:/image.: \"\"}\\\\x00\\\\x00\\\\x00\\\\x00age.: \"\"}\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00 \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obo\u0001\u0000bject_url\": \"http:/image.: \"\"}\u0000\u0000\u0000\u0000age.: \"\"}\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obo\\x01\\x00bject_url\": \"http:/\\x11mage.: \"\"}\\x00\\x00\\x00\\x00age.: \"\"}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"obo\\\\x01\\\\x00bject_url\": \"http:/\\\\x11mage.: \"\"}\\\\x00\\\\x00\\\\x00\\\\x00age.: \"\"}\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00 \"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obo\u0001\u0000bject_url\": \"http:/\u0011mage.: \"\"}\u0000\u0000\u0000\u0000age.: \"\"}\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 \"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x01\\x00\\x00\\x00jec~_url\": \\x1ehtppom/NNNNNNNNN1', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x01\\\\x00\\\\x00\\\\x00jec~_url\": \\\\x1ehtppom/NNNNNNNNN1?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0001\u0000\u0000\u0000jec~_url\": \u001ehtppom/NNNNNNNNN1'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x01\\x00\\x00\\x00jec~_url\": \\x1ehtppom/NNNNNNNNN0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x01\\\\x00\\\\x00\\\\x00jec~_url\": \\\\x1ehtppom/NNNNNNNNN0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0001\u0000\u0000\u0000jec~_url\": \u001ehtppom/NNNNNNNNN0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00l\": \\x1ehtppom/NNNNNNNNN0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00l\": \\\\x1ehtppom/NNNNNNNNN0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000l\": \u001ehtppom/NNNNNNNNN0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob\\x01\\x00\\x00\\x00\\x00\\x00\": \\x1ehtppom/NNNNNNNNN0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\": \\\\x1ehtppom/NNNNNNNNN0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob\u0001\u0000\u0000\u0000\u0000\u0000\": \u001ehtppom/NNNNNNNNN0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ob%\\x01\\x00\\x00\\x00\\x00\\x00\": \\x1ehtppom/NNNNNNNNN0', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"ob%\\\\x01\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\": \\\\x1ehtppom/NNNNNNNNN0?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ob%\u0001\u0000\u0000\u0000\u0000\u0000\": \u001ehtppom/NNNNNNNNN0'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"000\", \"radius_x\": \"abcNNNNNNNNN1_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"000\", \"radius_x\": \"abcNNNNNNNNN1_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"000\", \"radius_x\": \"abcNNNNNNNNN1_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"000\"1_y\": \"def', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"000\"1_y\": \"def?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"000\"1_y\": \"def'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"000\"1_y\": \"00\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"000\"1_y\": \"00\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"000\"1_y\": \"00\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\x01\\x00\"object_url\": \"000\"1_y\": \"00\"', 'radius_x': '', 'radius_y': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"000\"1_y\": \"00\"?roundPic%2Fradiusx%2F%2Fradiusy%2F\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x1) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0001\u0000\"object_url\": \"000\"1_y\": \"00\"'"
+  }
+ ],
+ "truncated": true
+}

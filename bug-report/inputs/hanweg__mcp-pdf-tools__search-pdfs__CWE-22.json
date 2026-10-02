@@ -1,0 +1,1414 @@
+{
+ "repo": "hanweg/mcp-pdf-tools",
+ "tool": "search-pdfs",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "388ba1fcb8cb30b9c938e681cbb5945e74b22596",
+ "draft": "hanweg__mcp-pdf-tools__search-pdfs__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 404,
+ "note": "404 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': '*', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: scandir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '../../../../etc/passwd', 'pattern': '*.pdf', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'pattern': 'report*.pdf', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error searching for PDFs: [Errno 2] No such file or directory: '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini'\\nBase path: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pat:h\" \"/tmp\", \"pattern\": \"../.,/../../etc/shadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_pat:h\" \"/etc/shadow\", \"recursive\": tru\\'\\nBase path: \"base_pat:h\" \"/etc/shadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pa\\x1a:h\" \"/tmp\", \"pattern\": \"../.,/../../etc/shadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_pa\\\\x1a:h\" \"/etc/shadow\", \"recursive\": tru\\'\\nBase path: \"base_pa\\x1a:h\" \"/etc/shadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pa\\x1a:h\" \"/tmp\", \"patter \"pattern\": \"../.,/../../etc/shadow\", \"re: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_pa\\\\x1a:h\" \"/etc/shadow\", \"re: tru\\'\\nBase path: \"base_pa\\x1a:h\" \"/etc/shadow\", \"re: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': '*', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../..: \"../../../../etc/shadow\" tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../etc/shadow\" tru\\'\\nBase path: ../../etc/shadow\" tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../..: \"../../../.t/sc.e/hadow\" tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../.t/sc.e/hadow\" tru\\'\\nBase path: ../.t/sc.e/hadow\" tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../..: \"../../../.t/sj.e/hadow\" tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../.t/sj.e/hadow\" tru\\'\\nBase path: ../.t/sj.e/hadow\" tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\":0\"../../../..: \"../../../.t/sj.e/hadow\" tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../.t/sj.e/hadow\" tru\\'\\nBase path: ../.t/sj.e/hadow\" tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\"rn\": \"../../../.ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error searching for PDFs: [Errno 2] No such file or directory: '../.ru'\\nBase path: ../.ru\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../.\\x00/etc/shadow\"rn\": \"../../../.ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: .\\x00/.ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tm\"rn\": \"../../../.ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error searching for PDFs: [Errno 2] No such file or directory: '.ru'\\nBase path: .ru\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bae_spath\": \"/tm\"rn\": \"../../../.ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error searching for PDFs: [Errno 2] No such file or directory: '.ru'\\nBase path: .ru\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bae_spath\":n\": \". \"/tm\"rn\": \"../../../.ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error searching for PDFs: [Errno 2] No such file or directory: '.ru'\\nBase path: .ru\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\",h\": \"/tmp\", \"../../../../etc/sha$ow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'etc/sha$ow\", \"recursive\": tru\\'\\nBase path: etc/sha$ow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\",h\": \"/tmp\", \"../../../../cet/sha$ow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'cet/sha$ow\", \"recursive\": tru\\'\\nBase path: cet/sha$ow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\",h+: \"/tmp\", \"../../../../cet/sha$ow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'cet/sha$ow\", \"recursive\": tru\\'\\nBase path: cet/sha$ow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\",h+: \"/tmp\", \"../../../../cet/sha$w,o\" \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'cet/sha$w,o\" \"recursive\": tru\\'\\nBase path: cet/sha$w,o\" \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': \"*'\", 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': 'MMMMMM/etc/passwd\\x00', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: MMMMMM/etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\\x1a: \"MMMMMM/etc/passwd\\\\u0000\", \"pattenr\": \"*\\'\", \"\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\\\\x1a: \"MMMMMM/etc/passwd\\\\\\\\u0000\", \"pattenr\": \"*\\\\\\'\", \"\": tru\\'\\nBase path: \"base_path\\x1a: \"MMMMMM/etc/passwd\\\\u0000\", \"pattenr\": \"*\\'\", \"\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pa\\x0ch\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_pa\\\\x0ch\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_pa\\x0ch\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"\\x7f\\x7f\\x7fpattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"\\x7f\\x7f\\x7fpattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_p\", \"\\x7f\\x7f\\x7fpatt/etc/passwd\\\\u0000\", \"\\x7f\\x7f\\x7fpattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_p\", \"\\\\x7f\\\\x7f\\\\x7fpatt/etc/passwd\\\\\\\\u0000\", \"\\\\x7f\\\\x7f\\\\x7fpattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_p\", \"\\x7f\\x7f\\x7fpatt/etc/passwd\\\\u0000\", \"\\x7f\\x7f\\x7fpattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"!recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\":\\\\x18\"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"!recursive\": tru\\'\\nBase path: \"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"!recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"!rEcursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\":\\\\x18\"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"!rEcursive\": tru\\'\\nBase path: \"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"!rEcursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"\\x7f\\x7f\\x7f*\", \"!rEcursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\":\\\\x18\"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"\\\\x7f\\\\x7f\\\\x7f*\", \"!rEcursive\": tru\\'\\nBase path: \"base_path\":\\x18\"/etc/passwd\\\\u0000\", \"pattern\": \"\\x7f\\x7f\\x7f*\", \"!rEcursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"btspaa_he\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \"recursive\": tru', 'pattern': '../../../../etc/shadow', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"btspaa_he\": \"/tmp\", \"pattren\": \"../../../../etc/shadow\", \"recursive\": tru', 'pattern': '', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"btspaa_he\": \"/tmp\", \"pattren\": \"../../../../etc/shadow\", \"re: \"sive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"re: \"sive\": tru\\'\\nBase path: ../etc/shadow\", \"re: \"sive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"btspaa_he\": \"/tmp\", \"pattren\": \"../../../../etc/shadow\", \"re: \"sive\": [ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"re: \"sive\": [ru\\'\\nBase path: ../etc/shadow\", \"re: \"sive\": [ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\"{\"base_path: ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\"{\"base_path: '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_p: \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\"{\"base_path: ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_p: \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", \"recursive\"{\"base_path: '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_p: \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", )))\"recursive\"{\"base_path: ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_p: \"/etc/passwd\\\\u0000\", \"\\x00\\x00\\x00\\x00ern\": \"*\", )))\"recursive\"{\"base_path: '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_p: \"/etc/passwd\\\\u0000\", )\"\\x00\\x00\\x00\\x00ern\": \"*\", )))\"recursive\"{\"base_path: ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_p: \"/etc/passwd\\\\u0000\", )\"\\x00\\x00\\x00\\x00ern\": \"*\", )))\"recursive\"{\"base_path: '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': '', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: scandir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"patteratn\": \"*\",\\x16\"recursiv\\'\\'\\'e\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"patteratn\": \"*\",\\\\x16\"recursiv\\\\\\'\\\\\\'\\\\\\'e\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"patteratn\": \"*\",\\x16\"recursiv\\'\\'\\'e\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"patteratn\": \"*\",\\x16\"pecursiv\\'\\'\\'e\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"patteratn\": \"*\",\\\\x16\"pecursiv\\\\\\'\\\\\\'\\\\\\'e\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"patteratn\": \"*\",\\x16\"pecursiv\\'\\'\\'e\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": #/tmp\", \"patt../e', 'pattern': '\\U00102f63\\U00097361\\U00102265\\U00037274\\U00092272\\U00102265', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": #/tmp\", \"patt../e\\'\\nBase path: \"base_path\": #/tmp\", \"patt../e'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadowecursive\": \"y\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadowecursive\": \"y\": tru\\'\\nBase path: ../etc/shadowecursive\": \"y\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/wecursive\": \"y\": \"y\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/wecursive\": \"y\": \"y\": tru\\'\\nBase path: ../etc/wecursive\": \"y\": \"y\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/wecurh\": \"/var/log\"\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/wecurh\": \"/var/log\"\": tru\\'\\nBase path: ../etc/wecurh\": \"/var/log\"\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"h\": \"/tmp\", \"pattern\": \"../../../../etc/wecurh\"ar/log\"\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/wecurh\"ar/log\"\": tru\\'\\nBase path: ../etc/wecurh\"ar/log\"\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \"recursive\": tmu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recursive\": tmu\\'\\nBase path: ../etc/shadow\", \"recursive\": tmu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\"\\\\ \"pattern\": \"../../../../etc/shadow\", \"recursive\": tmu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recursive\": tmu\\'\\nBase path: ../etc/shadow\", \"recursive\": tmu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\"\\\\ \"pattern\": \"../../../../etc/shadow\", \"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"\\'\\nBase path: ../etc/shadow\", \"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\"\\\\ \"pattern\": \"../../../../etc/sha\" ,dow\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/sha\" ,dow\"\\'\\nBase path: ../etc/sha\" ,dow\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_patn\": \".*mp\"\\\\ \"pattern\": \"../../../../etc/sha\" ,dow\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../etc/sha\" ,dow\"\\'\\nBase path: ../../etc/sha\" ,dow\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../\\x00\\x00/etc/shadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \\x00\\x00/etc/shadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../\\x00\\x00/etc/shadow\", \"recursive\":9tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \\x00\\x00/etc/shadow\", \"recursive\":9tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bape_path\": \"/tmp\", \"pattern\": \"../../../\\x00\\x00/etc/shadow\", \"recursive\":9tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \\x00\\x00/etc/shadow\", \"recursive\":9tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bape_path\": \"/tmp\", \"pattern\": \"../../../\\x00\\x00/etc/rsive\":9trrecursive\":9tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \\x00\\x00/etc/rsive\":9trrecursive\":9tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\":\"\"../../../../etc/shadow\", \"recursivg\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recursivg\": tru\\'\\nBase path: ../etc/shadow\", \"recursivg\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../.ecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\": \"../.ecursive\": tru\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\": \"../.ecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"th\": \"/tmp\", \"pa../.ecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\": \"th\": \"/tmp\", \"pa../.ecursive\": tru\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\": \"th\": \"/tmp\", \"pa../.ecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\": tru\\'\\nBase path: \"\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\"3 tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\"3 tru\\'\\nBase path: \"\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"reattern\": \"..rsive\"3 tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_iath\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '*', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\ath\": \"/tmp\", \"pa: \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\ath\": \"/tmp\", \"pa: \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\ath\": \"/tmp\", \"pa: \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\cth\": \"/tmp\", \"pa: \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\cth\": \"/tmp\", \"pa: \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\cth\": \"/tmp\", \"pa: \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\cth\": \"/tmp\",a\" :p \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\cth\": \"/tmp\",a\" :p \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\cth\": \"/tmp\",a\" :p \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bas%_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '*', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bas%_path\": \"/etc/passwd\\\\u0000\", \"patter*\",n\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"bas%_path\": \"/etc/passwd\\\\\\\\u0000\", \"patter*\",n\": \"*\", \"recursive\": tru\\'\\nBase path: \"bas%_path\": \"/etc/passwd\\\\u0000\", \"patter*\",n\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\"`, \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\"`, \"pattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\"`, \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\"`, \"pattern\": \"*\", \"recursive2: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\"`, \"pattern\": \"*\", \"recursive2: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\"`, \"pattern\": \"*\", \"recursive2: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"baE\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"baE\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"baE\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"re\\x00ursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"baE\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"re\\x00ursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"baE\\x08\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"re\\x00ursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"baE\\x08\\x00\\x00\\x00\\x00\\x00\\x00: \"/etc/passwd\\\\u0000\",\" pattern\": \"*\", \"re\\x00ursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path^I \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path^I \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path^I \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pa!tern\":\\x16\"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pa!tern\":\\\\x16\"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pa!tern\":\\x16\"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recuru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recuru\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recuru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recump', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recump\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recump'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/\\rmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recump', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/\\\\rmp\", \"pattern\":/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recump\\'\\nBase path: \"base_path\": \"/\\rmp\", \"pattern\":/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recump'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '*ath\": \"/etc/passwd\\\\u0000\", \"patternbase_path\": \"\", \":ursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'*ath\": \"/etc/passwd\\\\\\\\u0000\", \"patternbase_path\": \"\", \":ursive\": tru\\'\\nBase path: *ath\": \"/etc/passwd\\\\u0000\", \"patternbase_path\": \"\", \":ursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '*ath\": \"/etc/passwd\\\\u0000\", \"patternbase_pat, \":ursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'*ath\": \"/etc/passwd\\\\\\\\u0000\", \"patternbase_pat, \":ursive\": tru\\'\\nBase path: *ath\": \"/etc/passwd\\\\u0000\", \"patternbase_pat, \":ursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '*ath\": \"/etc/passwd\\\\u0000\", \"patternbase_pat,\\x7f\\x7f\\x7f\\x7f\\x7f \":ursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'*ath\": \"/etc/passwd\\\\\\\\u0000\", \"patternbase_pat,\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f \":ursive\": tru\\'\\nBase path: *ath\": \"/etc/passwd\\\\u0000\", \"patternbase_pat,\\x7f\\x7f\\x7f\\x7f\\x7f \":ursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \"dow\", \"rec: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"dow\", \"rec: tru\\'\\nBase path: ../etc/shadow\", \"dow\", \"rec: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../..c/shadow\", \"dw\", \"dow\", \"rec: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/..c/shadow\", \"dw\", \"dow\", \"rec: tru\\'\\nBase path: \"base_path\": \"/..c/shadow\", \"dw\", \"dow\", \"rec: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\",  \"\", \":urs\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\",  \"\", \":urs\": tru\\'\\nBase path: ../etc/shadow\",  \"\", \":urs\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../..\\'../etc/shadow\",  \"\", \":urs\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/..\\\\\\'../etc/shadow\",  \"\", \":urs\": tru\\'\\nBase path: \"base_path\": \"/..\\'../etc/shadow\",  \"\", \":urs\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pM\\x00tern\": \"../../..\\'../etc/shadow\",  \"\", \":urs\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/..\\\\\\'../etc/shadow\",  \"\", \":urs\": tru\\'\\nBase path: \"base_path\": \"/..\\'../etc/shadow\",  \"\", \":urs\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pM\\x00tern\": \"../../..\\'../etsd/haocw\",  \"\", \":urs\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/..\\\\\\'../etsd/haocw\",  \"\", \":urs\": tru\\'\\nBase path: \"base_path\": \"/..\\'../etsd/haocw\",  \"\", \":urs\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pM\\x00tern\": \"../../.. \"\", \":urs\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/.. \"\", \":urs\": tru\\'\\nBase path: \"base_path\": \"/.. \"\", \":urs\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": bbbbbb\"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": bbbbbb\"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": bbbbbb\"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwdᘕ', 'pattern': '*', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwdᘕ', 'pattern': '', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u1615\", \"p!ttern\": \"rn\": *\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u1615\", \"p!ttern\": \"rn\": *\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u1615\", \"p!ttern\": \"rn\": *\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u1615\", \"p!ttern\": \"rn\": *\"ursi-ve\": \"yes\"}ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u1615\", \"p!ttern\": \"rn\": *\"ursi-ve\": \"yes\"}ru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u1615\", \"p!ttern\": \"rn\": *\"ursi-ve\": \"yes\"}ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",_____ \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\",_____ \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",_____ \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",_____ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\",_____ru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",_____ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwdtttttttt\\x00', 'pattern': '*', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: scandir: embedded null character in path\\nBase path: /etc/passwdtttttttt\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/../../../../etc/shadow\", \"recursivehadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../../etc/shadow\", \"recursivehadow\", \"recursive\": tru\\'\\nBase path: ../../../etc/shadow\", \"recursivehadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u1615\"( \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u1615\"( \"pattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u1615\"( \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u1615\"( \"patter tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u1615\"( \"patter tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u1615\"( \"patter tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": _path\": \"/etc/passwd\\\\u16tter tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": _path\": \"/etc/passwd\\\\\\\\u16tter tru\\'\\nBase path: \"base_path\": _path\": \"/etc/passwd\\\\u16tter tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tra', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tra\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*\",\": t \"recursive\": tra'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*tt\": t \"recursive\": tra', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattgrn\": \"*tt\": t \"recursive\": tra\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*tt\": t \"recursive\": tra'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*tt\": t \"recuvisre\": tra', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattgrn\": \"*tt\": t \"recuvisre\": tra\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattgrn\": \"*tt\": t \"recuvisre\": tra'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\"e\"r ,cursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\"e\"r ,cursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\"e\"r ,cursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursiv\\x1be: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursiv\\\\x1be: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursiv\\x1be: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\", \"recursiv\\x1be: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0\",000\", \"pattern\": \"*\", \"recursiv\\\\x1be: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\", \"recursiv\\x1be: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\\\x1be: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base!\\x11ath\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base!\\\\x11ath\": \"/etc/passwd\\\\\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\\\x1be: tru\\'\\nBase path: \"base!\\x11ath\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base\"base!\\x11ath\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base\"base!\\\\x11ath\": \"/etc/passwd\\\\\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\\\x1be: tru\\'\\nBase path: \"base\"base!\\x11ath\": \"/etc/passwd\\\\u0\",000\", \"pattern\": \"*\"*\", \"rersiv\\x1be: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwd\\x00', 'pattern': '-', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: scandir: embedded null character in path\\nBase path: /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '/etc/passwdZu0000', 'pattern': '-', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursive\": tru', 'pattern': '-', 'recursive': True}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Found 0 PDF files:\\n'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru', 'pattern': '-', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru\\'\\nBase path: \"base_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"bas=e_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru', 'pattern': '-', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"bas=e_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru\\'\\nBase path: \"bas=e_pat%%%%%%%h\": \"/etc/passwdZu0000\", \"pattern\": \"-\", \"recursjve\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",0\"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\",0\"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\",0\"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":  \"recurs\"pattern\": \"../../../../et/cshadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../et/cshadow\", \"recursive\": tru\\'\\nBase path: ../../et/cshadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":  \"recurs\"pattern\": \"../../../../et/cshadow\", \"recu\\x1csive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../et/cshadow\", \"recu\\\\x1csive\": tru\\'\\nBase path: ../../et/cshadow\", \"recu\\x1csive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"basetah_p\":  \"recurs\"pattern\": \"../../../../et/cshadow\", \"recu\\x1csive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../et/cshadow\", \"recu\\\\x1csive\": tru\\'\\nBase path: ../../et/cshadow\", \"recu\\x1csive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"basetah \"_p: \"recurs\"pattern\": \"../../../../et/cshadow\", \"recu\\x1csive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../et/cshadow\", \"recu\\\\x1csive\": tru\\'\\nBase path: ../../et/cshadow\", \"recu\\x1csive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base$path\" \"\", \":u{\"base_path\": \"/etc/passwd\\\\rsiu0v0e\": trque}00\", \"pat', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base$path\" \"\", \":u{\"base_path\": \"/etc/passwd\\\\\\\\rsiu0v0e\": trque}00\", \"pat\\'\\nBase path: \"base$path\" \"\", \":u{\"base_path\": \"/etc/passwd\\\\rsiu0v0e\": trque}00\", \"pat'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"patter: n.\"\"./../../../etc/shado\\x7f\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shado\\\\x7f\", \"recursive\": tru\\'\\nBase path: ../etc/shado\\x7f\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"patter: n.\"\"./../../../etc/shado\\x7f\", \"recursive\":t ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shado\\\\x7f\", \"recursive\":t ru\\'\\nBase path: ../etc/shado\\x7f\", \"recursive\":t ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \"recetc/shadotru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recetc/shadotru\\'\\nBase path: ../etc/shadow\", \"recetc/shadotru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../..4../../etc/shadow\", \"recetc/shadotru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\": \"../etc/shadow\", \"recetc/shadotru\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\": \"../etc/shadow\", \"recetc/shadotru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../..4../../etc/shadow , \"recetc/shadotru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/tmp\", \"pattern\": \"../etc/shadow , \"recetc/shadotru\\'\\nBase path: \"base_path\": \"/tmp\", \"pattern\": \"../etc/shadow , \"recetc/shadotru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"basm_path\": \"/tmp\", \"pattern\": \"../..4../../etc/shadow , \"recetc/shadotru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"basm_path\": \"/tmp\", \"pattern\": \"../etc/shadow , \"recetc/shadotru\\'\\nBase path: \"basm_path\": \"/tmp\", \"pattern\": \"../etc/shadow , \"recetc/shadotru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \\x1crecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \\\\x1crecursive\": tru\\'\\nBase path: ../etc/shadow\", \\x1crecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", \\x1crecursiv\": \"tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \\\\x1crecursiv\": \"tru\\'\\nBase path: ../etc/shadow\", \\x1crecursiv\": \"tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/{hadow\", \\x1crecursiv\": \"tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/{hadow\", \\\\x1crecursiv\": \"tru\\'\\nBase path: ../etc/{hadow\", \\x1crecursiv\": \"tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/{hadow\", \\x1crecursi\\x01\\x00: \"tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: ../etc/{hadow\", \\x1crecursi\\x01\\x00: \"tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"re{\"base_path\": \"/tmp\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"re{\"base_path\": \"/tmp\"\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"re{\"base_path\": \"/tmp\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pat\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re{\"base_path\": \"/tmp\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pat\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re{\"base_path\": \"/tmp\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0t\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re{\"base_path\": \"/tmp\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0t\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re{\"base_path\": \"/tmp\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0t\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re\\x00\\x00\\x00Cse_path\": \"/tmp\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0t\\x00\\x00\\x00\\x00\\x00\\x00\\x00L*\", \"re\\x00\\x00\\x00Cse_path\": \"/tmp\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"patter\\x00\\x00\\x00\\x00n\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"patter\\x00\\x00\\x00\\x00n\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"\\'patter\\x00\\x00\\x00\\x00n\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"\\'patter\\x00\\x00\\x00\\x00n\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"\\'patter\\x00\\x00\\x00\\x00n\": ++++\"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"\\'patter\\x00\\x00\\x00\\x00n\": ++++\"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\"{\"base_path\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\"{\"base_path\"\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\"{\"base_path\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u1615\", \"pattern\": \"*\"{\"base_path\"\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fse_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"ba\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fse_path\": \"/etc/passwd\\\\\\\\u1615\", \"pattern\": \"*\"{\"base_path\"\\'\\nBase path: \"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fse_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"!a\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fse_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"!a\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fse_path\": \"/etc/passwd\\\\\\\\u1615\", \"pattern\": \"*\"{\"base_path\"\\'\\nBase path: \"!a\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fse_path\": \"/etc/passwd\\\\u1615\", \"pattern\": \"*\"{\"base_path\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/shadow\", $recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", $recursive\": tru\\'\\nBase path: ../etc/shadow\", $recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/sahdow\", $recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/sahdow\", $recursive\": tru\\'\\nBase path: ../etc/sahdow\", $recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/sahdow\", $recursiv*\", \"e\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/sahdow\", $recursiv*\", \"e\": tru\\'\\nBase path: ../etc/sahdow\", $recursiv*\", \"e\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etc/sahdow\", $recursiv*\", \"e\": tvu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/sahdow\", $recursiv*\", \"e\": tvu\\'\\nBase path: ../etc/sahdow\", $recursiv*\", \"e\": tvu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../etsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etsive\": tru\\'\\nBase path: ../etsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\"? \"../../../../etsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etsive\": tru\\'\\nBase path: ../etsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\"? \"../../../.ddddddddddddddd./etsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'.ddddddddddddddd./etsive\": tru\\'\\nBase path: .ddddddddddddddd./etsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\"? \"../../../.ddddddddddddddd.?/etsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'.ddddddddddddddd.?/etsive\": tru\\'\\nBase path: .ddddddddddddddd.?/etsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\"? \"../../../.ddddddddddddddd.?/eosive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'.ddddddddddddddd.?/eosive\": tru\\'\\nBase path: .ddddddddddddddd.?/eosive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"patt.*\",ern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"patt.*\",ern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"patt.*\",ern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"patt.*\",ern\": \"*\", \"tc/pasive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"patt.*\",ern\": \"*\", \"tc/pasive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"patt.*\",ern\": \"*\", \"tc/pasive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tsu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursive\": tsu\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tsu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"p\"recursive\": tsu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"p\"recursive\": tsu\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"p\"recursive\": tsu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\"$ \"p\"recursive\": tsu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\"$ \"p\"recursive\": tsu\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\"$ \"p\"recursive\": tsu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \", \"pattern\": \"../../../../etc/vhadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/vhadow\", \"recursive\": tru\\'\\nBase path: ../etc/vhadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \", \"pattern\": \"../../../\",../etc/vhadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\",../etc/vhadow\", \"recursive\": tru\\'\\nBase path: \",../etc/vhadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"basR_path\": \"/tmp\", \", \"pattern\": \"../../../\",../etc/vhadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\",../etc/vhadow\", \"recursive\": tru\\'\\nBase path: \",../etc/vhadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"basR_path\": \"/tmp\", \", \"pattern\": \"../../../\",../etc/vhadow\", \"recursive\": 4ru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\",../etc/vhadow\", \"recursive\": 4ru\\'\\nBase path: \",../etc/vhadow\", \"recursive\": 4ru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\":e\": ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern\": \"*\", \"recursive\":e\": \\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\":e\": '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u000, \"recur0\", \"pattern\": \"*\", \"recursive\":e\": ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u000, \"recur0\", \"pattern\": \"*\", \"recursive\":e\": \\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u000, \"recur0\", \"pattern\": \"*\", \"recursive\":e\": '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u000, \"recur0\", \"patte\\x0e\\x16\": \"*\", \"recursive\":e\": ', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u000, \"recur0\", \"patte\\\\x0e\\\\x16\": \"*\", \"recursive\":e\": \\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u000, \"recur0\", \"patte\\x0e\\x16\": \"*\", \"recursive\":e\": '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", bpattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", bpattern\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", bpattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_qath\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_qath\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_qath\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": truen\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_qath\": \"\\x00\\x00\\x00\\x00/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\": truen\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"patternado\": \"../../../../etc/ssive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/ssive\": tru\\'\\nBase path: ../etc/ssive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pattternado\": \"../../../../etc/ssive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../etc/ssive\": tru\\'\\nBase path: ../../etc/ssive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_pattternado\": \"../../../.W/etc/ssive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../.W/etc/ssive\": tru\\'\\nBase path: ../.W/etc/ssive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\", \"recursive\"=: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\", \"recursive\"=: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\", \"recursive\"=: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\"- \"recursive\"=: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\"- \"recursive\"=: tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"paXXXXXXXXXXXXXttern\": \"*\"- \"recursive\"=: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../e\", \"hadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../e\", \"hadow\", \"recursive\": tru\\'\\nBase path: ../e\", \"hadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \"../../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fe\", \"hadow\", \"recursive\": tru\\'\\nBase path: ../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"patternb: \"../../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fe\", \"hadow\", \"recursive\": tru\\'\\nBase path: ../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_0ath\": \"/tmp\", \"patternb: \"../../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fe\", \"hadow\", \"recursive\": tru\\'\\nBase path: ../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"\"patternb: \"../../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../../\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fe\", \"hadow\", \"recursive\": tru\\'\\nBase path: ../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe\", \"hadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\":\\\\x16\"/etc/passwd\\\\\\\\u0000\", \"patteEn\": \"*\", \"recursive\": tru\\'\\nBase path: \"base_path\":\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\":\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"\\'recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\":\\\\x16\"/etc/passwd\\\\\\\\u0000\", \"patteEn\": \"*\", \"\\\\\\'recursive\": tru\\'\\nBase path: \"base_path\":\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"\\'recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\"):\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"\\'recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\"):\\\\x16\"/etc/passwd\\\\\\\\u0000\", \"patteEn\": \"*\", \"\\\\\\'recursive\": tru\\'\\nBase path: \"base_path\"):\\x16\"/etc/passwd\\\\u0000\", \"patteEn\": \"*\", \"\\'recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern \"\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern \"\"\\'\\nBase path: \"{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern \"\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"*{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern \"\"', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"*{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \"pattern \"\"\\'\\nBase path: \"*{\"bth\": \"/tmp\",{\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern \"\"'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u000\\x16\\x16\\x16\\x16\\x160\", \"pattern\":', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u000\\\\x16\\\\x16\\\\x16\\\\x16\\\\x160\", \"pattern\":\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u000\\x16\\x16\\x16\\x16\\x160\", \"pattern\":'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u000\\x16e_path\": \"/var/log\", \"patt\\x16\\x16\\x16\\x160\", \"pattern\":', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u000\\\\x16e_path\": \"/var/log\", \"patt\\\\x16\\\\x16\\\\x16\\\\x160\", \"pattern\":\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u000\\x16e_path\": \"/var/log\", \"patt\\x16\\x16\\x16\\x160\", \"pattern\":'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u000\\x16e_path\": \"/var/log\"\\x01\\x00\"patt\\x16\\x16\\x16\\x160\", \"pattern\":', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u000\\x16e_path\": \"/var/log\"\\x01\\x00\"patt\\x16\\x16\\x16\\x160\", \"pattern\":'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": \\x12\\x12\\x12\\x12\\x12\\x12\"../../../../etc/shadow\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recursive\": tru\\'\\nBase path: ../etc/shadow\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"ba\\x08\\x1a_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"ba\\x08\\x1a_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"ba\\x08\\x1a_path\": \"/etc/passwd\\\\u0000\", lpattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"ba\\x08\\x1a_path\": \"/etc/passwd\\\\u0000\", lpattern\": \"*\", \"r\\x00\\x00\\x00ecursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '.../h/acetsdo~\", \"recursive\": tr\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fu', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'.../h/acetsdo~\", \"recursive\": tr\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fu\\'\\nBase path: .../h/acetsdo~\", \"recursive\": tr\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fu'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pa\\x00Eern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pa\\x00Eern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_h\": \"/etc/passwd\\\\u0000\", \"pa\\x00Eern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_h\": \"/etc/passwd\\\\u0000\", \"pa\\x00Eern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_h\": \"/etc/passwd\\\\u0000\", \"p, \"recursive\":a\\x00Eern\": \"*\", \"recursive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_h\": \"/etc/passwd\\\\u0000\", \"p, \"recursive\":a\\x00Eern\": \"*\", \"recursive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_h\": \"/etc/passwd\\\\u0000\", \"p, \"recursive\":a\\x00Eern\": \"*\", \"recurs\\x00\\x00\\x00\\x00: tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_h\": \"/etc/passwd\\\\u0000\", \"p, \"recursive\":a\\x00Eern\": \"*\", \"recurs\\x00\\x00\\x00\\x00: tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\"\\x01\\x00\\x00\\x00u', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": \"*\", \"recursive\"\\x01\\x00\\x00\\x00u'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": k\"*\", \"recursive\"\\x01\\x00\\x00\\x00u', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: listdir: embedded null character in path\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \"pattern\": k\"*\", \"recursive\"\\x01\\x00\\x00\\x00u'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/etc/passwd\\\\u0000\", \": \"*\", \"recursive\": tsive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'\"base_path\": \"/etc/passwd\\\\\\\\u0000\", \": \"*\", \"recursive\": tsive\": tru\\'\\nBase path: \"base_path\": \"/etc/passwd\\\\u0000\", \": \"*\", \"recursive\": tsive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": shad\"../../../../etc/shadow\", \"recu;sive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/shadow\", \"recu;sive\": tru\\'\\nBase path: ../etc/shadow\", \"recu;sive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'base_path': '\"base_path\": \"/tmp\", \"pattern\": shad\"../../../../etc/sh\\\\dow\", \"recu;sive\": tru', 'pattern': '', 'recursive': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error searching for PDFs: [Errno 2] No such file or directory: \\'../etc/sh\\\\\\\\dow\", \"recu;sive\": tru\\'\\nBase path: ../etc/sh\\\\dow\", \"recu;sive\": tru'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

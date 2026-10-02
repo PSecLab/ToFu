@@ -1,0 +1,77 @@
+{
+ "repo": "CheMiguel23/MemoryMesh",
+ "tool": "add_nodes",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "531580d2dcc99a87e499d6821b33bfaa191e63a5",
+ "draft": "CheMiguel23__MemoryMesh__add_nodes__CWE-79.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 9,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'nodes': [{'name': 'sensitive_error_leak', 'nodeType': 'error', 'metadata': [\"<script>alert('xss')</script>\", \"SELECT * FROM users WHERE '1'='1'\"]}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"sensitive_error_leak\",\\n      \"nodeType\": \"error\",\\n      \"metadata\": [\\n        \"<script>alert(\\'xss\\')</script>\",\\n        \"SELECT * FROM users WHERE \\'1\\'=\\'1\\'\"\\n      ]\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-26T18:30:21.514Z', 'data': {'nodes': [{'name': 'sensitive_error_leak', 'nodeType': 'error', 'metadata': [\"<script>alert('xss')</script>\", \"SELECT * FROM users WHERE '1'='1'\"]}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'nodes': [{'name': '\"nodOOOOes\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": [{\"{{\"\"\\x00\\x00\\x00\\x00\\x00\\x00es\": [{e\": \"', 'nodeType': '\\U00107365', 'metadata': []}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"\\\\\"nodOOOOes\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\\": [{\\\\\"{{\\\\\"\\\\\"\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000es\\\\\": [{e\\\\\": \\\\\"\",\\n      \"nodeType\": \"\\U00107365\",\\n      \"metadata\": []\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-26T18:30:54.222Z', 'data': {'nodes': [{'name': '\"nodOOOOes\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": [{\"{{\"\"\\x00\\x00\\x00\\x00\\x00\\x00es\": [{e\": \"', 'nodeType': '\\U00107365', 'metadata': []}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'nodes': [{'name': '\"nodOOOOes\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": [{\"{{\"\"\\x00\\x00\\x00\\x00\\x00\\x00es\" :[{e\": \"', 'nodeType': '\\U00107365', 'metadata': []}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"\\\\\"nodOOOOes\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\\": [{\\\\\"{{\\\\\"\\\\\"\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000es\\\\\" :[{e\\\\\": \\\\\"\",\\n      \"nodeType\": \"\\U00107365\",\\n      \"metadata\": []\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-26T18:30:54.243Z', 'data': {'nodes': [{'name': '\"nodOOOOes\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": [{\"{{\"\"\\x00\\x00\\x00\\x00\\x00\\x00es\" :[{e\": \"', 'nodeType': '\\U00107365', 'metadata': []}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'nodes': [{'name': '{{\"\\x00\\x00\\x00m', 'nodeType': '\":\\x00\\x00\\x00\\x00ans', 'metadata': []}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"{{\\\\\"\\\\u0000\\\\u0000\\\\u0000m\",\\n      \"nodeType\": \"\\\\\":\\\\u0000\\\\u0000\\\\u0000\\\\u0000ans\",\\n      \"metadata\": []\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-26T18:30:56.576Z', 'data': {'nodes': [{'name': '{{\"\\x00\\x00\\x00m', 'nodeType': '\":\\x00\\x00\\x00\\x00ans', 'metadata': []}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'nodes': [{'name': '=={\"node{{\"\"\\x00\\x00\\x00\\x00\\x00mF\\x00\\x00\\x00\"snormalNode\"e o\\x0f,nd\"Typ{\"nodes\": [', 'nodeType': 'e\": tes\"t\"', 'metadata': []}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"=={\\\\\"node{{\\\\\"\\\\\"\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000mF\\\\u0000\\\\u0000\\\\u0000\\\\\"snormalNode\\\\\"e o\\\\u000f,nd\\\\\"Typ{\\\\\"nodes\\\\\": [\",\\n      \"nodeType\": \"e\\\\\": tes\\\\\"t\\\\\"\",\\n      \"metadata\": []\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-26T18:31:16.016Z', 'data': {'nodes': [{'name': '=={\"node{{\"\"\\x00\\x00\\x00\\x00\\x00mF\\x00\\x00\\x00\"snormalNode\"e o\\x0f,nd\"Typ{\"nodes\": [', 'nodeType': 'e\": tes\"t\"', 'metadata': []}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'nodes': [{'name': '{\"{\\x1d\\x1d\\x1d\\x1d\\x1d{{\"\\x1d\\x1d\\x1d\\x1d', 'nodeType': '\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d', 'metadata': ['{n\\x1d']}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"{\\\\\"{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d{{\\\\\"\\\\u001d\\\\u001d\\\\u001d\\\\u001d\",\\n      \"nodeType\": \"\\\\u001d{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\",\\n      \"metadata\": [\\n        \"{n\\\\u001d\"\\n      ]\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-25T05:55:52.065Z', 'data': {'nodes': [{'name': '{\"{\\x1d\\x1d\\x1d\\x1d\\x1d{{\"\\x1d\\x1d\\x1d\\x1d', 'nodeType': '\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d', 'metadata': ['{n\\x1d']}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'nodes': [{'name': '{\"\\x1d\\x1d\\x1d\\x1d\\x1d{{\"{\\x1d\\x1d\\x1d\\x1d', 'nodeType': '{\"\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d', 'metadata': ['\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d{n\\x1d\\x1d']}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"{\\\\\"\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d{{\\\\\"{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\",\\n      \"nodeType\": \"{\\\\\"\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\",\\n      \"metadata\": [\\n        \"\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d{n\\\\u001d\\\\u001d\"\\n      ]\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-25T06:07:11.714Z', 'data': {'nodes': [{'name': '{\"\\x1d\\x1d\\x1d\\x1d\\x1d{{\"{\\x1d\\x1d\\x1d\\x1d', 'nodeType': '{\"\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d', 'metadata': ['\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d{n\\x1d\\x1d']}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'nodes': [{'name': '\"{{\"nodes\": [{\"name\": \"/etc/passwd\\\\u 0000\", \"nodeType\": \"file\", \"metadata\": [\"./../etc/passwd\", \"nor', 'nodeType': 'alMeta\"]}, {\"name\": \"deadlockTest\", \"nodeType\": \"deadlonck\", \"metad\\'ta\": [\"', 'metadata': []}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"\\\\\"{{\\\\\"nodes\\\\\": [{\\\\\"name\\\\\": \\\\\"/etc/passwd\\\\\\\\u 0000\\\\\", \\\\\"nodeType\\\\\": \\\\\"file\\\\\", \\\\\"metadata\\\\\": [\\\\\"./../etc/passwd\\\\\", \\\\\"nor\",\\n      \"nodeType\": \"alMeta\\\\\"]}, {\\\\\"name\\\\\": \\\\\"deadlockTest\\\\\", \\\\\"nodeType\\\\\": \\\\\"deadlonck\\\\\", \\\\\"metad\\'ta\\\\\": [\\\\\"\",\\n      \"metadata\": []\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-25T06:15:55.451Z', 'data': {'nodes': [{'name': '\"{{\"nodes\": [{\"name\": \"/etc/passwd\\\\u 0000\", \"nodeType\": \"file\", \"metadata\": [\"./../etc/passwd\", \"nor', 'nodeType': 'alMeta\"]}, {\"name\": \"deadlockTest\", \"nodeType\": \"deadlonck\", \"metad\\'ta\": [\"', 'metadata': []}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'nodes': [{'name': '\"{{\\x1d\\x1d\\x1d\\x1d\\x1d{\"\\x1d\\x1d\\x1d\\x19\\x19', 'nodeType': '\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19', 'metadata': ['\\x19\\x19\\x19\\x19\\x19\\x19\\x1d\\x1d\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d']}]}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"nodes\": [\\n    {\\n      \"name\": \"\\\\\"{{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d{\\\\\"\\\\u001d\\\\u001d\\\\u001d\\\\u0019\\\\u0019\",\\n      \"nodeType\": \"\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\",\\n      \"metadata\": [\\n        \"\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u001d\\\\u001d\\\\u001d{\\\\u001d\\\\u001d\\\\u001d\\\\u001d\\\\u001d\"\\n      ]\\n    }\\n  ]\\n}'}], 'structuredContent': {'timestamp': '2026-09-25T06:26:56.494Z', 'data': {'nodes': [{'name': '\"{{\\x1d\\x1d\\x1d\\x1d\\x1d{\"\\x1d\\x1d\\x1d\\x19\\x19', 'nodeType': '\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19', 'metadata': ['\\x19\\x19\\x19\\x19\\x19\\x19\\x1d\\x1d\\x1d{\\x1d\\x1d\\x1d\\x1d\\x1d']}]}, 'actionTaken': 'Added nodes to knowledge graph'}, 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

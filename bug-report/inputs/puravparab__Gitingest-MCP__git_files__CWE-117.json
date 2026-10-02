@@ -1,0 +1,105 @@
+{
+ "repo": "puravparab/Gitingest-MCP",
+ "tool": "git_files",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "c3b630a07304fb02e98eec12d38640a8c024a4ed",
+ "draft": "puravparab__Gitingest-MCP__git_files__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 13,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': '\"ow,er\": \"octocat\", \"repo\": \"Hello-World\", \"file_paths\": [], \"branch\": \"main', 'repo': 'Hello-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/\\\\\"ow,er\\\\\": \\\\\"octocat\\\\\", \\\\\"repo\\\\\": \\\\\"Hello-World\\\\\", \\\\\"file_paths\\\\\": [], \\\\\"branch\\\\\": \\\\\"main/Hello-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/\"ow,er\": \"octocat\", \"repo\": \"hello-world\", \"file_paths\": [], \"branch\": \"main/hello-world\\nError: fatal: unable to access 'https://github.com/\"ow,er\": \"octocat\", \"repo\": \"hello-world\", \"file_paths\": [], \"branch\": \"main/hello-world/': URL using bad/illegal format or missing URL'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': '', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Command failed: git clone --single-branch --depth=1 https://github.com/octocat/ /tmp/gitingest/9fdfdf1c-440b-4e38-808d-a782239b70c7/octocat-\\\\nError: Cloning into \\'/tmp/gitingest/9fdfdf1c-440b-4e38-808d-a782239b70c7/octocat-\\'...\\\\nremote: Not Found\\\\nfatal: repository \\'https://github.com/octocat/\\' not found. Try https://gitingest.com/https://github.com/octocat/ instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/\\nError: remote: Not Found\\nfatal: repository 'https://github.com/octocat/' not found'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': 'Hel+o-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octocat/Hel+o-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/hel+o-world\\nError: remote: Repository not found.\\nfatal: repository 'https://github.com/octocat/hel+o-world/' not found'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': 'Hello-Wmrld', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octocat/Hello-Wmrld instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/hello-wmrld\\nError: fatal: could not read Username for 'https://github.com': No such device or address'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': 'Hello-Worl', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octocat/Hello-Worl instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/hello-worl\\nError: fatal: could not read Username for 'https://github.com': No such device or address'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octoc!t', 'repo': 'Hello-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octoc!t/Hello-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octoc!t/hello-world\\nError: remote: Repository not found.\\nfatal: repository 'https://github.com/octoc!t/hello-world/' not found'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'tcocoat', 'repo': 'Hello-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/tcocoat/Hello-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/tcocoat/hello-world\\nError: fatal: could not read Username for 'https://github.com': No such device or address'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'tcocoat', 'repo': 'Hello-W\\x7frld', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/tcocoat/Hello-W\\\\u007frld instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/tcocoat/hello-wrld\\nError: fatal: unable to access 'https://github.com/tcocoat/hello-w?rld/': URL using bad/illegal format or missing URL'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': '\"Eowner\": \"octocat\", \"repo\": \"Hello-World\", \"ancaths\": [], \"branch\": \"main', 'repo': 'Hello-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/\\\\\"Eowner\\\\\": \\\\\"octocat\\\\\", \\\\\"repo\\\\\": \\\\\"Hello-World\\\\\", \\\\\"ancaths\\\\\": [], \\\\\"branch\\\\\": \\\\\"main/Hello-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/\"eowner\": \"octocat\", \"repo\": \"hello-world\", \"ancaths\": [], \"branch\": \"main/hello-world\\nError: fatal: unable to access 'https://github.com/\"eowner\": \"octocat\", \"repo\": \"hello-world\", \"ancaths\": [], \"branch\": \"main/hello-world/': URL using bad/illegal format or missing URL'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': '*octocat', 'repo': 'Hello-World', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/*octocat/Hello-World instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/gitingest']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/*octocat/hello-world\\nError: remote: Repository not found.\\nfatal: repository 'https://github.com/*octocat/hello-world/' not found'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/gitingest']."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': '\"Uwner\": \"octocat\", \"repoHello-Wor\": \"Hello-World\", \"ancaths\": [], \"branch\": \"main', 'repo': '', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/\\\\\"Uwner\\\\\": \\\\\"octocat\\\\\", \\\\\"repoHello-Wor\\\\\": \\\\\"Hello-World\\\\\", \\\\\"ancaths\\\\\": [], \\\\\"branch\\\\\": \\\\\"main/ instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/\"uwner\": \"octocat\", \"repohello-wor\": \"hello-world\", \"ancaths\": [], \"branch\": \"main/\\nError: fatal: unable to access 'https://github.com/\"uwner\": \"octocat\", \"repohello-wor\": \"hello-world\", \"ancaths\": [], \"branch\": \"main/': URL using bad/illegal format or missing URL'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': 'Heloro-Wlld', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octocat/Heloro-Wlld instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/heloro-wlld\\nError: fatal: could not read Username for 'https://github.com': No such device or address'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'owner': 'octocat', 'repo': 'Hello-_orld', 'file_paths': [], 'branch': 'main'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"Failed to get file content: Repository not found, make sure it is public. Try https://gitingest.com/https://github.com/octocat/Hello-_orld instead\"}'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp.server.lowlevel.server)! Logged content: 'Warning: RuntimeWarning: Warning: Failed to fetch branch list: Command failed: git ls-remote --heads https://github.com/octocat/hello-_orld\\nError: fatal: could not read Username for 'https://github.com': No such device or address'."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,42 @@
+{
+ "repo": "maoxiaoke/mcp-media-processor",
+ "tool": "rotate-image",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "2aecf0fb94b398ae7a708a979e302d90f89d670c",
+ "draft": "maoxiaoke__mcp-media-processor__rotate-image__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'degrees': 270, 'outputPath': '/var/tmp/rotated.jpg', 'outputFilename': 'rotated.jpg'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error rotating image: ImageMagick is not installed. Please install it first.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'degrees': 90, 'outputPath': '/tmp/rotated.png', 'outputFilename': 'rotated.png'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error rotating image: ImageMagick is not installed. Please install it first.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'predefined_seed:test.zip', 'degrees': 45, 'outputPath': '/tmp/../etc/shadow', 'outputFilename': 'shadow.png'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error rotating image: ImageMagick is not installed. Please install it first.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'degrees': 180, 'outputPath': 'C:\\\\temp\\\\output.png', 'outputFilename': 'output.png'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error rotating image: ImageMagick is not installed. Please install it first.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,168 @@
+{
+ "repo": "jae-jae/fetch-mcp",
+ "tool": "fetch_url",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "8754aff66e3d9207502207bf82a493f45f556bb8",
+ "draft": "jae-jae__fetch-mcp__fetch_url__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 22,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 512, 'returnHtml': True, 'waitForNavigation': False, 'navigationTimeout': 5000, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://127.0.0.1:8500', 'timeout': 0, 'waitUntil': 'load', 'extractContent': True, 'maxLength': 100, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 10000, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://127.0.0.1:8500\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8500/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8500/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://0177.0.0.1:8080', 'timeout': 10000, 'waitUntil': 'domcontentloaded', 'extractContent': True, 'maxLength': 2048, 'returnHtml': False, 'waitForNavigation': True, 'navigationTimeout': 10000, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://0177.0.0.1:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8080/\", waiting until \"domcontentloaded\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 0.0, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 0.0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': -1, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 0, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://localhost:8080\\nContent:\\n\\n<html><head></head><body></body></html>'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': -1, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 0, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0.0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://localhost:8080\\nContent:\\n\\n<html><head></head><body></body></html>'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://loashoclt:8080', 'timeout': -1, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 0, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0.0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://loashoclt:8080\\nContent:\\n\\n<html><head></head><body></body></html>'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443)]. Input: 'http://loashoclt:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 512, 'returnHtml': True, 'waitForNavigation': False, 'navigationTimeout': 0.0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://127.0.0.1:8500', 'timeout': 0, 'waitUntil': 'load', 'extractContent': True, 'maxLength': 100, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 10000, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://127.0.0.1:8500\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8500/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8500/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 512, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 5000, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://127.0.0.1:8500', 'timeout': 0, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 0.0, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 10000, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://127.0.0.1:8500\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8500/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8500/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': -1, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 5, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://localhost:8080\\nContent:\\n\\n<html'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://0177.0.0.1:8080', 'timeout': 7.031599692201716e+307, 'waitUntil': 'domcontentloaded', 'extractContent': True, 'maxLength': 2048, 'returnHtml': False, 'waitForNavigation': True, 'navigationTimeout': 10000, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://0177.0.0.1:8080\\nContent:\\n\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | IP Representation Error: Non-canonical octal or hex IPv4 notation detected: '0177.0.0.1']. Input: 'http://0177.0.0.1:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://127.0.0.1:8500', 'timeout': 0, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 0.0, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 0.0, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://127.0.0.1:8500\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8500/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8500/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 0.0, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 5000, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': -1, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 5, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0.0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: \\nURL: http://localhost:8080\\nContent:\\n\\n<html'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://0177.0.0.1:8080', 'timeout': 10000, 'waitUntil': 'domcontentloaded', 'extractContent': True, 'maxLength': 2048, 'returnHtml': False, 'waitForNavigation': True, 'navigationTimeout': 10000, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://0177.0.0.1:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8080/\", waiting until \"domcontentloaded\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': 0, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 5, 'returnHtml': True, 'waitForNavigation': True, 'navigationTimeout': 0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://localhost:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://localhost:8080/\", waiting until \"domcontentloaded\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://localhost:8080', 'timeout': 0, 'waitUntil': 'domcontentloaded', 'extractContent': False, 'maxLength': 0.0, 'returnHtml': False, 'waitForNavigation': True, 'navigationTimeout': 0, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://localhost:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://localhost:8080/\", waiting until \"domcontentloaded\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://[::1]:8080', 'timeout': 5000, 'waitUntil': 'load', 'extractContent': False, 'maxLength': 512, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 5001, 'disableMedia': False, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://[::1]:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://[::1]:8080/\\nCall log:\\n\\x1b[2m  - navigating to \"http://[::1]:8080/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://0177.0.0.1:8080', 'timeout': 10000, 'waitUntil': 'domcontentloa`ed', 'extractContent': True, 'maxLength': 2048, 'returnHtml': False, 'waitForNavigation': True, 'navigationTimeout': 10000, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://0177.0.0.1:8080\\nContent:\\n\\n<error>Failed to retrieve web page content: waitUntil: expected one of (load|domcontentloaded|networkidle|commit)</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'url': 'http://127.0.0.1:8500', 'timeout': 0, 'waitUntil': 'load', 'extractContent': True, 'maxLength': 100, 'returnHtml': False, 'waitForNavigation': False, 'navigationTimeout': 0.0, 'disableMedia': True, 'debug': False}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Title: Error\\nURL: http://127.0.0.1:8500\\nContent:\\n\\n<error>Failed to retrieve web page content: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8500/\\nCall log:\\n\\x1b[2m  - navigating to \"http://127.0.0.1:8500/\", waiting until \"load\"\\x1b[22m\\n</error>'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

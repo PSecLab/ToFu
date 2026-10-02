@@ -1,0 +1,56 @@
+{
+ "repo": "tuanle96/mcp-odoo",
+ "tool": "cancel_async_task",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "76ec136e0c89c414811a12629eb2903d2dc27357",
+ "draft": "tuanle96__mcp-odoo__cancel_async_task__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 6,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': \"<script>alert('xss')</script>\"}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: <script>alert(\\'xss\\')</script>\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: {{{{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '?{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: ?{{{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '?{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: ?{{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '?{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: ?{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"tool\": \"cancel_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: {{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

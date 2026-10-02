@@ -1,0 +1,140 @@
+{
+ "repo": "StarRocks/mcp-server-starrocks",
+ "tool": "write_query",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "88e782b0f3ff660c871f47cf8477773ac02d9e92",
+ "draft": "StarRocks__mcp-server-starrocks__write_query__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 18,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '\"quer=\"yi\"  :${', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'\"quer=\"yi\"  :${\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{\"\"ququery\": \"\\'', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{{\"\"ququery\": \"\\'\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{1', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"Error: Error executing statement '{{1': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '\"qu{{ey', 'db': '\"\"'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'\"qu{{ey\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '\\x00\\x00\\x00\\x00\\x00\\x00\"){{\\x00qu{c\\x00\\x00\\x00\\x00\\x00', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'\\x00\\x00\\x00\\x00\\x00\\x00\"){{\\x00qu{c\\x00\\x00\\x00\\x00\\x00\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '\"{qu~{{\"{', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'\"{qu~{{\"{\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{\"u', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{{\"u\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'R{{\"u', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'R{{\"u\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': ']{{', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"Error: Error executing statement ']{{': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{\"qu{{\"q\\n]q', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{\"qu{{\"q\\n]q\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{\")u{{\"q\\n]q', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{\")u{{\"q\\n]q\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'q{u\"{{', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'q{u\"{{\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'uq{u\"{{', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'uq{u\"{{\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{u', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"Error: Error executing statement '{{u': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{\"', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{{\"\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{{\"q\"', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'{{{\"q\"\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'y{{\"q\"', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'y{{\"q\"\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'y{{\"qc\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'y{{\"qc\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

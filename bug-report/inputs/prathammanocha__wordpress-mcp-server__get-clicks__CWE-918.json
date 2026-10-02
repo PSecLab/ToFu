@@ -1,0 +1,343 @@
+{
+ "repo": "prathammanocha/wordpress-mcp-server",
+ "tool": "get-clicks",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "904dbe20dab259fdf65d51dc55c6db024a53dc90",
+ "draft": "prathammanocha__wordpress-mcp-server__get-clicks__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 47,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'user', 'password': 'pass', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'ipv6user', 'password': 'ipv6pass', 'siteId': 5, 'period': 'year', 'limit': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://127.0.0.1:8500', 'username': 'admin', 'password': 'password123', 'siteId': 1, 'period': 'day', 'limit': 10}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED 127.0.0.1:8500'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:shhhhhs', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN shhhhhs'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:4040', 'username': 'user', 'password': 'pass', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED 127.0.0.1:4040'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': '', 'password': 'pass', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httx://localhost:8080', 'username': '', 'password': 'pass', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol httx:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httpeeee:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol httpeeee:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/p/localuser', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN p'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://local;user', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND local;user'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://lcal;user', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND lcal;user'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 5, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'hTtp:ss', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 4}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:{s', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND {s'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htt.p:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol htt.p:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'ttp:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol ttp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss2', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss2'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'week', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/olocaluser', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN olocaluser'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:$/localuser', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND $'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htp:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol htp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:sk', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN sk'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': 'k\", \"limit\": 1\\x7f', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'hvtp:ss', 'username': 'k\", \"limit\": 1\\x7f', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol hvtp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': '', 'password': '', 'siteId': 1, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'hcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccttp:ss', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol hcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccttp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss ', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss ', 'username': '', 'password': '', 'siteId': 0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http2:ss ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol http2:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:s', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN s'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'ht: tp:ss ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol ht:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htp:ss ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Unsupported protocol htp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://ser}', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND ser}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://s)r', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND s)r'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss', 'username': 'Id\": 0, \"period\": \"week\", \"limit\": 1iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/(/ser', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo ENOTFOUND ('}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ss ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 2}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:sL ', 'username': '', 'password': '', 'siteId': 0.0, 'period': 'day', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ws', 'username': '', 'password': '', 'siteId': 0, 'period': 'week', 'limit': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving clicks data: getaddrinfo EAI_AGAIN ws'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

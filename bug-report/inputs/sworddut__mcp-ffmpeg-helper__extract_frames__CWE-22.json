@@ -1,0 +1,42 @@
+{
+ "repo": "sworddut/mcp-ffmpeg-helper",
+ "tool": "extract_frames",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "d68d0104a756750f46f10074098401e34128ff23",
+ "draft": "sworddut__mcp-ffmpeg-helper__extract_frames__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputDir': 'output', 'frameRate': '1', 'format': 'jpg', 'quality': 95, 'startTime': '00:00:00', 'duration': '00:00:10'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputDir': '../tmp', 'frameRate': '0.5', 'format': 'png', 'quality': 100, 'startTime': '10', 'duration': '20'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputDir': '/tmp/frames', 'frameRate': '1/30', 'format': 'gif', 'quality': 0, 'startTime': '00:00:01.000', 'duration': '00:00:05.000'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: /etc/passwd\\x00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'predefined_seed:test.pdf', 'outputDir': '../../../../var/log', 'frameRate': 'rm -rf /', 'format': 'jpg', 'quality': -1, 'startTime': 'not_a_time', 'duration': '999999999999'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: predefined_seed:test.pdf'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

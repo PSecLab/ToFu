@@ -1,0 +1,35 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "read_openalex_paper",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__read_openalex_paper__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'null', 'save_path': '/etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"OpenAlex papers cannot be read directly through this aggregator. Please use the paper's DOI or pdf_url to access the full text.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '10.1234/validpaperid', 'save_path': '../../../../../tmp'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"OpenAlex papers cannot be read directly through this aggregator. Please use the paper's DOI or pdf_url to access the full text.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '10.7777/cleanup', 'save_path': '/tmp/cleanup_test/../cleanup_test'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"OpenAlex papers cannot be read directly through this aggregator. Please use the paper's DOI or pdf_url to access the full text.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

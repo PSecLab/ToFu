@@ -1,0 +1,91 @@
+{
+ "repo": "blazickjp/arxiv-mcp-server",
+ "tool": "search_papers",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "42419c18376ef5559a38fa7f1895938ad2b84e38",
+ "draft": "blazickjp__arxiv-mcp-server__search_papers__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 11,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'Tool error: {\\n  \"status\": \"error\",\\n  \"message\": \"No search criteria provided\"\\n}'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '../../../../etc/passwd', 'max_results': 50, 'start': 0, 'abstract_mode': 'full', 'date_from': '1990-01-01', 'date_to': '2024-01-01', 'categories': ['cs.AI', 'stat.ML'], 'sort_by': 'date'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.99 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28..%2F..%2F..%2F..%2Fetc%2Fpasswd%29%20OR%20abs%3A%28..%2F..%2F..%2F..%2Fetc%2Fpasswd%29%29%20AND%20%28cat%3Acs.AI%20OR%20cat%3Astat.ML%29%20AND%20submittedDate%3A%5B199001010000%20TO%20202401012359%5D&start=0&max_results=50&sortBy=submittedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '/etc/passwd\\x00', 'max_results': 5, 'start': 999999999, 'abstract_mode': 'snippet', 'date_from': '2021-01-01', 'date_to': '2021-12-31', 'categories': ['cs.CV', 'cs.MA'], 'sort_by': 'date'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.98 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/crash-6e65c208dba8dfd0cded5ddae0fe7a691940598e']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%2Fetc%2Fpasswd%00%29%20OR%20abs%3A%28%2Fetc%2Fpasswd%00%29%29%20AND%20%28cat%3Acs.CV%20OR%20cat%3Acs.MA%29%20AND%20submittedDate%3A%5B202101010000%20TO%20202112312359%5D&start=999999999&max_results=5&sortBy=submittedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/crash-6e65c208dba8dfd0cded5ddae0fe7a691940598e']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': 'cat:cs.AI OR abs:../../../../etc/passwd', 'max_results': 5, 'start': 0, 'abstract_mode': 'snippet', 'date_from': '2020-01-01', 'date_to': '2020-12-31', 'categories': ['cs.AI'], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.99 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/crash-b80749b0ad483c4010e69909ae70a9d5c450120c']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28cat%3Acs.AI%20OR%20abs%3A..%2F..%2F..%2F..%2Fetc%2Fpasswd%29%20AND%20%28cat%3Acs.AI%29%20AND%20submittedDate%3A%5B202001010000%20TO%20202012312359%5D&start=0&max_results=5&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/crash-b80749b0ad483c4010e69909ae70a9d5c450120c']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"queabstract_mode\": \"none\", \"date_from\": \"2022-02-29\", \"date_to\": \"2022-02-30\", \"categories\": [], \"sort_by\": \"relevance', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '2022-02-29', 'date_to': '2022-02-30', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'Tool error: {\\n  \"status\": \"error\",\\n  \"message\": \"Invalid date format. Use YYYY-MM-DD format: day is out of range for month: 2022-02-29\"\\n}'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"query\": \"/etc/passwd\\\\u0000\", \"max_results\": 5, \"start\": 999999999, \"abstract_mode\": \"snippet\", \"dat], \"sort_by\": \"date', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.46 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%22query%22%3A%20%22%2Fetc%2Fpasswd%5Cu0000%22%2C%20%22max_results%22%3A%205%2C%20%22start%22%3A%20999999999%2C%20%22abstract_mode%22%3A%20%22snippet%22%2C%20%22dat%5D%2C%20%22sort_by%22%3A%20%22date%29%20OR%20abs%3A%28%22query%22%3A%20%22%2Fetc%2Fpasswd%5Cu0000%22%2C%20%22max_results%22%3A%205%2C%20%22start%22%3A%20999999999%2C%20%22abstract_mode%22%3A%20%22snippet%22%2C%20%22dat%5D%2C%20%22sort_by%22%3A%20%22date%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"queabstract_mode\": \"none\", \"date_from\": \"\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x0029\", \"date_to\": \"2022-02-30\", \"categories\": [], \"sort_by\": \"relevance', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.19 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Server error '500 Internal Server Error' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22date_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22date_to%22%3A%20%222022-02-30%22%2C%20%22categories%22%3A%20%5B%5D%2C%20%22sort_by%22%3A%20%22relevance%29%20OR%20abs%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22date_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22date_to%22%3A%20%222022-02-30%22%2C%20%22categories%22%3A%20%5B%5D%2C%20%22sort_by%22%3A%20%22relevance%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"queabstract_mode\": \"none\", \"date_from\": \"\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x0029\", \"datnce', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.93 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/crash-350d0e13b803fabe784ae6677313dc64bf840c17']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Server error '500 Internal Server Error' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22date_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%20OR%20abs%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22date_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/crash-350d0e13b803fabe784ae6677313dc64bf840c17']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"queabstract_mode\": \"none\", \"dat\\x00e_from\": \"\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x0029\", \"datnce', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.92 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Server error '500 Internal Server Error' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%20OR%20abs%3A%28%22queabstract_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '\"q\\x02\\x1a\\x1e\\x1d\\x0c\\x0b\\r\\x1ect_mode\": \"none\", \"dat\\x00e_from\": \"\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x0029\", \"datnce', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 8.10 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Server error '500 Internal Server Error' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%28%22q%02%1A%1E%1D%0C%0B%0D%1Ect_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%20OR%20abs%3A%28%22q%02%1A%1E%1D%0C%0B%0D%1Ect_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'query': '9\"q\\x02\\x1a\\x1e\\x1d\\x0c\\x0b\\r\\x1ect_mode\": \"none\", \"dat\\x00e_from\": \"\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x0029\", \"datnce', 'max_results': 0, 'start': 0, 'abstract_mode': 'none', 'date_from': '', 'date_to': '', 'categories': [], 'sort_by': 'relevance'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:arxiv-mcp-server)! Logged content: 'arXiv API HTTP error: Server error '500 Internal Server Error' for url 'https://export.arxiv.org/api/query?search_query=%28ti%3A%289%22q%02%1A%1E%1D%0C%0B%0D%1Ect_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%20OR%20abs%3A%289%22q%02%1A%1E%1D%0C%0B%0D%1Ect_mode%22%3A%20%22none%22%2C%20%22dat%00e_from%22%3A%20%22%06%00%00%00%00%00%00%0029%22%2C%20%22datnce%29%29&start=0&max_results=0&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500'."
+  }
+ ],
+ "truncated": false
+}

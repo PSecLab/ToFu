@@ -1,0 +1,56 @@
+{
+ "repo": "pmmvr/obsidian-api-mcp-server",
+ "tool": "get_note_content",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "9a93913eb8f771b59930d7bbdc3377eacfe51cac",
+ "draft": "pmmvr__obsidian-api-mcp-server__get_note_content__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 6,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'/etc/passwd\\\\u0000\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'../../../../etc/passwd\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '/var/log/../etc/shadow'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'/var/log/../etc/shadow\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '../../../../proc/self/environ'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'../../../../proc/self/environ\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '../../../tmp/verylargefile.txt'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'../../../tmp/verylargefile.txt\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to get note at path \\'..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\\': All connection attempts failed\",\\n  \"data\": null\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

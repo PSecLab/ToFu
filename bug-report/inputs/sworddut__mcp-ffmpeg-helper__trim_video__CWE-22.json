@@ -1,0 +1,91 @@
+{
+ "repo": "sworddut/mcp-ffmpeg-helper",
+ "tool": "trim_video",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "d68d0104a756750f46f10074098401e34128ff23",
+ "draft": "sworddut__mcp-ffmpeg-helper__trim_video__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 11,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputPath': 'C:\\\\output.mp4', 'startTime': '-1', 'duration': '-10', 'endTime': '-5'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'input.mp4', 'outputPath': '../../../../../tmp/evil.mp4', 'startTime': '0', 'duration': '9999999999', 'endTime': '9999999999'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: input.mp4'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': 'output.mp4', 'startTime': 'not_a_time', 'duration': 'not_a_duration', 'endTime': 'not_an_endtime'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: /etc/passwd\\x00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputPath': 'output.mp4', 'startTime': '00:00:00.000', 'duration': '00:00:10.000', 'endTime': '00:00:10.000'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '///////////....../////', 'outputPath': '///////////////////////////////{///////', 'startTime': '//////////////////////////', 'duration': '///////////////', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ///////////....../////'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '///////////....../////', 'outputPath': '///////////////////////////////{///////', 'startTime': '//////////////////-///////', 'duration': '///////////////', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ///////////....../////'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '///////////......//////////////////////', 'outputPath': '//\\x7f///////////////\\x19\\x00///////////////{///', 'startTime': '////////////', 'duration': '', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ///////////......//////////////////////'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '//////////////////////', 'outputPath': '///////////////\\x7f\\x7f\\x7f\\x7fHP////////////...///', 'startTime': '\\x00\\x00////\\x04\\x00', 'duration': '', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: ENOENT: no such file or directory, mkdir '///////////////\\x7f\\x7f\\x7f\\x7fHP///////////'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': \"/////////////////'////\", 'outputPath': '///////////////\\x7f\\x7f\\x7f\\x7fHP////////////...///', 'startTime': '\\x00\\x00////\\x04\\x00', 'duration': '', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: Input file does not exist: /////////////////'////\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': \"/////////////////'////\", 'outputPath': '///////////////////////\\x7f/////////...///', 'startTime': '\\x00\\x00////\\x04\\x00', 'duration': '', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: Input file does not exist: /////////////////'////\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': \"/////////////////'////\", 'outputPath': '/////////////////////\\x18//\\x7f/////////...//', 'startTime': '/\\x00\\x00////\\x04\\x00', 'duration': '', 'endTime': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error: Input file does not exist: /////////////////'////\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

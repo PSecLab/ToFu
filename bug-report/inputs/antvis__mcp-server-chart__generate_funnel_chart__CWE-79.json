@@ -1,0 +1,21 @@
+{
+ "repo": "antvis/mcp-server-chart",
+ "tool": "generate_funnel_chart",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "e2a8fb7c185e17c75c067817ff1a2acfddf49aa1",
+ "draft": "antvis__mcp-server-chart__generate_funnel_chart__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'data': [{'category': '浏览网站', 'value': 50000}], 'style': {'backgroundColor': '#fff', 'palette': ['#ff0000'], 'texture': 'default'}, 'theme': 'default', 'width': 600, 'height': 400, 'title': \"<script>alert('xss')</script>\"}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'_meta': {'description': \"The content returned by MCP is the remote image URL of the visualization chart, which can be rendered using Markdown or HTML image tags. The _meta.spec content corresponds to the chart's configuration and spec, which can be rendered using AntV GPT-Vis chart components.\", 'spec': {'type': 'funnel', 'data': [{'category': '浏览网站', 'value': 50000}], 'style': {'backgroundColor': '#fff', 'palette': ['#ff0000'], 'texture': 'default'}, 'theme': 'default', 'width': 600, 'height': 400, 'title': \"<script>alert('xss')</script>\"}}, 'content': [{'type': 'text', 'text': 'https://mdn.alipayobjects.com/one_clip/afts/img/FuVPTa5TgqYAAAAAQyAAAAgAoEACAQFr/original'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

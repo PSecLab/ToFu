@@ -1,0 +1,1414 @@
+{
+ "repo": "maoxiaoke/mcp-media-processor",
+ "tool": "execute-ffmpeg",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "2aecf0fb94b398ae7a708a979e302d90f89d670c",
+ "draft": "maoxiaoke__mcp-media-processor__execute-ffmpeg__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1439,
+ "note": "1439 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputPath': '', 'outputFilename': 'output.avi', 'options': ['-c:v', 'libx265', '-crf', '28']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputPath': '/tmp/output.mp4', 'outputFilename': 'output.mp4', 'options': ['-c:v', 'libx264', '-crf', '23']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../etc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'predefined_seed:test.pdf', 'outputPath': '/tmp/../../root/.ssh/id_rsa', 'outputFilename': 'id_rsa', 'options': ['-c:v', 'copy', '-map', '0', '-f', 'mp4']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: predefined_seed:test.pdf'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicioutputFilename\": \"../malicious.i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicioutputFilename\": \"../malicious.i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falicioutputFilename\": \"../malicious.i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falicioutputFilename\": \"../malicious.i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falicioutputFilename\": \"../malicious.i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falicioutputFilename\": \"../malicious.i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falkcioutputFilename\": \"../malicious.i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falkcioutputFilename\": \"../malicious.i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath&: \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falkcioutputFilename\": \"../malicious.i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/psaswd\\\\u0000\", \"outputPath&: \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"\\x7f\\x7f\\x7f\\x7falkcioutputFilename\": \"../malicious.i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\000u0\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\000u0\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"input{\"', 'outputPath': 'nputPath\": [\"not\", \"a\", \"string\"],(\"outputPath\"\\x0e 12345, \"outputFilenaed:test.pptx\", s\": \"not\"../malicious{\"inputPath\": [\"', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"input{\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicio[s.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", (outputFilename\": \"../malicio[s.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", (outputFilename\": \"../malicio[s.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0\"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0\"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0\"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-v\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0\"/dev/shm/../../../../%tc/shadow\", (mp/output.mp4\", \"outputFilenas.mkv\", \"options\": [\"-v\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \".. \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \".. \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'HHHHHHHHHH\"inputPath\": \"/etc/passwd\\\\u00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: HHHHHHHHHH\"inputPath\": \"/etc/passwd\\\\u00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFileneme\": \".. \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '/dev/shm/../../../../%tc/shadoW', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '/dev(shm/../../../../%tc/shadoW', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", Pat\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", Pat\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outpu{\"inputPath\": [\"not\", \"ta\", \"string\"],(\"outFilputPath\"\\x0ee 1', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \")nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev(shm/../../../../%tc/shadoW\", \"outpu{\"inputPath\": [\"not\", \"ta\", \"string\"],(\"outFilputPath\"\\x0ee 1'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": , \"avi\", \"-y\"]\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": , \"avi\", \"-y\"]\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": , \"avi\", \"-y\"]\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": , \"avi\", \"-y\"]\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../../etc/shadow\", \"outputFilename\": \"../maliciousm.vk\", \"options\": , \"avi\", \"-y\"]\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../../etc/shadow\", \"outputFilename\": \"../maliciousm.vk\", \"options\": , \"avi\", \"-y\"]\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../.JP\\x1a\\x0b\\x1cP\\x0c\\x17adow\", \"outputFilename\": \"../maliciousm.vk\", \"options\": , \"avi\", \"-y\"]\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../.JP\\x1a\\x0b\\x1cP\\x0c\\x17adow\", \"outputFilename\": \"../maliciousm.vk\", \"options\": , \"avi\", \"-y\"]\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../.JP\\x1a\\x0b\\x1cP\\x0c\\x17adow\", \"outputFileny\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.././/../.JP\\x1a\\x0b\\x1cP\\x0c\\x17adow\", \"outputFileny\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etsscwp/ad\\x00', 'outputPath': '/dev/shm/../../../../etc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../2./../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../2./../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"ouuputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../2./../../%tc/shadow\", \"ouuputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/s\\x16\\x12PQ./2./../../%tc/shadow\", \"ouuputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"ioputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/s\\x16\\x12PQ./2./../../%tc/shadow\", \"ouuputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"av\\x01\\x00, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../../../%tc/shadow\", \"outputFilename\": \"../\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../../../%tc/shadow\", \"outputFilename\": \"../\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utputFilename\": \"../\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utputFilename\": \"../\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/:hadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utputFilename\": \"../\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/:hadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utputFilename\": \"../\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/:hadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utput=ilename\": \"../\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00\" 0,\"0outputPath\": \"/dev/shm/../../../../%tc/:hadow\", \"outputFilename\": \"../../..th\": \"/dev/shm/.utput=ilename\": \"../\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'av/', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", ^\\x1e\\tG\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", ^\\x1e\\tG\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\" \"outputFilename\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\" \"outputFilename\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadname\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadname\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputsswd\\\\u0000\", \"outputPath\": \"/dev/shm/../: \"/dev/shm/../../../../%tc/shadname\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputsswd\\\\u0000\", \"outputPath\": \"/dev/shm/../: \"/dev/shm/../../../../%tc/shadname\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilenv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilenv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../.utP./.ath\": \".', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../.utP./.ath\": \".'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.../../.utP./.ath\": \".', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/.../../.utP./.ath\": \".'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/...\\x10../.utP./.ath\": \".', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/...\\x10../.utP./.ath\": \".'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPa/etc/passwd\\\\u0000\", \"outputPath\"\": \".', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp{\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPa/etc/passwd\\\\u0000\", \"outputPath\"\": \".'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"predefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"predefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"pre\\x1edefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"pre\\x1edefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": $pre\\x1edefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": $pre\\x1edefined_seed:test.p;tx\", \"outputPath\": \"/tmp/output.m{\"inputPath\": \"/etc/passwd\\\\u0p8\", \"outpu000\", \"output'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPathlename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPathlename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPathlename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y%', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPathlename\": \"../malici\\'us.mkv\"T_]\\x10\\x0f\\x0b\\x16\\x08ns\": [\"-f\", \"avi\", \"-y%'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", !-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", !-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u_000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", !-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u_000\", \"outpus.mkv\", \"options\": [\"-f\", \"avi\", !-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u_000\", ^\\x10\\n\\x0b\\x0f\\n\\x0cWmkv\", \"options\": [\"-f\", \"avi\", !-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u_000\", ^\\x10\\n\\x0b\\x0f\\n\\x0cWmkv\", \"options\": [\"-f\", \"avi\", !-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilename\": \"../malicious.mkv\", \"opti\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilename\": \"../malicious.mkv\", \"opti\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilenamn\": \"../malicious.mkv\", \"opti\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilenamn\": \"../malicious.mkv\", \"opti\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilenamn\": \"../malicious.mkv\",\\x1f\"opti\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"ouow\", \"outputFilenamn\": \"../malicious.mkv\",\\x1f\"opti\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPautFilenamn\": \"../malicious.mkv\",\\x1f\"opti\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPautFilenamn\": \"../malicious.mkv\",\\x1f\"opti\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"wd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"wd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"wd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-Y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"wd\\\\u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-Y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"wd]u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-Y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"wd]u0000\", \"outme\": \"../malicious.mkv\",\\x00\\x00\\x00ftion\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fs\": [\"-f\", \"avi\", \"-Y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '{\"inputPath\": [\"not\", \"a\",?\"string\"]x\", s\": \"not\"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: {\"inputPath\": [\"not\", \"a\",?\"string\"]x\", s\": \"not\"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '{\"inputPath\": [\"not\", \"a\",?\"stringe\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: {\"inputPath\": [\"not\", \"a\",?\"stringe\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '{\"inputPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: {\"inputPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '{\"inputPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"opsntio\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: {\"inputPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"opsntio\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '{\"inpu;tPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"opsntio\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: {\"inpu;tPath\": [\"not\", \"a\",\\x7f\\x7f\\x7f\\x7f?\"stringe\": \"../malicious.mkv\", \"opsntio\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../etc/shadow', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../etc/shad+w', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/vde/shm/../../../../etc/shad+w', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/vde'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputPath\": \"/dev/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputPath\": \"/dev/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputP-th\": \"/dev/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\",0\"outputP-th\": \"/dev/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inpv/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inpv/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inpV/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inpV/shm/../../../..kv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00/malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00/malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malus.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malĉus.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shado', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shado', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"input0\\x1e\\x0b\\x17\": \"/etd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shado\", \"optiputFilename\": \"../mal\\x17\\x1cD\\tus.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '/dev/shm/../../../../%tc/shado', 'outputFilename': '', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"input0\\x1e\\x0b\\x17\": \"/etd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shado\", \"optiputFilename\": \"../mal\\x17\\x1cD\\tus.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1aname\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1aname\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1aname\": \"../malicious.mkv\", \"opti[\"no:s \"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1aname\": \"../malicious.mkv\", \"opti[\"no:s \"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1a?\"string\"]x\",licious.mkv\", \"opti[\"no:s \"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1a?\"string\"]x\",licious.mkv\", \"opti[\"no:s \"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1a?\"string\"]x\",licious.mkv\", \"opt\\x1a[\"no:s \"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00nputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"output?\\x16\\x13\\x1a?\"string\"]x\",licious.mkv\", \"opt\\x1a[\"no:s \"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/ow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPautPath\": \"/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"] \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPautPath\": \"/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"] \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp-f\", \"avi\", \"-/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"] \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp-f\", \"avi\", \"-/dev/shm/../../../../%tc/\\x0e\\x17\\x1e\\x1bow\", \"outputFilename\": ^QQP\\x12\\x1e\\x13\\rcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"] \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"o/malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"o/malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-f\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-v\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-v\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPathtc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\"\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-v\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPathtc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\"\": \"/etc/passwd\\\\u0000\"o/, \"malicious.mkv\", \"options\": [\"-v\", \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"predefined_seed:test.docx\", \"outpu\"outputPath\": \"/vde/shm/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"predefined_seed:test.docx\", \"outpu\"outputPath\": \"/vde/shm/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"predefined_seed:test.docx\", \"outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"predefined_seed:test.docx\", \"outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"predefined_seed:test.docx\\x00\\x00\\x00\\x19outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"predefined_seed:test.docx\\x00\\x00\\x00\\x19outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp4\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"predefined_seed:test.docx\\x00\\x00\\x00\\x19outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp8\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"predefined_seed:test.docx\\x00\\x00\\x00\\x19outpu\"outputPath\": \"/vde/s(m/../\"outputFilename\": \"output.mp8\", \"options\": [\"; rm -rf /\", \"-c:v\", \"libx264\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\"/ \":..malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\"/ \":..malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y%', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y%'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\": [\"-f\", \"avi\", \"-y%', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPtah\": VP\\x1a\\x0b\\x1cP\\x0f\\x1esswd\\\\u0000\",/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\": [\"-f\", \"avi\", \"-y%'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd䀀', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u4000\", \"outpth\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u4000\", \"outpth\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u4000\", \"outpth\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u4000\", \"outpth\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u4000\", \"outputPath\": \"/dev/shm/../../../../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u4000\",../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u4000\",../%tc/shhadow\", \"outputFilenae\": \"../malicious.mkv\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPat\\x10\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPat\\x10\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPat\\x10\": \"/etc/passwd\\\\u0000\", \"ou\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPat\\x10\": \"/etc/passwd\\\\u0000\", \"ou\": \"/vde/shm/.liicous.mkv\", \"options\": [\"\\rf\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": :\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": :\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": :\"/etc/passwd\\\\u0000\", \"outme\":, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": :\"/etc/passwd\\\\u0000\", \"outme\":, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"itpuPnath\": :\"/etc/passwd\\\\u0000\", \"outme\":, \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"itpuPnath\": :\"/etc/passwd\\\\u0000\", \"outme\":, \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv`\\x00\\x00\\x00options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv`\\x00\\x00\\x00options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"outme\": \"../\\x7f\\x7f\\x7f\\x7fcious.mkv`\\x00\\x00\\x00options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"outme\": \"../\\x7f\\x7f\\x7f\\x7fcious.mkv`\\x00\\x00\\x00options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"i\\x00\\x00\\x00gPath\": \"/etc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"i\\x00\\x00\\x00gPath\": \"/etc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/etc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/etc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/mtc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/mtc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/gtc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x7f\\x7f\\x7f{\"i\\x00\\x00\\x00gPath\": \"/gtc/passwd\\\\u0000\", \"outputPlename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadoPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadoPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadoPath\": \"/etc/pass{\"inputPath\": [\"not\", \"wa\", \"string\"],d\\\\u00', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadoPath\": \"/etc/pass{\"inputPath\": [\"not\", \"wa\", \"string\"],d\\\\u00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../.\": [\"not\", \"wa\", \"string\"],d\\\\u00', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../.\": [\"not\", \"wa\", \"string\"],d\\\\u00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\",utme\": \"../malic\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\",utme\": \"../malic\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\",utme\": \".c/passwd, \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\":\\x1e \"/etc/passw%\\\\u0000\", \"outme\": \"../malicious.mkv\",utme\": \".c/passwd, \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous]\\rutputF\\x11lenans\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous]\\rutputF\\x11lenans\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passw$\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous]\\rutputF\\x11lenans\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passw$\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad+w\"T_]\\rutputF\\x11lename\": \"../maliicous]\\rutputF\\x11lenans\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u{\"00inputP', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u{\"00inputP'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': '../malicious.mkv', 'options': ['-f', 'avi', ']y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev\\x00\\x19hm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev\\x00\\x19hm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"o\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x02h\": \"/dev\\x00\\x19hm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"o\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x02h\": \"/dev\\x00\\x19hm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [^Mf\", \"avi\", \"]y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath{\"inputPath\": \"\": \"/etc/passwd\\\\u0000\", \"o\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x02h\": \"/dev\\x00\\x19hm/../..//etc/../../%passwdt\\\\u0c/0', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath{\"inputPath\": \"\": \"/etc/passwd\\\\u0000\", \"o\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x02h\": \"/dev\\x00\\x19hm/../..//etc/../../%passwdt\\\\u0c/0'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outputFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outputFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tFilenamcious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tF/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tFilenamcious.mkvavi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", &outputPath\": \"/dev/shm/../../../../etc/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tF/sha\\x7f\\x7f\\x7f\\x7fdow\", \"outp?tFilenamcious.mkvavi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/pass-d\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/pass-d\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/qasswd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/pass-d\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/qasswd\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../..th\": \"/etc/pass-d\\\\u0000\", \"uotputPath\": \"/vde/shm/../../../../etc/shad+w\", \"outpu'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '/dev/shm/../../../../%tc/shadow', 'outputFilename': './shm/../../.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/dev/shm/../../../../%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputPath': '*dev/shm/../../../../%tc/shadow', 'outputFilename': './shm/../../.mkv', 'options': ['-f', 'avi', '-y']}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Error processing video: ENOENT: no such file or directory, mkdir '/home/mza6485/toolfuzzer/eval/%tc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \".\\x7f\\x7f\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\": \".\\x7f\\x7f\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../../%tc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../RQPRtc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shm/../../../RQPRtc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shM/../../../RQPRtc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", 0outputPath\": \"/dev/shM/../../../RQPRtc/shadow\", \"outputFilename\"\\x7f.: \\x7f\"\\x7f\\x7flicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilen)\\x12\\x1a]: \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilen)\\x12\\x1a]: \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/shadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/shm/../../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\"string\"],m/../../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\"string\"],m/../../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\"string\"],m/./.../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/dev/sh\"string\"],m/./.../../../etc/s\\x7f\\x7f\\x7f\\x7fhadow\", \"outputFilen)\\x12\\x1a]: \"../, \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad\"w,+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad\"w,+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/pascwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad\"w,+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/pascwd\\\\u0000\", \"outputPath\": \"/vde/shm/../../../../etc/shad\"w,+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\":\" t/ec/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\":\" t/ec/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\":\" t/ec/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.v\"m,k \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\":\" t/ec/pascwd\\\\u0000\", \"outputPath\": \"/vde/+ \"outputF\\x11lename\": \"../maliicous.v\"m,k \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"../malicious\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/../../.mkv\", \"options\": [\"-f\", \"avi\"\" ,-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/../../.mkv\", \"options\": [\"-f\", \"avi\"\" ,-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"Pitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/../../.mkv\", \"options\": [\"-f\", \"avi\"\" ,-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"Pitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/../../.mkv\", \"options\": [\"-f\", \"avi\"\" ,-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"Pitputanhitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/kv\", \"options\": [\"-f\", \"avi\"\" ,-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"Pitputanhitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm/../../../../%tc/shadow\", \"outputFilename\": \"./shm/kv\", \"options\": [\"-f\", \"avi\"\" ,-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"Pitputanhitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm(../../../../%tc/shadow\", \"outputFilename\": \"./shm/kv\", \"options\": [\"-f\", \"avi\"\" ,-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"Pitputanhitputanh\": \"/etc/passwd\\\\u0000\", \"outputPath\": \"*dev/shm(../../../../%tc/shadow\", \"outputFilename\": \"./shm/kv\", \"options\": [\"-f\", \"avi\"\" ,-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u0000\", \"ions\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u0000\", \"ions\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u0000\", \"ions\": [\"-f\", \"av\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u0000\", \"ions\": [\"-f\", \"av\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp\\x01\\x00\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inp\\x01\\x00\\x7f\\x7f\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inp\\x01\\x00\\x7f\\x7f\\x00\\x00th\\x1e\": \"/etc/passwd\\\\u\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"opmions\": [\" av\"\"f-,i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"opmions\": [\" av\"\"f-,i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"op,mions\": [\" av\"\"f-,i\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"op,mions\": [\" av\"\"f-,i\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"op,mions\": [\" av\"\"f-,i\"< \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u0000\", \"outme\": \"..t/malicious.mkv\", \"op,mions\": [\" av\"\"f-,i\"< \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"io, \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"io, \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"io, \"avi\",$\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \"io, \"avi\",$\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\": \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\\x1e\":P \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\\x1e\":P \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"inputPath\\x1e\":P \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"inputPath\\x1e\":P \"/etc/passwd\\\\u0000\", \",o i\"avi\",$\"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"tme\": \"../malicious.mkv\", \"options\": [\"-f\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"tme\": \"../malicious.mkv\", \"options\": [\"-f\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/passwd\\\\u0000\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\nOOOU\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\nOOOU\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\n\\x7f\\x7f\\x7f\\x7f\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\n\\x7f\\x7f\\x7f\\x7f\", \"outme\": \"../malicious.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\n\\x7f\\x7f\\x7f\\x7f\", \"outme\": \"../malicious.mkv)\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"tme\": \"../malicious.mkv\", \"opt)ons\": [\"-f\"/etc/pass\\t\\x1b#\\n\\x7f\\x7f\\x7f\\x7f\", \"outme\": \"../malicious.mkv)\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/etc/passwd\\\\u00./../etc/shad+w\", \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"', 'outputPath': '', 'outputFilename': '', 'options': []}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error processing video: Input file not found: \"inputPath\": \"/etc/passwd\\\\u00./../etc/shad+w\", \"outputF\\x11lename\": \"../maliicous.mkv\", \"options\": [\"-f\", \"avi\", \"-y\"'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

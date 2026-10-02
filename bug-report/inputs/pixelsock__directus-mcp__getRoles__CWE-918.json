@@ -1,0 +1,1414 @@
+{
+ "repo": "pixelsock/directus-mcp",
+ "tool": "getRoles",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "a1ccda361c3125b34de54697e05c95896cf8647d",
+ "draft": "pixelsock__directus-mcp__getRoles__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1201,
+ "note": "1201 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Request failed with status code 404'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'token': 'testtoken', 'query': {'sort': ['name'], 'limit': 1}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '/etc/passwd\\x00', 'token': 'testtoken', 'query': {'filter': {'role': {'_like': '%root%'}}}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'token': 'testtoken', 'query': {'sort': 'id', 'limit': -1}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'token': 'testtoken', 'query': {'filter': {'role': {'_eq': 'admin'}}}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: connect ECONNREFUSED 127.0.0.1:8500'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'token': 'testtoken', 'query': {'filter': {'role': {'_in': ['admin', 'user']}}}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://[::ffff:127.0.0.1]:8080', 'token': 'testtoken', 'query': {'filter': {'role': {'_eq': 'admin'}}, 'limit': 0}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_alternative_ip_representations', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: connect ECONNREFUSED ::ffff:7f00:1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_alternative_ip_representations', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'token': 'testtoken', 'query': {'filter': {'role': {'_neq': 'guest'}}, 'limit': 1000000000}}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: connect EHOSTUNREACH 169.254.169.254:80'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12345, \"query\": {\"filter\": { {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12345, \"query\": {\"filter\": { {\"_eq\": \"ad\"nim}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\":A 12345, \"query\": {\"filter\": { {\"_eq\": \"ad\"nim}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\";rl\": \"http://example.com\", \"token\":A 12345, \"query\": {\"filter\": { {\"_eq\": \"ad\"nim}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\";rl\": \"http://example.com\", \"te.com\"oken\":A 12345, \"query\": {\"filter\": { {\"_eq\": \"ad\"nim}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\";rl\": \"http://example.com\", \"te.com\"oken\":}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12345, \"query\": {\"filter\": {\"roleilter\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"tokep\": 12345, \"query\": {\"filter\": {\"roleilter\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"to\\x1fep\": 12345, \"query\": {\"filter\": {\"roleilter\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"to\\x1fep\": 12344, \"query\": {\"filter\": {\"roleilter\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"to\\x1fep\":[12344, \"query\": {\"filter\": {\"roleilter\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"ro|\": {\"_eq\": \"admin\"\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\" \"http://evampleample.com\", \"token\": 12345, \"query\": {\"filter\": {\"ro|\": {\"_eq\": \"admin\"\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\" \"http://evampleample.com\"{\"url\": \"h', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\" \"http://evampleam\\x00le.com\"{\"url\": \"h', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\"A \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.eken\"A \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.eken\"A \"testtoken\", \"qu {\"_eq\"\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產汲㨢∠瑦㩰⼯慭楬楣畯\\u2e73步湥䄢∠整瑳潴敫≮\\u202c焢⁵≻敟≱昢汩整≲›≻潲敬㨢笠弢煥㨢∠摡業≮絽\\u202c猢牯≴›畮汬', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產汲㨢∠瑦㩰⼯慭楬楣畯\\u2e73步湥䄢∠整瑳潴敫≮\\u202c焢⁵≻敟≱昢汩整≲›≻潲敯㨢笠弢煥㨢∠摡業≮絽\\u202c猢牯≴›畮汬', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"westtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"adm\\x00\\x00\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.co\"westtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"adm\\x00\\x00\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":licious.example.co\"westtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"adm\\x00\\x00\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\"u', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產產', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": \"testtoken\", \"query\": \"notAnObj \"t\"}\\x7f\\x7f\\x7f', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampKle.com\", \"token\": \"testtoken\", \"query\": \"notAnObj \"t\"}\\x7f\\x7f\\x7f', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/f/exampKle.com\", \"token\": \"testtoken\", \"query\": \"notAnObj \"t\"}\\x7f\\x7f\\x7f', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{\"url\": \"http:/f/exampKle.com\", \"token\": \"testtoken\", \"query\": \"notAnObj \"t\"}\\x7f\\x7f\\x7f', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": Null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"toke\\x7f\": \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": Null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\"l\"\"toke\\x7f\": \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": Null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\"l\"\"toke\\x7f\": \"testtoken\", \"query\": {\"filter\": {\"\\x06ole\": {\"_eq\": \"admin\"}}, \"sort\": Null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url): \"ftp://malicious.example.com\"l\"\"toke\\x7f\": \"testtoken\", \"query\": {\"filter\": {\"\\x06ole\": {\"_eq\": \"admin\"}}, \"sort\": Null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplec.om\", \"token\": 12345, \"query\": {\"filter\": {\"ro{e: l\"\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evimplec.om\", \"token\": 12345, \"query\": {\"filter\": {\"ro{e: l\"\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evimplec.om\", \"token\": 12345, \"query\": {\"fileq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evimplec.om\", \"token\": 06172, \"query\": {\"fileq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12342, \"query\": {\"filter\": {\"role\": {\"_eq\":(\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12342, \"query\": {\"filte{\"url\"role\": {\"_eq\":(\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h://example.com\", \"token\": 12342, \"query\": {\"filte{\"url\"role\": {\"_eq\":(\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h://example.com\", \"token\": 12342, \"query\": {\"1filte{\"url\"role\": {\"_eq\":(\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"role\"\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"token\": 24690, \"query\": {\"filter\": {\"role\"\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplelter\": {.com\", \"token\": 24690, \"query\": {\"filter\": {\"role\"\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplelter\": {.com\", \"token\": 24690, \"query\": {\"filter\": {\"rol.\"\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplelter\": {.com\",2\"token\": 24690, \"query\": {\"filter\": {\"rol.\"\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"testtokery\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malycious.example.com\", \"token\": \"testtokery\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malycious.example.com\", \"token\": \"testtokery\": {\"filter\": {\"role\": {\"_eq\": \"admin\\x00\\x00\\x00\\x00\\x00\\x00\\x00!rt}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ft0://malycious.example.com\", \"token\": \"testtokery\": {\"filter\": {\"role\": {\"_eq\": \"admin\\x00\\x00\\x00\\x00\\x00\\x00\\x00!rt}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"role\": {\"_eq\\x01\\x00 \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampletp://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"role\": {\"_e}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \": \"http://evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"adme}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \": \"http://evample.coml\": \"http://evam5, \"query\": {\"filter\": {\"role\": {\"_eq\": \"adme}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \": \"http://evample.coml\": \"http://evam5, \"que\\ny\": {\"filter\": {\"role\": {\"_eq\": \"adme}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"roleery\": {q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h\\x00\\x00\\x00^//evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"roleery\": {q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h\\x00\\x00\\x00^//evample.com\", \"token\": 12345, \"query\": {\"filter\": {\"roleery\": {q\": \"admin^\\n}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h\\x00\\x00\\x00^/{\";rl\": \"http://example.com\", \"te.com\"oken\":}}}r\": {\"roleery\": {q\": \"admin^\\n}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":token\": \"testtoken\", \"qutoken\": 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":token\": \"testtoken\", \"qutoken\": 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": n\", \"q\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":token\": \"testtoken\", \"qutoken\": 12345, \"query\": {\"filter\": {\"\\x13\\x10\\x13\\x1a\": {\"_eq\": n\", \"q\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":token\": \"testtoken\", \"qutoken\": 12345, \"query\": {\"filter\": {\"\\x13\\x10\\x13\\x1a\": {\"_eq\": n\", \"q#}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\";rl\": \"http://examphe.com\", \"te.com\"oken\":}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\";rl\": \"http://examphe.com\", \"te.com\"oken\":1', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;rll\": \"ftp://ma', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 12345, \"query\": {\"filter\": {\"rol\\x00\\x00: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com#, \"token\": 12345, \"query\": {\"filter\": {\"rol\\x00\\x00: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exwmple.com#, \"token\": 12345, \"query\": {\"filter\": {\"rol\\x00\\x00: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exwmpry\": {\"filter\": {\"rol\\x00\\x00: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '#url\": \"http://exwmpry\": {\"filter\": {\"rol\\x00\\x00: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"tokeeq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\"tokeeq\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evampl<<<<<<<<e.com\"tokeeq\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamp{{{{{{{{{{{{{{{{{{{{{{{{{{{l<<<<<<<<e.com\"tokeeq\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamp{{{{{{{[{{{{{{{{{{{{{{{{{{{l<<<<<<<<e.com\"tokeeq\":q\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp:/\"token\": \"testtoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp:/\"token\": \"setttoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp:/\"to`ken\": \"setttoken\", \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp:/\"to`ken\": \"setttoken\", \"query\": {\"filter\": {\"r \"sort\": nole\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp:/\"to`ken\": \"setttoken\", \"query\": {\"filter\": {\"r \"sort\"com\", \"toke: nole\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token :1\"2345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token :1\"2345, \\x13\\x00\\x00\\x00\\x00\\x00\\x00\\x00 {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":`]\\x17\\x0b\\x0b\\x0fEP/example.com\", \"token :1\"2345, \\x13\\x00\\x00\\x00\\x00\\x00\\x00\\x00 {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":`]\\x17\\x0b\\x0b\\x0fEP/example.com\", \"t{\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":`]\\x17\\x0b\\x0b\\x0fEP/examplc.oe\",m \"t{\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\" :rt\"lhtp://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\" :rt\"lhtp://example.com\", \"toke43n \":215, \"query\": {\"filte: \"a{\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\" :rt\"lhe://ptxample.com\", \"toke43n \":215, \"query\": {\"filte: \"a{\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\" :rt\"lhe://ptxample.com\"t \",oke43n \":215, \"query\": {\"filte: \"a{\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;rll\": \"ftp://ma\"{\"ur;rll\": \"ftp:', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ll\": \"ftp://ma\"{\"ur;rll\": \"ftp:', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r~~~~~~~~~~~~~~~~~~~~~~~ll\": \"ftp://ma\"{\"ur;rll\": \"ftp:', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r~~~~~~{\"u', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke43n \":215, \"query%: {\"filter\": {\"role\": {\"_es\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke60n \":215, \"query%: {\"filter\": {\"role\": {\"_es\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"tok0ne\":62 15, \"query%: {\"filter\": {\"role\": {\"_es\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:0/example.com\", \"tok0ne\":62 15, \"query%: {\"filter\": {\"role\": {\"_es\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htup//example.com', 'token': 'testtoken', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"htup\\t//example.com\", \"token\": \"testtoken\", \"&uer\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00y\": \"notAnObj=ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": \"testtoken\", \"query\": \"notAnObj\\x05ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": \"testtoken\", \"query\": \"notAnO\\x10bj\\x05ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com&, \"token\": \"testtoken\", \"query\": \"notAnO\\x10bj\\x05ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com&, \"tok\\x1den\": \"testtoken\", \"query\": \"notAnO\\x10bj\\x05ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com&, \"tok\\x1den\": \"testtoken\", \"qu\\x7f\\x7f\\x7f\\x7fery\": \"notAnO\\x10bj\\x05ct', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"tok: \"ftp://malicious.example.{\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"tok: \"ftp://malicious.example.{\"filter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\":]null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{\"url\": \"ftp://malicious.example.com\", \"tok: \"ftp://malicious.example.{\"ilter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\":]null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{\"url\": \"ftp://malicious.example.com\", \"tok: \"ftp://malicioqs.example.{\"ilter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\":]null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{{\\x00rl\": \"ftp://malicious.example.com\", \"tok: \"ftp://malicioqs.example.{\"ilter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\":]null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.c\\x00\\x00\\x00^ \"toke43n \":215, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exam{\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exm{or\"ale\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exm{o}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '*url\": \"http://exm{o}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"token\"> 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://eva^ple.com\", \"token\"> 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://eva^ple.comK, \"token\"> 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://eva^ple.comK, \"token\"> 12344, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0𧬢\\U00103b72\\U0010fefe𧯾', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010fefe', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0a8\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010fefe', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0a8\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0\\U0010b0b0𫃾', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", !token\": 12345, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", !token\": 1,\"3452 query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", !token\": 1,\"3452 token\": 1,\"3452 query\": {\"filter\": {\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampl/.com\", !token\": 1,\"3452 token\": 1,\"3452 query\": {\"filter\": {\"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampl/.com\", !token\":{\"url\" 1,', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"role\":n\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"t\"role\":n\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"t-\\x00ole\":n\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u//example.com\", \"t-\\x00ole\":n\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u//example.com\", \"t-\\x00ole\": \"t-', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"testtoken\", \"quer\\x07]E_\\x04]\\x19\\x10lter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"tosttoken\", \"quer\\x07]E_\\x04]\\x19\\x10lter\": {\"role\": {\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"tosttoken\", \"quer\\x07]E_\\x04]\\x19\\x10lter\":, \"sort\": n\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"tosttoken\", \"quer\\x07]E_\\x04]\\x19\\x10lte\\x0e[:, \"sort\": n\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"ftp://malicious.example.com\", \"token\": \"ken\", \"quer\\x07]E_\\x04]\\x19\\x10lte\\x0e[:, \"sort\": n\"_eq\": \"admin\"}}, \"sort\": null', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.co: {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.co: {\"_eq\": *admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplE.co: {\"_eq\": *admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplE(co: {\"_eq\": *admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamplE(co:in\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r~~~~~~+{\"u', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r\"ur;r~~~~~', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r\"ur;r~~q\"~', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"ur;r\"ur;r~~q\"\\x00\\x00\\x00\\x00~', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{\"u', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 06172, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"token\": 06172, \"query\": {\"filter\": {\"role\": {\"_eq\": \"a\\x01\\x00\\x00\\x00\\x00\\x00\\x00', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"to\\x00en\": 06172, \"query\": {\"filter\": {\"role\": {\"_eq\": \"a\\x01\\x00\\x00\\x00\\x00\\x00\\x00', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00107522㨢\\U00107468\\U000f2f3a\\U000d6178\\U000e656c𦵯\\U00102220\\U000e6500\\U0010203a\\U00103731\\U00102220\\U00107265\\U0010203a\\U000c6966𧉥𧬠\\U00056c6f\\U0010203a\\U0010655f𢀺\\x01', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00107522㨢\\U00107468\\U000f2f3a\\U000d6178\\U000e656c𦵯\\U00102220\\U000e655e\\U0010203a\\U00103731\\U00102220\\U00107265\\U0010203a\\U000c6966𧉥𧬠\\U00056c6f\\U0010203a\\U0010655f𢀺\\x01', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{eu', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"{', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", AAA\"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.coYYYYYm\", AAA\"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.coYYYYYo\", AAA\"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://xample.coYYYYYo\", AAA\"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://xample.coY\"YYYYo\", AAA\"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": {\"filter\":ample.com\", \"token\": 50005, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": {\"filter\":ample.com\"T_]\\x0b\\x10\\x14\\x1a\\x11\": 50005, \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"er\":ample.com\"T_]\\x0b\\x10\\x14\\x1a\\x11\": 50005, \"query\": {\"filter\": {\"role\" {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'u\"rl\"er\":ample.com\"T_]\\x0b\\x10\\x14\\x1a\\x11\": 50005, \"query\": {\"filter\": {\"role\" {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com\", \"t@ken\": 12345, \"query\": {\"filter\": {\"ro{\"{eu{\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com {\"ro{\"{eu{\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evample.com \\x10\"ro{\"{eu{\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://evamttp://evample.cou{\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"8\\x00l\": \"http://evamttp://evample.cou{\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":K\\x00http://example.com\", \"token\": \"testtoken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":K\\x00http://example.com\", \"token\"F_]\\x0b\\x1a\\x0c\\x0b\\noken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"sssssssssssurl\":K\\x00http://example.com\", \"token\"F_]\\x0b\\x1a\\x0c\\x0b\\noken\", \"query\": \"notAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"sssssssssssurl\":K\\x00http://example.com\", \"', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"sss\\x00http://example.com\", \"', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '-{', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '-{\\x00\\x00', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.c3m\", \"token\": \"testtooken\", \"que*y\": \"no\\x00\\x00\\x00\\x00tAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.c\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f3m\", \"token\": \"testtooken\", \"que*y\": \"no\\x00\\x00\\x00\\x00tAnObject', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"toke43n \":215, \"query\": {\"filter\": {\"rolee\": {\"_eq\": \"admin}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://e\\x01\\x00mple.com\", \"toke43n \":215, \"query\": {\"filter\": {\"rolee\": {\"_eq\": \"admin}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://e\\x01\\x00mple.com\", \"toke55n \":215, \"query\": {\"filter\": {\"rolee\": {\"_eq\": \"admin}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://e\\x01\\x00mple.com\", \"toke5\\x00\\x00\\x00\\x00:215, \"query\": {\"filter\": {\"rolee\": {\"_eq\": \"admin}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \" {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exam\\x7fple.com\", \" {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exam\\x7fple.com\", \" {\"filter\": {\"role\": {\"_e {\"role\": {\"_eq\": \"adq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'l\": r\"u\"http://exam\\x7fple.com\", \" {\"filter\": {\"role\": {\"_e {\"role\": {\"_eq\": \"adq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampel.com\", \"token\": 12345( \"query\": {\"filter\": {\"role\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exampel.com\", \"token\": 12345( \"query\": {\"filter\": {\"=ole\": {\"_eq\": \"admin\"}}', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exa{\"url\": \"http://example.com\", \"token\": 12345, \"qum', 'token': '', 'query': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges', 'check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

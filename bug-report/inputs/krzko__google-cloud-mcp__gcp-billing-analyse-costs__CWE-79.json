@@ -1,0 +1,21 @@
+{
+ "repo": "krzko/google-cloud-mcp",
+ "tool": "gcp-billing-analyse-costs",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "85eeb65a99f837e3fdaae6677c7287cc518d5304",
+ "draft": "krzko__google-cloud-mcp__gcp-billing-analyse-costs__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'billingAccountName': '../../../.. ', 'startDate': 'eId\": \"service-2\", \"groupBy\": \"proje', 'endDate': '2023-02-28', 'projectId': 'project-{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{xyz', 'serviceId': '', 'groupBy': 'project'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '# Cost Analysis\\n\\n**Billing Account:** ../../../.. \\n**Period:** eId\": \"service-2\", \"groupBy\": \"proje to 2023-02-28\\n**Grouped By:** project\\n\\n⚠️ **Note:** This is a demonstration with mock data. For actual cost analysis, you would need to:\\n1. Enable BigQuery billing export\\n2. Use Cloud Billing Report API\\n3. Query the billing export dataset\\n\\n## Cost Analysis\\n\\n| Project | Service | Cost | Usage | Period |\\n|---------|---------|------|-------|--------|\\n| project-{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{xyz | compute.googleapis.com | USD\\xa01,250.50 | 100 hours | Invalid Date - 27/02/2023 |\\n| project-{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{xyz | storage.googleapis.com | USD\\xa089.25 | 500 GB | Invalid Date - 27/02/2023 |\\n\\n## Cost Trends Analysis\\n\\n**project-{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{xyz (compute.googleapis.com):** ✅ 📈 8.7% (USD\\xa01,150.25 → USD\\xa01,250.50)\\n**project-{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{xyz (storage.googleapis.com):** ✅ 📉 -6.8% (USD\\xa095.75 → USD\\xa089.25)\\n\\n**Total Cost:** USD\\xa01,339.75\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

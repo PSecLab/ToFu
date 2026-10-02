@@ -1,0 +1,28 @@
+{
+ "repo": "bigcodegen/mcp-neovim-server",
+ "tool": "vim_command",
+ "class": "os-command-injection",
+ "cwe": "CWE-78",
+ "commit": "9076bbb34a08f44a743ad66c78638ef22da58ab0",
+ "draft": "bigcodegen__mcp-neovim-server__vim_command__CWE-78.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'command': ':!cat /etc/passwd'}",
+   "triggered_sanitizers": "['check_blocked_command_bypass']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Shell command execution is disabled. Set ALLOW_SHELL_COMMANDS=true environment variable to enable shell commands.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_blocked_command_bypass'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'command': ':!touch /tmp/vimtest && cat /tmp/vimtest'}",
+   "triggered_sanitizers": "['check_command_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Shell command execution is disabled. Set ALLOW_SHELL_COMMANDS=true environment variable to enable shell commands.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_command_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

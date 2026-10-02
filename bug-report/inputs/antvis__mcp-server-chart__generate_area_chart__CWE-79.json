@@ -1,0 +1,21 @@
+{
+ "repo": "antvis/mcp-server-chart",
+ "tool": "generate_area_chart",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "e2a8fb7c185e17c75c067817ff1a2acfddf49aa1",
+ "draft": "antvis__mcp-server-chart__generate_area_chart__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'data': [{'time': '2015', 'value': 23}, {'time': '2016', 'value': 32}], 'stack': False, 'style': {'backgroundColor': '#fff<script>alert(1)</script>', 'palette': ['#123456'], 'texture': 'default', 'lineWidth': 4}, 'theme': 'default', 'width': 600, 'height': 400, 'title': 'Sensitive Error Leak <img src=x onerror=alert(1)>', 'axisXTitle': 'Year', 'axisYTitle': 'Value'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'_meta': {'description': \"The content returned by MCP is the remote image URL of the visualization chart, which can be rendered using Markdown or HTML image tags. The _meta.spec content corresponds to the chart's configuration and spec, which can be rendered using AntV GPT-Vis chart components.\", 'spec': {'type': 'area', 'data': [{'time': '2015', 'value': 23}, {'time': '2016', 'value': 32}], 'stack': False, 'style': {'backgroundColor': '#fff<script>alert(1)</script>', 'palette': ['#123456'], 'texture': 'default', 'lineWidth': 4}, 'theme': 'default', 'width': 600, 'height': 400, 'title': 'Sensitive Error Leak <img src=x onerror=alert(1)>', 'axisXTitle': 'Year', 'axisYTitle': 'Value'}}, 'content': [{'type': 'text', 'text': 'https://mdn.alipayobjects.com/one_clip/afts/img/GdtkT5TnJs0AAAAARGAAAAgAoEACAQFr/original'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>', 'onerror=', '<img'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

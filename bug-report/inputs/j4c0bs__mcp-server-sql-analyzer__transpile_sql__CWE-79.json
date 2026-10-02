@@ -1,0 +1,28 @@
+{
+ "repo": "j4c0bs/mcp-server-sql-analyzer",
+ "tool": "transpile_sql",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "d6d69c0c55826d6baa5033820078d1c72453ee33",
+ "draft": "j4c0bs__mcp-server-sql-analyzer__transpile_sql__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': '%s %n %x {{{{{{{{{%p', 'read_dialect': 'sqlite', 'write_dialect': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Required keyword: \\'this\\' missing for <class \\'sqlglot.expressions.Mod\\'>. Line 1, Col: 4.\\\\n  %s \\\\u001b[4m%\\\\u001b[0mn %x {{{{{{{{{%p\", \"position\": {\"line\": 1, \"column\": 4}}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': '\"sql\": \"%{\"s %n %x {{{{{{{{{%p\",q* \"read_dia', 'read_dialect': '', 'write_dialect': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Invalid expression / Unexpected token. Line 1, Col: 12.\\\\n  \\\\\"sql\\\\\": \\\\\"%{\\\\\"\\\\u001b[4ms\\\\u001b[0m %n %x {{{{{{{{{%p\\\\\",q* \\\\\"read_dia\", \"position\": {\"line\": 1, \"column\": 12}}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

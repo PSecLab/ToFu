@@ -1,0 +1,1414 @@
+{
+ "repo": "ihrpr/mcp-server-jupyter",
+ "tool": "add_cell",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "fb4427030f7cd1e6b06268e6e1c7baa1a059bce4",
+ "draft": "ihrpr__mcp-server-jupyter__add_cell__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1081,
+ "note": "1081 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '/etc/passwd\\x00', 'cell_type': 'raw', 'source': 'Sensitive data', 'position': -1}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwd\u0000' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwd', 'cell_type': 'code', 'source': \"print('test')\", 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: Notebook does not appear to be JSON: 'root:x:0:0:root:/root:/bin/bash\\\\ndaemon...\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'cell_type': 'markdown', 'source': '# Heading', 'position': 1}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'notebook.ipynb', 'cell_type': 'code', 'source': \"print(open('/etc/passwd').read())\", 'position': 1}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: 'notebook.ipynb'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\",$\"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\",$\"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\",$\"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\",$\"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'tes~\\')\",$\"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'tes~\\\\\\')\",$\"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('tes~')\",$\"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('tes~')\",$\"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print(\\'tes~\\')\",$\"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print(\\\\\\'tes~\\\\\\')\",$\"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print('tes~')\",$\"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print('tes~')\",$\"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print(\\'tes~\\')\",$\"posiIion\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print(\\\\\\'tes~\\\\\\')\",$\"posiIion\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print('tes~')\",$\"posiIion\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"o\"cd\"e, source\": \"print('tes~')\",$\"posiIion\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00, \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"print('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"print('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00, \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"print('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"print('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00, \"source\": \"lrint(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"lrint('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"lrint('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00, \"source\": \"lrint(\\'test\\')\",\\x00, \"souron\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"lrint('test')\",\u0000, \"souron\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\"( \"cell_type\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000, \"source\": \"lrint('test')\",\u0000, \"souron\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../ \"cell_typec/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../ \"cell_typec/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest\\')\", \"positGon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest\\\\\\')\", \"positGon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest')\", \"positGon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\"G_\"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"prbook_pest')\", \"positGon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwd', 'cell_type': 'code', 'source': \"p(i'nrttest')\", 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: Notebook does not appear to be JSON: 'root:x:0:0:root:/root:/bin/bash\\\\ndaemon...\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_\\x0f\\x06\\x0f\\x1a]E_]code\", \"source\": \"p(i\\'nrttest\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_\\\\x0f\\\\x06\\\\x0f\\\\x1a]E_]code\", \"source\": \"p(i\\\\\\'nrttest\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_\u000f\u0006\u000f\u001a]E_]code\", \"source\": \"p(i'nrttest')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_\u000f\u0006\u000f\u001a]E_]code\", \"source\": \"p(i'nrttest')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", )cell_\\x0f\\x06\\x0f\\x1a]E_]code\", \"source\": \"p(i\\'nrttest\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", )cell_\\\\x0f\\\\x06\\\\x0f\\\\x1a]E_]code\", \"source\": \"p(i\\\\\\'nrttest\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", )cell_\u000f\u0006\u000f\u001a]E_]code\", \"source\": \"p(i'nrttest')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", )cell_\u000f\u0006\u000f\u001a]E_]code\", \"source\": \"p(i'nrttest')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/purce\": \"p(i\\'nrttest\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/purce\": \"p(i\\\\\\'nrttest\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwd', 'cell_type': 'code', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: Notebook does not appear to be JSON: 'root:x:0:0:root:/root:/bin/bash\\\\ndaemon...\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"so\\x04r', 'cell_type': 'e\": \"print(\\'test\\')\", \"posit \"so', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"so\\\\x04r\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"so\u0004r' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"so\u0004r' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typeswd\", \"cell_ty\\x04r', 'cell_type': 'e\": \"print(\\'test\\')\", \"posit \"so', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_typeswd\", \"cell_ty\\\\x04r\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typeswd\", \"cell_ty\u0004r' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typeswd\", \"cell_ty\u0004r' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\\x04r', 'cell_type': 'e\": \"print(\\'test\\')\", \"posit \"so', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\\\\x04r\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\u0004r' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\u0004r' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../...../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\\x04r', 'cell_type': 'e\": \"print(\\'test\\')\", \"posit \"so', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../...../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\\\\x04r\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../...../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\u0004r' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../...../../etc/passwd\", \"cell_t{peswd\", \"cell_ty\u0004r' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\", \"rce\": \"prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\", \"rce\": \"prin\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\", \"rce\": \"prin' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\", \"rce\": \"prin' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../.{\"0noteboT_]\\x1celle\": \"code\": 3}: 2./etc/passwd}\", \"cell_type\": \"', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../.{\"0noteboT_]\\\\x1celle\": \"code\": 3}: 2./etc/passwd}\", \"cell_type\": \"\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"code\": 3}: 2./etc/passwd}\", \"cell_type\": \"' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"code\": 3}: 2./etc/passwd}\", \"cell_type\": \"' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../.{\"0noteboT_]\\x1celle\": \"code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../.{\"0noteboT_]\\\\x1celle\": \"code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../.{\"0noteboT_]\\x1celle\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../.{\"0noteboT_]\u001celle\": \"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000code\": 3}: 2./etc/passwd}\", \"cetp_ylel\": \"' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \".>/../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \".>/../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \".>/../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \".>/../../../etc/passwd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"source\": \"prin\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"sourcc/pa3prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"sourell_type\": \"code\", \"sourcc/pa3prin\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"soureLl_type\": \"code\", \"sourcc/pa3prin', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \".>/../../../etc/pa3swd\", \"cell_type\": \"code\", \"soureLl_type\": \"code\", \"sourcc/pa3prin\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../.././../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'tes \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../.././../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'tes \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../.././../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('tes \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../.././../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('tes \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nTtebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"nTtebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nTtebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nTtebook_path\": \"../..otebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nTtebook_path\": \"../..otebook_path\": \"../....//../etc/passwd\", \"cell_type\": \"code\",st\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"nTtebook_path\": \"../..otebook_path\": \"../....//../etc/passwd\", \"cell_type\": \"code\",st\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nTtebook_path\": \"../..otebook_path\": \"../....//../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nTtebook_path\": \"../..otebook_path\": \"../....//../etc/passwd\", \"cell_type\": \"code\",st')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nTtebook../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'testype\": \"code\",st\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"nTtebook../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'testype\": \"code\",st\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '\"nTtebook../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('testype\": \"code\",st')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nTte\\x00\\x00\\x00j../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'testype\": \"code\",st\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '\"nTte\u0000\u0000\u0000j../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('testype\": \"code\",st')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../..ell_type\": \"wd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../..ell_type\": \"wd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \">./../..ell_type\": \"wd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \">./../..ell_type\": \"wd\", \"cell_type\": \"code\", \"source\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \">./../..ell_type\": \"wd\", \"cell_{\"notebook_path\":', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \">./../..ell_type\": \"wd\", \"cell_{\"notebook_path\":\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourceN: \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourceN: \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourceN: \"print('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"sourceN: \"print('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwt\", \"cell_type\": \"code\", \"sourceN: \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwt\", \"cell_type\": \"code\", \"sourceN: \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwt\", sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwt\", sition\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/patssw\", sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/patssw\", sition\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"not\\x01\\x00ook_path\": \"../../../../etc/patssw\", sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwd', 'cell_type': 'code', 'source': \"؊est')\", 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: Notebook does not appear to be JSON: 'root:x:0:0:root:/root:/bin/bash\\\\ndaemon...\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", ource\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", ource\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", ource\": \"print('test')\", \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", ource\": \"print('test')\", \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\'test\\')\", \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\\\\\'test\\\\\\')\", \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\'test\\')\",* \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\\\\\'test\\\\\\')\",* \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../..../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\'test\\')\",* \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../..../etc/parswd\", \"cell_type\": \"code\", ource\": \"print(\\\\\\'test\\\\\\')\",* \"position\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print(\\'test\\')\\x00\\x00 \"position\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\u0000\u0000 \"position\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_type\": \"code\", \"source\": \"print('test')\u0000\u0000 \"position\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: Notebook does not appear to be JSON: 'root:x:0:0:root:/root:/bin/bash\\\\ndaemon...\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosit\\x00\\x00n\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosit\u0000\u0000n\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosit\u0000\u0000n\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11ook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"noteb\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11ook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteb\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011ook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteb\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011ook_path\": \"../../../../etc/passwd\", \"cell_typositcell_t' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11on\\x10\\x10\\x14 \\x0f\\x19th\": \"../../../../etc/passwd\", \"cell_typositcell_t', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"noteb\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11\\\\x11on\\\\x10\\\\x10\\\\x14 \\\\x0f\\\\x19th\": \"../../../../etc/passwd\", \"cell_typositcell_t\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteb\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011on\u0010\u0010\u0014 \u000f\u0019th\": \"../../../../etc/passwd\", \"cell_typositcell_t' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteb\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011on\u0010\u0010\u0014 \u000f\u0019th\": \"../../../../etc/passwd\", \"cell_typositcell_t' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../e#c/passwd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../e#c/passwd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1eposition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1eposition\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1e\\x1e\\x1e\\x1eposition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x1e\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x1e\\\\x1e\\\\x1e\\\\x1eposition\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook \"c_path\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook \"c_path\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \"../../../../etc/passwd\", \"cell_ty\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x1e\\x1e\\x1e\\x1eposition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook \"c_path\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook \"c_path\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001eposition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook \"c_path\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \"../../../../etc/passwd\", \"cell_ty\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x1e\\x7f\\x7f\\x7f\\x7f\\x7fp\\x7f\\x1es\\x1e\\x1eo\\x1eition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook \"c_path\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001ep\u001es\u001e\u001eo\u001eition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook \"c_path\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"cell_ty\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001e\u001ep\u001es\u001e\u001eo\u001eition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": 0', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": 0\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": 0' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /passwd\", \"cell_typosition\": 0' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /\\x00\\x00\\x00passwd\", \"cell_typosition\": 0', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc../..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f/../../etc/passwd\", /\\x00\\x00\\x00passwd\", \"cell_typosition\": 0', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../: etc../..\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f/../../etc/passwd\", /\\x00\\x00\\x00passwd\", \"cell_typosition\": 0', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../: etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../: etc../../../../etc/passwd\", /\u0000\u0000\u0000passwd\", \"cell_typosition\": 0' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../../../etc/passwd\", \"c #l_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x002\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../../../etc/passwd\", \"c #l_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00002\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00002\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x002\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../../../etc/passwd\", \"c #l_typos\\x00\\x00ition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00002\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typos\u0000\u0000ition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"..\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00002\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../../../etc/passwd\", \"c #l_typos\u0000\u0000ition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell\\x00\\x00yporition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell\u0000\u0000yporition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell\u0000\u0000yporition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell\\x00\":porition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell\u0000\":porition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell\u0000\":porition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '..xxxxxxxxxxxxxxxxxxxxx/../../../etc/passwd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '..xxxxxxxxxxxxxxxxxxxxx/../../../etc/passwd'\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '..xxxxxxxxxxxxxxxxxxxxx/../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '..xxxxxxxxxxxxxxxxxxxxx/../../../etc/passwd' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..xxxxxxxxxxxxxxxxxxxxx/../../..\"cell_typo..............sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"..xxxxxxxxxxxxxxxxxxxxx/../../..\"cell_typo..............sition\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..xxxxxxxxxxxxxxxxxxxxx/../../..\"cell_typo..asswd\"......sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"..xxxxxxxxxxxxxxxxxxxxx/../../..\"cell_typo..asswd\"......sition\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebookxxxxxxxxxxxx/../../..\"cell_typo..asswd\"......sition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebookxxxxxxxxxxxx/../../..\"cell_typo..asswd\"......sition\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7foop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"noteb\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7foop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7foop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7foop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \\x00\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteboop\"h_kta: \"../../../../etc/passwd\", \"cell_typosition\": \u0000\u0000\u0000\u0000\u0000\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x000noteboelT_Q]l\\x1ce\":/../../../etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"..\u00000noteboelT_Q]l\u001ce\":/../../../etc/passwd\", \"cell_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"..\u00000noteboelT_Q]l\u001ce\":/../../../etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x000noteboelT_Q]l\\x1ce\":/../../../?etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x000noteboelT_Q]l\\x1ce\":/../=./../?etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typoA\\x00\\x00\\x00\\x00\\x00\\x00\\x00 ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typoA\u0000\u0000\u0000\u0000\u0000\u0000\u0000 ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typoA\u0000\u0000\u0000\u0000\u0000\u0000\u0000 ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../\\x00./../etc/passwd\", \"cell_typoA\\x00\\x00\\x00\\x00\\x00\\x00\\x00 ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../\u0000./../etc/passwd\", \"cell_typoA\u0000\u0000\u0000\u0000\u0000\u0000\u0000 ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../\\x00./../etc/pas\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"cell_typoA\\x00\\x00\\x00\\x00\\x00\\x00\\x00 ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"no>tebook_path\": \"../../\\x00./../etc/pas\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"cell_typoA\\x00\\x00\\x00\\x00\\x00\\x00\\x00 ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"no>tebook_path\": \"../../\\x00./../etc/pas\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\\x00\\x00\", \"cell_typoA\\x00\\x00\\x00\\x00\\x00\\x00\\x00 ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/pass', 'cell_type': 'd\", \"cell_typosition\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/pass\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x00\\x00/../../../etc/pass', 'cell_type': 'd\", \"cell_typosition\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x00\\x00/././..../etc/pass', 'cell_type': 'd\", \"cell_typosition\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": !|\\x00/././..../etc/pass', 'cell_type': 'd\", \"cell_typosition\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": !|\\x00/././..../etc/pa !', 'cell_type': '\\U000e2f00\\U000e2f2e\\U000f2e2e\\U000f6374\\U00107361\\U00102264𦑷𲈠\\U00106c6c\\U000f7079\\U00097469', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x000notebo/../etc/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x000notebo/../etc/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\passwd\", \"cell*_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x001notebo/../etc/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\passwd\", \"cell*_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x001notebo/../etc/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\passwd\", \"cell*_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pAth\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '\"notebook_pAth\": \"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000/../etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pAth\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../et,/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pAth\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../A\\x00\\x00\\x00\\x00\\x00\\x00\\x00wd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pAth\": \"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../A\\x00\\x00\\x00\\x00\\x00\\x00\\x00wd\", \"cell_typsition\":osition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\"A ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\"A \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\"A ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_typosition\"A ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_path\": \"../..typosition\"A ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_path\": \"../..typosition\"A \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_path\": \"../..typosition\"A ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_path\": \"../..typosition\"A ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\\x02path\": \"../..typosition\"A ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\\\\x02path\": \"../..typosition\"A \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\u0002path\": \"../..typosition\"A ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\u0002path\": \"../..typosition\"A ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\\x02path\":\\x00\\x00 \"../..typosition\"A ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\u0002path\":\u0000\u0000 \"../..typosition\"A ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cell_otebook_\u0002path\":\u0000\u0000 \"../..typosition\"A ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passA\\x00\\x00\\x00\\x00\\x00\\x00\\x00ll_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"n\\x00\\x00otebook_path\": \"../../../../etc/passA\\x00\\x00\\x00\\x00\\x00\\x00\\x00ll_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"n\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fk_path\": \"../../../../etc/passA\\x00\\x00\\x00\\x00\\x00\\x00\\x00ll_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"n\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fk_path\": \"../../../../etc/pass \"cell_typosition\": 0}: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"n\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fk_path\": \"../../../../etc/pass \"cell_typosition\": 0}: \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../\\x00\\x00/etc/passwd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../\u0000\u0000/etc/passwd\", \"cell_typosition\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../\u0000\u0000/etc/passwd\", \"cell_typosition\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../\\x00atep\\x00c//sswd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../../\\x00atep\\x00c//sswd\", \"cell_typosition\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\\x00\\x00et \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\\x00\\x00et \"celon\"\\' ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\"' ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\"' ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../.@\\x00\\x00\\x00/../etc/passwd\",{{\"n\"\\x00\\x00et \"celon\"\\' ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../.@\u0000\u0000\u0000/../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\"' ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../.@\u0000\u0000\u0000/../etc/passwd\",{{\"n\"\u0000\u0000et \"celon\"' ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path*: \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path*: \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path*: \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path*: \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"no../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"no../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"no../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"no../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"no..{{\"n\"\\x00\\x00/etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"no..{{\"n\"\u0000\u0000/etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"no..{{\"n\"\u0000\u0000/etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"no..{{\"n\"\\x00\\x00/etc/passwd\", \"celo@\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"no..{{\"n\"\u0000\u0000/etc/passwd\", \"celo@\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"no..{{\"n\"\u0000\u0000/etc/passwd\", \"celo@\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '', 'cell_type': '', 'source': '\\x00\\x00\\x00\\x05../..', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: ''\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '{\"{\"notebook_path\": \"../.n./../../etc/passwd\", \"cnelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'{\"{\"notebook_path\": \"../.n./../../etc/passwd\", \"cnelon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection alert: Access to restricted system file detected: '{\"{\"notebook_path\": \"../.n./../../etc/passwd\", \"cnelon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '{\"{\"notebook_path\": \"../.n./../../etc/pa\\r\\x0c\\x08\\x1b\", \"cnelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'{\"{\"notebook_path\": \"../.n./../../etc/pa\\\\r\\\\x0c\\\\x08\\\\x1b\", \"cnelon\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '{\"{\"notebook_path\": \"../.n./../../etc/pa\\r\\x0c\\x08\\x1b\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"cnelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'{\"{\"notebook_path\": \"../.n./../../etc/pa\\\\r\\\\x0c\\\\x08\\\\x1b\"\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f, \"cnelon\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '{\"{\"notebook_path\": \"../.n./../../etc/pa\\r\\x00\\x00\\x1b\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"cnelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebLook_path\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebLook_path\": \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebLook_path\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebLook_path\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebLook_path\": \"../../../../e ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebLook_path\": \"../../../../e \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebLook_path\": \"../../.n/../e ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebLook_path\": \"../../.n/../e \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"ebLook_path\": \"../../.n/../../e ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"ebLook_path\": \"../../.n/../../e \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb7\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteb7\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteb7\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb7\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \".,/../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteb7\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \".,/../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteb7\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \".,/../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb4\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": \".,/../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"noteb4\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \".,/../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"noteb4\u0000\u0000\u0000\u0000\u0000\u0000\u0000\": \".,/../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../ecp/tasswd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../ecp/tasswd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../e/tasswd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../e/tasswd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../.g/e/tasswd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../.g/e/tasswd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_patq\": \"../../../.g/e\\x1a\\x0f/tasswd\", \"ceoln\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_patq\": \"../../../.g/e\\\\x1a\\\\x0f/tasswd\", \"ceoln\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passw: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passw: \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passw: v', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passw: v\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pa\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fth\": \"../../../../etc/passw: v', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_pa\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fth\": \"../../../../etc/passw: v\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"n../../../../etc/passw: v0otebook_pa\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fth\": \"../../../../etc/passw: v', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"n../../../../etc/passw: v0otebook_pa\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fth\": \"../../../../etc/passw: v\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/passwhd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../etc/passwhd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/pansswhd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../etc/pansswhd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/pansswhd\", \"ce\\x01\\x00lon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/pansswhd\", \"ce\\x01\\x00l\\x12\\x11]E ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"..~n/../../../etc/pansswhd\", \"ce\\x01\\x00l\\x12\\x11]E ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../.\\x00\\x00../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../.\\x00\\x00../../etc/passwd\", \"cebook_path\": \"../.\\x00\\x00../../etc/pa', 'cell_type': 'swd\", \"clon\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"cebook_path\": \"../.\u0000\u0000../../etc/pa' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"cebook_path\": \"../.\u0000\u0000../../etc/pa' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '_\\x11\\x10\\x0bebook_path\": \"../.\\x00\\x00../../etc/passwd\", \"cebook_path\": \"../.\\x00\\x00../../etc/pa', 'cell_type': 'swd\", \"clon\"', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '_\u0011\u0010\u000bebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"cebook_path\": \"../.\u0000\u0000../../etc/pa' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '_\u0011\u0010\u000bebook_path\": \"../.\u0000\u0000../../etc/passwd\", \"cebook_path\": \"../.\u0000\u0000../../etc/pa' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '_\\x11\\x10\\x0bebook_path\": \"../.\\x00.\\x00\\x00../../etc/passwd\", \"clon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '_\u0011\u0010\u000bebook_path\": \"../.\u0000.\u0000\u0000../../etc/passwd\", \"clon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '_\u0011\u0010\u000bebook_path\": \"../.\u0000.\u0000\u0000../../etc/passwd\", \"clon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"cel~n\"\\x00\\x00: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"cel~n\"\u0000\u0000: ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"cel~n\"\u0000\u0000: ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pauh\": \"../../../../etc/passwd\", \"cel~n\"\\x00\\x00: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_pauh\": \"../../../../etc/passwd\", \"cel~n\"\u0000\u0000: ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_pauh\": \"../../../../etc/passwd\", \"cel~n\"\u0000\u0000: ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../ \"../../../../etc/passwd\", \"cel', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../ \"../../../../etc/passwd\", \"cel\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../ \"../../../../etc/passwd\", \"cel' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../ \"../../../../etc/passwd\", \"cel' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../ \"../../../../etc/pas\\x17wd\", \"cel', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../ \"../../../../etc/pas\\\\x17wd\", \"cel\\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../ \"../../..\\x00\\x00/../etc/pas\\x17wd\", \"cel', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../ \"../../..\\x00\\x00/../etc/pas\\x17w`\", \"cel', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\"\\x00\\x00\"../ \"../../..\\x00\\x00/../etc/pas\\x17w`\", \"cel', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"celon\":../. ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"celon\":../. \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\":../. ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\":../. ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../..\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"celon\":../. ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb+ook_path\": \"../../../..\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"celon\":../. ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"not\\x00\\x00eb+ook_path\": \"../../../..\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"celon\":../. ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"not\\x00\\x00eb+ook_path\": \"../../..+..\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00swd\", \"celon\":../. ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/paڀsswd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../etc/paڀsswd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/pa\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00bZZ\\x00\\x00\\x00\\x00sswd\", \"celon\": /../../../etc/passw', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/pa\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00bZZ\\x00\\x00\\x00\\x00sswd\", \"celo_p: /../../../etc/passw', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\", \"celon\"\\x1a ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\", \"celon\"\\\\x1a \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\"\u001a ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\", \"celon\"\u001a ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\",\\t\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1a ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\",\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\",\t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u001a ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passw\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00d\",\\t\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1a ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passw\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00d\",\\t\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1a ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passw\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/../etc/passw\\x00\\x00\\x00\\x00\\x1a ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '../../../../etc/p;sswd', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"An error happened while trying to add a new cell: [Errno 2] No such file or directory: '../../../../etc/p;sswd'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fn\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fn\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwdn\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwdn\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc\\x7f\\x7fnsswd\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fn\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc\\\\x7f\\\\x7fnsswd\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fn\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook ah\":t_p\"../../../../etc\\x7f\\x7fnsswd\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fn\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook ah\":t_p\"../../../../etc\\\\x7f\\\\x7fnsswd\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7fn\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook ah\":t_\\x00\\x00../../../../etc\\x7f\\x7fnsswd\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fn\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\",sswd\", \"c: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\",sswd\", \"c: \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\",sswd\", \"c: ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\",sswd\", \"c: ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../e~tc/passwd\",sswd\", \"c: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../e~tc/passwd\",sswd\", \"c: \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../e~tswd\", \"c: ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../e~tswd\", \"c: \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/p\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/p\": \\''",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../..\\x00\\x00./etc/p\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"noteb\\x00\\x00k_path\": \"../../..\\x00\\x00./etc/p\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000 \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00on\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nc/passwd\", \"celon\": otebook_path\": \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nc/passwd\", \"celon\": otebook_path\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"../../../../etc/passwd\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00on\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nc/passwd\", \"celon\": otebook_path\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000: \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nc/passwd\", \"celon\": otebook_path\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000: \"../../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"nc/passwd\", \"celon\": otebook_path\"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00.\". :/../../../etc/passwd\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00on\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"nc/passwd\", \"celon\": otebook_path\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000.\". :/../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"nc/passwd\", \"celon\": otebook_path\"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000.\". :/../../../etc/passwd\",\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000on\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_path\": \"../../../../etc/passwd\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_path\": \"../../../../etc/passwd\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_path\": \"../../../../etc/passwd\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_path\": \"../../../../etc/passwd\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../....//../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../....//../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../....//../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../....//../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\\x00\\x00\\x00\\x00..//../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\u0000\u0000\u0000\u0000..//../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\u0000\u0000\u0000\u0000..//../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\\x00\\x00\\x00\\x00..//../etc/passwd\", \"celonD\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\u0000\u0000\u0000\u0000..//../etc/passwd\", \"celonD\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path\": \"../..\u0000\u0000\u0000\u0000..//../etc/passwd\", \"celonD\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path./etc/passwd\", \"celonD\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path./etc/passwd\", \"celonD\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path./etc/passwd\", \"celonD\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\"notebook_path./etc/passwd\", \"celonD\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_pa\\x00\\x00th\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'bbbbbbbbbbbbbbb\"notebook_pa\\x00\\x00th\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'bbbbbbbbbbbbbbb\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'bbbbbbbbbbbbbbb\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'bbbbbbbbbbbbbbb\"notebook_pa\\x00\\x00th\": \"../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'bbbbbbbbbbbbbbb\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'bbbbbbbbbbbbbbb\"notebook_pa\u0000\u0000th\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'bbbbbbbbbbbbbbb\"notebook_pa\\x00\\x00th\": \"../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f../etc/pass\",\"d wcelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': 'bbbbbbbbbbbbbbb\"notebook_pa\\x00\\x00th\": \"../../../\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f.\\x00\\x00./etc/pass\",\"d wcelon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'notebook_path': '\"notebook_h\": \"../../../../etc/passwd\"path\": \"../../../../etc/passwd\", \"celon\": ', 'cell_type': '', 'source': '', 'position': 0}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_path_traversal']",
+   "tool_output": "'An error happened while trying to add a new cell: [Errno 2] No such file or directory: \\'\"notebook_h\": \"../../../../etc/passwd\"path\": \"../../../../etc/passwd\", \"celon\": \\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"notebook_h\": \"../../../../etc/passwd\"path\": \"../../../../etc/passwd\", \"celon\": ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"notebook_h\": \"../../../../etc/passwd\"path\": \"../../../../etc/passwd\", \"celon\": ' matching pattern '/etc/passwd'Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

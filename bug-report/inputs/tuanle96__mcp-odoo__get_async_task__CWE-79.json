@@ -1,0 +1,35 @@
+{
+ "repo": "tuanle96/mcp-odoo",
+ "tool": "get_async_task",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "76ec136e0c89c414811a12629eb2903d2dc27357",
+ "draft": "tuanle96__mcp-odoo__get_async_task__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '{{{{{\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "'{\\n  \"tool\": \"get_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: {{{{{\\x7f\\x7f\\x7f\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "'{\\n  \"tool\": \"get_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: {{{{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'task_id': '{%{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "'{\\n  \"tool\": \"get_async_task\",\\n  \"success\": false,\\n  \"error\": \"Unknown or expired task_id: {%{{{{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

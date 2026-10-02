@@ -1,0 +1,35 @@
+{
+ "repo": "sworddut/mcp-ffmpeg-helper",
+ "tool": "add_watermark",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "d68d0104a756750f46f10074098401e34128ff23",
+ "draft": "sworddut__mcp-ffmpeg-helper__add_watermark__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'input.mp4', 'watermarkPath': 'watermark.png', 'outputPath': '/etc/passwd\\x00', 'position': 'center', 'opacity': 0.0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: input.mp4'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'watermarkPath': 'watermark.png', 'outputPath': 'output.mp4', 'position': 'topleft', 'opacity': 0.5}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': 'input.mp4', 'watermarkPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputPath': 'output.mp4', 'position': 'bottomright', 'opacity': 1.0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Input file does not exist: input.mp4'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

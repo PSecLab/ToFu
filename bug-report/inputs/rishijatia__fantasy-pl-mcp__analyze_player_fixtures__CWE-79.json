@@ -1,0 +1,1414 @@
+{
+ "repo": "rishijatia/fantasy-pl-mcp",
+ "tool": "analyze_player_fixtures",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "fdaef005143347455fc500cb1f934d451f95251a",
+ "draft": "rishijatia__fantasy-pl-mcp__analyze_player_fixtures__CWE-79.md",
+ "logs_read": 5,
+ "n_distinct_inputs": 507,
+ "note": "507 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'player_name': '{\\x7f\"\\x7f{\"{{{\\x7f\"\\x7f{\\x01', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{\\\\u007f\\\\\"\\\\u007f{\\\\\"{{{\\\\u007f\\\\\"\\\\u007f{\\\\u0001\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pemerso\\x12\\x11_\\x1c\\x10\\r\\r\\x1bia da{\"player_name\": \"adm${\"pla', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pemerso\\\\u0012\\\\u0011_\\\\u001c\\\\u0010\\\\r\\\\r\\\\u001bia da{\\\\\"player_name\\\\\": \\\\\"adm${\\\\\"pla\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(\"pemerso\u0012\u0011_\u001c\u0010\\r\\r\u001bia da{\"player_name\": \"adm${\"pla, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pemerso\\x12\\x11_\\x1c\\x10\\r: \"adm${\"pla', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pemerso\\\\u0012\\\\u0011_\\\\u001c\\\\u0010\\\\r: \\\\\"adm${\\\\\"pla\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(\"pemerso\u0012\u0011_\u001c\u0010\\r: \"adm${\"pla, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'z{{z{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'z{{z{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{\\x05', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\\\u0005\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{\"player_na\\x00\\x00\\x00\\x00\\x00me', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{\\\\\"player_na\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000me\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{\"play_na\\x00\\x00\\x00\\x00\\x00me', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{\\\\\"play_na\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000me\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e\\x7f\\x7f\\x7f\\x7f{{{{', 'num_fixtures': 2071690107}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e\\\\u007f\\\\u007f\\\\u007f\\\\u007f{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{q{\"{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{q{\\\\\"{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{e\"{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{e\\\\\"{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00;{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000;{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00;{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000;{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00\\x00{q\\x0b\\x00\\x00\\x00{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000\\\\u0000{q\\\\u000b\\\\u0000\\\\u0000\\\\u0000{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00*\\x00\\x00{q\\x0b\\x00\\x00\\x00{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000*\\\\u0000\\\\u0000{q\\\\u000b\\\\u0000\\\\u0000\\\\u0000{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00*\\x00\\x00{q\\x0b\\x00\\x00\\x00{{0', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000*\\\\u0000\\\\u0000{q\\\\u000b\\\\u0000\\\\u0000\\\\u0000{{0\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00*\\x00\\x00{q\\x0b\\x00\\x00\\x00\\x1c{{0', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000*\\\\u0000\\\\u0000{q\\\\u000b\\\\u0000\\\\u0000\\\\u0000\\\\u001c{{0\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{}\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{}\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{}\"}', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{}\\\\\"}\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\nq\\x00\\x00@{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\nq\\\\u0000\\\\u0000@{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(\\nq\u0000\u0000@{{, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{u', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{u\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{#u', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{#u\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00{{\"pl`', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000{{\\\\\"pl`\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '0{{0', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'0{{0\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '0{{0nick p+pe', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'0{{0nick p+pe\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '.pA{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'.pA{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '.pA{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'.pA{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'admin\\nINFO: User logged {{{{in', 'num_fixtures': 1}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'admin\\\\nINFO: User logged {{{{in\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(admin\\nINFO: User logged {{{{in, 1)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'admin\\nINFO: User logged {{{{in', 'num_fixtures': 5}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'admin\\\\nINFO: User logged {{{{in\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(admin\\nINFO: User logged {{{{in, 5)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'admin\\nINFO: User logged {{{{in', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'admin\\\\nINFO: User logged {{{{in\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(admin\\nINFO: User logged {{{{in, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'admin\\n%NFO: User logged {{{{in', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'admin\\\\n%NFO: User logged {{{{in\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(admin\\n%NFO: User logged {{{{in, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00\\x00\\x00\\x00\\x08\\x00{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\b\\\\u0000{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x1au{{u{o', 'num_fixtures': -1660251291}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u001au{{u{o\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p\"le{{\"player_\"p\"lname\"eatyr:X -: \"a1', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p\\\\\"le{{\\\\\"player_\\\\\"p\\\\\"lname\\\\\"eatyr:X -: \\\\\"a1\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p\"le{{\"playe\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00r_\"p\"lname\"eatyr:X -: \"a1', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p\\\\\"le{{\\\\\"playe\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000r_\\\\\"p\\\\\"lname\\\\\"eatyr:X -: \\\\\"a1\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p\"le{{\"playe\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00r_\"p\"lname\"eat{r:X -: \"a1', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p\\\\\"le{{\\\\\"playe\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000r_\\\\\"p\\\\\"lname\\\\\"eat{r:X -: \\\\\"a1\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '${y', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'${y\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'guglielmo${y', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'guglielmo${y\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': ';{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\';{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'o${y aar_', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'o${y aar_\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{y{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{y{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'y{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'y{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x07{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0007{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{\"{{\"player_nq\\n\\x00\" deame\": \"and|minplayer_nq\\n\\x00\" deame\": \"and|m', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{\\\\\"{{\\\\\"player_nq\\\\n\\\\u0000\\\\\" deame\\\\\": \\\\\"and|minplayer_nq\\\\n\\\\u0000\\\\\" deame\\\\\": \\\\\"and|m\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({\"{{\"player_nq\\n\u0000\" deame\": \"and|minplayer_nq\\n\u0000\" deame\": \"and|m, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{\"{{\"player_nq\\n\\x00\" deame\": \"and|mi)player_nq\\n\\x00\" deame\": \"and|m', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{\\\\\"{{\\\\\"player_nq\\\\n\\\\u0000\\\\\" deame\\\\\": \\\\\"and|mi)player_nq\\\\n\\\\u0000\\\\\" deame\\\\\": \\\\\"and|m\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({\"{{\"player_nq\\n\u0000\" deame\": \"and|mi)player_nq\\n\u0000\" deame\": \"and|m, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{emen', 'num_fixtures': 509812846}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{emen\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 3584}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 917595}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x00\\x00\\x00\\x00\\x00\\x00[', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000[\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x00\\x04\\x00\\x00\\x00\\x00[', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0000\\\\u0004\\\\u0000\\\\u0000\\\\u0000\\\\u0000[\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{q{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{q{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{{q{{q{', 'num_fixtures': 31601}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{{q{{q{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{{q{{q\\x1e', 'num_fixtures': 31601}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{{q{{q\\\\u001e\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"plaemeGpr\\x14\\x11~_\\x10\\x11ilv$ TABLE{{\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"plaemeGpr\\\\u0014\\\\u0011~_\\\\u0010\\\\u0011ilv$ TABLE{{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{q\\n^p\\x11${le', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{q\\\\n^p\\\\u0011${le\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({q\\n^p\u0011${le, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{\"qq', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\\\\"qq\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{\"leatyr{\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{\\\\\"leatyr{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{\"leaty?{\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{\\\\\"leaty?{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{\"lea\\x0c\\x06@\\x04\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{\"lea\\x0c\\x06@\\x04e\\x11R\\x0cx\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fpt\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004e\\\\u0011R\\\\fx\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007fpt\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{\"lea\\x0c\"lea\\x0c\\x06@\\x04e\\x11R\\x7f\\x7f\\x7f\\x7f\\x7fpt\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{\\\\\"lea\\\\f\\\\\"lea\\\\f\\\\u0006@\\\\u0004e\\\\u0011R\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007fpt\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"playerg+{{\"lea\\x0c\\x06@\\x04\"r_name\": \"aUser logged hn\", \"num_fixtures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"playerg+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"r_name\\\\\": \\\\\"aUser logged hn\\\\\", \\\\\"num_fixtures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"playerg+{{\"lea\\x0c\\x06@\\x04\"r_name\": \"aUser logged hn\", \"num_fixtuRes\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"playerg+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"r_name\\\\\": \\\\\"aUser logged hn\\\\\", \\\\\"num_fixtuRes\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"playerg+{{\"lea\\x0c\\x06@\\x04\"r_name\": \"aUser logged hn\", \"num_fixtuRes\"\\x7f: ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"playerg+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"r_name\\\\\": \\\\\"aUser logged hn\\\\\", \\\\\"num_fixtuRes\\\\\"\\\\u007f: \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pla\\x7f\\x7f\\x7f\\x7f\\x7fyerg+{{\"lea\\x0c\\x06@\\x04\"r_name\": \"aUser logged hn\", \"num_fixtuRes\"\\x7f: ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007fyerg+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"r_name\\\\\": \\\\\"aUser logged hn\\\\\", \\\\\"num_fixtuRes\\\\\"\\\\u007f: \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pla\\x7f\\x7f\\x7f\\x7f\\x7fyerg+{{\"lea\\x0c\\x06@\\x04\"r_name\": \"aUser logged hn\", \"num_fixtuResdil\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007fyerg+{{\\\\\"lea\\\\f\\\\u0006@\\\\u0004\\\\\"r_name\\\\\": \\\\\"aUser logged hn\\\\\", \\\\\"num_fixtuResdil\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{q{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{q{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'dil+{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'dil+{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'r`{{q\\n\\x00{e\\ni\\x00g', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'r`{{q\\\\n\\\\u0000{e\\\\ni\\\\u0000g\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(r`{{q\\n\u0000{e\\ni\u0000g, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'J+{{\" le1\\r-%}:', 'num_fixtures': 2070945890}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'J+{{\\\\\" le1\\\\r-%}:\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(J+{{\" le1\\r-%}:, 2070945890)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{dan ailvapgr', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{dan ailvapgr\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{dan ailv!pgr', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{dan ailv!pgr\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{dan ailv!p1gr', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{dan ailv!p1gr\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{dan ailv!p1{dan aigrl_\"vap', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{dan ailv!p1{dan aigrl_\\\\\"vap\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{dan ailv!p1{dan aigrl_\"Vap', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{dan ailv!p1{dan aigrl_\\\\\"Vap\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x10\\x00:', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0010\\\\u0000:\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x10\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00:', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0010\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000:\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'op{.p \\x11xeR\\x0c\\n\\x00\\x00\\x00kplp{{{{{{{{{{{{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'op{.p \\\\u0011xeR\\\\f\\\\n\\\\u0000\\\\u0000\\\\u0000kplp{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(op{.p \u0011xeR\f\\n\u0000\u0000\u0000kplp{{{{{{{{{{{{{{, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'op{.p \\x11xeR\\x0c\\n\\x00\\x00\\x00kp%lp{{{{{{{{{{{{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'op{.p \\\\u0011xeR\\\\f\\\\n\\\\u0000\\\\u0000\\\\u0000kp%lp{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(op{.p \u0011xeR\f\\n\u0000\u0000\u0000kp%lp{{{{{{{{{{{{{{, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'X{{\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'X{{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{zzu{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{zzu{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{zzu}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{zzu}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{zzu}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\\t\\x02\\x02\\x02\\x02\\x02\\x02\\x02}{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{zzu}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\\\\t\\\\u0002\\\\u0002\\\\u0002\\\\u0002\\\\u0002\\\\u0002\\\\u0002}{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x06{{ee\\x1e #\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u0006{{ee\\\\u001e #\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '|\\x7f\\x7f\\x7f\\x7f\\x7f\\x06{{ee\\x1e #\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'|\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u0006{{ee\\\\u001e #\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'z{{\"leatyr{\"p', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'z{{\\\\\"leatyr{\\\\\"p\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'mealick hfofanaz{{\"lendeeat', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'mealick hfofanaz{{\\\\\"lendeeat\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u\"{{u', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u\\\\\"{{u\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'mersz{{eonn ', 'num_fixtures': 581198179}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'mersz{{eonn \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG\"+p{{\"+p{laye', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG\\\\\"+p{{\\\\\"+p{laye\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG\"+p{{\"+;p{laye', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG\\\\\"+p{{\\\\\"+;p{laye\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{e\\x01pG', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{e\\\\u0001pG\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{q;{\"{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{q;{\\\\\"{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19\\x19{dan ai\\x19\\x19\\x19lv\\x19\\x19\\x19\\x19apg', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019\\\\u0019{dan ai\\\\u0019\\\\u0019\\\\u0019lv\\\\u0019\\\\u0019\\\\u0019\\\\u0019apg\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'u{{ai\\x19\\x19\\x19lv\\x19\\x19\\x19\\x19apg', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'u{{ai\\\\u0019\\\\u0019\\\\u0019lv\\\\u0019\\\\u0019\\\\u0019\\\\u0019apg\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{{y', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{{y\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{{y{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{{y{\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{{y{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{\"pl\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{{y{\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f{\\\\\"pl\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{{y{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{\"pl\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x01\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{{y{\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f{\\\\\"pl\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u0001\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{TABLE{\"playe usLE usersBLEe\\r', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{TABLE{\\\\\"playe usLE usersBLEe\\\\r\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({{TABLE{\"playe usLE usersBLEe\\r, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{TABLE{\"playe usLE use!\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{TABLE{\\\\\"playe usLE use!\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{TB{LEA\"playe usLE use!\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{TB{LEA\\\\\"playe usLE use!\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{TB{LEA\"playe usLE us[!\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{TB{LEA\\\\\"playe usLE us[!\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '-\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'-\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{{{{{{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '-\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'-\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{{{{{{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '-\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'-\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"{{Ay\"{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"{{Ay\\\\\"{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"{{Ay\"\\x01', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"{{Ay\\\\\"\\\\u0001\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{m', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{m\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{~\\x04\\x04\\x04\\x04\\x04\\x04\\x04{{{{{{{{{{{{{{{{{{{{{{{{{m', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{~\\\\u0004\\\\u0004\\\\u0004\\\\u0004\\\\u0004\\\\u0004\\\\u0004{{{{{{{{{{{{{{{{{{{{{{{{{m\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{u{{u{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{u{{u{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{u{{u{{ ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{u{{u{{ \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{nz{e{z', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{nz{e{z\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'F{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'F{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '$pe \\x11$pe.R\\x00{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'$pe \\\\u0011$pe.R\\\\u0000{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '$pe \\x11$pe.R\\x00{{{{dan apgr{{{{{{{{{{{{{{{{_{{{{{{{{{{{{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'$pe \\\\u0011$pe.R\\\\u0000{{{{dan apgr{{{{{{{{{{{{{{{{_{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{e\\x1fF{{e\\x1f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{e\\\\u001fF{{e\\\\u001f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"player_name\": \"anogged in\", \"num_fixtu\\x01\\x00\\x00\\x00\\x00\\x00\\x00LZZZZZZZZZZZZZZZZZZZZsZZZZnZZZ\\x0b\"qZZZZre\\x0b\"q{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player_name\\\\\": \\\\\"anogged in\\\\\", \\\\\"num_fixtu\\\\u0001\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000LZZZZZZZZZZZZZZZZZZZZsZZZZnZZZ\\\\u000b\\\\\"qZZZZre\\\\u000b\\\\\"q{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{ kevi]', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{ kevi]\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{{{\\r', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{\\\\r\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({{{{{\\r, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'pe{{{{{{{{ D%', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'pe{{{{{{{{ D%\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'pepe{{{{{{{{ D%R\\x00{{{{{{{{ D%', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'pepe{{{{{{{{ D%R\\\\u0000{{{{{{{{ D%\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"q{{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"q{{\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"q{{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fw\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"q{{\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007fw\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"player_name\": \"admieida de\" ogon in\", \"num_fixtures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"player_name\\\\\": \\\\\"admieida de\\\\\" ogon in\\\\\", \\\\\"num_fixtures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"player_name\": \"admieida de\" ogon in\", \"num_fixtumaguir', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"player_name\\\\\": \\\\\"admieida de\\\\\" ogon in\\\\\", \\\\\"num_fixtumaguir\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"playeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\": \"admieida de\" ogon in\", \"num_fixtumaguir', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"playeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\\\\\": \\\\\"admieida de\\\\\" ogon in\\\\\", \\\\\"num_fixtumaguir\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"playeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\\x04{a\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\": \"admieida de\" ogon in\", \"num_fixtumaguir', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"playeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\\\\u0004{a\\\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\\\\\": \\\\\"admieida de\\\\\" ogon in\\\\\", \\\\\"num_fixtumaguir\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(q{{\"playeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\u0004{a\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\": \"admieida de\" ogon in\", \"num_fixtumaguir, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"wlayeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\\x04{a\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\": \"admieida de\" ogon in\", \"num_fixtumaguir', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"wlayeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\\\\u0004{a\\\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\\\\\": \\\\\"admieida de\\\\\" ogon in\\\\\", \\\\\"num_fixtumaguir\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(q{{\"wlayeXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXq*\u0004{a\\nhXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXr_name\": \"admieida de\" ogon in\", \"num_fixtumaguir, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'ysak{{e\\x1fcsle\\x1fcms', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'ysak{{e\\\\u001fcsle\\\\u001fcms\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'ysa\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00k{{e\\x1fcsle\\x1fcms', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'ysa\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000k{{e\\\\u001fcsle\\\\u001fcms\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{\\n\\x00ee\\n', 'num_fixtures': -1735262095}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\\\n\\\\u0000ee\\\\n\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({{\\n\u0000ee\\n, -1735262095)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{\\n\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\\\n\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({{\\n\u0000\u0000\u0000\u0000, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q{{\"{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q{{\\\\\"{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '``````````````````````````````````````````````````````````````````````````````````````````q{{\"{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'``````````````````````````````````````````````````````````````````````````````````````````q{{\\\\\"{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '``````````````````````````````````````````````q{{\"{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'``````````````````````````````````````````````q{{\\\\\"{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '${{${', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'${{${\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{', '${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pl`yer_name\": \"aUser lged hn\"{{{{{{{{{{{{{{{{{{{{{{{{{{{{{, \"nu\\nAfixtures\":\\x1d', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pl`yer_name\\\\\": \\\\\"aUser lged hn\\\\\"{{{{{{{{{{{{{{{{{{{{{{{{{{{{{, \\\\\"nu\\\\nAfixtures\\\\\":\\\\u001d\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures(\"pl`yer_name\": \"aUser lged hn\"{{{{{{{{{{{{{{{{{{{{{{{{{{{{{, \"nu\\nAfixtures\":\u001d, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'z{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'z{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{z{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f{z{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1c\\x1cz{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f{\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001c\\\\u001cz{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXPXXXXXXXXX', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXPXXXXXXXXX\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{\"player_\"name\":\\' \"admin\\\\nINFO: in\", \"num_fixtures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{\\\\\"player_\\\\\"name\\\\\":\\' \\\\\"admin\\\\\\\\nINFO: in\\\\\", \\\\\"num_fixtures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{\"player_\"name\":\\' \"admin\\\\nINFO: in\", \"n(um_fixtures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{\\\\\"player_\\\\\"name\\\\\":\\' \\\\\"admin\\\\\\\\nINFO: in\\\\\", \\\\\"n(um_fixtures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'e{{\"player_\"name\":\\' \"admin\\\\nINFO: in\", \"n(um_fixturesname\":\\' \"admin\\\\nINFO: in\", \"n(um_fixtures\": 3\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'e{{\\\\\"player_\\\\\"name\\\\\":\\' \\\\\"admin\\\\\\\\nINFO: in\\\\\", \\\\\"n(um_fixturesname\\\\\":\\' \\\\\"admin\\\\\\\\nINFO: in\\\\\", \\\\\"n(um_fixtures\\\\\": 3\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{\".k', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{\\\\\".k\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{\".k', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{\\\\\".k\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{q\\n\\x00;\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{\"leatyratyr{{\"p_;;;;;;;;;;;;', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{q\\\\n\\\\u0000;\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f\\\\u007f{\\\\\"leatyratyr{{\\\\\"p_;;;;;;;;;;;;\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.tools.fixtures)! Logged content: 'Tool called: analyze_player_fixtures({q\\n\u0000;{\"leatyratyr{{\"p_;;;;;;;;;;;;, 0)'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x01I{{  ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0001I{{  \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '${su', 'num_fixtures': 578513833}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'${su\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x1eG{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u001eG{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{z{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{z{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'dil+{{[[a', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'dil+{{[[a\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'dil\\x00+{{[[a', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'dil\\\\u0000+{{[[a\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'dil+{{em', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'dil+{{em\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'dil+{{e\\x19', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'dil+{{e\\\\u0019\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00\\x00+{{e\\x19', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000\\\\u0000+{{e\\\\u0019\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x00\\x00+\\x00{{e\\x19', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0000\\\\u0000+\\\\u0000{{e\\\\u0019\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'G\\x01G{{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'G\\\\u0001G{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"player_name\":e\\x1e{qw d{\"{qrw\\x1e d{{{\"qqro\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player_name\\\\\":e\\\\u001e{qw d{\\\\\"{qrw\\\\u001e d{{{\\\\\"qqro\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"player_\\x06name\":e\\x1e{qw d{\"{qrw\\x1e d{{{\"qqro\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player_\\\\u0006name\\\\\":e\\\\u001e{qw d{\\\\\"{qrw\\\\u001e d{{{\\\\\"qqro\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '^\\x0f\\x13\\x17yer_\\x06name\":e\\x1e{qw d{\"{qrw\\x1e d{{{\"qqro\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'^\\\\u000f\\\\u0013\\\\u0017yer_\\\\u0006name\\\\\":e\\\\u001e{qw d{\\\\\"{qrw\\\\u001e d{{{\\\\\"qqro\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '^\\x0f\\x13\\x17yer_\\x06name\":e\\x1e{qw d{\"{qrw\\x1e d{{{\"qqro\": 2}Eisak', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'^\\\\u000f\\\\u0013\\\\u0017yer_\\\\u0006name\\\\\":e\\\\u001e{qw d{\\\\\"{qrw\\\\u001e d{{{\\\\\"qqro\\\\\": 2}Eisak\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{{\\x00{\\x00{e', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{\\\\u0000{\\\\u0000{e\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p \"\\'; \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'num_fixtures': -67372037}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p \\\\\"\\'; \\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p \"\\'; \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\"pl{{{{{{{{{{{{{{{{{{{', 'num_fixtures': -67372037}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p \\\\\"\\'; \\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\\\\"pl{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"p \"\\'; \\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\x15\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{{{{{{{{\"pl{{{{{{{{{{{{{{{{{{{', 'num_fixtures': -67372037}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"p \\\\\"\\'; \\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000DROP{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\\\u0015\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{{{{{{{{{{{{{{\\\\\"pl{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{q', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{q\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{q{HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH', 'num_fixtures': 1212696648}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{q{HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rG+{{q{HHHHHHHHHHHHHHHHHHHHHH{q{\"HHHHHHHHHHHHHH', 'num_fixtures': 1212696648}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rG+{{q{HHHHHHHHHHHHHHHHHHHHHH{q{\\\\\"HHHHHHHHHHHHHH\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x01rG+{{q{HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH', 'num_fixtures': 1212696648}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0001rG+{{q{HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"z\\x7fzu{{2pu{', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"z\\\\u007fzu{{2pu{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'henderso{{{{', 'num_fixtures': 2071690107}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'henderso{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '{{is', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{is\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x16{{z', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0016{{z\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x13\\x16{{z', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0013\\\\u0016{{z\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pla{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'num_fixtures': -67372037}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pla{{{{{{{{{{{{{{{{{{{{{{{{yer_name\":&\"W;e', 'num_fixtures': 1936876909}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla{{{{{{{{{{{{{{{{{{{{{{{{yer_name\\\\\":&\\\\\"W;e\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"pla{{{{{{{{{{{{{{{{{{{{{{{{yer_name\":&\"W>e', 'num_fixtures': 1936876909}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla{{{{{{{{{{{{{{{{{{{{{{{{yer_name\\\\\":&\\\\\"W>e\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rGZ{{\"leatyr{\"', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rGZ{{\\\\\"leatyr{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rGZ{{\"leatyr{\"p_\\x01\\x00\\x00\\x00\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rGZ{{\\\\\"leatyr{\\\\\"p_\\\\u0001\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rGZ{{\"leatyr{\"\\x00_\\x00p\\x00\\x01\\x00\\x00', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rGZ{{\\\\\"leatyr{\\\\\"\\\\u0000_\\\\u0000p\\\\u0000\\\\u0001\\\\u0000\\\\u0000\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'rGZ{{\"leatyr{\"\\x00_\\x00p\\x00\\x01\\x00*', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'rGZ{{\\\\\"leatyr{\\\\\"\\\\u0000_\\\\u0000p\\\\u0000\\\\u0001\\\\u0000*\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\"\\x01p{\"p \"\\'; DO2Gn ersonP Tn rcr{{ABLE {', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"\\\\u0001p{\\\\\"p \\\\\"\\'; DO2Gn ersonP Tn rcr{{ABLE {\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '~{y{\"{{y', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'~{y{\\\\\"{{y\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q\"{{\"player_name\": \"a\", \"num_fixtures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q\\\\\"{{\\\\\"player_name\\\\\": \\\\\"a\\\\\", \\\\\"num_fixtures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q\"{{\"player_name\": \"a\", \"num_fixBures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q\\\\\"{{\\\\\"player_name\\\\\": \\\\\"a\\\\\", \\\\\"num_fixBures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': 'q\"{{\"player_name\": \"\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00a\", \"num_fixBures\": ', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'q\\\\\"{{\\\\\"player_name\\\\\": \\\\\"\\\\u0002\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000a\\\\\", \\\\\"num_fixBures\\\\\": \\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x05\\x05{{ne', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0005\\\\u0005{{ne\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_name': '\\x05n{{\\x05e', 'num_fixtures': 0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\u0005n{{\\\\u0005e\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": true
+}

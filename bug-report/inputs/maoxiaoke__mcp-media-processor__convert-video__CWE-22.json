@@ -1,0 +1,105 @@
+{
+ "repo": "maoxiaoke/mcp-media-processor",
+ "tool": "convert-video",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "2aecf0fb94b398ae7a708a979e302d90f89d670c",
+ "draft": "maoxiaoke__mcp-media-processor__convert-video__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 13,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '/etc/passwd\\x00', 'outputFormat': 'mkv', 'outputPath': '/var/tmp/evil.mkv', 'outputFilename': 'evil.mkv'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Cannot find ffmpeg'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputFormat': 'mp4', 'outputPath': '/tmp/output.mp4', 'outputFilename': 'output.mp4'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputFormat': 'avi', 'outputPath': 'C:\\\\temp\\\\converted.avi', 'outputFilename': 'converted.avi'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/proc/self/mem\", \"outputForma{\"inputPatt\": \"mp4\"h\": \"../../../../etc/passwd\", \"output', 'outputFormat': '', 'outputPath': '', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"/proc/self/mem\", \"outputForma{\"inputPatt\": \"mp4\"h\": \"../../../../etc/passwd\", \"output'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"/proc/self/mem\"\\x08 \"outputForma{\"inputPatt\": \"mp4\"h\": \"../../../../etc/passwd\", \"output', 'outputFormat': '', 'outputPath': '', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"/proc/self/mem\"\\x08 \"outputForma{\"inputPatt\": \"mp4\"h\": \"../../../../etc/passwd\", \"output'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\w2indows\\\\win.ini', 'outputFormat': 'avi', 'outputPath': 'C:\\\\temp\\\\converted.avi', 'outputFilename': 'converted.avi'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: ..\\\\..\\\\..\\\\..\\\\w2indows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFilen', 'outputFormat': '', 'outputPath': 'me\": \"converted', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFilen'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFilen', 'outputFormat': '', 'outputPath': 'me\": \"converted.a', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFilen'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFieln', 'outputFormat': '', 'outputPath': 'me\": \"converted.a', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x7f\\x7fw2indows\\\\\\\\win.ini\", \"outputFormat\": \"avi\", \"outputPath\": \"C:\\\\\\\\temp\\\\\\\\converted.avi\", \"outputFieln'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '../../../../etc/passwd', 'outputFormat': 'mp4', 'outputPath': '/tmp/output.mp4', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: ../../../../etc/passwd'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"../../../../etc/passwd\", \"outputFormat\": \"mp4\", \"outputPath\": \"/tmp/output.mp4\", \"outputFilenBme\": \"output.mp4\\x00\\x00\\x00', 'outputFormat': '', 'outputPath': '', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"../../../../etc/passwd\", \"outputFormat\": \"mp4\", \"outputPath\": \"/tmp/output.mp4\", \"outputFilenBme\": \"output.mp4\\x00\\x00\\x00'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '\"inputPath\": \"../../../../etc/passwd\", \"outputFormat\": \"mp4\", \"outputPath\": \"/tmp/output.mp4\", \"outputFilenBme\": \"output.mp4\\x00\\x00.', 'outputFormat': '', 'outputPath': '', 'outputFilename': ''}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: \"inputPath\": \"../../../../etc/passwd\", \"outputFormat\": \"mp4\", \"outputPath\": \"/tmp/output.mp4\", \"outputFilenBme\": \"output.mp4\\x00\\x00.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'inputPath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'outputFormat': 'avi', 'outputPath': 'C:erted.avi', 'outputFilename': 'converted.avi'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error converting video: Input file not found: ..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

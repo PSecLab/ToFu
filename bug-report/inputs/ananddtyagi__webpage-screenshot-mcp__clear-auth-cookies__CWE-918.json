@@ -1,0 +1,1414 @@
+{
+ "repo": "ananddtyagi/webpage-screenshot-mcp",
+ "tool": "clear-auth-cookies",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "cad4a14af1b0c5bf883eeac253b49e3590534ba1",
+ "draft": "ananddtyagi__webpage-screenshot-mcp__clear-auth-cookies__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 369,
+ "note": "369 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::1]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Canonicalization Error: Invalid characters in DNS label '::1' | SSRF Protection Alert: Loopback IP address detected: ::1]. Input: 'http://[::1]'Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://2130706433'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: 127_0_0_1'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [IP Representation Error: Non-canonical integer/octal/hex IPv4 detected: '2130706433']. Input: 'http://2130706433'Silent Bug Alert: Sanitizers ['check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://0177.0.0.1'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: 127_0_0_1'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [IP Representation Error: Non-canonical octal or hex IPv4 notation detected: '0177.0.0.1']. Input: 'http://0177.0.0.1'Silent Bug Alert: Sanitizers ['check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'file:///etc/shadow'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Forbidden scheme 'file' detected | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'file:///etc/shadow'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: 127_0_0_1'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: localhost'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: 169_254_169_254'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [SSRF Protection Alert: Cloud Metadata target detected: '169.254.169.254']. Input: 'http://169.254.169.254/latest/meta-data/'Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htp://[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::1]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htp' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::1' | SSRF Protection Alert: Loopback IP address detected: ::1]. Input: 'htp://[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htp://[::2]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::2]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htp' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::2' | SSRF Protection Alert: Reserved IP address detected: ::2]. Input: 'htp://[::2]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': ' http://[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::1]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 0 | Canonicalization Error: Invalid characters in DNS label '::1' | SSRF Protection Alert: Loopback IP address detected: ::1]. Input: ' http://[::1]'Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'rltp://[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::1]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'rltp' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::1' | SSRF Protection Alert: Loopback IP address detected: ::1]. Input: 'rltp://[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://[::2]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::2]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Canonicalization Error: Invalid characters in DNS label '::2' | SSRF Protection Alert: Reserved IP address detected: ::2]. Input: 'http://[::2]'Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt://[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::1]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::1' | SSRF Protection Alert: Loopback IP address detected: ::1]. Input: 'htt://[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt://[::0]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::0' | SSRF Protection Alert: Private network IP address detected: ::]. Input: 'htt://[::0]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/url::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/url::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt://[::9]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::9]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::9' | SSRF Protection Alert: Reserved IP address detected: ::9]. Input: 'htt://[::9]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/5[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/5[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt://[::2]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: [::2]'}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Invalid characters in DNS label '::2' | SSRF Protection Alert: Reserved IP address detected: ::2]. Input: 'htt://[::2]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:./[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:./[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/l/[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/l/[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/u/[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/u/[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/u:/:[1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/u:/:[1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:1//[::1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:1//[::1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:::/1/[]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:::/1/[]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/$[:/:1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/$[:/:1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/$[A:/:1]'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:/$[A:/:1]'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'itt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'itt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'itt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:*'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:*'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:;'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:;'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htk:;'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htk' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htk:;'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htk:^'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htk' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htk:^'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:t'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:t'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'tht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'tht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'tht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ktht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ktht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ktht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:TTTT'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:TTTT'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:TTTt'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:TTTt'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htthtt:\"/:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htthtt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htthtt:\"/:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:\"+://:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:\"+://:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hhtt:\"tt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hhtt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hhtt:\"tt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hhtt:t\"t\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hhtt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hhtt:t\"t\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'yyyyyyyyyyyyyyhhtt:t\"t\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'yyyyyyyyyyyyyyhhtt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'yyyyyyyyyyyyyyhhtt:t\"t\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:\\x00\\x00\\x00\\x00\"+{htt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:\u0000\u0000\u0000\u0000\"+{htt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hCtt:\\x00\\x00\\x00\\x00\"+{htt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x0) | Structure Error: Scheme 'hctt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hCtt:\u0000\u0000\u0000\u0000\"+{htt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hCtt:\\x00\\x00\\x00\\x00\"+t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x0) | Structure Error: Scheme 'hctt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hCtt:\u0000\u0000\u0000\u0000\"+t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:\\x02'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x2) | Structure Error: Scheme 'htt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htt:\u0002'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"@+ht:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"@+ht:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htA:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hta' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htA:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hpA:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hpa' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hpA:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+{ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+{ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+{ht:G'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+{ht:G'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'b+ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'b+ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'b+ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'b+ht:\"1111111111111111'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'b+ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'b+ht:\"1111111111111111'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht::h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht::h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht::h:h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht::h:h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht::h:*'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht::h:*'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x06t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x6) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0006t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'h:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'h' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'h:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htiiiiiiiiiiiiiiiiii:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htiiiiiiiiiiiiiiiiii' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htiiiiiiiiiiiiiiiiii:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htiiiiiiiiiiiiiii:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htiiiiiiiiiiiiiii' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htiiiiiiiiiiiiiii:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htiiiiiiiiiiiiii:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htiiiiiiiiiiiiii' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htiiiiiiiiiiiiii:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+ZZZZZZZZZZZZZZZZ'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+ZZZZZZZZZZZZZZZZ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+ZZZZ'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+ZZZZ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+(\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 6 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+('Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+(\\x7f\\x7f\\x7f\\x7f1\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 6 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+(1'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+(\\x7f\\x7f\\x7f\\x04N\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 6 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+(\u0004N'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:@@@@@@@@'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:@@@@@@@@'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:@@@@@@@'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:@@@@@@@'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:=@@@@@@'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:=@@@@@@'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:=\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x05@@@@@@'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:=\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0005@@@@@@'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:=\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x05@@=@@@'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x1) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:=\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0005@@=@@@'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:{ht:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:{ht:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'HHHHHHHHHHHHHHHHht:{ht:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hhhhhhhhhhhhhhhhht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'HHHHHHHHHHHHHHHHht:{ht:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x11) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x10\\x11\\x11\\x11\\x11'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x11) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0010\u0011\u0011\u0011\u0011'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht::\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x11\\x10\\x11\\x11\\x11\\x11'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x11) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht::\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0011\u0010\u0011\u0011\u0011\u0011'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht::\\x11\\x11\\x11\\x11\\x11\\x17\\x11\\x11\\x11\\x11\\x11\\x10\\x11\\x11\\x11\\x11'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x11) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht::\u0011\u0011\u0011\u0011\u0011\u0017\u0011\u0011\u0011\u0011\u0011\u0010\u0011\u0011\u0011\u0011'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:[\\x11\\x11\\x11\\x11\\x11\\x17\\x11\\x11\\x11\\x11\\x11\\x10\\x11\\x11\\x11\\x11'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x11) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:[\u0011\u0011\u0011\u0011\u0011\u0017\u0011\u0011\u0011\u0011\u0011\u0010\u0011\u0011\u0011\u0011'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:&+ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:&+ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:&t+h:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:&t+h:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:+'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'h+t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'h+t' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'h+t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htht:\":'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'htht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'htht:\":'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x01\\x00\\x00\\x00ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x1) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0001\u0000\u0000\u0000ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hz:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hz' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hz:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hz: +{hz:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 3 | Structure Error: Scheme 'hz' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hz: +{hz:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"&&&&&&&&&&&&&&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"&&&&&&&&&&&&&&'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"&&&&&&&&&&&\\x15&&&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 15 (code 0x15) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"&&&&&&&&&&&\u0015&&&'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"&\\x7f\\x7f\\x7f\\x7f\\x7f&&&&&&&&&&\\x15&&&'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"&&&&&&&&&&&\u0015&&&'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'th:\"{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'th' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'th:\"{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+{ht\":{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+{ht\":{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:ht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+|||||||||||||||'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+|||||||||||||||'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+||||||'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+||||||'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+|'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+|'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'hoooooooooot:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'hoooooooooot' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'hoooooooooot:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht-:t'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht-' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht-:t'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'h4:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'h4' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'h4:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x06h'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\u0006h'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\\x00w\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\u0000w'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00ht:+'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x0) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000ht:+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"{ht:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"{ht:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"MMMMMMMMMMMMMMMMMMMMM'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"MMMMMMMMMMMMMMMMMMMMM'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:{ht\"MM:\"M+M'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:{ht\"MM:\"M+M'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht\\t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x9) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht\t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00h\\t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x0) | Structure Error: Scheme 'h' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000h\t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'xt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'xt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'xt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"888888888888888888888888'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"888888888888888888888888'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"88{ht:8\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"88{ht:8\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Dt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'dt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'Dt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'DDt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ddt' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'DDt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Dht:Dt:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'dht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'Dht:Dt:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+hh{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+hh{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'IIIIIIIIIIIIIIIIIIIIIIht:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'iiiiiiiiiiiiiiiiiiiiiiht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'IIIIIIIIIIIIIIIIIIIIIIht:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'III:IIIIIIIIIIIIIIII'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'iii' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'III:IIIIIIIIIIIIIIII'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht:\"+\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x7f) | Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'v:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'v' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'v:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:A'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:A'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:A.'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:A.'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:----------------------'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:----------------------'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': \"t:------------------'---\"}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:------------------'---'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f\\x7f\\x7f\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f\"\\x7f\\x7f\\x7f\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f\"\\x7f\\x7f\\x7f\"`'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\"`'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"`'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\"`'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x0b{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0xb) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\u000b{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'u:\"\\x0b{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0xb) | Structure Error: Scheme 'u' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'u:\"\u000b{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'u:\"\\x0b,{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0xb) | Structure Error: Scheme 'u' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'u:\"\u000b,{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x06\\x06\\x06'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x6) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\u0006\u0006\u0006'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:{t:\"+\\x06\\x06\\x06'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 7 (code 0x6) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:{t:\"+\u0006\u0006\u0006'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:{t{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:{t{'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0000\u0000\u0000\u0000t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"h\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"h\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"h\\x00\\x00\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"h\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"h\\x00\\x00\\x00\\x7f\\x7f\\x7fL\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"h\u0000\u0000\u0000L\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"h\\x00\\x00\\x00\\x7f\\x7f\\x7fL\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"h\u0000\u0000\u0000L\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'tA:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ta' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'tA:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:tttttttttttttttt'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:tttttttttttttttt'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'd:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'd' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'd:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'T:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'T:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'T:t:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'T:t:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'T:t{T'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'T:t{T'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01\\x01T:t{T'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x1) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001T:t{T'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:['}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:['Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'P:\\x01'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x1) | Structure Error: Scheme 'p' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'P:\u0001'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't::\"+t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't::\"+t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"+\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\"+\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x00\\x00{t\\x00\\x00\\x00\\x00\\x00\\x00\"+\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\u0000\u0000{t\u0000\u0000\u0000\u0000\u0000\u0000\"+\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+{t\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00\\x00:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 6 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+{t\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0005\u0000\u0000\u0000\u0000:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:,'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:,'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:,+'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:,+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'v:,+'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'v' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'v:,+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"{t:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"{t:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"{t\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16\\x16:\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x16) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"{t\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016\u0016:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"Ft'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"Ft'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"F{t'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"F{t'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"Fz{t'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"Fz{t'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x0) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'p:\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x0) | Structure Error: Scheme 'p' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'p:\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'p:\\x00\\x00\\x00\\x00\\x00p:\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x0) | Structure Error: Scheme 'p' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'p:\u0000\u0000\u0000\u0000\u0000p:\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\"'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"IIIIIIIIIIIIIIIIIIIIIIIIIIIII'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"IIIIIIIIIIIIIIIIIIIIIIIIIIIII'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"PIIIIIIIIIIIIIIIIIIIIIIIIIIII'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"PIIIIIIIIIIIIIIIIIIIIIIIIIIII'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't+t:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't+t' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't+t:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+\\x7f\\x7f[\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+['Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f\\x7f\\x7f777777777777777'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"777777777777777'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f{t:77777777777777'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"{t:77777777777777'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f{t:77777w77777777'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"{t:77777w77777777'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"\\x7f\\x7f{t:77777w77777777%'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 3 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"{t:77777w77777777%'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\"+\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\"+'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x01\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x1) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:\u0001\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 2 (code 0x7f) | Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:st:'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:st:'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't:stB'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 't' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 't:stB'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'st:stB'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No cookies found for domain: '}]}",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'st' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'st:stB'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

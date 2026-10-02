@@ -1,0 +1,84 @@
+{
+ "repo": "dragon1086/kospi-kosdaq-stock-server",
+ "tool": "get_stock_market_cap",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "8455054a043376cfde22e472c3fb3241bcc57f32",
+ "draft": "dragon1086__kospi-kosdaq-stock-server__get_stock_market_cap__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 10,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"{{\"{\"\"t\\x00\"\"t\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'todate': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\U00106164', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"{{\\\\\"{\\\\\"\\\\\"t\\\\u0000\\\\\"\\\\\"t\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x00\\x7f}888888{{\"fromdate\": \"20230101\", \"t\"o', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u0000\\x7f}888888{{\\\\\"fromdate\\\\\": \\\\\"20230101\\\\\", \\\\\"t\\\\\"o\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x008}\\x7f88888{{\"fromdate\": \"20230101\", \"t\"o', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u00008}\\x7f88888{{\\\\\"fromdate\\\\\": \\\\\"20230101\\\\\", \\\\\"t\\\\\"o\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x008}\\x7f888\\x188{{\"fromdate\": \"20230101\", \"t\"o', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u00008}\\x7f888\\\\u00188{{\\\\\"fromdate\\\\\": \\\\\"20230101\\\\\", \\\\\"t\\\\\"o\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x00\"}\\x00{{\\x00\\x00d\\x00\\x00\\x00{', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u0000\\\\\"}\\\\u0000{{\\\\u0000\\\\u0000d\\\\u0000\\\\u0000\\\\u0000{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x00\"}\\x00{{\\x00\\x00d\\x00\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'todate': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u0000\\\\\"}\\\\u0000{{\\\\u0000\\\\u0000d\\\\u0000\\\\u0000\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"d\\x00\\x00\\x00\"}\\x00{{\\x00\\x00d\\x00\\x00\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'todate': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fmdate\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"d\\\\u0000\\\\u0000\\\\u0000\\\\\"}\\\\u0000{{\\\\u0000\\\\u0000d\\\\u0000\\\\u0000\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\\x14-|{{\\x14-\\x14-', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\u0014-|{{\\\\u0014-\\\\u0014-\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\\x04-|{{\\x14-\\x14-', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\u0004-|{{\\\\u0014-\\\\u0014-\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\\x04-|{{\\x14-\\x14-|\\x04-|{', 'todate': '', 'ticker': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\u0004-|{{\\\\u0014-\\\\u0014-|\\\\u0004-|{\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

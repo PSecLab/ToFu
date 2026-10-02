@@ -1,0 +1,42 @@
+{
+ "repo": "zhiwei5576/excel-mcp-server",
+ "tool": "clearFileCache",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "cf0e7c98b95e77f77628c33c6ca4af87a79b3ac8",
+ "draft": "zhiwei5576__excel-mcp-server__clearFileCache__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fileAbsolutePath': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"success\":true,\"message\":\"No cache found for file: /etc/passwd\\\\u0000\"}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fileAbsolutePath': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"success\":true,\"message\":\"No cache found for file: ../../../../etc/passwd\"}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fileAbsolutePath': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"success\":true,\"message\":\"No cache found for file: ..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\"}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fileAbsolutePath': '/var/tmp/../../../../root/.ssh/id_rsa'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"success\":true,\"message\":\"No cache found for file: /var/tmp/../../../../root/.ssh/id_rsa\"}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

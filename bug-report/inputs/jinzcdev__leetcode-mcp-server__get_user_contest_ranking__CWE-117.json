@@ -1,0 +1,28 @@
+{
+ "repo": "jinzcdev/leetcode-mcp-server",
+ "tool": "get_user_contest_ranking",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "126115fc6e89e60125474e721d985afdf159c55f",
+ "draft": "jinzcdev__leetcode-mcp-server__get_user_contest_ranking__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'username': 'admin\\nINFO: User logged in', 'attended': True}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"username\":\"admin\\\\nINFO: User logged in\",\"contestRanking\":{\"userContestRanking\":null,\"userContestRankingHistory\":[]}}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'username': '\"usernam\\x1b]E_]\\x0f\\r~toty_Ip', 'attended': False}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"username\":\"\\\\\"usernam\\\\u001b]E_]\\\\u000f\\\\r~toty_Ip\",\"contestRanking\":{\"userContestRanking\":null,\"userContestRankingHistory\":[]}}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

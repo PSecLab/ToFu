@@ -1,0 +1,70 @@
+{
+ "repo": "GoogleCloudPlatform/cloud-run-mcp",
+ "tool": "get_service_log",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "560558a78b9d10f30da4b21879dff67379c80668",
+ "draft": "GoogleCloudPlatform__cloud-run-mcp__get_service_log__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 8,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'my-gcp-project', 'region': 'europe-west1', 'service': 'myservice\\nINJECTED_LOG_ENTRY'}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': 'my-gcp-project', 'region': 'europe-west1', 'service': 'myservice\\r\\n2024-01-01 00:00:00 ERROR: Sensitive info leaked'}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\r\\x00', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\r᐀', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\rk\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\rk\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r(\\r\\r\\r\\r\\r\\r\\r', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project': '\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\rk\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r\\r(\\r\\r\\r\\r\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\r\\r\\r', 'region': '', 'service': ''}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'GCP credentials are not available. Please configure your environment using OAuth or `gcloud auth`.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

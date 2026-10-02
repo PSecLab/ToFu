@@ -1,0 +1,42 @@
+{
+ "repo": "RegiByte/todo-list-mcp",
+ "tool": "create-todo",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "a04a79204f5b66377244e2654bd4dac2e8a785b5",
+ "draft": "RegiByte__todo-list-mcp__create-todo__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"t', 'description': 'tl{{{{{{{{{{{{{{{ \":ype C{\"of'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '✅ Todo Created:\\n\\n## \"t ⏳\\n\\nID: 520d8fc9-60aa-4f1f-89b0-402a9688d3a2\\nCreated: 9/26/2026, 3:03:14 PM\\nUpdated: 9/26/2026, 3:03:14 PM\\n\\ntl{{{{{{{{{{{{{{{ \":ype C{\"of'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"t', 'description': 'tl{{{{{{{{C{\"of'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '✅ Todo Created:\\n\\n## \"t ⏳\\n\\nID: a02e0566-9726-485c-8c2e-3d4fde4f407c\\nCreated: 9/26/2026, 3:03:14 PM\\nUpdated: 9/26/2026, 3:03:14 PM\\n\\ntl{{{{{{{{C{\"of'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titl', 'description': '{{{{{{{C{\"of'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '✅ Todo Created:\\n\\n## \"titl ⏳\\n\\nID: b4698a68-678b-463d-b80e-368603c99573\\nCreated: 9/26/2026, 3:03:14 PM\\nUpdated: 9/26/2026, 3:03:14 PM\\n\\n{{{{{{{C{\"of'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"t\"{{{\"t\"{{\\x00\"\"\"o{ftu\"of\\x00\\x7fus\\x00\"\"\"o{ftu', 'description': '景\\uff00獵瑩琢'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '✅ Todo Created:\\n\\n## \"t\"{{{\"t\"{{\\x00\"\"\"o{ftu\"of\\x00\\x7fus\\x00\"\"\"o{ftu ⏳\\n\\nID: 3c00082c-3ed0-477c-b91e-e4d30869285b\\nCreated: 9/26/2026, 3:03:17 PM\\nUpdated: 9/26/2026, 3:03:17 PM\\n\\n景\\uff00獵瑩琢'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

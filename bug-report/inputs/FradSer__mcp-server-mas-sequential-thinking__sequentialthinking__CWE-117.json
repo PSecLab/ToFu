@@ -1,0 +1,140 @@
+{
+ "repo": "FradSer/mcp-server-mas-sequential-thinking",
+ "tool": "sequentialthinking",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "f1a20b349e459cc92274b28159363cfbe05f8346",
+ "draft": "FradSer__mcp-server-mas-sequential-thinking__sequentialthinking__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 18,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '/etc/passwd\\x00', 'thoughtNumber': 3, 'totalThoughts': 3, 'nextThoughtNeeded': False, 'isRevision': False, 'branchFromThought': '3', 'branchId': 'B', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #3: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '/etc/passwd\\...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '../../../../etc/passwd', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'A', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '../../../../...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: isRevision as integer', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': 1, 'branchFromThought': '1', 'branchId': 'G', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': 'Type confusi...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: thoughtNumber as string', 'thoughtNumber': '2', 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'D', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_weak_hash', 'check_introspection_log_injection']",
+   "tool_output": "'DEEPSEEK_API_KEY not set. Please set the DEEPSEEK_API_KEY environment variable.'",
+   "analysis": "[Sequence Step 1/1] Introspection Weak Hash Alert (CWE-328): Cryptographically broken or deprecated hash algorithm 'SHA1' used during tool execution! Migrate to SHA-256, SHA-512, or Argon2/bcrypt for credential hashing.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: '  Built prompt:\\nProcess Thought #2:\\n**BRANCH (ID: D) from Thought #1** (Origin: \"Unknown thought\")\\n\\nThought Content: \"Type confusion: thoughtNumber as string\"'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: needsMoreThoughts as string', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'H', 'needsMoreThoughts': 'false'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': 'Type confusi...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: nextThoughtNeeded as string', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': 'true', 'isRevision': False, 'branchFromThought': '1', 'branchId': 'F', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': 'Type confusi...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Testing path traversal in branchId', 'thoughtNumber': 2, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '2', 'branchId': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #2: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': 'Testing path...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: thoughtNumber as string', 'thoughtNumber': 1750361458, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'D', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'DEEPSEEK_API_KEY not set. Please set the DEEPSEEK_API_KEY environment variable.'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: '  Built prompt:\\nProcess Thought #1750361458:\\n**BRANCH (ID: D) from Thought #1** (Origin: \"Unknown thought\")\\n\\nThought Content: \"Type confusion: thoughtNumber as string\"'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '\"thTought\": \"../../../../etc/passwd\", \"thoughtNumber\": 1, \"totalThoughts\": 3, \"nextThoughtNeeded\": true, \"isRevision\": false, \"branchFromThought\": \"1\", \"branchId\": \"A\", \"needsMoreThoughts\": fals', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'A', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '\"thTought\": ...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '\"thTought\": \"../../../../etc/passwd\", \"thoughtNumber\": 1, \"totalThoughts\": 3, \"nextThoughtNeeded\": true, \"isRevision\": false, \"branchFromThought\": \"1\", \"branchId\": \"A\", \"needsMor!!!eThoughts\": fa', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'A', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '\"thTought\": ...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: thoughtNumber as string', 'thoughtNumber': 1750361458, 'totalThoughts': 1751610735, 'nextThoughtNeeded': False, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'D', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'DEEPSEEK_API_KEY not set. Please set the DEEPSEEK_API_KEY environment variable.'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: '  Built prompt:\\nProcess Thought #1750361458:\\n**BRANCH (ID: D) from Thought #1** (Origin: \"Unknown thought\")\\n\\nThought Content: \"Type confusion: thoughtNumber as string\"'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '/etcpaws/sd\\x00', 'thoughtNumber': 3, 'totalThoughts': 3, 'nextThoughtNeeded': False, 'isRevision': False, 'branchFromThought': '3', 'branchId': 'B', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #3: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '/etcpaws/sd\\...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '/etc/passwd\\x00', 'thoughtNumber': 3, 'totalThoughts': 1, 'nextThoughtNeeded': False, 'isRevision': False, 'branchFromThought': '3', 'branchId': 'B', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #3: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '/etc/passwd\\...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '../../../../etc/passwd', 'thoughtNumber': 1, 'totalThoughts': 2, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'A', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '../../../../...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '../../../../etc/passwd', 'thoughtNumber': 1, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '2', 'branchId': 'A', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #1: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '../../../../...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusien: thoughtNumber as string', 'thoughtNumber': 1750361458, 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': False, 'branchFromThought': '1', 'branchId': 'D', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'DEEPSEEK_API_KEY not set. Please set the DEEPSEEK_API_KEY environment variable.'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: '  Built prompt:\\nProcess Thought #1750361458:\\n**BRANCH (ID: D) from Thought #1** (Origin: \"Unknown thought\")\\n\\nThought Content: \"Type confusien: thoughtNumber as string\"'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': 'Type confusion: thoughtNumber as string', 'thoughtNumber': '2', 'totalThoughts': 3, 'nextThoughtNeeded': True, 'isRevision': True, 'branchFromThought': '1', 'branchId': 'D', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "'DEEPSEEK_API_KEY not set. Please set the DEEPSEEK_API_KEY environment variable.'",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: '  Built prompt:\\nProcess Thought #2:\\n**REVISION of Thought #1** (Original: \"Unknown thought\")\\n\\nThought Content: \"Type confusion: thoughtNumber as string\"'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'thought': '/etc/pas1swd\\x00', 'thoughtNumber': 3, 'totalThoughts': 3, 'nextThoughtNeeded': False, 'isRevision': False, 'branchFromThought': '3', 'branchId': 'B', 'needsMoreThoughts': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:sequential_thinking)! Logged content: 'Input validation failed for thought #3: Invalid thought data: 1 validation error for ThoughtData\\n  Value error, branchFromThought must be less than current thoughtNumber [type=value_error, input_value={'thought': '/etc/pas1swd...edsMoreThoughts': False}, input_type=dict]\\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error'."
+  }
+ ],
+ "truncated": false
+}
