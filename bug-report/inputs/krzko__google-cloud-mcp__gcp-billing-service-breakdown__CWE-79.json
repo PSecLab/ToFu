@@ -1,0 +1,21 @@
+{
+ "repo": "krzko/google-cloud-mcp",
+ "tool": "gcp-billing-service-breakdown",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "85eeb65a99f837e3fdaae6677c7287cc518d5304",
+ "draft": "krzko__google-cloud-mcp__gcp-billing-service-breakdown__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'billingAccountName': '筻筻筻筻筻筻', 'projectId': '{{{{{{', 'timeRange': '1y'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '# Service Cost Breakdown\\n\\n**Billing Account:** 筻筻筻筻筻筻\\n**Project:** {{{{{{\\n**Time Range:** 1y\\n**Services Analysed:** 3\\n\\n⚠️ **Note:** This is demonstration data with detailed service and SKU breakdown.\\n\\n## COMPUTE\\n\\n**Service ID:** compute.googleapis.com\\n**Total Cost:** USD\\xa01,847.25\\n**SKUs:** 1\\n\\n| Project | SKU ID | Cost | Usage | Labels |\\n|---------|--------|------|-------|--------|\\n| {{{{{{ | CP-COMPUTEENGINE-VMIMAGE-N1-STANDARD-1 | USD\\xa01,847.25 | 744 hours | environment:production, team:backend, instance_type:n1-standard-1, zone:us-central1-a |\\n\\n## STORAGE\\n\\n**Service ID:** storage.googleapis.com\\n**Total Cost:** USD\\xa0426.80\\n**SKUs:** 1\\n\\n| Project | SKU ID | Cost | Usage | Labels |\\n|---------|--------|------|-------|--------|\\n| {{{{{{ | 9E26-D0CA-7C08 | USD\\xa0426.80 | 2500 GB | environment:production, team:data, storage_class:standard, location:us-central1 |\\n\\n## BIGQUERY\\n\\n**Service ID:** bigquery.googleapis.com\\n**Total Cost:** USD\\xa0189.45\\n**SKUs:** 1\\n\\n| Project | SKU ID | Cost | Usage | Labels |\\n|---------|--------|------|-------|--------|\\n| {{{{{{ | 1145-49C5-8000 | USD\\xa0189.45 | 1250 TB | environment:development, team:analytics, query_type:on_demand |\\n\\n## Summary\\n\\n**Total Cost:** USD\\xa02,463.50\\n**Average Cost per Service:** USD\\xa0821.1667\\n**Top Cost Driver:** compute.googleapis.com (USD\\xa01,847.25)\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

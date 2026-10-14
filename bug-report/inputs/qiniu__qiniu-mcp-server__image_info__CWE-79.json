@@ -1,0 +1,56 @@
+{
+ "repo": "qiniu/qiniu-mcp-server",
+ "tool": "image_info",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "52dd33532655721816b3efb61285522ec94c485a",
+ "draft": "qiniu__qiniu-mcp-server__image_info__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 6,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'javascript:alert(1)'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"{'object_url': 'javascript:alert(1)?imageInfo'}\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['javascript:'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur{{{{{{{{{{{{{{{{l\": '}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur{{{{{{{{{{{{{{{{l\": ?imageInfo\\'}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur{{{{{{{{{{{{{{{{\\x7f\\x7f: '}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur{{{{{{{{{{{{{{{{\\\\x7f\\\\x7f: ?imageInfo\\'}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur\\x1d\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{{{{{{{{{\\x7f\\x7f: '}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur\\\\x1d\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00{{{{{{{{{{{{{{{{\\\\x7f\\\\x7f: ?imageInfo\\'}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur\\x1d\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{{{{{{{{{vvv\\x7f\\x7f: '}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur\\\\x1d\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00{{{{{{{{{{{{{{{{vvv\\\\x7f\\\\x7f: ?imageInfo\\'}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur\\x1d\\x00\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{*{{{{{{{{vvv\\x7f\\x7f: '}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur\\\\x1d\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00\\\\x00{{{{{{{*{{{{{{{{vvv\\\\x7f\\\\x7f: ?imageInfo\\'}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

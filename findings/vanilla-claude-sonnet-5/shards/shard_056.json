@@ -1,0 +1,2930 @@
+{
+ "shard_id": "056",
+ "n_repos": 7,
+ "n_configs": 146,
+ "surface_loc": 16033,
+ "repos": [
+  {
+   "repo": "Arindam200/reddit-mcp",
+   "slug": "Arindam200__reddit-mcp",
+   "lang": "python",
+   "commit": "5c5636371315386dfcf4cea73123ea4f6c06842a",
+   "path": "eval/targets/Arindam200__reddit-mcp",
+   "surface_loc": 2327,
+   "tools": [
+    {
+     "name": "create_post",
+     "description": "Create a new post in a subreddit.\n\nArgs:\n    subreddit: Name of the subreddit to post in (with or without 'r/' prefix)\n    title: Title of the post (max 300 characters)\n    content: Content of the post (text for self posts, URL for link posts)\n    flair: Flair to add to the post. Must be an available flair in the subreddit\n    is_self: Whether this is a self (text) post (True) or link post (False)\n\nReturns:\n    Dictionary containing information about the created post\n\nRaises:\n    ValueError: If input validation fails or flair is invalid\n    RuntimeError: For other errors during post creation\n",
+     "config": "Arindam200__reddit-mcp__create_post.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1152,
+       "text": "def create_post("
+      },
+      {
+       "file": "server.py",
+       "line": 1263,
+       "text": "logger.error(f\"Error in create_post for r/{clean_subreddit}: {e}\")"
+      }
+     ]
+    },
+    {
+     "name": "get_submission_by_id",
+     "description": "Get a Reddit submission by its ID.\n\nArgs:\n    submission_id: The ID of the Reddit submission to retrieve (can be full URL or just ID)\n    include_comments: If True, load and return the full comment forest for the post\n    comment_replace_more_limit: Limit for replacing \"MoreComments\" objects (0 for none, None for all)\n\nReturns:\n    Dictionary containing structured submission information with the following structure:\n    {\n        'id': str,  # Submission ID (e.g., 'abc123')\n        'title': str,  # Submission title\n        'author': str,  # Author's username or '[deleted]' if deleted\n        'subreddit': str,  # Subreddit name\n        'score': int,  # Post score (upvotes - downvotes)\n        'upvote_ratio': float,  # Ratio of upvotes to total votes\n        'num_comments': int,  # Number of comments\n        'created_utc': float,  # Post creation timestamp (UTC)\n        'url': str,  # Full URL to the post\n        'permalink': str,  # Relative URL to the post\n        'is_self': bool,  # Whether it's a self (text) post\n        'selftext': str,  # Content of self post (if any)\n        'selftext_html': Optional[str],  # HTML formatted content\n        'link_url': str,  # URL for link posts (if any)\n        'domain': str,  # Domain of the linked content\n        'over_18': bool,  # Whether marked as NSFW\n        'spoiler': bool,  # Whether marked as spoiler\n        'stickied': bool,  # Whether stickied in the subreddit\n        'locked': bool,  # Whether comments are locked\n        'archived': bool,  # Whether the post is archived\n        'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n        'flair': Optional[Dict],  # Post flair information if any\n        'media': Optional[Dict],  # Media information if any\n        'preview': Optional[Dict],  # Preview information if available\n        'awards': List[Dict],  # List of awards received\n        'comments': Optional[List[Dict]],  # present if include_comments is True\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'subreddit_id': str,  # Subreddit full ID\n            'author_id': str,  # Author's full ID if available\n            'is_original_content': bool,  # Whether marked as OC\n            'is_meta': bool,  # Whether marked as meta\n            'is_crosspostable': bool,  # Whether can be crossposted\n            'is_reddit_media_domain': bool,  # Whether media is hosted on Reddit\n            'is_robot_indexable': bool,  # Whether search engines should index\n            'is_created_from_ads_ui': bool,  # Whether created via ads UI\n            'is_video': bool,  # Whether the post is a video\n            'pinned': bool,  # Whether the post is pinned in the subreddit\n            'gilded': int,  # Number of times gilded\n            'total_awards_received': int,  # Total number of awards received\n            'view_count': Optional[int],  # View count if available\n            'visited': bool,  # Whether the current user has visited\n        }\n    }\n\nRaises:\n    ValueError: If submission_id is invalid or submission not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_submission_by_id.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1766,
+       "text": "def get_submission_by_id(submission_id: str, include_comments: bool = False, comment_replace_more_limit: int = 0) -> Dict[str, Any]:"
+      },
+      {
+       "file": "server.py",
+       "line": 1959,
+       "text": "logger.error(f\"Error in get_submission_by_id: {e}\")"
+      }
+     ]
+    },
+    {
+     "name": "get_submission_by_url",
+     "description": "Get a Reddit submission by its URL.\n\nArgs:\n    url: The URL of the Reddit submission to retrieve\n    include_comments: If True, load and return the full comment forest for the post\n    comment_replace_more_limit: Limit for replacing \"MoreComments\" objects (0 for none, None for all)\n\nReturns:\n    Dictionary containing structured submission information with the following structure:\n    {\n        'id': str,  # Submission ID (e.g., 'abc123')\n        'title': str,  # Submission title\n        'author': str,  # Author's username or '[deleted]' if deleted\n        'subreddit': str,  # Subreddit name\n        'score': int,  # Post score (upvotes - downvotes)\n        'upvote_ratio': float,  # Ratio of upvotes to total votes\n        'num_comments': int,  # Number of comments\n        'created_utc': float,  # Post creation timestamp (UTC)\n        'url': str,  # Full URL to the post\n        'permalink': str,  # Relative URL to the post\n        'is_self': bool,  # Whether it's a self (text) post\n        'selftext': str,  # Content of self post (if any)\n        'selftext_html': Optional[str],  # HTML formatted content\n        'link_url': str,  # URL for link posts (if any)\n        'domain': str,  # Domain of the linked content\n        'over_18': bool,  # Whether marked as NSFW\n        'spoiler': bool,  # Whether marked as spoiler\n        'stickied': bool,  # Whether stickied in the subreddit\n        'locked': bool,  # Whether comments are locked\n        'archived': bool,  # Whether the post is archived\n        'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n        'flair': Optional[Dict],  # Post flair information if any\n        'media': Optional[Dict],  # Media information if any\n        'preview': Optional[Dict],  # Preview information if available\n        'awards': List[Dict],  # List of awards received\n        'comments': Optional[List[Dict]],  # present if include_comments is True\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'subreddit_id': str,  # Subreddit full ID\n            'author_id': str,  # Author's full ID if available\n            'is_original_content': bool,  # Whether marked as OC\n            'is_meta': bool,  # Whether marked as meta\n            'is_crosspostable': bool,  # Whether can be crossposted\n            'is_reddit_media_domain': bool,  # Whether media is hosted on Reddit\n            'is_robot_indexable': bool,  # Whether search engines should index\n            'is_created_from_ads_ui': bool,  # Whether created via ads UI\n            'is_video': bool,  # Whether the post is a video\n            'pinned': bool,  # Whether the post is pinned in the subreddit\n            'gilded': int,  # Number of times gilded\n            'total_awards_received': int,  # Total number of awards received\n            'view_count': Optional[int],  # View count if available\n            'visited': bool,  # Whether the current user has visited\n        }\n    }\n\nRaises:\n    ValueError: If URL is invalid or submission not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_submission_by_url.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1562,
+       "text": "def get_submission_by_url(url: str, include_comments: bool = False, comment_replace_more_limit: int = 0) -> Dict[str, Any]:"
+      },
+      {
+       "file": "server.py",
+       "line": 1753,
+       "text": "logger.error(f\"Error in get_submission_by_url: {e}\")"
+      }
+     ]
+    },
+    {
+     "name": "get_subreddit_info",
+     "description": "Get information about a subreddit.\n\nArgs:\n    subreddit_name: Name of the subreddit (with or without 'r/' prefix)\n\nReturns:\n    Dictionary containing subreddit information\n\nRaises:\n    ValueError: If subreddit_name is invalid or subreddit not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_subreddit_info.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 899,
+       "text": "def get_subreddit_info(subreddit_name: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "get_subreddit_stats",
+     "description": "Get statistics and information about a subreddit.\n\nArgs:\n    subreddit: Name of the subreddit (with or without 'r/' prefix)\n\nReturns:\n    Dictionary containing structured subreddit information with the following structure:\n    {\n        'id': str,  # Subreddit ID (e.g., '2qgzt')\n        'display_name': str,  # Subreddit display name (without r/ prefix)\n        'title': str,  # Subreddit title\n        'public_description': str,  # Public description\n        'description': str,  # Full description (can include markdown)\n        'subscribers': int,  # Number of subscribers\n        'active_user_count': Optional[int],  # Currently active users if available\n        'created_utc': float,  # Creation timestamp (UTC)\n        'over18': bool,  # Whether marked as NSFW\n        'submission_type': str,  # Allowed submission types (any, link, self)\n        'allow_images': bool,  # Whether image uploads are allowed\n        'allow_videos': bool,  # Whether video uploads are allowed\n        'allow_polls': bool,  # Whether polls are allowed\n        'spoilers_enabled': bool,  # Whether spoiler tags are enabled\n        'wikienabled': bool,  # Whether wiki is enabled\n        'user_is_banned': bool,  # Whether current user is banned\n        'user_is_moderator': bool,  # Whether current user is a moderator\n        'user_is_subscriber': bool,  # Whether current user is a subscriber\n        'mod_permissions': List[str],  # Moderator permissions if applicable\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'url': str,  # Full URL to the subreddit\n            'moderators_count': int,  # Number of moderators\n            'rules': List[Dict],  # Subreddit rules if available\n            'features': Dict[str, bool],  # Enabled subreddit features\n        }\n    }\n\nRaises:\n    ValueError: If subreddit is invalid or not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_subreddit_stats.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1009,
+       "text": "def get_subreddit_stats(subreddit: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "get_top_posts",
+     "description": "Get top posts from a subreddit.\n\nArgs:\n    subreddit: Name of the subreddit (with or without 'r/' prefix)\n    time_filter: Time period to filter posts (e.g. \"day\", \"week\", \"month\", \"year\", \"all\")\n    limit: Number of posts to fetch (1-100)\n    include_comments: If True, load and return the full comment forest for each post\n    comment_replace_more_limit: Limit for replacing \"MoreComments\" objects (0 for none, None for all)\n\nReturns:\n    Dictionary containing structured post information with the following structure:\n    {\n        'subreddit': str,  # Subreddit name\n        'time_filter': str,  # The time period used for filtering\n        'posts': [  # List of posts, each with the following structure:\n            {\n                'id': str,  # Post ID\n                'title': str,  # Post title\n                'author': str,  # Author's username\n                'score': int,  # Post score (upvotes - downvotes)\n                'upvote_ratio': float,  # Ratio of upvotes to total votes\n                'num_comments': int,  # Number of comments\n                'created_utc': float,  # Post creation timestamp\n                'url': str,  # URL to the post\n                'permalink': str,  # Relative URL to the post\n                'is_self': bool,  # Whether it's a self (text) post\n                'selftext': str,  # Content of self post (if any)\n                'link_url': str,  # URL for link posts (if any)\n                'over_18': bool,  # Whether marked as NSFW\n                'spoiler': bool,  # Whether marked as spoiler\n                'stickied': bool,  # Whether stickied in the subreddit\n                'locked': bool,  # Whether comments are locked\n                'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n                'flair': Optional[Dict],  # Post flair information if any\n                'comments': Optional[List[Dict]],  # present if include_comments is True\n            },\n            ...\n        ],\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'post_count': int,  # Number of posts returned\n        }\n    }\n\nRaises:\n    ValueError: If subreddit is invalid or time_filter is not valid\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_top_posts.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 708,
+       "text": "def get_top_posts("
+      }
+     ]
+    },
+    {
+     "name": "get_trending_subreddits",
+     "description": "Get currently trending subreddits.\n\nArgs:\n    limit: Maximum number of trending subreddits to return (1-50)\n\nReturns:\n    Dictionary containing list of trending subreddits with their basic info\n\nRaises:\n    ValueError: If limit is invalid\n    RuntimeError: For errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_trending_subreddits.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 957,
+       "text": "def get_trending_subreddits(limit: int = 5) -> \"Dict[str, List[Dict[str, Any]]]\":"
+      }
+     ]
+    },
+    {
+     "name": "get_user_comments",
+     "description": "Get a user's comment history.\n\nArgs:\n    username: The username of the Reddit user (with or without 'u/' prefix)\n    sort: Sort order for comments - one of: \"new\", \"hot\", \"top\", \"controversial\"\n    time_filter: Time period to filter comments (e.g. \"hour\", \"day\", \"week\", \"month\", \"year\", \"all\")\n    limit: Number of comments to return (1-100)\n\nReturns:\n    Dictionary containing structured comment history with the following structure:\n    {\n        'username': str,  # The username\n        'sort': str,  # Sort method used\n        'time_filter': str,  # Time filter used\n        'comments': [  # List of comments\n            {\n                'id': str,  # Comment ID\n                'body': str,  # Comment text content\n                'author': str,  # Author's username\n                'subreddit': str,  # Subreddit where comment was posted\n                'score': int,  # Comment score (upvotes - downvotes)\n                'created_utc': float,  # Comment creation timestamp\n                'permalink': str,  # Relative URL to the comment\n                'link_title': str,  # Title of the post being commented on\n                'link_id': str,  # ID of the post\n                'parent_id': str,  # ID of parent comment or post\n                'is_submitter': bool,  # Whether commenter is the post author\n                'stickied': bool,  # Whether comment is stickied\n                'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n                'edited': bool,  # Whether comment has been edited\n                'gilded': int,  # Number of times gilded\n                'controversiality': int,  # Controversy score\n                'depth': int,  # Comment depth in thread (0 for top-level)\n            },\n            ...\n        ],\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'comment_count': int,  # Number of comments returned\n        }\n    }\n\nRaises:\n    ValueError: If username is invalid, sort method is invalid, or time_filter is invalid\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_user_comments.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 420,
+       "text": "def get_user_comments("
+      }
+     ]
+    },
+    {
+     "name": "get_user_info",
+     "description": "Get information about a Reddit user.\n\nArgs:\n    username: The username of the Reddit user to get info for\n\nReturns:\n    Dictionary containing user information with the following structure:\n    {\n        'username': str,  # User's username\n        'created_utc': float,  # Account creation timestamp\n        'comment_karma': int,  # User's comment karma\n        'link_karma': int,  # User's post/link karma\n        'has_verified_email': bool,  # Whether email is verified\n        'is_mod': bool,  # Whether user is a moderator\n        'is_gold': bool,  # Whether user has Reddit premium\n        'has_subscribed': bool,  # Whether user has subscribed to premium\n        'is_employee': bool,  # Whether user is a Reddit employee\n        'over_18': bool,  # Whether user is marked as NSFW\n        'is_suspended': bool,  # Whether account is suspended\n        'suspension_expiration_utc': Optional[float],  # When suspension ends if suspended\n        'total_karma': int,  # Total karma (comments + posts)\n        'subreddit': Optional[Dict],  # User's profile subreddit info if exists\n    }\n\nRaises:\n    ValueError: If the username is invalid or not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_user_info.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 337,
+       "text": "def get_user_info(username: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "get_user_posts",
+     "description": "Get a user's post/submission history.\n\nArgs:\n    username: The username of the Reddit user (with or without 'u/' prefix)\n    sort: Sort order for posts - one of: \"new\", \"hot\", \"top\", \"controversial\"\n    time_filter: Time period to filter posts (e.g. \"hour\", \"day\", \"week\", \"month\", \"year\", \"all\")\n    limit: Number of posts to return (1-100)\n\nReturns:\n    Dictionary containing structured post history with the following structure:\n    {\n        'username': str,  # The username\n        'sort': str,  # Sort method used\n        'time_filter': str,  # Time filter used\n        'posts': [  # List of posts\n            {\n                'id': str,  # Post ID\n                'title': str,  # Post title\n                'author': str,  # Author's username\n                'subreddit': str,  # Subreddit name\n                'score': int,  # Post score (upvotes - downvotes)\n                'upvote_ratio': float,  # Ratio of upvotes to total votes\n                'num_comments': int,  # Number of comments\n                'created_utc': float,  # Post creation timestamp\n                'url': str,  # Full URL to the post\n                'permalink': str,  # Relative URL to the post\n                'is_self': bool,  # Whether it's a self (text) post\n                'selftext': str,  # Content of self post (if any)\n                'link_url': str,  # URL for link posts (if any)\n                'domain': str,  # Domain of the linked content\n                'over_18': bool,  # Whether marked as NSFW\n                'spoiler': bool,  # Whether marked as spoiler\n                'stickied': bool,  # Whether stickied in the subreddit\n                'locked': bool,  # Whether comments are locked\n                'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n                'gilded': int,  # Number of times gilded\n            },\n            ...\n        ],\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'post_count': int,  # Number of posts returned\n        }\n    }\n\nRaises:\n    ValueError: If username is invalid, sort method is invalid, or time_filter is invalid\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__get_user_posts.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 561,
+       "text": "def get_user_posts("
+      }
+     ]
+    },
+    {
+     "name": "join_subreddit",
+     "description": "Join (subscribe to) or leave (unsubscribe from) a subreddit.\n\nArgs:\n    subreddit_name: Name of the subreddit to join/leave (with or without 'r/' prefix)\n    unsubscribe: If True, leave the subreddit instead of joining\n\nReturns:\n    Dictionary containing information about the action and subreddit\n\nRaises:\n    ValueError: If subreddit name is invalid or subreddit not found\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__join_subreddit.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1499,
+       "text": "def join_subreddit(subreddit_name: str, unsubscribe: bool = False) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "reply_to_comment",
+     "description": "Post a reply to an existing Reddit comment.\n\nArgs:\n    comment_id: The ID of the comment to reply to (can be full URL, permalink, or just ID)\n    content: The content of the reply (1-10000 characters)\n\nReturns:\n    Dictionary containing information about the created reply and parent comment\n\nRaises:\n    ValueError: If input validation fails or comment is not found\n    RuntimeError: For other errors during reply creation\n",
+     "config": "Arindam200__reddit-mcp__reply_to_comment.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1396,
+       "text": "def reply_to_comment("
+      },
+      {
+       "file": "server.py",
+       "line": 1491,
+       "text": "logger.exception(f\"Error in reply_to_comment for ID {comment_id}: {e}\")"
+      }
+     ]
+    },
+    {
+     "name": "reply_to_post",
+     "description": "Post a reply to an existing Reddit post.\n\nArgs:\n    post_id: The ID of the post to reply to (can be full URL, permalink, or just ID)\n    content: The content of the reply (1-10000 characters)\n    subreddit: The subreddit name if known (for validation, with or without 'r/' prefix)\n\nReturns:\n    Dictionary containing information about the created reply and parent post\n\nRaises:\n    ValueError: If input validation fails or post is not found\n    RuntimeError: For other errors during reply creation\n",
+     "config": "Arindam200__reddit-mcp__reply_to_post.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1281,
+       "text": "def reply_to_post("
+      },
+      {
+       "file": "server.py",
+       "line": 1388,
+       "text": "logger.exception(f\"Error in reply_to_post for ID {post_id}: {e}\")"
+      }
+     ]
+    },
+    {
+     "name": "search_posts",
+     "description": "Search for Reddit posts using a search query.\n\nArgs:\n    query: The search query/term to search for\n    subreddit: Optional subreddit to limit search to (with or without 'r/' prefix). If None, searches all of Reddit\n    sort: Sort order for results - one of: \"relevance\", \"hot\", \"top\", \"new\", \"comments\"\n    time_filter: Time period to filter results (e.g. \"hour\", \"day\", \"week\", \"month\", \"year\", \"all\")\n    limit: Number of posts to return (1-100)\n\nReturns:\n    Dictionary containing structured search results with the following structure:\n    {\n        'query': str,  # The search query used\n        'subreddit': Optional[str],  # Subreddit searched (None if searching all of Reddit)\n        'sort': str,  # Sort method used\n        'time_filter': str,  # Time filter used\n        'posts': [  # List of matching posts\n            {\n                'id': str,  # Post ID\n                'title': str,  # Post title\n                'author': str,  # Author's username\n                'subreddit': str,  # Subreddit name\n                'score': int,  # Post score (upvotes - downvotes)\n                'upvote_ratio': float,  # Ratio of upvotes to total votes\n                'num_comments': int,  # Number of comments\n                'created_utc': float,  # Post creation timestamp\n                'url': str,  # URL to the post\n                'permalink': str,  # Relative URL to the post\n                'is_self': bool,  # Whether it's a self (text) post\n                'selftext': str,  # Content of self post (if any)\n                'link_url': str,  # URL for link posts (if any)\n                'over_18': bool,  # Whether marked as NSFW\n                'spoiler': bool,  # Whether marked as spoiler\n                'stickied': bool,  # Whether stickied in the subreddit\n                'locked': bool,  # Whether comments are locked\n                'distinguished': Optional[str],  # Distinguishing type (e.g., 'moderator')\n                'flair': Optional[Dict],  # Post flair information if any\n            },\n            ...\n        ],\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'result_count': int,  # Number of results returned\n            'search_scope': str,  # \"all\" or subreddit name\n        }\n    }\n\nRaises:\n    ValueError: If query is empty, sort method is invalid, or time_filter is invalid\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__search_posts.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 1974,
+       "text": "def search_posts("
+      }
+     ]
+    },
+    {
+     "name": "who_am_i",
+     "description": "Get information about the currently authenticated user.\n\nReturns:\n    Dictionary containing structured user information with the following structure:\n    {\n        'id': str,  # Full user ID (e.g., 't2_abc123')\n        'name': str,  # Username\n        'created_utc': float,  # Account creation timestamp\n        'comment_karma': int,  # Comment karma\n        'link_karma': int,  # Post/link karma\n        'total_karma': int,  # Total karma (comments + posts)\n        'awardee_karma': int,  # Karma from awards received\n        'awarder_karma': int,  # Karma from awards given\n        'has_verified_email': bool,  # Whether email is verified\n        'is_employee': bool,  # Whether user is a Reddit employee\n        'is_friend': bool,  # Whether user is a friend\n        'is_gold': bool,  # Whether user has Reddit Premium\n        'is_mod': bool,  # Whether user is a moderator\n        'is_suspended': bool,  # Whether account is suspended\n        'verified': bool,  # Whether account is verified\n        'has_subscribed': bool,  # Whether user has subscribed to Premium\n        'snoovatar_img': str,  # URL to snoovatar image\n        'icon_img': str,  # URL to user's icon\n        'pref_show_snoovatar': bool,  # Whether to show snoovatar\n        'snoovatar_size': Optional[List[int]],  # Snoovatar dimensions\n        'subreddit': Optional[Dict],  # User's profile subreddit info\n        'metadata': {\n            'fetched_at': float,  # Timestamp when data was fetched\n            'is_authenticated': bool,  # Whether user is authenticated\n            'is_moderator': bool,  # Whether user is a moderator\n            'has_verified_email': bool,  # Whether email is verified\n            'has_mail': bool,  # Whether user has unread messages\n            'has_mod_mail': bool,  # Whether user has mod mail\n            'has_subscribed': bool,  # Whether user has subscribed to Premium\n            'in_chat': bool,  # Whether user is in chat\n            'in_redesign_beta': bool,  # Whether user is in redesign beta\n            'new_modmail_exists': bool,  # Whether user has new modmail\n            'pref_no_profanity': bool,  # Whether to filter profanity\n            'suspension_expiration_utc': Optional[float],  # When suspension ends if suspended\n        }\n    }\n\nRaises:\n    ValueError: If user authentication is not available\n    RuntimeError: For other errors during the operation\n",
+     "config": "Arindam200__reddit-mcp__who_am_i.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 2182,
+       "text": "def who_am_i() -> Dict[str, Any]:"
+      },
+      {
+       "file": "server.py",
+       "line": 2316,
+       "text": "logger.error(f\"Error in who_am_i: {e}\")"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "jagan-shanmugam/open-streetmap-mcp",
+   "slug": "jagan-shanmugam__open-streetmap-mcp",
+   "lang": "python",
+   "commit": "4319f9f0744f089209081e8c20fc854db7a1a43c",
+   "path": "eval/targets/jagan-shanmugam__open-streetmap-mcp",
+   "surface_loc": 2311,
+   "tools": [
+    {
+     "name": "analyze_commute",
+     "description": "\nPerform a detailed commute analysis between home and work locations.\n\nThis advanced tool analyzes commute options between two locations (typically home and work),\ncomparing multiple transportation modes and providing detailed metrics for each option.\nIncludes estimated travel times, distances, turn-by-turn directions, and other commute-relevant\ndata. Essential for real estate decisions, lifestyle planning, and workplace relocation analysis.\n\nArgs:\n    home_latitude: Home location latitude (decimal degrees)\n    home_longitude: Home location longitude (decimal degrees)\n    work_latitude: Workplace location latitude (decimal degrees)\n    work_longitude: Workplace location longitude (decimal degrees)\n    modes: List of transportation modes to analyze (options: \"car\", \"foot\", \"bike\")\n    depart_at: Optional departure time (format: \"HH:MM\") for time-sensitive routing\n    \nReturns:\n    Comprehensive commute analysis with:\n    - Summary comparing all transportation modes\n    - Detailed route information for each mode\n    - Total distance and duration for each option\n    - Turn-by-turn directions\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__analyze_commute.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 950,
+       "text": "async def analyze_commute("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 257,
+       "text": "async def analyze_commute(self, home_location, work_location, modes=None):"
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 273,
+       "text": "\"analyze_commute\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 505,
+       "text": "commute = await assistant.analyze_commute("
+      }
+     ]
+    },
+    {
+     "name": "analyze_neighborhood",
+     "description": "\nGenerate a comprehensive neighborhood analysis focused on livability factors.\n\nThis advanced analysis tool evaluates a neighborhood based on multiple livability factors,\nincluding amenities, transportation options, green spaces, and services. Results include\ncounts and proximity scores for various categories, helping to assess the overall quality\nand convenience of a residential area. Invaluable for real estate decisions, relocation\nplanning, and neighborhood comparisons.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Analysis radius in meters (defaults to 1000m/1km)\n    \nReturns:\n    Comprehensive neighborhood profile including:\n    - Overall neighborhood score\n    - Walkability assessment\n    - Public transportation access\n    - Nearby amenities (shops, restaurants, services)\n    - Green spaces and recreation\n    - Education and healthcare facilities\n    - Detailed counts and distance metrics for each category\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__analyze_neighborhood.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1226,
+       "text": "async def analyze_neighborhood("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 333,
+       "text": "async def analyze_neighborhood(self, place, radius=1000):"
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 343,
+       "text": "\"analyze_neighborhood\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 551,
+       "text": "livability = await assistant.analyze_neighborhood(\"Cambridge, MA\", radius=1500)"
+      }
+     ]
+    },
+    {
+     "name": "explore_area",
+     "description": "\nGenerate a comprehensive profile of an area including all amenities and features.\n\nThis powerful analysis tool creates a detailed overview of a neighborhood or area by\nidentifying and categorizing all geographic features, amenities, and points of interest.\nResults are organized by category for easy analysis. Excellent for neighborhood research,\narea comparisons, and location-based decision making.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 500m)\n    \nReturns:\n    In-depth area profile including:\n    - Address and location context\n    - Total feature count\n    - Features organized by category and subcategory\n    - Each feature includes name, coordinates, and detailed metadata\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__explore_area.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 615,
+       "text": "async def explore_area("
+      },
+      {
+       "file": "examples/client.py",
+       "line": 76,
+       "text": "\"explore_area\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 190,
+       "text": "\"explore_area\","
+      }
+     ]
+    },
+    {
+     "name": "find_ev_charging_stations",
+     "description": "\nLocate electric vehicle charging stations near a specific location.\n\nThis specialized search tool identifies EV charging infrastructure within a specified\ndistance from a location. Results can be filtered by connector type (Tesla, CCS, CHAdeMO, etc.)\nand minimum power delivery. Essential for EV owners planning trips or evaluating potential\ncharging stops.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 5000m/5km)\n    connector_types: Optional list of specific connector types to filter by\n                    (e.g., [\"type2\", \"ccs\", \"tesla\"])\n    min_power: Minimum charging power in kW\n    \nReturns:\n    List of charging stations with:\n    - Location name and operator\n    - Available connector types\n    - Charging speeds\n    - Number of charging points\n    - Access restrictions\n    - Other relevant metadata\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__find_ev_charging_stations.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1054,
+       "text": "async def find_ev_charging_stations("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 308,
+       "text": "\"find_ev_charging_stations\","
+      }
+     ]
+    },
+    {
+     "name": "find_nearby_places",
+     "description": "\nDiscover points of interest and amenities near a specific location.\n\nThis tool performs a comprehensive search around a geographic point to identify\nnearby establishments, amenities, and points of interest. Results are organized by\ncategory and subcategory, making it easy to find specific types of places. Essential\nfor location-based recommendations, neighborhood analysis, and proximity-based decision making.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 1000m/1km)\n    categories: List of OSM categories to search for (e.g., [\"amenity\", \"shop\", \"tourism\"]).\n               If omitted, searches common categories.\n    limit: Maximum number of total results to return\n    \nReturns:\n    Structured dictionary containing:\n    - Original query parameters\n    - Total count of places found\n    - Results grouped by category and subcategory\n    - Each place includes name, coordinates, and associated tags\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__find_nearby_places.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 264,
+       "text": "async def find_nearby_places("
+      },
+      {
+       "file": "examples/client.py",
+       "line": 47,
+       "text": "\"find_nearby_places\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 80,
+       "text": "\"find_nearby_places\","
+      }
+     ]
+    },
+    {
+     "name": "find_parking_facilities",
+     "description": "\nLocate parking facilities near a specific location.\n\nThis tool finds parking options (lots, garages, street parking) near a specified location.\nResults can be filtered by parking type and include capacity information where available.\nUseful for trip planning, city navigation, and evaluating parking availability in urban areas.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 1000m/1km)\n    parking_type: Optional filter for specific types of parking facilities\n                 (\"surface\", \"underground\", \"multi-storey\", etc.)\n    \nReturns:\n    List of parking facilities with:\n    - Name and type\n    - Capacity information if available\n    - Fee structure if available\n    - Access restrictions\n    - Distance from search point\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__find_parking_facilities.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1460,
+       "text": "async def find_parking_facilities("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 378,
+       "text": "\"find_parking_facilities\","
+      }
+     ]
+    },
+    {
+     "name": "find_schools_nearby",
+     "description": "\nLocate educational institutions near a specific location, filtered by education level.\n\nThis specialized search tool identifies schools, colleges, and other educational institutions\nwithin a specified distance from a location. Results can be filtered by education level\n(elementary, middle, high school, university, etc.). Essential for families evaluating\nneighborhoods or real estate purchases with education considerations.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 2000m/2km)\n    education_levels: Optional list of specific education levels to filter by\n                     (e.g., [\"elementary\", \"secondary\", \"university\"])\n    \nReturns:\n    List of educational institutions with:\n    - Name and type\n    - Distance from search point\n    - Education levels offered\n    - Contact information if available\n    - Other relevant metadata\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__find_schools_nearby.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 801,
+       "text": "async def find_schools_nearby("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 233,
+       "text": "\"find_schools_nearby\","
+      }
+     ]
+    },
+    {
+     "name": "geocode_address",
+     "description": "\nConvert an address or place name to geographic coordinates with detailed location information.\n\nThis tool takes a text description of a location (such as an address, landmark name, or\nplace of interest) and returns its precise geographic coordinates along with rich metadata.\nThe results can be used for mapping, navigation, location-based analysis, and as input to\nother geospatial tools.\n\nArgs:\n    address: The address, place name, landmark, or description to geocode (e.g., \"Empire State Building\", \n            \"123 Main St, Springfield\", \"Golden Gate Park, San Francisco\")\n    \nReturns:\n    List of matching locations with:\n    - Geographic coordinates (latitude/longitude)\n    - Formatted address\n    - Administrative boundaries (city, state, country)\n    - OSM type and ID\n    - Bounding box (if applicable)\n    - Importance ranking\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__geocode_address.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 203,
+       "text": "async def geocode_address(address: str, ctx: Context) -> List[Dict]:"
+      },
+      {
+       "file": "examples/client.py",
+       "line": 28,
+       "text": "\"geocode_address\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 52,
+       "text": "\"geocode_address\","
+      }
+     ]
+    },
+    {
+     "name": "get_route_directions",
+     "description": "\nCalculate detailed route directions between two geographic points.\n\nThis tool provides comprehensive routing information between two locations using OpenStreetMap/OSRM.\nThe output can be minimized using the steps, overview, and annotations parameters to reduce the response size.\n\nArgs:\n    from_latitude: Starting point latitude (decimal degrees)\n    from_longitude: Starting point longitude (decimal degrees)\n    to_latitude: Destination latitude (decimal degrees)\n    to_longitude: Destination longitude (decimal degrees)\n    ctx: Context (provided internally by MCP)\n    mode: Transportation mode (\"car\", \"bike\", \"foot\")\n    steps: Turn-by-turn instructions (True/False, Default: False)\n    overview: Geometry output (\"full\", \"simplified\", \"false\"; Default: \"simplified\")\n    annotations: Additional segment info (True/False, Default: False)\n\nReturns:\n    Dictionary with routing information (summary, directions, geometry, waypoints)\n\nExample:\n    {\n      \"from_latitude\": 51.3334193,\n      \"from_longitude\": 9.4540423,\n      \"to_latitude\": 51.3295516,\n      \"to_longitude\": 9.4576721,\n      \"mode\": \"car\",\n      \"steps\": false,\n      \"overview\": \"simplified\",\n      \"annotations\": false\n    }\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__get_route_directions.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 349,
+       "text": "async def get_route_directions("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 111,
+       "text": "\"get_route_directions\","
+      }
+     ]
+    },
+    {
+     "name": "reverse_geocode",
+     "description": "\nConvert geographic coordinates to a detailed address and location description.\n\nThis tool takes a specific point on Earth (latitude and longitude) and returns \ncomprehensive information about that location, including its address, nearby landmarks,\nadministrative boundaries, and other contextual information. Useful for translating\nGPS coordinates into human-readable locations.\n\nArgs:\n    latitude: The latitude coordinate (decimal degrees, WGS84)\n    longitude: The longitude coordinate (decimal degrees, WGS84)\n    \nReturns:\n    Detailed address and location information including:\n    - Formatted address\n    - Building, street, city, state, country\n    - Administrative hierarchy\n    - OSM metadata\n    - Postal code and other relevant identifiers\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__reverse_geocode.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 45,
+       "text": "async def reverse_geocode(self, lat: float, lon: float) -> Dict:"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 239,
+       "text": "async def reverse_geocode(latitude: float, longitude: float, ctx: Context) -> Dict:"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 261,
+       "text": "return await osm_client.reverse_geocode(latitude, longitude)"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 707,
+       "text": "address_info = await osm_client.reverse_geocode(latitude, longitude)"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 985,
+       "text": "home_info = await osm_client.reverse_geocode(home_latitude, home_longitude)"
+      }
+     ]
+    },
+    {
+     "name": "search_category",
+     "description": "\nSearch for specific types of places within a defined geographic area.\n\nThis tool allows targeted searches for places matching specific categories within\na rectangular geographic region. It's particularly useful for filtering places by type\n(restaurants, schools, parks, etc.) within a neighborhood or city district. Results include\ncomplete location details and metadata about each matching place.\n\nArgs:\n    category: Main OSM category to search for (e.g., \"amenity\", \"shop\", \"tourism\", \"building\")\n    min_latitude: Southern boundary of search area (decimal degrees)\n    min_longitude: Western boundary of search area (decimal degrees)\n    max_latitude: Northern boundary of search area (decimal degrees)\n    max_longitude: Eastern boundary of search area (decimal degrees)\n    subcategories: Optional list of specific subcategories to filter by (e.g., [\"restaurant\", \"cafe\"])\n    \nReturns:\n    Structured results including:\n    - Query parameters\n    - Count of matching places\n    - List of matching places with coordinates, names, and metadata\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__search_category.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 442,
+       "text": "async def search_category("
+      }
+     ]
+    },
+    {
+     "name": "suggest_meeting_point",
+     "description": "\nFind the optimal meeting place for multiple people coming from different locations.\n\nThis tool calculates a central meeting point based on the locations of multiple individuals,\nthen recommends suitable venues near that central point. Ideal for planning social gatherings,\nbusiness meetings, or any situation where multiple people need to converge from different\nstarting points.\n\nArgs:\n    locations: List of dictionaries, each containing the latitude and longitude of a person's location\n              Example: [{\"latitude\": 37.7749, \"longitude\": -122.4194}, {\"latitude\": 37.3352, \"longitude\": -121.8811}]\n    venue_type: Type of venue to suggest as a meeting point. Options include:\n               \"cafe\", \"restaurant\", \"bar\", \"library\", \"park\", etc.\n    \nReturns:\n    Meeting point recommendations including:\n    - Calculated center point coordinates\n    - List of suggested venues with names and details\n    - Total number of matching venues in the area\n",
+     "config": "jagan-shanmugam__open-streetmap-mcp__suggest_meeting_point.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 527,
+       "text": "async def suggest_meeting_point("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 161,
+       "text": "\"suggest_meeting_point\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "jagan-shanmugam/osm-mcp-server",
+   "slug": "jagan-shanmugam__osm-mcp-server",
+   "lang": "python",
+   "commit": "4319f9f0744f089209081e8c20fc854db7a1a43c",
+   "path": "eval/targets/jagan-shanmugam__osm-mcp-server",
+   "surface_loc": 2311,
+   "tools": [
+    {
+     "name": "analyze_commute",
+     "description": "\nPerform a detailed commute analysis between home and work locations.\n\nThis advanced tool analyzes commute options between two locations (typically home and work),\ncomparing multiple transportation modes and providing detailed metrics for each option.\nIncludes estimated travel times, distances, turn-by-turn directions, and other commute-relevant\ndata. Essential for real estate decisions, lifestyle planning, and workplace relocation analysis.\n\nArgs:\n    home_latitude: Home location latitude (decimal degrees)\n    home_longitude: Home location longitude (decimal degrees)\n    work_latitude: Workplace location latitude (decimal degrees)\n    work_longitude: Workplace location longitude (decimal degrees)\n    modes: List of transportation modes to analyze (options: \"car\", \"foot\", \"bike\")\n    depart_at: Optional departure time (format: \"HH:MM\") for time-sensitive routing\n    \nReturns:\n    Comprehensive commute analysis with:\n    - Summary comparing all transportation modes\n    - Detailed route information for each mode\n    - Total distance and duration for each option\n    - Turn-by-turn directions\n",
+     "config": "jagan-shanmugam__osm-mcp-server__analyze_commute.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 950,
+       "text": "async def analyze_commute("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 257,
+       "text": "async def analyze_commute(self, home_location, work_location, modes=None):"
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 273,
+       "text": "\"analyze_commute\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 505,
+       "text": "commute = await assistant.analyze_commute("
+      }
+     ]
+    },
+    {
+     "name": "analyze_neighborhood",
+     "description": "\nGenerate a comprehensive neighborhood analysis focused on livability factors.\n\nThis advanced analysis tool evaluates a neighborhood based on multiple livability factors,\nincluding amenities, transportation options, green spaces, and services. Results include\ncounts and proximity scores for various categories, helping to assess the overall quality\nand convenience of a residential area. Invaluable for real estate decisions, relocation\nplanning, and neighborhood comparisons.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Analysis radius in meters (defaults to 1000m/1km)\n    \nReturns:\n    Comprehensive neighborhood profile including:\n    - Overall neighborhood score\n    - Walkability assessment\n    - Public transportation access\n    - Nearby amenities (shops, restaurants, services)\n    - Green spaces and recreation\n    - Education and healthcare facilities\n    - Detailed counts and distance metrics for each category\n",
+     "config": "jagan-shanmugam__osm-mcp-server__analyze_neighborhood.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1226,
+       "text": "async def analyze_neighborhood("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 333,
+       "text": "async def analyze_neighborhood(self, place, radius=1000):"
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 343,
+       "text": "\"analyze_neighborhood\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 551,
+       "text": "livability = await assistant.analyze_neighborhood(\"Cambridge, MA\", radius=1500)"
+      }
+     ]
+    },
+    {
+     "name": "explore_area",
+     "description": "\nGenerate a comprehensive profile of an area including all amenities and features.\n\nThis powerful analysis tool creates a detailed overview of a neighborhood or area by\nidentifying and categorizing all geographic features, amenities, and points of interest.\nResults are organized by category for easy analysis. Excellent for neighborhood research,\narea comparisons, and location-based decision making.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 500m)\n    \nReturns:\n    In-depth area profile including:\n    - Address and location context\n    - Total feature count\n    - Features organized by category and subcategory\n    - Each feature includes name, coordinates, and detailed metadata\n",
+     "config": "jagan-shanmugam__osm-mcp-server__explore_area.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 615,
+       "text": "async def explore_area("
+      },
+      {
+       "file": "examples/client.py",
+       "line": 76,
+       "text": "\"explore_area\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 190,
+       "text": "\"explore_area\","
+      }
+     ]
+    },
+    {
+     "name": "find_ev_charging_stations",
+     "description": "\nLocate electric vehicle charging stations near a specific location.\n\nThis specialized search tool identifies EV charging infrastructure within a specified\ndistance from a location. Results can be filtered by connector type (Tesla, CCS, CHAdeMO, etc.)\nand minimum power delivery. Essential for EV owners planning trips or evaluating potential\ncharging stops.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 5000m/5km)\n    connector_types: Optional list of specific connector types to filter by\n                    (e.g., [\"type2\", \"ccs\", \"tesla\"])\n    min_power: Minimum charging power in kW\n    \nReturns:\n    List of charging stations with:\n    - Location name and operator\n    - Available connector types\n    - Charging speeds\n    - Number of charging points\n    - Access restrictions\n    - Other relevant metadata\n",
+     "config": "jagan-shanmugam__osm-mcp-server__find_ev_charging_stations.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1054,
+       "text": "async def find_ev_charging_stations("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 308,
+       "text": "\"find_ev_charging_stations\","
+      }
+     ]
+    },
+    {
+     "name": "find_nearby_places",
+     "description": "\nDiscover points of interest and amenities near a specific location.\n\nThis tool performs a comprehensive search around a geographic point to identify\nnearby establishments, amenities, and points of interest. Results are organized by\ncategory and subcategory, making it easy to find specific types of places. Essential\nfor location-based recommendations, neighborhood analysis, and proximity-based decision making.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 1000m/1km)\n    categories: List of OSM categories to search for (e.g., [\"amenity\", \"shop\", \"tourism\"]).\n               If omitted, searches common categories.\n    limit: Maximum number of total results to return\n    \nReturns:\n    Structured dictionary containing:\n    - Original query parameters\n    - Total count of places found\n    - Results grouped by category and subcategory\n    - Each place includes name, coordinates, and associated tags\n",
+     "config": "jagan-shanmugam__osm-mcp-server__find_nearby_places.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 264,
+       "text": "async def find_nearby_places("
+      },
+      {
+       "file": "examples/client.py",
+       "line": 47,
+       "text": "\"find_nearby_places\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 80,
+       "text": "\"find_nearby_places\","
+      }
+     ]
+    },
+    {
+     "name": "find_parking_facilities",
+     "description": "\nLocate parking facilities near a specific location.\n\nThis tool finds parking options (lots, garages, street parking) near a specified location.\nResults can be filtered by parking type and include capacity information where available.\nUseful for trip planning, city navigation, and evaluating parking availability in urban areas.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 1000m/1km)\n    parking_type: Optional filter for specific types of parking facilities\n                 (\"surface\", \"underground\", \"multi-storey\", etc.)\n    \nReturns:\n    List of parking facilities with:\n    - Name and type\n    - Capacity information if available\n    - Fee structure if available\n    - Access restrictions\n    - Distance from search point\n",
+     "config": "jagan-shanmugam__osm-mcp-server__find_parking_facilities.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 1460,
+       "text": "async def find_parking_facilities("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 378,
+       "text": "\"find_parking_facilities\","
+      }
+     ]
+    },
+    {
+     "name": "find_schools_nearby",
+     "description": "\nLocate educational institutions near a specific location, filtered by education level.\n\nThis specialized search tool identifies schools, colleges, and other educational institutions\nwithin a specified distance from a location. Results can be filtered by education level\n(elementary, middle, high school, university, etc.). Essential for families evaluating\nneighborhoods or real estate purchases with education considerations.\n\nArgs:\n    latitude: Center point latitude (decimal degrees)\n    longitude: Center point longitude (decimal degrees)\n    radius: Search radius in meters (defaults to 2000m/2km)\n    education_levels: Optional list of specific education levels to filter by\n                     (e.g., [\"elementary\", \"secondary\", \"university\"])\n    \nReturns:\n    List of educational institutions with:\n    - Name and type\n    - Distance from search point\n    - Education levels offered\n    - Contact information if available\n    - Other relevant metadata\n",
+     "config": "jagan-shanmugam__osm-mcp-server__find_schools_nearby.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 801,
+       "text": "async def find_schools_nearby("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 233,
+       "text": "\"find_schools_nearby\","
+      }
+     ]
+    },
+    {
+     "name": "geocode_address",
+     "description": "\nConvert an address or place name to geographic coordinates with detailed location information.\n\nThis tool takes a text description of a location (such as an address, landmark name, or\nplace of interest) and returns its precise geographic coordinates along with rich metadata.\nThe results can be used for mapping, navigation, location-based analysis, and as input to\nother geospatial tools.\n\nArgs:\n    address: The address, place name, landmark, or description to geocode (e.g., \"Empire State Building\", \n            \"123 Main St, Springfield\", \"Golden Gate Park, San Francisco\")\n    \nReturns:\n    List of matching locations with:\n    - Geographic coordinates (latitude/longitude)\n    - Formatted address\n    - Administrative boundaries (city, state, country)\n    - OSM type and ID\n    - Bounding box (if applicable)\n    - Importance ranking\n",
+     "config": "jagan-shanmugam__osm-mcp-server__geocode_address.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 203,
+       "text": "async def geocode_address(address: str, ctx: Context) -> List[Dict]:"
+      },
+      {
+       "file": "examples/client.py",
+       "line": 28,
+       "text": "\"geocode_address\","
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 52,
+       "text": "\"geocode_address\","
+      }
+     ]
+    },
+    {
+     "name": "get_route_directions",
+     "description": "\nCalculate detailed route directions between two geographic points.\n\nThis tool provides comprehensive routing information between two locations using OpenStreetMap/OSRM.\nThe output can be minimized using the steps, overview, and annotations parameters to reduce the response size.\n\nArgs:\n    from_latitude: Starting point latitude (decimal degrees)\n    from_longitude: Starting point longitude (decimal degrees)\n    to_latitude: Destination latitude (decimal degrees)\n    to_longitude: Destination longitude (decimal degrees)\n    ctx: Context (provided internally by MCP)\n    mode: Transportation mode (\"car\", \"bike\", \"foot\")\n    steps: Turn-by-turn instructions (True/False, Default: False)\n    overview: Geometry output (\"full\", \"simplified\", \"false\"; Default: \"simplified\")\n    annotations: Additional segment info (True/False, Default: False)\n\nReturns:\n    Dictionary with routing information (summary, directions, geometry, waypoints)\n\nExample:\n    {\n      \"from_latitude\": 51.3334193,\n      \"from_longitude\": 9.4540423,\n      \"to_latitude\": 51.3295516,\n      \"to_longitude\": 9.4576721,\n      \"mode\": \"car\",\n      \"steps\": false,\n      \"overview\": \"simplified\",\n      \"annotations\": false\n    }\n",
+     "config": "jagan-shanmugam__osm-mcp-server__get_route_directions.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 349,
+       "text": "async def get_route_directions("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 111,
+       "text": "\"get_route_directions\","
+      }
+     ]
+    },
+    {
+     "name": "reverse_geocode",
+     "description": "\nConvert geographic coordinates to a detailed address and location description.\n\nThis tool takes a specific point on Earth (latitude and longitude) and returns \ncomprehensive information about that location, including its address, nearby landmarks,\nadministrative boundaries, and other contextual information. Useful for translating\nGPS coordinates into human-readable locations.\n\nArgs:\n    latitude: The latitude coordinate (decimal degrees, WGS84)\n    longitude: The longitude coordinate (decimal degrees, WGS84)\n    \nReturns:\n    Detailed address and location information including:\n    - Formatted address\n    - Building, street, city, state, country\n    - Administrative hierarchy\n    - OSM metadata\n    - Postal code and other relevant identifiers\n",
+     "config": "jagan-shanmugam__osm-mcp-server__reverse_geocode.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 45,
+       "text": "async def reverse_geocode(self, lat: float, lon: float) -> Dict:"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 239,
+       "text": "async def reverse_geocode(latitude: float, longitude: float, ctx: Context) -> Dict:"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 261,
+       "text": "return await osm_client.reverse_geocode(latitude, longitude)"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 707,
+       "text": "address_info = await osm_client.reverse_geocode(latitude, longitude)"
+      },
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 985,
+       "text": "home_info = await osm_client.reverse_geocode(home_latitude, home_longitude)"
+      }
+     ]
+    },
+    {
+     "name": "search_category",
+     "description": "\nSearch for specific types of places within a defined geographic area.\n\nThis tool allows targeted searches for places matching specific categories within\na rectangular geographic region. It's particularly useful for filtering places by type\n(restaurants, schools, parks, etc.) within a neighborhood or city district. Results include\ncomplete location details and metadata about each matching place.\n\nArgs:\n    category: Main OSM category to search for (e.g., \"amenity\", \"shop\", \"tourism\", \"building\")\n    min_latitude: Southern boundary of search area (decimal degrees)\n    min_longitude: Western boundary of search area (decimal degrees)\n    max_latitude: Northern boundary of search area (decimal degrees)\n    max_longitude: Eastern boundary of search area (decimal degrees)\n    subcategories: Optional list of specific subcategories to filter by (e.g., [\"restaurant\", \"cafe\"])\n    \nReturns:\n    Structured results including:\n    - Query parameters\n    - Count of matching places\n    - List of matching places with coordinates, names, and metadata\n",
+     "config": "jagan-shanmugam__osm-mcp-server__search_category.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 442,
+       "text": "async def search_category("
+      }
+     ]
+    },
+    {
+     "name": "suggest_meeting_point",
+     "description": "\nFind the optimal meeting place for multiple people coming from different locations.\n\nThis tool calculates a central meeting point based on the locations of multiple individuals,\nthen recommends suitable venues near that central point. Ideal for planning social gatherings,\nbusiness meetings, or any situation where multiple people need to converge from different\nstarting points.\n\nArgs:\n    locations: List of dictionaries, each containing the latitude and longitude of a person's location\n              Example: [{\"latitude\": 37.7749, \"longitude\": -122.4194}, {\"latitude\": 37.3352, \"longitude\": -121.8811}]\n    venue_type: Type of venue to suggest as a meeting point. Options include:\n               \"cafe\", \"restaurant\", \"bar\", \"library\", \"park\", etc.\n    \nReturns:\n    Meeting point recommendations including:\n    - Calculated center point coordinates\n    - List of suggested venues with names and details\n    - Total number of matching venues in the area\n",
+     "config": "jagan-shanmugam__osm-mcp-server__suggest_meeting_point.json",
+     "hints": [
+      {
+       "file": "src/osm_mcp_server/server.py",
+       "line": 527,
+       "text": "async def suggest_meeting_point("
+      },
+      {
+       "file": "examples/location_assistant_client.py",
+       "line": 161,
+       "text": "\"suggest_meeting_point\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "imprvhub/mcp-claude-spotify",
+   "slug": "imprvhub__mcp-claude-spotify",
+   "lang": "node",
+   "commit": "28976556b98a651fb3eb8333136ebe8c6743f72a",
+   "path": "eval/targets/imprvhub__mcp-claude-spotify",
+   "surface_loc": 2300,
+   "tools": [
+    {
+     "name": "add-tracks-to-playlist",
+     "description": "Add tracks to a playlist",
+     "config": "imprvhub__mcp-claude-spotify__add-tracks-to-playlist.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 811,
+       "text": "name: \"add-tracks-to-playlist\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1500,
+       "text": "if (name === \"add-tracks-to-playlist\") {"
+      }
+     ]
+    },
+    {
+     "name": "auth-spotify",
+     "description": "Authenticate with Spotify",
+     "config": "imprvhub__mcp-claude-spotify__auth-spotify.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 691,
+       "text": "name: \"auth-spotify\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1063,
+       "text": "if (name === \"auth-spotify\") {"
+      }
+     ]
+    },
+    {
+     "name": "create-playlist",
+     "description": "Create a new playlist for the current user",
+     "config": "imprvhub__mcp-claude-spotify__create-playlist.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 789,
+       "text": "name: \"create-playlist\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1474,
+       "text": "if (name === \"create-playlist\") {"
+      }
+     ]
+    },
+    {
+     "name": "delete-playlist",
+     "description": "Unfollow a playlist (removes it from your library, but the playlist still exists on Spotify)",
+     "config": "imprvhub__mcp-claude-spotify__delete-playlist.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 854,
+       "text": "name: \"delete-playlist\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1580,
+       "text": "if (name === \"delete-playlist\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-current-playback",
+     "description": "Get information about the user's current playback state",
+     "config": "imprvhub__mcp-claude-spotify__get-current-playback.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 722,
+       "text": "name: \"get-current-playback\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1303,
+       "text": "if (name === \"get-current-playback\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-playlist-cover",
+     "description": "Get the cover image of a playlist",
+     "config": "imprvhub__mcp-claude-spotify__get-playlist-cover.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 919,
+       "text": "name: \"get-playlist-cover\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1648,
+       "text": "if (name === \"get-playlist-cover\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-playlist-tracks",
+     "description": "Get the tracks in a playlist",
+     "config": "imprvhub__mcp-claude-spotify__get-playlist-tracks.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 832,
+       "text": "name: \"get-playlist-tracks\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1523,
+       "text": "if (name === \"get-playlist-tracks\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-recently-played",
+     "description": "Get the user's recently played tracks",
+     "config": "imprvhub__mcp-claude-spotify__get-recently-played.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 933,
+       "text": "name: \"get-recently-played\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1674,
+       "text": "if (name === \"get-recently-played\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-recommendations",
+     "description": "Get track recommendations based on seeds",
+     "config": "imprvhub__mcp-claude-spotify__get-recommendations.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 998,
+       "text": "name: \"get-recommendations\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1761,
+       "text": "if (name === \"get-recommendations\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-top-tracks",
+     "description": "Get the user's top played tracks over a specified time range",
+     "config": "imprvhub__mcp-claude-spotify__get-top-tracks.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 1032,
+       "text": "name: \"get-top-tracks\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1806,
+       "text": "if (name === \"get-top-tracks\") {"
+      }
+     ]
+    },
+    {
+     "name": "get-user-playlists",
+     "description": "Get a list of the user's playlists",
+     "config": "imprvhub__mcp-claude-spotify__get-user-playlists.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 772,
+       "text": "name: \"get-user-playlists\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1425,
+       "text": "if (name === \"get-user-playlists\") {"
+      }
+     ]
+    },
+    {
+     "name": "next-track",
+     "description": "Skip to the next track",
+     "config": "imprvhub__mcp-claude-spotify__next-track.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 756,
+       "text": "name: \"next-track\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1399,
+       "text": "if (name === \"next-track\") {"
+      }
+     ]
+    },
+    {
+     "name": "pause-playback",
+     "description": "Pause the user's playback",
+     "config": "imprvhub__mcp-claude-spotify__pause-playback.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 748,
+       "text": "name: \"pause-playback\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1386,
+       "text": "if (name === \"pause-playback\") {"
+      }
+     ]
+    },
+    {
+     "name": "play-track",
+     "description": "Play a specific track on an active device",
+     "config": "imprvhub__mcp-claude-spotify__play-track.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 730,
+       "text": "name: \"play-track\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1367,
+       "text": "if (name === \"play-track\") {"
+      }
+     ]
+    },
+    {
+     "name": "previous-track",
+     "description": "Skip to the previous track",
+     "config": "imprvhub__mcp-claude-spotify__previous-track.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 764,
+       "text": "name: \"previous-track\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1412,
+       "text": "if (name === \"previous-track\") {"
+      }
+     ]
+    },
+    {
+     "name": "remove-tracks-from-playlist",
+     "description": "Remove tracks from a playlist",
+     "config": "imprvhub__mcp-claude-spotify__remove-tracks-from-playlist.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 868,
+       "text": "name: \"remove-tracks-from-playlist\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1598,
+       "text": "if (name === \"remove-tracks-from-playlist\") {"
+      }
+     ]
+    },
+    {
+     "name": "reorder-playlist-tracks",
+     "description": "Reorder tracks in a playlist by moving a range of tracks to a new position",
+     "config": "imprvhub__mcp-claude-spotify__reorder-playlist-tracks.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 972,
+       "text": "name: \"reorder-playlist-tracks\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1738,
+       "text": "if (name === \"reorder-playlist-tracks\") {"
+      }
+     ]
+    },
+    {
+     "name": "search-spotify",
+     "description": "Search for tracks, albums, artists, or playlists on Spotify",
+     "config": "imprvhub__mcp-claude-spotify__search-spotify.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 699,
+       "text": "name: \"search-spotify\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1222,
+       "text": "if (name === \"search-spotify\") {"
+      }
+     ]
+    },
+    {
+     "name": "update-playlist",
+     "description": "Update a playlist's name, description, public/private status, or collaborative setting",
+     "config": "imprvhub__mcp-claude-spotify__update-playlist.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 889,
+       "text": "name: \"update-playlist\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1619,
+       "text": "if (name === \"update-playlist\") {"
+      }
+     ]
+    },
+    {
+     "name": "upload-playlist-cover",
+     "description": "Upload a custom cover image for a playlist (base64 encoded JPEG, max 256KB)",
+     "config": "imprvhub__mcp-claude-spotify__upload-playlist-cover.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 954,
+       "text": "name: \"upload-playlist-cover\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1713,
+       "text": "if (name === \"upload-playlist-cover\") {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "dcSpark/mcp-server-helius",
+   "slug": "dcSpark__mcp-server-helius",
+   "lang": "node",
+   "commit": "ceef556686f32eb52afe7f062cd11fbbf92db6f1",
+   "path": "eval/targets/dcSpark__mcp-server-helius",
+   "surface_loc": 2290,
+   "tools": [
+    {
+     "name": "helius_execute_jupiter_swap",
+     "description": "Execute a token swap using Jupiter",
+     "config": "dcSpark__mcp-server-helius__helius_execute_jupiter_swap.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 517,
+       "text": "name: 'helius_execute_jupiter_swap',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 590,
+       "text": "\"helius_execute_jupiter_swap\": executeJupiterSwapHandler"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_account_info",
+     "description": "Get account information for a Solana address",
+     "config": "dcSpark__mcp-server-helius__helius_get_account_info.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 139,
+       "text": "name: \"helius_get_account_info\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 560,
+       "text": "\"helius_get_account_info\": getAccountInfoHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_asset",
+     "description": "Get details of a digital asset by its ID",
+     "config": "dcSpark__mcp-server-helius__helius_get_asset.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 276,
+       "text": "name: 'helius_get_asset',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 298,
+       "text": "name: 'helius_get_asset_batch',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 309,
+       "text": "name: 'helius_get_asset_proof',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 320,
+       "text": "name: 'helius_get_assets_by_group',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 334,
+       "text": "name: 'helius_get_assets_by_owner',"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_asset_batch",
+     "description": "Get details of multiple assets by their IDs",
+     "config": "dcSpark__mcp-server-helius__helius_get_asset_batch.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 298,
+       "text": "name: 'helius_get_asset_batch',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 574,
+       "text": "\"helius_get_asset_batch\": helius.getAssetBatchHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_asset_proof",
+     "description": "Get proof for a digital asset",
+     "config": "dcSpark__mcp-server-helius__helius_get_asset_proof.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 309,
+       "text": "name: 'helius_get_asset_proof',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 575,
+       "text": "\"helius_get_asset_proof\": helius.getAssetProofHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_assets_by_authority",
+     "description": "Get assets by authority address",
+     "config": "dcSpark__mcp-server-helius__helius_get_assets_by_authority.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 360,
+       "text": "name: 'helius_get_assets_by_authority',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 579,
+       "text": "\"helius_get_assets_by_authority\": helius.getAssetsByAuthorityHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_assets_by_creator",
+     "description": "Get assets created by a specific address",
+     "config": "dcSpark__mcp-server-helius__helius_get_assets_by_creator.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 347,
+       "text": "name: 'helius_get_assets_by_creator',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 578,
+       "text": "\"helius_get_assets_by_creator\": helius.getAssetsByCreatorHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_assets_by_group",
+     "description": "Get assets by group key and value",
+     "config": "dcSpark__mcp-server-helius__helius_get_assets_by_group.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 320,
+       "text": "name: 'helius_get_assets_by_group',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 576,
+       "text": "\"helius_get_assets_by_group\": helius.getAssetsByGroupHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_assets_by_owner",
+     "description": "Get assets owned by a specific address",
+     "config": "dcSpark__mcp-server-helius__helius_get_assets_by_owner.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 334,
+       "text": "name: 'helius_get_assets_by_owner',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 577,
+       "text": "\"helius_get_assets_by_owner\": helius.getAssetsByOwnerHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_balance",
+     "description": "Get the balance of a Solana address",
+     "config": "dcSpark__mcp-server-helius__helius_get_balance.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 34,
+       "text": "name: \"helius_get_balance\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 550,
+       "text": "\"helius_get_balance\": getBalanceHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_block_height",
+     "description": "Get the block height of the Solana blockchain",
+     "config": "dcSpark__mcp-server-helius__helius_get_block_height.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 46,
+       "text": "name: \"helius_get_block_height\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 551,
+       "text": "\"helius_get_block_height\": getBlockHeightHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_bundle_statuses",
+     "description": "Get statuses of Jito bundles",
+     "config": "dcSpark__mcp-server-helius__helius_get_bundle_statuses.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 493,
+       "text": "name: 'helius_get_bundle_statuses',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 588,
+       "text": "\"helius_get_bundle_statuses\": helius.getBundleStatusesHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_epoch_info",
+     "description": "Get information about the current epoch",
+     "config": "dcSpark__mcp-server-helius__helius_get_epoch_info.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 221,
+       "text": "name: \"helius_get_epoch_info\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 566,
+       "text": "\"helius_get_epoch_info\": getEpochInfoHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_epoch_schedule",
+     "description": "Get the epoch schedule",
+     "config": "dcSpark__mcp-server-helius__helius_get_epoch_schedule.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 232,
+       "text": "name: \"helius_get_epoch_schedule\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 567,
+       "text": "\"helius_get_epoch_schedule\": getEpochScheduleHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_fee_for_message",
+     "description": "Get the fee for a serialized message",
+     "config": "dcSpark__mcp-server-helius__helius_get_fee_for_message.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 505,
+       "text": "name: 'helius_get_fee_for_message',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 589,
+       "text": "\"helius_get_fee_for_message\": getFeeForMessageHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_inflation_reward",
+     "description": "Get inflation rewards for a list of addresses",
+     "config": "dcSpark__mcp-server-helius__helius_get_inflation_reward.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 205,
+       "text": "name: \"helius_get_inflation_reward\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 565,
+       "text": "\"helius_get_inflation_reward\": getInflationRewardHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_latest_blockhash",
+     "description": "Get the latest blockhash from the Solana blockchain",
+     "config": "dcSpark__mcp-server-helius__helius_get_latest_blockhash.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 92,
+       "text": "name: \"helius_get_latest_blockhash\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 555,
+       "text": "\"helius_get_latest_blockhash\": getLatestBlockhashHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_leader_schedule",
+     "description": "Get the leader schedule for an epoch",
+     "config": "dcSpark__mcp-server-helius__helius_get_leader_schedule.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 243,
+       "text": "name: \"helius_get_leader_schedule\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 568,
+       "text": "\"helius_get_leader_schedule\": getLeaderScheduleHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_minimum_balance_for_rent_exemption",
+     "description": "Get the minimum balance required for rent exemption",
+     "config": "dcSpark__mcp-server-helius__helius_get_minimum_balance_for_rent_exemption.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 178,
+       "text": "name: \"helius_get_minimum_balance_for_rent_exemption\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 563,
+       "text": "\"helius_get_minimum_balance_for_rent_exemption\": getMinimumBalanceForRentExemptionHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_multiple_accounts",
+     "description": "Get information about multiple Solana accounts",
+     "config": "dcSpark__mcp-server-helius__helius_get_multiple_accounts.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 190,
+       "text": "name: \"helius_get_multiple_accounts\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 564,
+       "text": "\"helius_get_multiple_accounts\": getMultipleAccountsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_nft_editions",
+     "description": "Get NFT editions for a master edition",
+     "config": "dcSpark__mcp-server-helius__helius_get_nft_editions.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 424,
+       "text": "name: 'helius_get_nft_editions',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 582,
+       "text": "\"helius_get_nft_editions\": helius.getNftEditionsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_priority_fee_estimate",
+     "description": "Get priority fee estimate for a transaction",
+     "config": "dcSpark__mcp-server-helius__helius_get_priority_fee_estimate.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 451,
+       "text": "name: 'helius_get_priority_fee_estimate',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 585,
+       "text": "\"helius_get_priority_fee_estimate\": helius.getPriorityFeeEstimateHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_program_accounts",
+     "description": "Get all accounts owned by a program",
+     "config": "dcSpark__mcp-server-helius__helius_get_program_accounts.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 151,
+       "text": "name: \"helius_get_program_accounts\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 561,
+       "text": "\"helius_get_program_accounts\": getProgramAccountsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_recent_performance_samples",
+     "description": "Get recent performance samples",
+     "config": "dcSpark__mcp-server-helius__helius_get_recent_performance_samples.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 255,
+       "text": "name: \"helius_get_recent_performance_samples\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 569,
+       "text": "\"helius_get_recent_performance_samples\": getRecentPerformanceSamplesHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_rwa_asset",
+     "description": "Get details of a real-world asset by its ID",
+     "config": "dcSpark__mcp-server-helius__helius_get_rwa_asset.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 287,
+       "text": "name: 'helius_get_rwa_asset',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 573,
+       "text": "\"helius_get_rwa_asset\": helius.getRwaAssetHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_signatures_for_address",
+     "description": "Get transaction signatures for a Solana address",
+     "config": "dcSpark__mcp-server-helius__helius_get_signatures_for_address.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 163,
+       "text": "name: \"helius_get_signatures_for_address\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 562,
+       "text": "\"helius_get_signatures_for_address\": getSignaturesForAddressHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_signatures_for_asset",
+     "description": "Get signatures associated with an asset",
+     "config": "dcSpark__mcp-server-helius__helius_get_signatures_for_asset.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 411,
+       "text": "name: 'helius_get_signatures_for_asset',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 581,
+       "text": "\"helius_get_signatures_for_asset\": helius.getSignaturesForAssetHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_slot",
+     "description": "Get the current slot of the Solana blockchain",
+     "config": "dcSpark__mcp-server-helius__helius_get_slot.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 115,
+       "text": "name: \"helius_get_slot\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 557,
+       "text": "\"helius_get_slot\": getSlotHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_token_account_balance",
+     "description": "Get the balance of a token account",
+     "config": "dcSpark__mcp-server-helius__helius_get_token_account_balance.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 103,
+       "text": "name: \"helius_get_token_account_balance\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 556,
+       "text": "\"helius_get_token_account_balance\": getTokenAccountBalanceHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_token_accounts",
+     "description": "Get token accounts by mint or owner",
+     "config": "dcSpark__mcp-server-helius__helius_get_token_accounts.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 57,
+       "text": "name: \"helius_get_token_accounts_by_owner\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 437,
+       "text": "name: 'helius_get_token_accounts',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 552,
+       "text": "\"helius_get_token_accounts_by_owner\": getTokenAccountsByOwnerHandler,"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 583,
+       "text": "\"helius_get_token_accounts\": helius.getTokenAccountsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_token_accounts_by_owner",
+     "description": "Get token accounts owned by a Solana address",
+     "config": "dcSpark__mcp-server-helius__helius_get_token_accounts_by_owner.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 57,
+       "text": "name: \"helius_get_token_accounts_by_owner\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 552,
+       "text": "\"helius_get_token_accounts_by_owner\": getTokenAccountsByOwnerHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_token_largest_accounts",
+     "description": "Get the largest token accounts for a specific token mint",
+     "config": "dcSpark__mcp-server-helius__helius_get_token_largest_accounts.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 80,
+       "text": "name: \"helius_get_token_largest_accounts\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 554,
+       "text": "\"helius_get_token_largest_accounts\": getTokenLargestAccountsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_token_supply",
+     "description": "Get the supply of a token",
+     "config": "dcSpark__mcp-server-helius__helius_get_token_supply.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 69,
+       "text": "name: \"helius_get_token_supply\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 553,
+       "text": "\"helius_get_token_supply\": getTokenSupplyHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_transaction",
+     "description": "Get a transaction by its signature",
+     "config": "dcSpark__mcp-server-helius__helius_get_transaction.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 126,
+       "text": "name: \"helius_get_transaction\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 558,
+       "text": "\"helius_get_transaction\": getTransactionHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_get_version",
+     "description": "Get the version of the Solana node",
+     "config": "dcSpark__mcp-server-helius__helius_get_version.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 266,
+       "text": "name: \"helius_get_version\","
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 570,
+       "text": "\"helius_get_version\": getVersionHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_poll_transaction_confirmation",
+     "description": "Poll for transaction confirmation status",
+     "config": "dcSpark__mcp-server-helius__helius_poll_transaction_confirmation.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 468,
+       "text": "name: 'helius_poll_transaction_confirmation',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 586,
+       "text": "\"helius_poll_transaction_confirmation\": helius.pollTransactionConfirmationHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_search_assets",
+     "description": "Search for assets using various filters",
+     "config": "dcSpark__mcp-server-helius__helius_search_assets.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 373,
+       "text": "name: 'helius_search_assets',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 580,
+       "text": "\"helius_search_assets\": helius.searchAssetsHandler,"
+      }
+     ]
+    },
+    {
+     "name": "helius_send_jito_bundle",
+     "description": "Send a bundle of transactions to Jito",
+     "config": "dcSpark__mcp-server-helius__helius_send_jito_bundle.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 481,
+       "text": "name: 'helius_send_jito_bundle',"
+      },
+      {
+       "file": "src/tools.ts",
+       "line": 587,
+       "text": "\"helius_send_jito_bundle\": helius.sendJitoBundleHandler,"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "Coding-Solo/godot-mcp",
+   "slug": "Coding-Solo__godot-mcp",
+   "lang": "node",
+   "commit": "1209744fad78f3998f98c7394fd0f6ef50da5281",
+   "path": "eval/targets/Coding-Solo__godot-mcp",
+   "surface_loc": 2250,
+   "tools": [
+    {
+     "name": "add_node",
+     "description": "Add a node to an existing scene",
+     "config": "Coding-Solo__godot-mcp__add_node.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 784,
+       "text": "name: 'add_node',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 949,
+       "text": "case 'add_node':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1562,
+       "text": "* Handle the add_node tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1631,
+       "text": "const { stdout, stderr } = await this.executeOperation('add_node', params, args.projectPath);"
+      }
+     ]
+    },
+    {
+     "name": "create_scene",
+     "description": "Create a new Godot scene file",
+     "config": "Coding-Solo__godot-mcp__create_scene.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 762,
+       "text": "name: 'create_scene',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 947,
+       "text": "case 'create_scene':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1480,
+       "text": "* Handle the create_scene tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1528,
+       "text": "const { stdout, stderr } = await this.executeOperation('create_scene', params, args.projectPath);"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1609,
+       "text": "'Use create_scene to create a new scene first',"
+      }
+     ]
+    },
+    {
+     "name": "export_mesh_library",
+     "description": "Export a scene as a MeshLibrary resource",
+     "config": "Coding-Solo__godot-mcp__export_mesh_library.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 844,
+       "text": "name: 'export_mesh_library',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 953,
+       "text": "case 'export_mesh_library':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1769,
+       "text": "* Handle the export_mesh_library tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1830,
+       "text": "const { stdout, stderr } = await this.executeOperation('export_mesh_library', params, args.projectPath);"
+      }
+     ]
+    },
+    {
+     "name": "get_debug_output",
+     "description": "Get the current debug output and errors",
+     "config": "Coding-Solo__godot-mcp__get_debug_output.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 703,
+       "text": "name: 'get_debug_output',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 937,
+       "text": "case 'get_debug_output':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1137,
+       "text": "text: `Godot project started in debug mode. Use get_debug_output to see output.`,"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1155,
+       "text": "* Handle the get_debug_output tool"
+      }
+     ]
+    },
+    {
+     "name": "get_godot_version",
+     "description": "Get the installed Godot version",
+     "config": "Coding-Solo__godot-mcp__get_godot_version.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 721,
+       "text": "name: 'get_godot_version',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 941,
+       "text": "case 'get_godot_version':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1224,
+       "text": "* Handle the get_godot_version tool"
+      }
+     ]
+    },
+    {
+     "name": "get_project_info",
+     "description": "Retrieve metadata about a Godot project",
+     "config": "Coding-Solo__godot-mcp__get_project_info.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 748,
+       "text": "name: 'get_project_info',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 945,
+       "text": "case 'get_project_info':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1379,
+       "text": "* Handle the get_project_info tool"
+      }
+     ]
+    },
+    {
+     "name": "get_uid",
+     "description": "Get the UID for a specific file in a Godot project (for Godot 4.4+)",
+     "config": "Coding-Solo__godot-mcp__get_uid.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 895,
+       "text": "name: 'get_uid',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 957,
+       "text": "case 'get_uid':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1963,
+       "text": "* Handle the get_uid tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 2039,
+       "text": "const { stdout, stderr } = await this.executeOperation('get_uid', params, args.projectPath);"
+      }
+     ]
+    },
+    {
+     "name": "launch_editor",
+     "description": "Launch Godot editor for a specific project",
+     "config": "Coding-Solo__godot-mcp__launch_editor.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 671,
+       "text": "name: 'launch_editor',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 933,
+       "text": "case 'launch_editor':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 971,
+       "text": "* Handle the launch_editor tool"
+      }
+     ]
+    },
+    {
+     "name": "list_projects",
+     "description": "List Godot projects in a directory",
+     "config": "Coding-Solo__godot-mcp__list_projects.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 730,
+       "text": "name: 'list_projects',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 943,
+       "text": "case 'list_projects':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1014,
+       "text": "'Use list_projects to find valid Godot projects',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1079,
+       "text": "'Use list_projects to find valid Godot projects',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1265,
+       "text": "* Handle the list_projects tool"
+      }
+     ]
+    },
+    {
+     "name": "load_sprite",
+     "description": "Load a sprite into a Sprite2D node",
+     "config": "Coding-Solo__godot-mcp__load_sprite.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 818,
+       "text": "name: 'load_sprite',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 951,
+       "text": "case 'load_sprite':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1665,
+       "text": "* Handle the load_sprite tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1735,
+       "text": "const { stdout, stderr } = await this.executeOperation('load_sprite', params, args.projectPath);"
+      }
+     ]
+    },
+    {
+     "name": "run_project",
+     "description": "Run the Godot project and capture output",
+     "config": "Coding-Solo__godot-mcp__run_project.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 685,
+       "text": "name: 'run_project',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 935,
+       "text": "case 'run_project':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1050,
+       "text": "* Handle the run_project tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1162,
+       "text": "'Use run_project to start a Godot project first',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1193,
+       "text": "'Use run_project to start a Godot project first',"
+      }
+     ]
+    },
+    {
+     "name": "save_scene",
+     "description": "Save changes to a scene file",
+     "config": "Coding-Solo__godot-mcp__save_scene.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 873,
+       "text": "name: 'save_scene',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 955,
+       "text": "case 'save_scene':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1864,
+       "text": "* Handle the save_scene tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1928,
+       "text": "const { stdout, stderr } = await this.executeOperation('save_scene', params, args.projectPath);"
+      }
+     ]
+    },
+    {
+     "name": "stop_project",
+     "description": "Stop the currently running Godot project",
+     "config": "Coding-Solo__godot-mcp__stop_project.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 712,
+       "text": "name: 'stop_project',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 939,
+       "text": "case 'stop_project':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 1186,
+       "text": "* Handle the stop_project tool"
+      }
+     ]
+    },
+    {
+     "name": "update_project_uids",
+     "description": "Update UID references in a Godot project by resaving resources (for Godot 4.4+)",
+     "config": "Coding-Solo__godot-mcp__update_project_uids.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 913,
+       "text": "name: 'update_project_uids',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 959,
+       "text": "case 'update_project_uids':"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 2072,
+       "text": "* Handle the update_project_uids tool"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "lanbaoshen/mcp-jenkins",
+   "slug": "lanbaoshen__mcp-jenkins",
+   "lang": "python",
+   "commit": "474b9853532a216727834d83c605235bc672b3fe",
+   "path": "eval/targets/lanbaoshen__mcp-jenkins",
+   "surface_loc": 2244,
+   "tools": [
+    {
+     "name": "build_item",
+     "description": "Build an item in Jenkins\n\nArgs:\n    fullname: The fullname of the item\n    data: The parameters to trigger the build with. Required if build_type is 'buildWithParameters'.\n    build_type: If your item is configured with parameters, you must use 'buildWithParameters' as build_type.\n\nReturns:\n    The queue item number of the item.",
+     "config": "lanbaoshen__mcp-jenkins__build_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 711,
+       "text": "def build_item("
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 88,
+       "text": "async def build_item("
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 104,
+       "text": "return jenkins(ctx).build_item(fullname=fullname, build_type=build_type, data=data)"
+      }
+     ]
+    },
+    {
+     "name": "cancel_queue_item",
+     "description": "Cancel a specific item in Jenkins queue by id\n\nArgs:\n    id: The id of the queue item",
+     "config": "lanbaoshen__mcp-jenkins__cancel_queue_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 230,
+       "text": "def cancel_queue_item(self, *, id: int) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/queue.py",
+       "line": 32,
+       "text": "async def cancel_queue_item(ctx: Context, id: int) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/queue.py",
+       "line": 38,
+       "text": "jenkins(ctx).cancel_queue_item(id=id)"
+      }
+     ]
+    },
+    {
+     "name": "get_all_build_artifacts",
+     "description": "List the artifacts of a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n\nReturns:\n    A list of artifact metadata dicts with fileName, relativePath, and displayPath",
+     "config": "lanbaoshen__mcp-jenkins__get_all_build_artifacts.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 285,
+       "text": "async def get_all_build_artifacts(ctx: Context, fullname: str, number: int | None = None) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_all_items",
+     "description": "Get all items from Jenkins\n\nReturns:\n    A list of items",
+     "config": "lanbaoshen__mcp-jenkins__get_all_items.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 11,
+       "text": "async def get_all_items(ctx: Context) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_all_nodes",
+     "description": "Get all nodes from Jenkins\n\nReturns:\n    A list of all nodes",
+     "config": "lanbaoshen__mcp-jenkins__get_all_nodes.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 8,
+       "text": "async def get_all_nodes(ctx: Context) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_all_plugins",
+     "description": "Get all installed plugins from Jenkins\n\nArgs:\n    depth: The depth of the information to retrieve. Default is 2 (includes dependencies).\n\nReturns:\n    A list of all installed plugins",
+     "config": "lanbaoshen__mcp-jenkins__get_all_plugins.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 8,
+       "text": "async def get_all_plugins(ctx: Context, depth: int = 2) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_all_queue_items",
+     "description": "Get all items in Jenkins queue\n\nReturns:\n    A list of all items in the Jenkins queue",
+     "config": "lanbaoshen__mcp-jenkins__get_all_queue_items.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/queue.py",
+       "line": 8,
+       "text": "async def get_all_queue_items(ctx: Context) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_all_views",
+     "description": "Get all top-level views from Jenkins.\n\nReturns:\n    A list of views with their name and URL.",
+     "config": "lanbaoshen__mcp-jenkins__get_all_views.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/view.py",
+       "line": 8,
+       "text": "async def get_all_views(ctx: Context) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_build",
+     "description": "Get specific build info from Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n\nReturns:\n    The build info",
+     "config": "lanbaoshen__mcp-jenkins__get_build.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 290,
+       "text": "def get_build(self, *, fullname: str, number: int, depth: int = 0) -> Build:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 308,
+       "text": "def get_build_console_output("
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 365,
+       "text": "def get_build_pending_inputs(self, *, fullname: str, number: int) -> list[PendingInput]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 441,
+       "text": "def get_build_replay(self, *, fullname: str, number: int) -> BuildReplay:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 462,
+       "text": "def get_build_parameters(self, *, fullname: str, number: int) -> dict:"
+      }
+     ]
+    },
+    {
+     "name": "get_build_artifact",
+     "description": "Download an artifact from a specific build in Jenkins\n\nBinary files are returned as base64-encoded content; text files are returned as plain text.\n\nArgs:\n    fullname: The fullname of the job\n    relative_path: The relative path of the artifact (e.g. playwright-report/index.html)\n    number: The number of the build, if None, get the last build\n\nReturns:\n    A dict with 'content' (str) and 'encoding' ('utf-8' or 'base64')",
+     "config": "lanbaoshen__mcp-jenkins__get_build_artifact.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 501,
+       "text": "def get_build_artifacts(self, *, fullname: str, number: int) -> list[Artifact]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 518,
+       "text": "def get_build_artifact(self, *, fullname: str, number: int, relative_path: str) -> bytes:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 536,
+       "text": "def get_build_artifact_url(self, *, fullname: str, number: int, relative_path: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 299,
+       "text": "for artifact in jenkins(ctx).get_build_artifacts(fullname=fullname, number=number)"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 304,
+       "text": "async def get_build_artifact(ctx: Context, fullname: str, relative_path: str, number: int | None = None) -> dict:"
+      }
+     ]
+    },
+    {
+     "name": "get_build_artifact_url",
+     "description": "Get the direct URL of an artifact from a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    relative_path: The relative path of the artifact (e.g. playwright-report/index.html)\n    number: The number of the build, if None, get the last build\n\nReturns:\n    The direct Jenkins URL of the artifact",
+     "config": "lanbaoshen__mcp-jenkins__get_build_artifact_url.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 536,
+       "text": "def get_build_artifact_url(self, *, fullname: str, number: int, relative_path: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 328,
+       "text": "async def get_build_artifact_url(ctx: Context, fullname: str, relative_path: str, number: int | None = None) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 341,
+       "text": "return jenkins(ctx).get_build_artifact_url(fullname=fullname, number=number, relative_path=relative_path)"
+      }
+     ]
+    },
+    {
+     "name": "get_build_console_output",
+     "description": "Get the console output of a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n    pattern: Optional regex pattern to filter lines (only matching lines are returned)\n    offset: Number of lines to skip from the beginning after filtering, default 0\n    limit: Maximum number of lines to return after filtering and offset\n\nReturns:\n    The console output of the build",
+     "config": "lanbaoshen__mcp-jenkins__get_build_console_output.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 308,
+       "text": "def get_build_console_output("
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 74,
+       "text": "async def get_build_console_output("
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 96,
+       "text": "return jenkins(ctx).get_build_console_output("
+      }
+     ]
+    },
+    {
+     "name": "get_build_parameters",
+     "description": "Get the parameters of a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n\nReturns:\n    A dictionary of build parameter names and their values",
+     "config": "lanbaoshen__mcp-jenkins__get_build_parameters.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 462,
+       "text": "def get_build_parameters(self, *, fullname: str, number: int) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 118,
+       "text": "async def get_build_parameters(ctx: Context, fullname: str, number: int | None = None) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 130,
+       "text": "return jenkins(ctx).get_build_parameters(fullname=fullname, number=number)"
+      }
+     ]
+    },
+    {
+     "name": "get_build_scripts",
+     "description": "Get the scripts used in a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n\nReturns:\n    A list of scripts used in the build",
+     "config": "lanbaoshen__mcp-jenkins__get_build_scripts.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 58,
+       "text": "async def get_build_scripts(ctx: Context, fullname: str, number: int | None = None) -> list[str]:"
+      }
+     ]
+    },
+    {
+     "name": "get_build_test_report",
+     "description": "Get the test report of a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, get the last build\n\nReturns:\n    The test report of the build",
+     "config": "lanbaoshen__mcp-jenkins__get_build_test_report.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 483,
+       "text": "def get_build_test_report(self, *, fullname: str, number: int, depth: int = 0) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 102,
+       "text": "async def get_build_test_report(ctx: Context, fullname: str, number: int | None = None) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 114,
+       "text": "return jenkins(ctx).get_build_test_report(fullname=fullname, number=number)"
+      }
+     ]
+    },
+    {
+     "name": "get_item",
+     "description": "Get specific item from Jenkins\n\nArgs:\n    fullname: The fullname of the item\n\nReturns:\n    The item",
+     "config": "lanbaoshen__mcp-jenkins__get_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 569,
+       "text": "def get_items(self, *, folder_depth: int | None = None, folder_depth_per_request: int = 10) -> list[ItemType]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 603,
+       "text": "def get_item(self, *, fullname: str, depth: int = 0) -> ItemType:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 640,
+       "text": "def get_item_config(self, *, fullname: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 693,
+       "text": "items = self.get_items(folder_depth=folder_depth, folder_depth_per_request=folder_depth_per_request)"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 17,
+       "text": "return [item.model_dump(exclude_none=True) for item in jenkins(ctx).get_items()]"
+      }
+     ]
+    },
+    {
+     "name": "get_item_config",
+     "description": "Get specific item config from Jenkins\n\nArgs:\n    fullname: The fullname of the item\n\nReturns:\n    The config of the item",
+     "config": "lanbaoshen__mcp-jenkins__get_item_config.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 640,
+       "text": "def get_item_config(self, *, fullname: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 34,
+       "text": "async def get_item_config(ctx: Context, fullname: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 43,
+       "text": "return jenkins(ctx).get_item_config(fullname=fullname)"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 117,
+       "text": "config_xml = jenkins(ctx).get_item_config(fullname=fullname)"
+      }
+     ]
+    },
+    {
+     "name": "get_item_parameters",
+     "description": "Get the parameter definitions of a Jenkins job\n\nArgs:\n    fullname: The fullname of the item\n\nReturns:\n    A list of parameter definitions, each containing name, type, defaultValue, and description",
+     "config": "lanbaoshen__mcp-jenkins__get_item_parameters.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 108,
+       "text": "async def get_item_parameters(ctx: Context, fullname: str) -> list[dict]:"
+      }
+     ]
+    },
+    {
+     "name": "get_node",
+     "description": "Get a specific node from Jenkins\n\nContains executor about the node.\n\nArgs:\n    name: The name of the node\n\nReturns:\n    The node",
+     "config": "lanbaoshen__mcp-jenkins__get_node.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 238,
+       "text": "def get_node(self, *, name: str, depth: int = 0) -> Node:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 252,
+       "text": "def get_nodes(self, *, depth: int = 0) -> list[Node]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 264,
+       "text": "def get_node_config(self, *, name: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 562,
+       "text": "for node in self.get_nodes(depth=2):"
+      },
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 14,
+       "text": "return [node.model_dump(exclude={'executors'}) for node in jenkins(ctx).get_nodes(depth=0)]"
+      }
+     ]
+    },
+    {
+     "name": "get_node_config",
+     "description": "Get node config from Jenkins\n\nArgs:\n    name: The name of the node\n\nReturns:\n    The config of the node",
+     "config": "lanbaoshen__mcp-jenkins__get_node_config.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 264,
+       "text": "def get_node_config(self, *, name: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 33,
+       "text": "async def get_node_config(ctx: Context, name: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 42,
+       "text": "return jenkins(ctx).get_node_config(name=name)"
+      }
+     ]
+    },
+    {
+     "name": "get_pending_inputs",
+     "description": "Get the pending input steps of a specific build in Jenkins\n\nA pipeline showing \"Paused for Input\" is waiting on an input step. Call this before submit_input\nto discover the input id and the parameter definitions the pipeline is waiting for.\n\nOnly the given build is inspected. With number=None that is the job's last build, so a paused build\nthat is no longer the most recent one is not found that way \u2014 locate it with get_running_builds and\npass its number explicitly.\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build, if None, check the last build\n\nReturns:\n    A list of pending inputs with id, message, proceedText and inputs (parameter definitions)",
+     "config": "lanbaoshen__mcp-jenkins__get_pending_inputs.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 145,
+       "text": "async def get_pending_inputs(ctx: Context, fullname: str, number: int | None = None) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 190,
+       "text": "get_pending_inputs rather than retrying, because a settled input rejects a second submission."
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 194,
+       "text": "number: The number of the paused build, use get_pending_inputs to confirm its pending input"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 277,
+       "text": "f'be settled \u2014 re-check with get_pending_inputs rather than retrying.'"
+      }
+     ]
+    },
+    {
+     "name": "get_plugin",
+     "description": "Get a specific plugin from Jenkins\n\nContains detailed information about the plugin, including dependencies when depth >= 2.\n\nArgs:\n    short_name: The short name of the plugin\n    depth: The depth of the information to retrieve. Default is 2 (includes dependencies).\n\nReturns:\n    The plugin details, or None if not found",
+     "config": "lanbaoshen__mcp-jenkins__get_plugin.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 740,
+       "text": "def get_plugins(self, *, depth: int = 0) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 752,
+       "text": "def get_plugin(self, *, short_name: str, depth: int = 2) -> dict | None:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 762,
+       "text": "plugins = self.get_plugins(depth=depth)"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 768,
+       "text": "def get_plugins_with_problems(self) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 778,
+       "text": "plugins = self.get_plugins(depth=2)"
+      }
+     ]
+    },
+    {
+     "name": "get_plugin_dependency_graph",
+     "description": "Get dependency graph for a specific plugin in Graphviz format\n\nRecursively analyzes dependencies down to leaf nodes.\nReturns nodes and edges that can be used to generate a dependency graph.\n\nArgs:\n    short_name: The short name of the plugin to analyze\n\nReturns:\n    A dictionary with 'nodes' and 'edges' for Graphviz rendering",
+     "config": "lanbaoshen__mcp-jenkins__get_plugin_dependency_graph.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 959,
+       "text": "def get_plugin_dependency_graph(self, short_name: str) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 78,
+       "text": "async def get_plugin_dependency_graph(ctx: Context, short_name: str) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 90,
+       "text": "return jenkins(ctx).get_plugin_dependency_graph(short_name=short_name)"
+      }
+     ]
+    },
+    {
+     "name": "get_plugins_with_backup",
+     "description": "Get plugins that can be downgraded\n\nReturns plugins that have a backupVersion and can be rolled back.\n\nArgs:\n    depth: The depth of the information to retrieve. Default is 0.\n\nReturns:\n    A list of plugins that can be downgraded",
+     "config": "lanbaoshen__mcp-jenkins__get_plugins_with_backup.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 903,
+       "text": "def get_plugins_with_backup(self, depth: int = 0) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 50,
+       "text": "async def get_plugins_with_backup(ctx: Context, depth: int = 0) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 61,
+       "text": "return jenkins(ctx).get_plugins_with_backup(depth=depth)"
+      }
+     ]
+    },
+    {
+     "name": "get_plugins_with_problems",
+     "description": "Get all plugins with problems from Jenkins\n\nThese are plugins that have issues such as missing dependencies,\nincompatible versions, core version mismatch, or other configuration problems.\n\nReturns:\n    A list of plugins with problems",
+     "config": "lanbaoshen__mcp-jenkins__get_plugins_with_problems.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 768,
+       "text": "def get_plugins_with_problems(self) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 37,
+       "text": "async def get_plugins_with_problems(ctx: Context) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 46,
+       "text": "return jenkins(ctx).get_plugins_with_problems()"
+      }
+     ]
+    },
+    {
+     "name": "get_plugins_with_updates",
+     "description": "Get plugins that have available updates\n\nArgs:\n    depth: The depth of the information to retrieve. Default is 0.\n\nReturns:\n    A list of plugins with available updates",
+     "config": "lanbaoshen__mcp-jenkins__get_plugins_with_updates.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 883,
+       "text": "def get_plugins_with_updates(self, depth: int = 0) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 65,
+       "text": "async def get_plugins_with_updates(ctx: Context, depth: int = 0) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/plugin.py",
+       "line": 74,
+       "text": "return jenkins(ctx).get_plugins_with_updates(depth=depth)"
+      }
+     ]
+    },
+    {
+     "name": "get_queue_item",
+     "description": "Get a specific item in Jenkins queue by id\n\nArgs:\n    id: The id of the queue item\n\nReturns:\n    The queue item",
+     "config": "lanbaoshen__mcp-jenkins__get_queue_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 217,
+       "text": "def get_queue_item(self, *, id: int, depth: int = 0) -> 'QueueItem':"
+      },
+      {
+       "file": "src/mcp_jenkins/server/queue.py",
+       "line": 18,
+       "text": "async def get_queue_item(ctx: Context, id: int) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/queue.py",
+       "line": 27,
+       "text": "item = jenkins(ctx).get_queue_item(id=id, depth=1)"
+      }
+     ]
+    },
+    {
+     "name": "get_running_builds",
+     "description": "Get all running builds from Jenkins\n\nReturns:\n    A list of all running builds",
+     "config": "lanbaoshen__mcp-jenkins__get_running_builds.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 552,
+       "text": "def get_running_builds(self) -> list[Build]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 29,
+       "text": "async def get_running_builds(ctx: Context) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 37,
+       "text": "for item in jenkins(ctx).get_running_builds()"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 152,
+       "text": "that is no longer the most recent one is not found that way \u2014 locate it with get_running_builds and"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 195,
+       "text": "(and get_running_builds to locate a paused build that is not the job's last one)"
+      }
+     ]
+    },
+    {
+     "name": "get_view",
+     "description": "Get a Jenkins view by path, returning its jobs and/or nested sub-views.\n\nViews can be nested up to multiple levels deep. Use \"/\" to separate levels\nin the path. If the view contains sub-views instead of jobs, the response\nwill include their names so you can drill down further.\n\nArgs:\n    view_path: View path using \"/\" to separate levels.\n               Examples: \"All\", \"frontend\", \"frontend/nightly\".\n               Spaces and special characters in view names are handled automatically.\n    depth: Depth of detail to retrieve for each job. Default is 0.\n\nReturns:\n    A dict with the view's name, jobs list, and/or nested views.",
+     "config": "lanbaoshen__mcp-jenkins__get_view.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 179,
+       "text": "def get_views(self) -> list[dict]:"
+      },
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 188,
+       "text": "def get_view(self, *, view_path: str, depth: int = 0) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/view.py",
+       "line": 14,
+       "text": "return jenkins(ctx).get_views()"
+      },
+      {
+       "file": "src/mcp_jenkins/server/view.py",
+       "line": 18,
+       "text": "async def get_view(ctx: Context, view_path: str, depth: int = 0) -> dict:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/view.py",
+       "line": 34,
+       "text": "return jenkins(ctx).get_view(view_path=view_path, depth=depth)"
+      }
+     ]
+    },
+    {
+     "name": "query_items",
+     "description": "Query items from Jenkins\n\nArgs:\n    class_pattern: The pattern of the _class\n    fullname_pattern: The pattern of the fullname\n    color_pattern: The pattern of the color\n    folder_depth: The maximum depth of folders to traverse. If None, traverses all levels.\n\nReturns:\n    A list of items",
+     "config": "lanbaoshen__mcp-jenkins__query_items.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 668,
+       "text": "def query_items("
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 58,
+       "text": "async def query_items("
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 78,
+       "text": "for item in jenkins(ctx).query_items("
+      }
+     ]
+    },
+    {
+     "name": "run_groovy_script",
+     "description": "Execute an arbitrary Groovy script on Jenkins.\n\nThis tool provides access to Jenkins internal features that are not available via REST API.\n\nArgs:\n    script: The Groovy script code to execute.\n\nReturns:\n    The result of the script execution.\n\nExamples:\n    # Basic usage:\n    run_groovy_script(script='println Jenkins.instance.version')\n\n    # Access Jenkins information:\n    run_groovy_script(\n        script='''\n            def version = Jenkins.instance.version\n            def mode = Jenkins.instance.mode\n            return \"Version: ${version}, Mode: ${mode}\"\n        '''\n    )",
+     "config": "lanbaoshen__mcp-jenkins__run_groovy_script.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/script.py",
+       "line": 8,
+       "text": "async def run_groovy_script(ctx: Context, script: str) -> str:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/script.py",
+       "line": 21,
+       "text": "run_groovy_script(script='println Jenkins.instance.version')"
+      },
+      {
+       "file": "src/mcp_jenkins/server/script.py",
+       "line": 24,
+       "text": "run_groovy_script("
+      }
+     ]
+    },
+    {
+     "name": "set_item_config",
+     "description": "Set specific item config in Jenkins\n\nArgs:\n    fullname: The fullname of the item\n    config_xml: The config XML of the item",
+     "config": "lanbaoshen__mcp-jenkins__set_item_config.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 653,
+       "text": "def set_item_config(self, *, fullname: str, config_xml: str) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 47,
+       "text": "async def set_item_config(ctx: Context, fullname: str, config_xml: str) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/item.py",
+       "line": 54,
+       "text": "jenkins(ctx).set_item_config(fullname=fullname, config_xml=config_xml)"
+      }
+     ]
+    },
+    {
+     "name": "set_node_config",
+     "description": "Set specific node config in Jenkins\n\nArgs:\n    name: The name of the node\n    config_xml: The config XML of the node",
+     "config": "lanbaoshen__mcp-jenkins__set_node_config.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 276,
+       "text": "def set_node_config(self, *, name: str, config_xml: str) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 46,
+       "text": "async def set_node_config(ctx: Context, name: str, config_xml: str) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/node.py",
+       "line": 53,
+       "text": "jenkins(ctx).set_node_config(name=name, config_xml=config_xml)"
+      }
+     ]
+    },
+    {
+     "name": "stop_build",
+     "description": "Stop a specific build in Jenkins\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the build to stop",
+     "config": "lanbaoshen__mcp-jenkins__stop_build.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/jenkins/rest_client.py",
+       "line": 355,
+       "text": "def stop_build(self, *, fullname: str, number: int) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 134,
+       "text": "async def stop_build(ctx: Context, fullname: str, number: int) -> None:"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 141,
+       "text": "return jenkins(ctx).stop_build(fullname=fullname, number=number)"
+      }
+     ]
+    },
+    {
+     "name": "submit_input",
+     "description": "Respond to a pipeline input step of a build that is paused for input in Jenkins\n\nWarnings:\n    Omitting a declared parameter settles it with null \u2014 Jenkins does not fall back to the declared\n    defaults, so every declared parameter must be submitted. That is enforced whenever the pending\n    input can be discovered; when the pending inputs cannot be fetched (wfapi endpoint missing or\n    erroring) an explicit input_id is submitted as-is, so check the declared parameters yourself in\n    that case.\n    If this call times out the input may or may not have been settled: re-check with\n    get_pending_inputs rather than retrying, because a settled input rejects a second submission.\n\nArgs:\n    fullname: The fullname of the job\n    number: The number of the paused build, use get_pending_inputs to confirm its pending input\n        (and get_running_builds to locate a paused build that is not the job's last one)\n    input_id: The id of the pending input, if None, resolved automatically when exactly one is pending\n    parameters: A mapping of parameter name to value, e.g. {'APPROVE': True, 'TARGET': 'prod'}\n    action: 'proceed' to continue the pipeline, 'abort' to reject the input and abort the build\n\nReturns:\n    A dict with the fullname, number, inputId and the Jenkins action that was submitted:\n    'proceed' with values, 'proceedEmpty' with none, or 'abort'",
+     "config": "lanbaoshen__mcp-jenkins__submit_input.json",
+     "hints": [
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 148,
+       "text": "A pipeline showing \"Paused for Input\" is waiting on an input step. Call this before submit_input"
+      },
+      {
+       "file": "src/mcp_jenkins/server/build.py",
+       "line": 173,
+       "text": "async def submit_input("
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

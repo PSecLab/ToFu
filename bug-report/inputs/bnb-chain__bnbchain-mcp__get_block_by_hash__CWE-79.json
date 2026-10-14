@@ -1,0 +1,21 @@
+{
+ "repo": "bnb-chain/bnbchain-mcp",
+ "tool": "get_block_by_hash",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "a133675365d5d941d891b17a42f2ca587c33922a",
+ "draft": "bnb-chain__bnbchain-mcp__get_block_by_hash__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'blockHash': '\"blockHach\": \"../../../../etc/passwd\", \"network\":lllllllllllllllllllll \"bsc\", \"inc{{{{{ludeTransactionHashes\": true, \"maxTransactionHashes\": 1', 'network': 'bsc', 'includeTransactionHashes': False, 'maxTransactionHashes': 100}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error fetching block by hash: Invalid parameters were provided to the RPC method.\\nDouble check you have provided the correct parameters.\\n\\nURL: https://bsc-dataseed.binance.org\\nRequest body: {\"method\":\"eth_getBlockByHash\",\"params\":[\"\\\\\"blockHach\\\\\": \\\\\"../../../../etc/passwd\\\\\", \\\\\"network\\\\\":lllllllllllllllllllll \\\\\"bsc\\\\\", \\\\\"inc{{{{{ludeTransactionHashes\\\\\": true, \\\\\"maxTransactionHashes\\\\\": 1\",false]}\\n\\nDetails: unmarshalerDecoder: json: cannot unmarshal hex string without 0x prefix into Go value of type common.Hash, error found in #10 byte of ...|shes\\\\\": 1\"|..., bigger context ...|actionHashes\\\\\": true, \\\\\"maxTransactionHashes\\\\\": 1\"|...\\nVersion: viem@2.27.2'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

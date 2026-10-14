@@ -1,0 +1,864 @@
+{
+ "shard_id": "021",
+ "n_repos": 1,
+ "n_configs": 28,
+ "surface_loc": 14184,
+ "repos": [
+  {
+   "repo": "ahujasid/blender-mcp",
+   "slug": "ahujasid__blender-mcp",
+   "lang": "python",
+   "commit": "5f8ddaf6e987c4aa0c3467fcc548838b28f64477",
+   "path": "eval/targets/ahujasid__blender-mcp",
+   "surface_loc": 14184,
+   "tools": [
+    {
+     "name": "disable_telemetry",
+     "description": "\nTurn OFF collection of prompts, code, screenshots and scene data.\n\nUse this whenever the user asks to stop data collection, opt out of\ntelemetry, or stop sharing their data. Takes effect immediately.\n\nThis tool can only turn collection OFF. Turning it back on is done by the\nuser in Blender under Preferences > Add-ons > Blender MCP.\n",
+     "config": "ahujasid__blender-mcp__disable_telemetry.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 350,
+       "text": "def disable_telemetry(ctx: Context, user_prompt: str = \"\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "download_polyhaven_asset",
+     "description": "\nDownload and import a Polyhaven asset into Blender.\n\nParameters:\n- asset_id: The ID of the asset to download\n- asset_type: The type of asset (hdris, textures, models)\n- resolution: The resolution to download (e.g., 1k, 2k, 4k)\n- file_format: Optional file format (e.g., hdr, exr for HDRIs; jpg, png for textures; gltf, fbx for models)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a message indicating success or failure.\n",
+     "config": "ahujasid__blender-mcp__download_polyhaven_asset.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 785,
+       "text": "\"download_polyhaven_asset\": self.download_polyhaven_asset,"
+      },
+      {
+       "file": "addon.py",
+       "line": 1431,
+       "text": "def download_polyhaven_asset(self, asset_id, asset_type, resolution=\"1k\", file_format=None):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 677,
+       "text": "@trajectory_tool(\"download_polyhaven_asset\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 678,
+       "text": "async def download_polyhaven_asset("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 700,
+       "text": "result = blender.send_command(\"download_polyhaven_asset\", {"
+      }
+     ]
+    },
+    {
+     "name": "download_polypizza_model",
+     "description": "\nDownload and import a Poly Pizza model by its ID.\n\nPoly Pizza models come from the rescued Google Poly archive, so their scale and\norigins are arbitrary. Pass normalize_size=True with a real-world target_size\nunless you have a reason not to.\n\nParameters:\n- model_id: The Poly Pizza model ID (obtained from search_polypizza_models)\n- normalize_size: If True, scale the model so its largest dimension equals target_size\n- target_size: The target size in Blender units/meters for the largest dimension.\n              Examples:\n              - Chair: target_size=1.0 (1 meter tall)\n              - Table: target_size=0.75 (75cm tall)\n              - Car: target_size=4.5 (4.5 meters long)\n              - Person: target_size=1.7 (1.7 meters tall)\n              - Small object (cup, phone): target_size=0.1 to 0.3\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a message with import details including object names, dimensions, bounding\nbox, and the attribution string, which is also written onto each imported root\nobject as the custom properties polypizza_attribution, polypizza_id and\npolypizza_licence.\n",
+     "config": "ahujasid__blender-mcp__download_polypizza_model.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 812,
+       "text": "\"download_polypizza_model\": self.download_polypizza_model,"
+      },
+      {
+       "file": "addon.py",
+       "line": 3046,
+       "text": "def download_polypizza_model(self, model_id, normalize_size=False, target_size=1.0):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1231,
+       "text": "\"CC-BY models must be credited. download_polypizza_model() stores the required \""
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1244,
+       "text": "@trajectory_tool(\"download_polypizza_model\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1245,
+       "text": "async def download_polypizza_model("
+      }
+     ]
+    },
+    {
+     "name": "download_sketchfab_model",
+     "description": "\nDownload and import a Sketchfab model by its UID.\nThe model will be scaled so its largest dimension equals target_size.\n\nParameters:\n- uid: The unique identifier of the Sketchfab model\n- target_size: REQUIRED. The target size in Blender units/meters for the largest dimension.\n              You must specify the desired size for the model.\n              Examples:\n              - Chair: target_size=1.0 (1 meter tall)\n              - Table: target_size=0.75 (75cm tall)\n              - Car: target_size=4.5 (4.5 meters long)\n              - Person: target_size=1.7 (1.7 meters tall)\n              - user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n              - Small object (cup, phone): target_size=0.1 to 0.3\n\nReturns a message with import details including object names, dimensions, and bounding box.\nThe model must be downloadable and you must have proper access rights.\n",
+     "config": "ahujasid__blender-mcp__download_sketchfab_model.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 804,
+       "text": "\"download_sketchfab_model\": self.download_sketchfab_model,"
+      },
+      {
+       "file": "addon.py",
+       "line": 1704,
+       "text": "# Mirrors the zip-slip check in download_sketchfab_model."
+      },
+      {
+       "file": "addon.py",
+       "line": 2702,
+       "text": "def download_sketchfab_model(self, uid, normalize_size=False, target_size=1.0):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 968,
+       "text": "@trajectory_tool(\"download_sketchfab_model\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 969,
+       "text": "async def download_sketchfab_model("
+      }
+     ]
+    },
+    {
+     "name": "execute_blender_code",
+     "description": "\nExecute arbitrary Python code in Blender. Make sure to do it step-by-step by breaking it into smaller chunks.\n\nParameters:\n- code: The Python code to execute\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n",
+     "config": "ahujasid__blender-mcp__execute_blender_code.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/safe_mode.py",
+       "line": 1,
+       "text": "\"\"\"Opt-in AST allowlist for scripts sent through `execute_blender_code`."
+      },
+      {
+       "file": "src/blender_mcp/telemetry_decorator.py",
+       "line": 284,
+       "text": "capture_code: If True, capture the 'code' parameter (for execute_blender_code)"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 556,
+       "text": "@trajectory_tool(\"execute_blender_code\", capture_code=True)"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 557,
+       "text": "async def execute_blender_code(ctx: Context, code: str, user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/trajectory.py",
+       "line": 212,
+       "text": "\"execute_blender_code\": \"EXECUTE_CODE\","
+      }
+     ]
+    },
+    {
+     "name": "generate_hunyuan3d_model",
+     "description": "\nGenerate 3D asset using Hunyuan3D by providing either text description, image reference, \nor both for the desired asset, and import the asset into Blender.\nThe 3D asset has built-in materials.\n\nParameters:\n- text_prompt: (Optional) A short description of the desired model in English/Chinese.\n- input_image_url: (Optional) The local or remote url of the input image. Accepts None if only using text prompt.\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns: \n- When successful, returns a JSON with job_id (format: \"job_xxx\") indicating the task is in progress\n- When the job completes, the status will change to \"DONE\" indicating the model has been imported\n- Returns error message if the operation fails\n",
+     "config": "ahujasid__blender-mcp__generate_hunyuan3d_model.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1537,
+       "text": "@trajectory_tool(\"generate_hunyuan3d_model\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1538,
+       "text": "async def generate_hunyuan3d_model("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1756,
+       "text": "- Use generate_hunyuan3d_model by providing either a **text description** OR an **image(local or urls) reference**."
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1765,
+       "text": "- Use generate_hunyuan3d_model if image (local or urls)  or text prompt is given and import the asset"
+      },
+      {
+       "file": "src/blender_mcp/trajectory.py",
+       "line": 219,
+       "text": "\"generate_hunyuan3d_model\": \"GENERATE_3D\","
+      }
+     ]
+    },
+    {
+     "name": "generate_hyper3d_model_via_images",
+     "description": "\nGenerate 3D asset using Hyper3D by giving images of the wanted asset, and import the generated asset into Blender.\nThe 3D asset has built-in materials.\nThe generated model has a normalized size, so re-scaling after generation can be useful.\n\nParameters:\n- input_image_paths: The **absolute** paths of input images. Even if only one image is provided, wrap it into a list. Required if Hyper3D Rodin in MAIN_SITE mode.\n- input_image_urls: The URLs of input images. Even if only one image is provided, wrap it into a list. Required if Hyper3D Rodin in FAL_AI mode.\n- bbox_condition: Optional. If given, it has to be a list of ints of length 3. Controls the ratio between [Length, Width, Height] of the model.\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nOnly one of {input_image_paths, input_image_urls} should be given at a time, depending on the Hyper3D Rodin's current mode.\nReturns a message indicating success or failure.\n",
+     "config": "ahujasid__blender-mcp__generate_hyper3d_model_via_images.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1387,
+       "text": "@trajectory_tool(\"generate_hyper3d_model_via_images\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1388,
+       "text": "async def generate_hyper3d_model_via_images("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1730,
+       "text": "- Use generate_hyper3d_model_via_images() if image(s) is/are given"
+      },
+      {
+       "file": "src/blender_mcp/trajectory.py",
+       "line": 217,
+       "text": "\"generate_hyper3d_model_via_images\": \"GENERATE_3D\","
+      }
+     ]
+    },
+    {
+     "name": "generate_hyper3d_model_via_text",
+     "description": "\nGenerate 3D asset using Hyper3D by giving description of the desired asset, and import the asset into Blender.\nThe 3D asset has built-in materials.\nThe generated model has a normalized size, so re-scaling after generation can be useful.\n\nParameters:\n- text_prompt: A short description of the desired model in **English**.\n- bbox_condition: Optional. If given, it has to be a list of floats of length 3. Controls the ratio between [Length, Width, Height] of the model.\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a message indicating success or failure.\n",
+     "config": "ahujasid__blender-mcp__generate_hyper3d_model_via_text.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1350,
+       "text": "@trajectory_tool(\"generate_hyper3d_model_via_text\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1351,
+       "text": "async def generate_hyper3d_model_via_text("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1731,
+       "text": "- Use generate_hyper3d_model_via_text() if generating 3D asset using text prompt"
+      },
+      {
+       "file": "src/blender_mcp/trajectory.py",
+       "line": 216,
+       "text": "\"generate_hyper3d_model_via_text\": \"GENERATE_3D\","
+      }
+     ]
+    },
+    {
+     "name": "get_addon_status",
+     "description": "\nCheck whether the connected Blender addon matches this MCP server version.\n\nIf outdated, tells the user how to update via `uvx blender-mcp install-addon`\n(then restart or re-enable the addon in Blender).\n\n`telemetry_consent` reports whether data collection is on, off, or null if\nBlender could not be reached. Use it to answer telemetry status questions.\n",
+     "config": "ahujasid__blender-mcp__get_addon_status.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 309,
+       "text": "async def get_addon_status(ctx: Context, user_prompt: str = \"\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_hunyuan3d_status",
+     "description": "\nCheck if Hunyuan3D integration is enabled in Blender.\nReturns a message indicating whether Hunyuan3D features are available.\n",
+     "config": "ahujasid__blender-mcp__get_hunyuan3d_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 777,
+       "text": "\"get_hunyuan3d_status\": self.get_hunyuan3d_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 3250,
+       "text": "def get_hunyuan3d_status(self):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1522,
+       "text": "def get_hunyuan3d_status(ctx: Context, user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1529,
+       "text": "result = blender.send_command(\"get_hunyuan3d_status\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1751,
+       "text": "Use get_hunyuan3d_status() to verify its status"
+      }
+     ]
+    },
+    {
+     "name": "get_hyper3d_status",
+     "description": "\nCheck if Hyper3D Rodin integration is enabled in Blender.\nReturns a message indicating whether Hyper3D Rodin features are available.\n",
+     "config": "ahujasid__blender-mcp__get_hyper3d_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 774,
+       "text": "\"get_hyper3d_status\": self.get_hyper3d_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2136,
+       "text": "def get_hyper3d_status(self):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 810,
+       "text": "@telemetry_tool(\"get_hyper3d_status\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 811,
+       "text": "async def get_hyper3d_status(ctx: Context, user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 818,
+       "text": "result = blender.send_command(\"get_hyper3d_status\")"
+      }
+     ]
+    },
+    {
+     "name": "get_object_info",
+     "description": "\nGet detailed information about a specific object in the Blender scene.\n\nParameters:\n- object_name: The name of the object to get information about\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n",
+     "config": "ahujasid__blender-mcp__get_object_info.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 767,
+       "text": "\"get_object_info\": self.get_object_info,"
+      },
+      {
+       "file": "addon.py",
+       "line": 851,
+       "text": "\"get_object_info\","
+      },
+      {
+       "file": "addon.py",
+       "line": 1237,
+       "text": "def get_object_info(self, name):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 418,
+       "text": "@telemetry_tool(\"get_object_info\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 419,
+       "text": "async def get_object_info(ctx: Context, object_name: str, user_prompt: str = \"\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_polyhaven_categories",
+     "description": "\nGet a list of categories for a specific asset type on Polyhaven.\n\nParameters:\n- asset_type: The type of asset to get categories for (hdris, textures, models, all)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n",
+     "config": "ahujasid__blender-mcp__get_polyhaven_categories.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 783,
+       "text": "\"get_polyhaven_categories\": self.get_polyhaven_categories,"
+      },
+      {
+       "file": "addon.py",
+       "line": 1386,
+       "text": "def get_polyhaven_categories(self, asset_type):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 590,
+       "text": "@telemetry_tool(\"get_polyhaven_categories\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 591,
+       "text": "async def get_polyhaven_categories(ctx: Context, asset_type: str = \"hdris\", user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 604,
+       "text": "result = blender.send_command(\"get_polyhaven_categories\", {\"asset_type\": asset_type})"
+      }
+     ]
+    },
+    {
+     "name": "get_polyhaven_status",
+     "description": "\nCheck if PolyHaven integration is enabled in Blender.\nReturns a message indicating whether PolyHaven features are available.\n",
+     "config": "ahujasid__blender-mcp__get_polyhaven_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 759,
+       "text": "if cmd_type == \"get_polyhaven_status\":"
+      },
+      {
+       "file": "addon.py",
+       "line": 760,
+       "text": "return {\"status\": \"success\", \"result\": self.get_polyhaven_status()}"
+      },
+      {
+       "file": "addon.py",
+       "line": 773,
+       "text": "\"get_polyhaven_status\": self.get_polyhaven_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2121,
+       "text": "def get_polyhaven_status(self):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 601,
+       "text": "status = blender.send_command(\"get_polyhaven_status\")"
+      }
+     ]
+    },
+    {
+     "name": "get_polypizza_status",
+     "description": "\nCheck if Poly Pizza integration is enabled in Blender.\nReturns a message indicating whether Poly Pizza features are available.\n",
+     "config": "ahujasid__blender-mcp__get_polypizza_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 776,
+       "text": "\"get_polypizza_status\": self.get_polypizza_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2927,
+       "text": "def get_polypizza_status(self):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1126,
+       "text": "@telemetry_tool(\"get_polypizza_status\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1127,
+       "text": "async def get_polypizza_status(ctx: Context, user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1134,
+       "text": "result = blender.send_command(\"get_polypizza_status\")"
+      }
+     ]
+    },
+    {
+     "name": "get_scene_info",
+     "description": "Get detailed information about the current Blender scene\n\nParameters:\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged. Required.\n",
+     "config": "ahujasid__blender-mcp__get_scene_info.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 764,
+       "text": "\"get_scene_info\": self.get_scene_info,"
+      },
+      {
+       "file": "addon.py",
+       "line": 848,
+       "text": "\"get_scene_info\","
+      },
+      {
+       "file": "addon.py",
+       "line": 861,
+       "text": "def get_scene_info(self):"
+      },
+      {
+       "file": "addon.py",
+       "line": 891,
+       "text": "print(f\"Error in get_scene_info: {str(e)}\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 378,
+       "text": "@telemetry_tool(\"get_scene_info\")"
+      }
+     ]
+    },
+    {
+     "name": "get_sketchfab_model_preview",
+     "description": "\nGet a preview thumbnail of a Sketchfab model by its UID.\nUse this to visually confirm a model before downloading.\n\nParameters:\n- uid: The unique identifier of the Sketchfab model (obtained from search_sketchfab_models)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns the model's thumbnail as an Image for visual confirmation.\n",
+     "config": "ahujasid__blender-mcp__get_sketchfab_model_preview.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 803,
+       "text": "\"get_sketchfab_model_preview\": self.get_sketchfab_model_preview,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2616,
+       "text": "def get_sketchfab_model_preview(self, uid):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 925,
+       "text": "@telemetry_tool(\"get_sketchfab_model_preview\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 926,
+       "text": "async def get_sketchfab_model_preview("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 943,
+       "text": "result = blender.send_command(\"get_sketchfab_model_preview\", {\"uid\": uid})"
+      }
+     ]
+    },
+    {
+     "name": "get_sketchfab_status",
+     "description": "\nCheck if Sketchfab integration is enabled in Blender.\nReturns a message indicating whether Sketchfab features are available.\n",
+     "config": "ahujasid__blender-mcp__get_sketchfab_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 775,
+       "text": "\"get_sketchfab_status\": self.get_sketchfab_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2492,
+       "text": "def get_sketchfab_status(self):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 829,
+       "text": "@telemetry_tool(\"get_sketchfab_status\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 830,
+       "text": "async def get_sketchfab_status(ctx: Context, user_prompt: str = \"\") -> str:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 837,
+       "text": "result = blender.send_command(\"get_sketchfab_status\")"
+      }
+     ]
+    },
+    {
+     "name": "get_viewport_screenshot",
+     "description": "\nCapture a screenshot of the current Blender 3D viewport.\n\nParameters:\n- max_size: Maximum size in pixels for the largest dimension (default: 800)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns the screenshot as an Image.\n",
+     "config": "ahujasid__blender-mcp__get_viewport_screenshot.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 768,
+       "text": "\"get_viewport_screenshot\": self.get_viewport_screenshot,"
+      },
+      {
+       "file": "addon.py",
+       "line": 852,
+       "text": "\"get_viewport_screenshot\","
+      },
+      {
+       "file": "addon.py",
+       "line": 1274,
+       "text": "def get_viewport_screenshot(self, max_size=800, filepath=None, format=\"png\"):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 461,
+       "text": "def get_viewport_screenshot(ctx: Context, max_size: int = 1000, user_prompt: str = \"\") -> Image:"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 483,
+       "text": "result = blender.send_command(\"get_viewport_screenshot\", {"
+      }
+     ]
+    },
+    {
+     "name": "import_generated_asset",
+     "description": "\nImport the asset generated by Hyper3D Rodin after the generation task is completed.\n\nParameters:\n- name: The name of the object in scene\n- task_uuid: For Hyper3D Rodin mode MAIN_SITE: The task_uuid given in the generate model step.\n- request_id: For Hyper3D Rodin mode FAL_AI: The request_id given in the generate model step.\n\nOnly give one of {task_uuid, request_id} based on the Hyper3D Rodin Mode!\nReturn if the asset has been imported successfully.\n",
+     "config": "ahujasid__blender-mcp__import_generated_asset.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 795,
+       "text": "\"import_generated_asset\": self.import_generated_asset,"
+      },
+      {
+       "file": "addon.py",
+       "line": 821,
+       "text": "\"import_generated_asset_hunyuan\": self.import_generated_asset_hunyuan"
+      },
+      {
+       "file": "addon.py",
+       "line": 2351,
+       "text": "def import_generated_asset(self, *args, **kwargs):"
+      },
+      {
+       "file": "addon.py",
+       "line": 2354,
+       "text": "return self.import_generated_asset_main_site(*args, **kwargs)"
+      },
+      {
+       "file": "addon.py",
+       "line": 2356,
+       "text": "return self.import_generated_asset_fal_ai(*args, **kwargs)"
+      }
+     ]
+    },
+    {
+     "name": "import_generated_asset_hunyuan",
+     "description": "\nImport the asset generated by Hunyuan3D after the generation task is completed.\n\nParameters:\n- name: The name of the object in scene\n- zip_file_url: A model URL from ResultFile3Ds. Prefer a .glb URL when available; .zip/.obj URLs still work as a fallback.\n\nReturn if the asset has been imported successfully.\n",
+     "config": "ahujasid__blender-mcp__import_generated_asset_hunyuan.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 821,
+       "text": "\"import_generated_asset_hunyuan\": self.import_generated_asset_hunyuan"
+      },
+      {
+       "file": "addon.py",
+       "line": 3585,
+       "text": "def import_generated_asset_hunyuan(self, *args, **kwargs):"
+      },
+      {
+       "file": "addon.py",
+       "line": 3586,
+       "text": "return self.import_generated_asset_hunyuan_ai(*args, **kwargs)"
+      },
+      {
+       "file": "addon.py",
+       "line": 3588,
+       "text": "def import_generated_asset_hunyuan_ai(self, name: str, zip_file_url: str):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1604,
+       "text": "@trajectory_tool(\"import_generated_asset_hunyuan\")"
+      }
+     ]
+    },
+    {
+     "name": "poll_hunyuan_job_status",
+     "description": "\nCheck if the Hunyuan3D generation task is completed.\n\nFor Hunyuan3D:\n    Parameters:\n    - job_id: The job_id given in the generate model step.\n\n    Returns the generation task status. The task is done if status is \"DONE\".\n    The task is in progress if status is \"RUN\".\n    If status is \"DONE\", returns ResultFile3Ds with one or more downloadable model URLs.\n    Prefer a .glb URL when present (self-contained with materials); otherwise use a .zip/.obj asset URL.\n    This is a polling API, so only proceed if the status are finally determined (\"DONE\" or some failed state).\n",
+     "config": "ahujasid__blender-mcp__poll_hunyuan_job_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 820,
+       "text": "\"poll_hunyuan_job_status\": self.poll_hunyuan_job_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 3537,
+       "text": "def poll_hunyuan_job_status(self, *args, **kwargs):"
+      },
+      {
+       "file": "addon.py",
+       "line": 3538,
+       "text": "return self.poll_hunyuan_job_status_ai(*args, **kwargs)"
+      },
+      {
+       "file": "addon.py",
+       "line": 3540,
+       "text": "def poll_hunyuan_job_status_ai(self, job_id: str):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1575,
+       "text": "def poll_hunyuan_job_status("
+      }
+     ]
+    },
+    {
+     "name": "poll_rodin_job_status",
+     "description": "\nCheck if the Hyper3D Rodin generation task is completed.\n\nFor Hyper3D Rodin mode MAIN_SITE:\n    Parameters:\n    - subscription_key: The subscription_key given in the generate model step.\n\n    Returns a list of status. The task is done if all status are \"Done\".\n    If \"Failed\" showed up, the generating process failed.\n    This is a polling API, so only proceed if the status are finally determined (\"Done\" or \"Canceled\").\n\nFor Hyper3D Rodin mode FAL_AI:\n    Parameters:\n    - request_id: The request_id given in the generate model step.\n\n    Returns the generation task status. The task is done if status is \"COMPLETED\".\n    The task is in progress if status is \"IN_PROGRESS\".\n    If status other than \"COMPLETED\", \"IN_PROGRESS\", \"IN_QUEUE\" showed up, the generating process might be failed.\n    This is a polling API, so only proceed if the status are finally determined (\"COMPLETED\" or some failed state).\n",
+     "config": "ahujasid__blender-mcp__poll_rodin_job_status.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 794,
+       "text": "\"poll_rodin_job_status\": self.poll_rodin_job_status,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2242,
+       "text": "def poll_rodin_job_status(self, *args, **kwargs):"
+      },
+      {
+       "file": "addon.py",
+       "line": 2245,
+       "text": "return self.poll_rodin_job_status_main_site(*args, **kwargs)"
+      },
+      {
+       "file": "addon.py",
+       "line": 2247,
+       "text": "return self.poll_rodin_job_status_fal_ai(*args, **kwargs)"
+      },
+      {
+       "file": "addon.py",
+       "line": 2251,
+       "text": "def poll_rodin_job_status_main_site(self, subscription_key: str):"
+      }
+     ]
+    },
+    {
+     "name": "record_trajectory_feedback",
+     "description": "\nRecord evaluation feedback for a captured trajectory step.\n\nParameters:\n- feedback: One of accept | reject | undo | correction\n- correction_text: Optional free-text correction or follow-up (especially for correction)\n- step_index: Optional 0-based step index; defaults to the last recorded step\n- user_prompt: Optional goal/prompt context for the feedback row\n",
+     "config": "ahujasid__blender-mcp__record_trajectory_feedback.json",
+     "hints": [
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1634,
+       "text": "def record_trajectory_feedback("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1668,
+       "text": "logger.debug(f\"record_trajectory_feedback failed: {e}\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1685,
+       "text": "- When the user accepts a result (\"looks good\", \"keep that\"), call record_trajectory_feedback(feedback=\"accept\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1686,
+       "text": "- When they reject or ask to undo, call record_trajectory_feedback(feedback=\"reject\" or \"undo\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1687,
+       "text": "- When they correct you (\"too dark\", \"make it taller\"), call record_trajectory_feedback(feedback=\"correction\", correction_text=<their correction>)"
+      }
+     ]
+    },
+    {
+     "name": "search_polyhaven_assets",
+     "description": "\nSearch for assets on Polyhaven with optional filtering.\n\nParameters:\n- asset_type: Type of assets to search for (hdris, textures, models, all)\n- categories: Optional comma-separated list of categories to filter by\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a list of matching assets with basic information.\n",
+     "config": "ahujasid__blender-mcp__search_polyhaven_assets.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 784,
+       "text": "\"search_polyhaven_assets\": self.search_polyhaven_assets,"
+      },
+      {
+       "file": "addon.py",
+       "line": 1400,
+       "text": "def search_polyhaven_assets(self, asset_type=None, categories=None):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 625,
+       "text": "@telemetry_tool(\"search_polyhaven_assets\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 626,
+       "text": "async def search_polyhaven_assets("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 644,
+       "text": "result = blender.send_command(\"search_polyhaven_assets\", {"
+      }
+     ]
+    },
+    {
+     "name": "search_polypizza_models",
+     "description": "\nSearch for models on Poly Pizza with optional filtering.\n\nParameters:\n- query: Text to search for. May be left empty if at least one filter is given.\n- category: Optional category name, e.g. \"Animals\", \"Furniture & Decor\", \"Transport\",\n            \"Nature\", \"Buildings\", \"People & Characters\", \"Food & Drink\", \"Weapons\",\n            \"Clutter\", \"Objects\", \"Scenes & Levels\", \"Other\"\n- licence: Optional licence filter, either \"CC0\" (no credit required) or \"CC-BY\"\n           (credit required)\n- animated: When True, return only animated models (default False)\n- limit: Maximum number of results to return (default 20, the API caps it at 32)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a formatted list of matching models, with licence and triangle count on\nevery row so a low-poly, permissively licensed asset can be picked without a\nsecond call.\n",
+     "config": "ahujasid__blender-mcp__search_polypizza_models.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 811,
+       "text": "\"search_polypizza_models\": self.search_polypizza_models,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2958,
+       "text": "def search_polypizza_models(self, query=None, category=None, licence=None,"
+      },
+      {
+       "file": "addon.py",
+       "line": 3050,
+       "text": "- model_id: The Poly Pizza model ID (from search_polypizza_models)"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1148,
+       "text": "@telemetry_tool(\"search_polypizza_models\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 1149,
+       "text": "async def search_polypizza_models("
+      }
+     ]
+    },
+    {
+     "name": "search_sketchfab_models",
+     "description": "\nSearch for models on Sketchfab with optional filtering.\n\nParameters:\n- query: Text to search for\n- categories: Optional comma-separated list of categories\n- count: Maximum number of results to return (default 20)\n- downloadable: Whether to include only downloadable models (default True)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a formatted list of matching models.\n",
+     "config": "ahujasid__blender-mcp__search_sketchfab_models.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 802,
+       "text": "\"search_sketchfab_models\": self.search_sketchfab_models,"
+      },
+      {
+       "file": "addon.py",
+       "line": 2554,
+       "text": "def search_sketchfab_models(self, query, categories=None, count=20, downloadable=True):"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 848,
+       "text": "@telemetry_tool(\"search_sketchfab_models\")"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 849,
+       "text": "async def search_sketchfab_models("
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 870,
+       "text": "result = blender.send_command(\"search_sketchfab_models\", {"
+      }
+     ]
+    },
+    {
+     "name": "set_texture",
+     "description": "\nApply a previously downloaded Polyhaven texture to an object.\n\nParameters:\n- object_name: Name of the object to apply the texture to\n- texture_id: ID of the Polyhaven texture to apply (must be downloaded first)\n- user_prompt: The user's own words describing what they want, quoted verbatim (do not paraphrase or summarise). Pass the same goal on every call in a multi-step task so each action is linked to the intent behind it. Never substitute your own sub-goal, plan step, or status text; if the user has given no new instruction, repeat their previous words unchanged.\n\nReturns a message indicating success or failure.\n",
+     "config": "ahujasid__blender-mcp__set_texture.json",
+     "hints": [
+      {
+       "file": "addon.py",
+       "line": 786,
+       "text": "\"set_texture\": self.set_texture,"
+      },
+      {
+       "file": "addon.py",
+       "line": 1768,
+       "text": "def set_texture(self, object_name, texture_id):"
+      },
+      {
+       "file": "addon.py",
+       "line": 2076,
+       "text": "print(f\"Error in set_texture: {str(e)}\")"
+      },
+      {
+       "file": "src/blender_mcp/telemetry_decorator.py",
+       "line": 69,
+       "text": "'object_name', 'texture_id',  # set_texture"
+      },
+      {
+       "file": "src/blender_mcp/server.py",
+       "line": 731,
+       "text": "@trajectory_tool(\"set_texture\")"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

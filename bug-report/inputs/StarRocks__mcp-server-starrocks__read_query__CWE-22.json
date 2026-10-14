@@ -1,0 +1,35 @@
+{
+ "repo": "StarRocks/mcp-server-starrocks",
+ "tool": "read_query",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "88e782b0f3ff660c871f47cf8477773ac02d9e92",
+ "draft": "StarRocks__mcp-server-starrocks__read_query__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'SELECT * FROM users', 'db': None, 'output_file': '/etc/passwd', 'output_format': 'jsonl'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error: Error executing statement 'SELECT * FROM users': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'UNION SELECT null, username, password FROM users', 'db': 'main', 'output_file': '../../../../etc/passwd', 'output_format': 'csv'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error: Error executing statement 'UNION SELECT null, username, password FROM users': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"SELECT * FROM users WHERE id = 1' OR '1'='1\", 'db': 'testdb', 'output_file': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'output_format': 'json'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error: Error executing statement 'SELECT * FROM users WHERE id = 1' OR '1'='1': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

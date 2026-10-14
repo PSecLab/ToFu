@@ -1,0 +1,2308 @@
+{
+ "shard_id": "065",
+ "n_repos": 14,
+ "n_configs": 135,
+ "surface_loc": 16226,
+ "repos": [
+  {
+   "repo": "renyumeng1/mcp_scholar",
+   "slug": "renyumeng1__mcp_scholar",
+   "lang": "python",
+   "commit": "5e12e93c95353754b2700f38d8377ccd66dc5fa1",
+   "path": "eval/targets/renyumeng1__mcp_scholar",
+   "surface_loc": 1239,
+   "tools": [
+    {
+     "name": "adaptive_search",
+     "description": "\n\u81ea\u9002\u5e94\u641c\u7d22\u8c37\u6b4c\u5b66\u672f\uff0c\u5148\u5c1d\u8bd5\u7cbe\u786e\u641c\u7d22\uff0c\u5982\u679c\u7ed3\u679c\u592a\u5c11\u5219\u81ea\u52a8\u5207\u6362\u5230\u6a21\u7cca\u641c\u7d22\n\nArgs:\n    keywords: \u641c\u7d22\u5173\u952e\u8bcd\n    count: \u8fd4\u56de\u7ed3\u679c\u6570\u91cf\uff0c\u9ed8\u8ba4\u4e3a5\n    min_results: \u6700\u5c11\u9700\u8981\u8fd4\u56de\u7684\u7ed3\u679c\u6570\u91cf\uff0c\u5c11\u4e8e\u6b64\u6570\u91cf\u4f1a\u89e6\u53d1\u6a21\u7cca\u641c\u7d22\uff0c\u9ed8\u8ba4\u4e3a3\n    sort_by: \u6392\u5e8f\u65b9\u5f0f\uff0c\u53ef\u9009\u503c:\n        - \"relevance\": \u6309\u76f8\u5173\u6027\u6392\u5e8f\uff08\u9ed8\u8ba4\uff09\n        - \"citations\": \u6309\u5f15\u7528\u91cf\u6392\u5e8f\n        - \"date\": \u6309\u53d1\u8868\u65e5\u671f\u6392\u5e8f\uff08\u65b0\u5230\u65e7\uff09\n        - \"title\": \u6309\u6807\u9898\u5b57\u6bcd\u987a\u5e8f\u6392\u5e8f\n    year_start: \u5f00\u59cb\u5e74\u4efd\uff0c\u53ef\u9009\n    year_end: \u7ed3\u675f\u5e74\u4efd\uff0c\u53ef\u9009\n\nReturns:\n    Dict: \u5305\u542b\u8bba\u6587\u5217\u8868\u548c\u641c\u7d22\u6a21\u5f0f\u7684\u5b57\u5178\n",
+     "config": "renyumeng1__mcp_scholar__adaptive_search.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 182,
+       "text": "async def adaptive_search("
+      }
+     ]
+    },
+    {
+     "name": "health_check",
+     "description": "\n\u5065\u5eb7\u68c0\u67e5\u7aef\u70b9\uff0c\u7528\u4e8e\u9a8c\u8bc1\u670d\u52a1\u662f\u5426\u6b63\u5e38\u8fd0\u884c\n\nReturns:\n    str: \u670d\u52a1\u72b6\u6001\u4fe1\u606f\n",
+     "config": "renyumeng1__mcp_scholar__health_check.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 533,
+       "text": "async def health_check(ctx: Context) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "paper_detail",
+     "description": "\n\u83b7\u53d6\u8bba\u6587\u8be6\u7ec6\u4fe1\u606f\n\nArgs:\n    paper_id: \u8bba\u6587ID\n\nReturns:\n    Dict: \u8bba\u6587\u8be6\u7ec6\u4fe1\u606f\n",
+     "config": "renyumeng1__mcp_scholar__paper_detail.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 12,
+       "text": "get_paper_detail,"
+      },
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 286,
+       "text": "async def paper_detail(ctx: Context, paper_id: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 299,
+       "text": "detail = await get_paper_detail(paper_id)"
+      },
+      {
+       "file": "src/mcp_scholar/scholar.py",
+       "line": 248,
+       "text": "async def get_paper_detail(paper_id: str) -> Optional[Dict[str, Any]]:"
+      }
+     ]
+    },
+    {
+     "name": "paper_references",
+     "description": "\n\u83b7\u53d6\u5f15\u7528\u6307\u5b9a\u8bba\u6587\u7684\u6587\u732e\u5217\u8868\n\nArgs:\n    paper_id: \u8bba\u6587ID\n    count: \u8fd4\u56de\u7ed3\u679c\u6570\u91cf\uff0c\u9ed8\u8ba4\u4e3a5\n    sort_by: \u6392\u5e8f\u65b9\u5f0f\uff0c\u53ef\u9009\u503c:\n        - \"relevance\": \u6309\u76f8\u5173\u6027\u6392\u5e8f\uff08\u9ed8\u8ba4\uff09\n        - \"citations\": \u6309\u5f15\u7528\u91cf\u6392\u5e8f\n        - \"date\": \u6309\u53d1\u8868\u65e5\u671f\u6392\u5e8f\uff08\u65b0\u5230\u65e7\uff09\n        - \"title\": \u6309\u6807\u9898\u5b57\u6bcd\u987a\u5e8f\u6392\u5e8f\n\nReturns:\n    Dict: \u5f15\u7528\u8bba\u6587\u5217\u8868\n",
+     "config": "renyumeng1__mcp_scholar__paper_references.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 13,
+       "text": "get_paper_references,"
+      },
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 322,
+       "text": "async def paper_references("
+      },
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 343,
+       "text": "references = await get_paper_references(paper_id, count, sort_by=sort_by)"
+      },
+      {
+       "file": "src/mcp_scholar/scholar.py",
+       "line": 338,
+       "text": "async def get_paper_references("
+      }
+     ]
+    },
+    {
+     "name": "profile_papers",
+     "description": "\n\u83b7\u53d6\u5b66\u8005\u7684\u8bba\u6587\n\nArgs:\n    profile_url: \u8c37\u6b4c\u5b66\u672f\u4e2a\u4eba\u4e3b\u9875URL\n    count: \u8fd4\u56de\u7ed3\u679c\u6570\u91cf\uff0c\u9ed8\u8ba4\u4e3a5\n    sort_by: \u6392\u5e8f\u65b9\u5f0f\uff0c\u53ef\u9009\u503c:\n        - \"relevance\": \u6309\u76f8\u5173\u6027\u6392\u5e8f\uff08\u9ed8\u8ba4\uff09\n        - \"citations\": \u6309\u5f15\u7528\u91cf\u6392\u5e8f\n        - \"date\": \u6309\u53d1\u8868\u65e5\u671f\u6392\u5e8f\uff08\u65b0\u5230\u65e7\uff09\n        - \"title\": \u6309\u6807\u9898\u5b57\u6bcd\u987a\u5e8f\u6392\u5e8f\n\nReturns:\n    Dict: \u8bba\u6587\u5217\u8868\n",
+     "config": "renyumeng1__mcp_scholar__profile_papers.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 373,
+       "text": "async def profile_papers("
+      }
+     ]
+    },
+    {
+     "name": "scholar_search",
+     "description": "\n\u641c\u7d22\u8c37\u6b4c\u5b66\u672f\u5e76\u8fd4\u56de\u8bba\u6587\u6458\u8981\n\nArgs:\n    keywords: \u641c\u7d22\u5173\u952e\u8bcd\n    count: \u8fd4\u56de\u7ed3\u679c\u6570\u91cf\uff0c\u9ed8\u8ba4\u4e3a5\n    fuzzy_search: \u662f\u5426\u4f7f\u7528\u6a21\u7cca\u641c\u7d22\uff0c\u9ed8\u8ba4\u4e3aFalse\n    sort_by: \u6392\u5e8f\u65b9\u5f0f\uff0c\u53ef\u9009\u503c:\n        - \"relevance\": \u6309\u76f8\u5173\u6027\u6392\u5e8f\uff08\u9ed8\u8ba4\uff09\n        - \"citations\": \u6309\u5f15\u7528\u91cf\u6392\u5e8f\n        - \"date\": \u6309\u53d1\u8868\u65e5\u671f\u6392\u5e8f\uff08\u65b0\u5230\u65e7\uff09\n        - \"title\": \u6309\u6807\u9898\u5b57\u6bcd\u987a\u5e8f\u6392\u5e8f\n    year_start: \u5f00\u59cb\u5e74\u4efd\uff0c\u53ef\u9009\n    year_end: \u7ed3\u675f\u5e74\u4efd\uff0c\u53ef\u9009\n\nReturns:\n    Dict: \u5305\u542b\u8bba\u6587\u5217\u8868\u7684\u5b57\u5178\n",
+     "config": "renyumeng1__mcp_scholar__scholar_search.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 94,
+       "text": "async def scholar_search("
+      }
+     ]
+    },
+    {
+     "name": "summarize_papers",
+     "description": "\n\u641c\u7d22\u5e76\u603b\u7ed3\u7279\u5b9a\u4e3b\u9898\u7684\u8bba\u6587\n\nArgs:\n    topic: \u7814\u7a76\u4e3b\u9898\n    count: \u8fd4\u56de\u7ed3\u679c\u6570\u91cf\uff0c\u9ed8\u8ba4\u4e3a5\n    sort_by: \u6392\u5e8f\u65b9\u5f0f\uff0c\u53ef\u9009\u503c:\n        - \"relevance\": \u6309\u76f8\u5173\u6027\u6392\u5e8f\uff08\u9ed8\u8ba4\uff09\n        - \"citations\": \u6309\u5f15\u7528\u91cf\u6392\u5e8f\n        - \"date\": \u6309\u53d1\u8868\u65e5\u671f\u6392\u5e8f\uff08\u65b0\u5230\u65e7\uff09\n        - \"title\": \u6309\u6807\u9898\u5b57\u6bcd\u987a\u5e8f\u6392\u5e8f\n    year_start: \u5f00\u59cb\u5e74\u4efd\uff0c\u53ef\u9009\n    year_end: \u7ed3\u675f\u5e74\u4efd\uff0c\u53ef\u9009\n\nReturns:\n    str: \u8bba\u6587\u603b\u7ed3\u7684Markdown\u683c\u5f0f\u6587\u672c\n",
+     "config": "renyumeng1__mcp_scholar__summarize_papers.json",
+     "hints": [
+      {
+       "file": "src/mcp_scholar/server.py",
+       "line": 432,
+       "text": "async def summarize_papers("
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "supercurses/powerpoint",
+   "slug": "supercurses__powerpoint",
+   "lang": "python",
+   "commit": "1f11406f467d3f4674d761141906c23a02e72b48",
+   "path": "eval/targets/supercurses__powerpoint",
+   "surface_loc": 1224,
+   "tools": [
+    {
+     "name": "add-slide-comparison",
+     "description": "Add a new a comparison slide with title and comparison content. Use when you wish to compare two concepts",
+     "config": "supercurses__powerpoint__add-slide-comparison.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 151,
+       "text": "name=\"add-slide-comparison\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 435,
+       "text": "elif name == \"add-slide-comparison\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-picture-with-caption",
+     "description": "Add a new slide with a picture and caption to an existing presentation",
+     "config": "supercurses__powerpoint__add-slide-picture-with-caption.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 299,
+       "text": "name=\"add-slide-picture-with-caption\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 461,
+       "text": "elif name == \"add-slide-picture-with-caption\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-section-header",
+     "description": "This tool adds a section header (a.k.a segue) slide to the presentation you are working on. The tool doesn't return anything. It requires the presentation_name to work on.",
+     "config": "supercurses__powerpoint__add-slide-section-header.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 101,
+       "text": "name=\"add-slide-section-header\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 532,
+       "text": "elif name == \"add-slide-section-header\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-title-content",
+     "description": "Add a new slide with a title and content to an existing presentation",
+     "config": "supercurses__powerpoint__add-slide-title-content.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 125,
+       "text": "name=\"add-slide-title-content\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 510,
+       "text": "elif name == \"add-slide-title-content\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-title-only",
+     "description": "This tool adds a new title slide to the presentation you are working on. The tool doesn't return anything. It requires the presentation_name to work on.",
+     "config": "supercurses__powerpoint__add-slide-title-only.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 82,
+       "text": "name=\"add-slide-title-only\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 628,
+       "text": "elif name == \"add-slide-title-only\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-title-with-chart",
+     "description": "Add a new slide with a title and chart. The chart type will be automatically selected based on the data structure.",
+     "config": "supercurses__powerpoint__add-slide-title-with-chart.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 233,
+       "text": "name=\"add-slide-title-with-chart\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 589,
+       "text": "elif name == \"add-slide-title-with-chart\":"
+      }
+     ]
+    },
+    {
+     "name": "add-slide-title-with-table",
+     "description": "Add a new slide with a title and table containing the provided data",
+     "config": "supercurses__powerpoint__add-slide-title-with-table.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 195,
+       "text": "name=\"add-slide-title-with-table\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 554,
+       "text": "elif name == \"add-slide-title-with-table\":"
+      }
+     ]
+    },
+    {
+     "name": "create-presentation",
+     "description": "This tool starts the process of generating a new powerpoint presentation with the name given by the user. Use this tool when the user requests to create or generate a new presentation.",
+     "config": "supercurses__powerpoint__create-presentation.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 47,
+       "text": "name=\"create-presentation\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 490,
+       "text": "elif name == \"create-presentation\":"
+      }
+     ]
+    },
+    {
+     "name": "generate-and-save-image",
+     "description": "Generates an image using a FLUX model and save the image to the specified path. The tool will return a PNG file path. It should be used when the user asks to generate or create an image or a picture.",
+     "config": "supercurses__powerpoint__generate-and-save-image.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 62,
+       "text": "name=\"generate-and-save-image\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 409,
+       "text": "elif name == \"generate-and-save-image\":"
+      }
+     ]
+    },
+    {
+     "name": "open-presentation",
+     "description": "Opens an existing presentation and saves a copy to a new file for backup. Use this tool when the user requests to open a presentation that has already been created.",
+     "config": "supercurses__powerpoint__open-presentation.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 325,
+       "text": "name=\"open-presentation\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 372,
+       "text": "if name == \"open-presentation\":"
+      }
+     ]
+    },
+    {
+     "name": "save-presentation",
+     "description": "Save the presentation to a file. Always use this tool at the end of any process that has added slides to a presentation.",
+     "config": "supercurses__powerpoint__save-presentation.json",
+     "hints": [
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 344,
+       "text": "name=\"save-presentation\","
+      },
+      {
+       "file": "src/powerpoint/server.py",
+       "line": 649,
+       "text": "elif name == \"save-presentation\":"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "chatwork/chatwork-mcp-server",
+   "slug": "chatwork__chatwork-mcp-server",
+   "lang": "node",
+   "commit": "31385a87b7a117ee2b0f6f712ad386bca1dbc29b",
+   "path": "eval/targets/chatwork__chatwork-mcp-server",
+   "surface_loc": 1214,
+   "tools": [
+    {
+     "name": "accept_incoming_request",
+     "description": "\u81ea\u5206\u3078\u306e\u30b3\u30f3\u30bf\u30af\u30c8\u627f\u8a8d\u4f9d\u983c\u3092\u627f\u8a8d\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__accept_incoming_request.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 232,
+       "text": "'accept_incoming_request',"
+      }
+     ]
+    },
+    {
+     "name": "create_room",
+     "description": "\u65b0\u3057\u3044\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u3092\u4f5c\u6210\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__create_room.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 89,
+       "text": "'create_room',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 173,
+       "text": "'create_room_task',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 209,
+       "text": "'create_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "create_room_link",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u3078\u306e\u62db\u5f85\u30ea\u30f3\u30af\u3092\u4f5c\u6210\u3057\u307e\u3059\u3002\u3059\u3067\u306b\u62db\u5f85\u30ea\u30f3\u30af\u304c\u4f5c\u6210\u3055\u308c\u3066\u3044\u308b\u5834\u5408\u306f400\u30a8\u30e9\u30fc\u3092\u8fd4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__create_room_link.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 209,
+       "text": "'create_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "create_room_task",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306b\u65b0\u3057\u3044\u30bf\u30b9\u30af\u3092\u8ffd\u52a0\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__create_room_task.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 173,
+       "text": "'create_room_task',"
+      }
+     ]
+    },
+    {
+     "name": "delete_or_leave_room",
+     "description": "\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u3092\u9000\u5e2d\u3001\u307e\u305f\u306f\u524a\u9664\u3057\u307e\u3059\u3002\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u3092\u9000\u5e2d\u3059\u308b\u3068\u3001\u3053\u306e\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u306b\u3042\u308b\u81ea\u5206\u304c\u62c5\u5f53\u8005\u306e\u30bf\u30b9\u30af\u3001\u304a\u3088\u3073\u81ea\u5206\u304c\u9001\u4fe1\u3057\u305f\u30d5\u30a1\u30a4\u30eb\u304c\u3059\u3079\u3066\u524a\u9664\u3055\u308c\u307e\u3059\u3002\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u3092\u524a\u9664\u3059\u308b\u3068\u3001\u3053\u306e\u30b0\u30eb\u30fc\u30d7\u30c1\u30e3\u30c3\u30c8\u306b\u3042\u308b\u30e1\u30c3\u30bb\u30fc\u30b8\u3001\u30bf\u30b9\u30af\u3001\u30d5\u30a1\u30a4\u30eb\u304c\u3059\u3079\u3066\u524a\u9664\u3055\u308c\u307e\u3059\u3002\uff08\u4e00\u5ea6\u524a\u9664\u3059\u308b\u3068\u5143\u306b\u623b\u305b\u307e\u305b\u3093\u3002\uff09",
+     "config": "chatwork__chatwork-mcp-server__delete_or_leave_room.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 107,
+       "text": "'delete_or_leave_room',"
+      }
+     ]
+    },
+    {
+     "name": "delete_room_link",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u3078\u306e\u62db\u5f85\u30ea\u30f3\u30af\u3092\u524a\u9664\u3057\u307e\u3059\u3002\u62db\u5f85\u30ea\u30f3\u30af\u304c\u7121\u52b9\u306b\u306a\u3063\u3066\u3044\u308b\u5834\u5408\u306f400\u30a8\u30e9\u30fc\u3092\u8fd4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__delete_room_link.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 221,
+       "text": "'delete_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "delete_room_message",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u524a\u9664\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__delete_room_message.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 161,
+       "text": "'delete_room_message',"
+      }
+     ]
+    },
+    {
+     "name": "get_me",
+     "description": "\u81ea\u5206\u81ea\u8eab\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_me.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 70,
+       "text": "server.tool('get_me', '\u81ea\u5206\u81ea\u8eab\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002', getMe);"
+      }
+     ]
+    },
+    {
+     "name": "get_my_status",
+     "description": "\u81ea\u5206\u306e\u672a\u8aad\u6570\u3001\u81ea\u5206\u5b9b\u3066\u306e\u672a\u8aad\u306e\u6570\u3001\u672a\u5b8c\u4e86\u30bf\u30b9\u30af\u6570\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_my_status.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 72,
+       "text": "'get_my_status',"
+      }
+     ]
+    },
+    {
+     "name": "get_room",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u60c5\u5831\uff08\u540d\u524d\u3001\u30a2\u30a4\u30b3\u30f3\u3001\u7a2e\u985e\u306a\u3069\uff09\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_room.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 95,
+       "text": "'get_room',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 149,
+       "text": "'get_room_message',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 179,
+       "text": "'get_room_task',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 197,
+       "text": "'get_room_file',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 203,
+       "text": "'get_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "get_room_file",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30d5\u30a1\u30a4\u30eb\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_room_file.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 197,
+       "text": "'get_room_file',"
+      }
+     ]
+    },
+    {
+     "name": "get_room_link",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u3078\u306e\u62db\u5f85\u30ea\u30f3\u30af\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_room_link.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 203,
+       "text": "'get_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "get_room_message",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_room_message.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 149,
+       "text": "'get_room_message',"
+      }
+     ]
+    },
+    {
+     "name": "get_room_task",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30bf\u30b9\u30af\u306e\u60c5\u5831\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__get_room_task.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 179,
+       "text": "'get_room_task',"
+      }
+     ]
+    },
+    {
+     "name": "list_contacts",
+     "description": "\u81ea\u5206\u306e\u30b3\u30f3\u30bf\u30af\u30c8\u4e00\u89a7\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_contacts.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 83,
+       "text": "'list_contacts',"
+      }
+     ]
+    },
+    {
+     "name": "list_incoming_requests",
+     "description": "\u81ea\u5206\u3078\u306e\u30b3\u30f3\u30bf\u30af\u30c8\u627f\u8a8d\u4f9d\u983c\u4e00\u89a7\u3092\u6700\u5927100\u4ef6\u307e\u3067\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_incoming_requests.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 227,
+       "text": "'list_incoming_requests',"
+      }
+     ]
+    },
+    {
+     "name": "list_my_tasks",
+     "description": "\u81ea\u5206\u306e\u30bf\u30b9\u30af\u4e00\u89a7\u3092\u6700\u5927100\u4ef6\u307e\u3067\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_my_tasks.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 77,
+       "text": "'list_my_tasks',"
+      }
+     ]
+    },
+    {
+     "name": "list_room_files",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30d5\u30a1\u30a4\u30eb\u4e00\u89a7\u3092\u6700\u5927100\u4ef6\u307e\u3067\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_room_files.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 191,
+       "text": "'list_room_files',"
+      }
+     ]
+    },
+    {
+     "name": "list_room_members",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30f3\u30d0\u30fc\u4e00\u89a7\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_room_members.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 113,
+       "text": "'list_room_members',"
+      }
+     ]
+    },
+    {
+     "name": "list_room_messages",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u4e00\u89a7\u3092\u6700\u5927100\u4ef6\u307e\u3067\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_room_messages.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 125,
+       "text": "'list_room_messages',"
+      }
+     ]
+    },
+    {
+     "name": "list_room_tasks",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30bf\u30b9\u30af\u4e00\u89a7\u3092\u6700\u5927100\u4ef6\u307e\u3067\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_room_tasks.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 167,
+       "text": "'list_room_tasks',"
+      }
+     ]
+    },
+    {
+     "name": "list_rooms",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u4e00\u89a7\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__list_rooms.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 87,
+       "text": "server.tool('list_rooms', '\u30c1\u30e3\u30c3\u30c8\u4e00\u89a7\u3092\u53d6\u5f97\u3057\u307e\u3059\u3002', listRooms);"
+      }
+     ]
+    },
+    {
+     "name": "post_room_message",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306b\u65b0\u3057\u3044\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u6295\u7a3f\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__post_room_message.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 131,
+       "text": "'post_room_message',"
+      }
+     ]
+    },
+    {
+     "name": "read_room_messages",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u65e2\u8aad\u306b\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__read_room_messages.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 137,
+       "text": "'read_room_messages',"
+      }
+     ]
+    },
+    {
+     "name": "reject_incoming_request",
+     "description": "\u81ea\u5206\u3078\u306e\u30b3\u30f3\u30bf\u30af\u30c8\u627f\u8a8d\u4f9d\u983c\u3092\u62d2\u5426\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__reject_incoming_request.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 238,
+       "text": "'reject_incoming_request',"
+      }
+     ]
+    },
+    {
+     "name": "unread_room_message",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u672a\u8aad\u306b\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__unread_room_message.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 143,
+       "text": "'unread_room_message',"
+      }
+     ]
+    },
+    {
+     "name": "update_room",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u60c5\u5831\uff08\u540d\u524d\u3001\u30a2\u30a4\u30b3\u30f3\u306a\u3069\uff09\u3092\u5909\u66f4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__update_room.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 101,
+       "text": "'update_room',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 119,
+       "text": "'update_room_members',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 155,
+       "text": "'update_room_message',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 185,
+       "text": "'update_room_task_status',"
+      },
+      {
+       "file": "src/server.ts",
+       "line": 215,
+       "text": "'update_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "update_room_link",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u3078\u306e\u62db\u5f85\u30ea\u30f3\u30af\u3092\u5909\u66f4\u3057\u307e\u3059\u3002\u62db\u5f85\u30ea\u30f3\u30af\u304c\u7121\u52b9\u306b\u306a\u3063\u3066\u3044\u308b\u5834\u5408\u306f400\u30a8\u30e9\u30fc\u3092\u8fd4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__update_room_link.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 215,
+       "text": "'update_room_link',"
+      }
+     ]
+    },
+    {
+     "name": "update_room_members",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30f3\u30d0\u30fc\u3092\u4e00\u62ec\u3067\u5909\u66f4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__update_room_members.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 119,
+       "text": "'update_room_members',"
+      }
+     ]
+    },
+    {
+     "name": "update_room_message",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30e1\u30c3\u30bb\u30fc\u30b8\u3092\u66f4\u65b0\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__update_room_message.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 155,
+       "text": "'update_room_message',"
+      }
+     ]
+    },
+    {
+     "name": "update_room_task_status",
+     "description": "\u30c1\u30e3\u30c3\u30c8\u306e\u30bf\u30b9\u30af\u306e\u5b8c\u4e86\u72b6\u614b\u3092\u5909\u66f4\u3057\u307e\u3059\u3002",
+     "config": "chatwork__chatwork-mcp-server__update_room_task_status.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 185,
+       "text": "'update_room_task_status',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "fengin/image-gen-server",
+   "slug": "fengin__image-gen-server",
+   "lang": "python",
+   "commit": "4ec89fefef82133c46642679e5a284d176452730",
+   "path": "eval/targets/fengin__image-gen-server",
+   "surface_loc": 1210,
+   "tools": [
+    {
+     "name": "generate_image",
+     "description": "\u6839\u636e\u6587\u672c\u63cf\u8ff0\u751f\u6210\u56fe\u7247\n\nArgs:\n    prompt: \u56fe\u7247\u7684\u6587\u672cprompt\u63cf\u8ff0\uff0c800\u5b57\u7b26\u957f\u5ea6\u9650\u5236\uff0c\u4e00\u4e2a\u6c49\u5b57\u7b97\u4e00\u4e2a\u5b57\u7b26\u957f\u5ea6\n    file_name: \u751f\u6210\u56fe\u7247\u7684\u6587\u4ef6\u540d\uff0c\u542b\u540e\u8f8d\u540d(\u4e0d\u542b\u8def\u5f84\uff0c\u5982\u679c\u6ca1\u6709\u540e\u7f00\u5219\u9ed8\u8ba4\u4f7f\u7528.jpg)\n    save_folder: \u56fe\u7247\u4fdd\u5b58\u7edd\u5bf9\u5730\u5740\u76ee\u5f55(\u5fc5\u9009)\n    sample_strength: \u751f\u6210\u56fe\u7247\u7684\u7cbe\u7ec6\u5ea6(\u53ef\u9009,\u8303\u56f40-1,\u9ed8\u8ba40.5)\n    width: \u751f\u6210\u56fe\u7247\u7684\u5bbd\u5ea6(\u53ef\u9009,\u9ed8\u8ba41024\uff0c\u6700\u59271024)\n    height: \u751f\u6210\u56fe\u7247\u7684\u9ad8\u5ea6(\u53ef\u9009,\u9ed8\u8ba41024\uff0c\u6700\u59271024)\n    \nReturns:\n    List: \u5305\u542b\u751f\u6210\u7ed3\u679c\u7684JSON\u5b57\u7b26\u4e32\n",
+     "config": "fengin__image-gen-server__generate_image.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 14,
+       "text": "from proxy.jimeng import generate_images  # \u5bfc\u5165proxy.jimeng\u6a21\u5757"
+      },
+      {
+       "file": "server.py",
+       "line": 76,
+       "text": "@mcp.tool(\"generate_image\")"
+      },
+      {
+       "file": "server.py",
+       "line": 77,
+       "text": "async def generate_image(prompt: str, file_name: str, save_folder: str, sample_strength: float = 0.5, width: int = 1024, height: int = 1024) -> list[types.TextContent | types.ImageContent | types.Embe"
+      },
+      {
+       "file": "server.py",
+       "line": 163,
+       "text": "image_urls = generate_images("
+      },
+      {
+       "file": "proxy/example.py",
+       "line": 13,
+       "text": "from jimeng import generate_images, create_completion, create_completion_stream"
+      }
+     ]
+    },
+    {
+     "name": "use_description",
+     "description": "\u5217\u51fa\u6240\u6709\u53ef\u7528\u7684\u5de5\u5177\u53ca\u5176\u53c2\u6570",
+     "config": "fengin__image-gen-server__use_description.json",
+     "hints": [
+      {
+       "file": "server.py",
+       "line": 32,
+       "text": "@mcp.tool(\"use_description\")"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "pmmvr/obsidian-api-mcp-server",
+   "slug": "pmmvr__obsidian-api-mcp-server",
+   "lang": "python",
+   "commit": "9a93913eb8f771b59930d7bbdc3377eacfe51cac",
+   "path": "eval/targets/pmmvr__obsidian-api-mcp-server",
+   "surface_loc": 1203,
+   "tools": [
+    {
+     "name": "browse_vault_structure",
+     "description": "\nBrowse vault directory structure.\n\nArgs:\n    path: Path to browse from (defaults to vault root)\n    include_files: Include files in listing (default: False, folders only)\n    recursive: List nested contents recursively\n",
+     "config": "pmmvr__obsidian-api-mcp-server__browse_vault_structure.json",
+     "hints": [
+      {
+       "file": "src/obsidian_mcp/server.py",
+       "line": 134,
+       "text": "async def browse_vault_structure(path: str = \"\", include_files: bool = False, recursive: bool = False) -> Dict[str, Any]:"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 155,
+       "text": "@when('I call the browse_vault_structure tool with include_files True')"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 157,
+       "text": "from obsidian_mcp.server import browse_vault_structure"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 171,
+       "text": "return await browse_vault_structure(include_files=True)"
+      }
+     ]
+    },
+    {
+     "name": "get_note_content",
+     "description": "\nGet the full content and metadata of a specific note by path.\n\nArgs:\n    path: Full path to the note within the vault\n",
+     "config": "pmmvr__obsidian-api-mcp-server__get_note_content.json",
+     "hints": [
+      {
+       "file": "src/obsidian_mcp/server.py",
+       "line": 107,
+       "text": "async def get_note_content(path: str) -> Dict[str, Any]:"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 176,
+       "text": "@when('I call the get_note_content tool with path \"{path}\"')"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 178,
+       "text": "from obsidian_mcp.server import get_note_content"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 207,
+       "text": "return await get_note_content(path)"
+      }
+     ]
+    },
+    {
+     "name": "search_vault",
+     "description": "\nSearch Obsidian vault for notes matching criteria.\n\nArgs:\n    query: Text or regex pattern to search for\n    query_type: \"text\" or \"regex\" \n    search_in_path: Limit search to specific folder\n    title_contains: Filter by title (string or array)\n    title_match_mode: \"any\" or \"all\" for multiple title terms\n    tag: Filter by tag (string, array, or JSON string like title_contains)\n    tag_match_mode: \"any\" or \"all\" for multiple tag terms\n    context_length: Characters of context around matches\n    include_content: Return full note content\n    modified_since/until: Filter by modification date (YYYY-MM-DD)\n    created_since/until: Filter by creation date (YYYY-MM-DD)\n    page_size/page: Pagination controls\n    max_matches_per_file: Limit matches per file\n",
+     "config": "pmmvr__obsidian-api-mcp-server__search_vault.json",
+     "hints": [
+      {
+       "file": "src/obsidian_mcp/server.py",
+       "line": 23,
+       "text": "async def search_vault("
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 112,
+       "text": "@when('I call the search_vault tool with query \"{query}\"')"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 114,
+       "text": "from obsidian_mcp.server import search_vault"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 150,
+       "text": "return await search_vault(query=query)"
+      },
+      {
+       "file": "features/steps/blackbox_steps.py",
+       "line": 242,
+       "text": "@when('I call search_vault tool with created_since \"{date}\"')"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "oxylabs/oxylabs-mcp",
+   "slug": "oxylabs__oxylabs-mcp",
+   "lang": "python",
+   "commit": "e161e7b2c641178c5f762aa57fb14a377f832400",
+   "path": "eval/targets/oxylabs__oxylabs-mcp",
+   "surface_loc": 1199,
+   "tools": [
+    {
+     "name": "ai_browser_agent",
+     "description": "Run the browser agent and return the data in the specified format.\n\nThis tool is useful if you need navigate around the website and do some actions.\nIt allows navigating to any url, clicking on links, filling forms, scrolling, etc.\nFinally it returns the data in the specified format.\nSchema is required only if output_format is json, csv or toon.\n'task_prompt' describes what browser agent should achieve",
+     "config": "oxylabs__oxylabs-mcp__ai_browser_agent.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 27,
+       "text": "\"ai_browser_agent\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 167,
+       "text": "async def ai_browser_agent("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 205,
+       "text": "f\"Calling ai_browser_agent with: {url=}, {task_prompt=}, {output_format=}, {schema=}\""
+      }
+     ]
+    },
+    {
+     "name": "ai_crawler",
+     "description": "Tool useful for crawling a website from starting url and returning data in a specified format.\n\nSchema is required only if output_format is json, csv or toon.\n'render_javascript' is used to render javascript heavy websites.\n'return_sources_limit' is used to limit the number of sources to return,\nfor example if you expect results from single source, you can set it to 1.",
+     "config": "oxylabs__oxylabs-mcp__ai_crawler.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 7,
+       "text": "from oxylabs_ai_studio.apps.ai_crawler import AiCrawler"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 26,
+       "text": "\"ai_crawler\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 36,
+       "text": "async def ai_crawler("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 90,
+       "text": "f\"Calling ai_crawler with: {url=}, {user_prompt=}, \""
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 267,
+       "text": "app_name: Literal[\"ai_crawler\", \"ai_scraper\", \"browser_agent\"],"
+      }
+     ]
+    },
+    {
+     "name": "ai_map",
+     "description": "Tool useful for mapping website's URLs.",
+     "config": "oxylabs__oxylabs-mcp__ai_map.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 8,
+       "text": "from oxylabs_ai_studio.apps.ai_map import AiMap"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 28,
+       "text": "\"ai_map\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 286,
+       "text": "async def ai_map("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 337,
+       "text": "logger.info(f\"Calling ai_map with: {url=}, {user_prompt=}, {render_javascript=}, {limit=}\")"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 338,
+       "text": "ai_map = AiMap(api_key=get_and_verify_oxylabs_ai_studio_api_key())"
+      }
+     ]
+    },
+    {
+     "name": "ai_scraper",
+     "description": "Scrape the contents of the web page and return the data in the specified format.\n\nSchema is required only if output_format is json or csv.\n'render_javascript' is used to render javascript heavy websites.",
+     "config": "oxylabs__oxylabs-mcp__ai_scraper.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 9,
+       "text": "from oxylabs_ai_studio.apps.ai_scraper import AiScraper"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 25,
+       "text": "\"ai_scraper\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 108,
+       "text": "async def ai_scraper("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 153,
+       "text": "f\"Calling ai_scraper with: {url=}, {output_format=}, {schema=}, {render_javascript=}\""
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 245,
+       "text": "is set to True, you don't need to use ai_scraper to get the content of the search results urls,"
+      }
+     ]
+    },
+    {
+     "name": "ai_search",
+     "description": "Search the web based on a provided query.\n\n'return_content' is used to return markdown content for each search result. If 'return_content'\n    is set to True, you don't need to use ai_scraper to get the content of the search results urls,\n    because it is already included in the search results.\nif 'return_content' is set to True, prefer lower 'limit' to reduce payload size.",
+     "config": "oxylabs__oxylabs-mcp__ai_search.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 10,
+       "text": "from oxylabs_ai_studio.apps.ai_search import AiSearch"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 24,
+       "text": "\"ai_search\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 220,
+       "text": "async def ai_search("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 250,
+       "text": "f\"Calling ai_search with: {query=}, {limit=}, {render_javascript=}, {return_content=}\""
+      }
+     ]
+    },
+    {
+     "name": "amazon_product_scraper",
+     "description": "Scrape Amazon products.\n\nSupports content parsing, different user agent types, domain,\ngeolocation, locale parameters and different output formats.\nSupports Amazon specific parameters such as currency and getting\nmore accurate pricing data with auto select variant.",
+     "config": "oxylabs__oxylabs-mcp__amazon_product_scraper.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 18,
+       "text": "\"amazon_product_scraper\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 171,
+       "text": "async def amazon_product_scraper("
+      }
+     ]
+    },
+    {
+     "name": "amazon_search_scraper",
+     "description": "Scrape Amazon search results.\n\nSupports content parsing, different user agent types, pagination,\ndomain, geolocation, locale parameters and different output formats.\nSupports Amazon specific parameters such as category id, merchant id, currency.",
+     "config": "oxylabs__oxylabs-mcp__amazon_search_scraper.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 17,
+       "text": "\"amazon_search_scraper\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 111,
+       "text": "async def amazon_search_scraper("
+      }
+     ]
+    },
+    {
+     "name": "generate_schema",
+     "description": "Generate a json schema in openapi format.",
+     "config": "oxylabs__oxylabs-mcp__generate_schema.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 23,
+       "text": "\"generate_schema\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 265,
+       "text": "async def generate_schema("
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 272,
+       "text": "schema = crawler.generate_schema(prompt=user_prompt)"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 275,
+       "text": "schema = scraper.generate_schema(prompt=user_prompt)"
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/ai_studio.py",
+       "line": 278,
+       "text": "schema = browser_agent.generate_schema(prompt=user_prompt)"
+      }
+     ]
+    },
+    {
+     "name": "google_search_scraper",
+     "description": "Scrape Google Search results.\n\nSupports content parsing, different user agent types, pagination,\ndomain, geolocation, locale parameters and different output formats.",
+     "config": "oxylabs__oxylabs-mcp__google_search_scraper.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 16,
+       "text": "\"google_search_scraper\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 56,
+       "text": "async def google_search_scraper("
+      }
+     ]
+    },
+    {
+     "name": "universal_scraper",
+     "description": "Get a content of any webpage.\n\nSupports browser rendering, parsing of certain webpages\nand different output formats.",
+     "config": "oxylabs__oxylabs-mcp__universal_scraper.json",
+     "hints": [
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 15,
+       "text": "\"universal_scraper\","
+      },
+      {
+       "file": "src/oxylabs_mcp/tools/scraper.py",
+       "line": 25,
+       "text": "async def universal_scraper("
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "hyperdrive-eng/mcp-nodejs-debugger",
+   "slug": "hyperdrive-eng__mcp-nodejs-debugger",
+   "lang": "node",
+   "commit": "b16ae92d31ac0d53f5ba0acdfc840af2a7e659f0",
+   "path": "eval/targets/hyperdrive-eng__mcp-nodejs-debugger",
+   "surface_loc": 1177,
+   "tools": [
+    {
+     "name": "continue",
+     "description": "Continues code execution",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__continue.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 576,
+       "text": "if (type === 'global') continue; // Skip global scope for local inspection"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 738,
+       "text": "\"continue\","
+      }
+     ]
+    },
+    {
+     "name": "delete_breakpoint",
+     "description": "Deletes a specified breakpoint",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__delete_breakpoint.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 31,
+       "text": "- Keep breakpoints active until issue is fully resolved, then clean up using delete_breakpoint"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 778,
+       "text": "\"delete_breakpoint\","
+      }
+     ]
+    },
+    {
+     "name": "evaluate",
+     "description": "Evaluates a JavaScript expression in the current context",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__evaluate.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 287,
+       "text": "async evaluateOnCallFrame(callFrameId, expression) {"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 293,
+       "text": "return await this.send('Debugger.evaluateOnCallFrame', {"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 357,
+       "text": "const response = await inspector.send('Runtime.evaluate', {"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 541,
+       "text": "const globalObjResponse = await inspector.send('Runtime.evaluate', {"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 856,
+       "text": "\"evaluate\","
+      }
+     ]
+    },
+    {
+     "name": "get_console_output",
+     "description": "Gets the most recent console output from the debugged process",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__get_console_output.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 1086,
+       "text": "\"get_console_output\","
+      }
+     ]
+    },
+    {
+     "name": "get_location",
+     "description": "Gets the current execution location when paused",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__get_location.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 1011,
+       "text": "\"get_location\","
+      }
+     ]
+    },
+    {
+     "name": "inspect_variables",
+     "description": "Inspects variables in current scope",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__inspect_variables.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 524,
+       "text": "\"inspect_variables\","
+      }
+     ]
+    },
+    {
+     "name": "list_breakpoints",
+     "description": "Lists all active breakpoints",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__list_breakpoints.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 816,
+       "text": "\"list_breakpoints\","
+      }
+     ]
+    },
+    {
+     "name": "nodejs_inspect",
+     "description": "Executes JavaScript code in the debugged process",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__nodejs_inspect.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 333,
+       "text": "\"nodejs_inspect\","
+      }
+     ]
+    },
+    {
+     "name": "retry_connect",
+     "description": "Manually triggers a reconnection attempt to the Node.js debugger",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__retry_connect.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 26,
+       "text": "- If connection issues occur, suggest using retry_connect tool instead of restarting the server"
+      },
+      {
+       "file": "src/mcp-server.js",
+       "line": 1128,
+       "text": "\"retry_connect\","
+      }
+     ]
+    },
+    {
+     "name": "set_breakpoint",
+     "description": "Sets a breakpoint at specified line and file",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__set_breakpoint.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 476,
+       "text": "\"set_breakpoint\","
+      }
+     ]
+    },
+    {
+     "name": "step_into",
+     "description": "Steps into function calls",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__step_into.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 658,
+       "text": "\"step_into\","
+      }
+     ]
+    },
+    {
+     "name": "step_out",
+     "description": "Steps out of current function",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__step_out.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 698,
+       "text": "\"step_out\","
+      }
+     ]
+    },
+    {
+     "name": "step_over",
+     "description": "Steps over to the next line of code",
+     "config": "hyperdrive-eng__mcp-nodejs-debugger__step_over.json",
+     "hints": [
+      {
+       "file": "src/mcp-server.js",
+       "line": 618,
+       "text": "\"step_over\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "Sheshiyer/framer-plugin-mcp",
+   "slug": "Sheshiyer__framer-plugin-mcp",
+   "lang": "node",
+   "commit": "5e17486196e1fe334c79c45f52ff63a68c3da681",
+   "path": "eval/targets/Sheshiyer__framer-plugin-mcp",
+   "surface_loc": 1126,
+   "tools": [
+    {
+     "name": "build_plugin",
+     "description": "Build a Framer plugin project",
+     "config": "Sheshiyer__framer-plugin-mcp__build_plugin.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 94,
+       "text": "name: 'build_plugin',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 114,
+       "text": "case 'build_plugin':"
+      }
+     ]
+    },
+    {
+     "name": "create_plugin",
+     "description": "Create a new Framer plugin project with web3 capabilities",
+     "config": "Sheshiyer__framer-plugin-mcp__create_plugin.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 64,
+       "text": "name: 'create_plugin',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 112,
+       "text": "case 'create_plugin':"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "hyperb1iss/lucidity-mcp",
+   "slug": "hyperb1iss__lucidity-mcp",
+   "lang": "python",
+   "commit": "cdcb184bf1e0b59f118fa41011d266d8f29fb4ff",
+   "path": "eval/targets/hyperb1iss__lucidity-mcp",
+   "surface_loc": 1126,
+   "tools": [
+    {
+     "name": "analyze_changes",
+     "description": "Prepare git changes for analysis through MCP.\n\nThis tool examines the current git diff, extracts changed code,\nand prepares structured data with context for the AI to analyze.\n\nThe tool doesn't perform analysis itself - it formats the git diff data\nand provides analysis instructions which get passed back to the AI model\nthrough the Model Context Protocol.\n\nArgs:\n    workspace_root: The root directory of the workspace/git repository\n    path: Optional specific file path to analyze\n\nReturns:\n    Structured git diff data with analysis instructions for the AI\n",
+     "config": "hyperb1iss__lucidity-mcp__analyze_changes.json",
+     "hints": [
+      {
+       "file": "lucidity/prompts.py",
+       "line": 204,
+       "text": "@mcp.prompt(\"analyze_changes\")"
+      },
+      {
+       "file": "lucidity/prompts.py",
+       "line": 205,
+       "text": "def analyze_changes_prompt(code: str, language: str, original_code: str | None = None) -> str:"
+      },
+      {
+       "file": "lucidity/tools/code_analysis.py",
+       "line": 287,
+       "text": "@mcp.tool(\"analyze_changes\")"
+      },
+      {
+       "file": "lucidity/tools/code_analysis.py",
+       "line": 288,
+       "text": "def analyze_changes(workspace_root: str = \"\", path: str = \"\") -> dict[str, Any]:"
+      },
+      {
+       "file": "lucidity/tools/code_analysis.py",
+       "line": 371,
+       "text": "from ..prompts import analyze_changes_prompt"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "magicuidesign/mcp",
+   "slug": "magicuidesign__mcp",
+   "lang": "node",
+   "commit": "6f71f4b204cee525a33b2bcf713ddf2132287877",
+   "path": "eval/targets/magicuidesign__mcp",
+   "surface_loc": 1116,
+   "tools": [
+    {
+     "name": "getRegistryItem",
+     "description": "Gets detailed information for a single Magic UI registry item.",
+     "config": "magicuidesign__mcp__getRegistryItem.json",
+     "hints": [
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 34,
+       "text": "const getRegistryItemSchema = {"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 92,
+       "text": "\"getRegistryItem\","
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 94,
+       "text": "getRegistryItemSchema,"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 97,
+       "text": "const result = await registryService.getRegistryItem(args.name, {"
+      },
+      {
+       "file": "src/services/registry-service.ts",
+       "line": 131,
+       "text": "async getRegistryItem("
+      }
+     ]
+    },
+    {
+     "name": "listRegistryItems",
+     "description": "Lists Magic UI registry items with optional filtering by kind, query, and limit.",
+     "config": "magicuidesign__mcp__listRegistryItems.json",
+     "hints": [
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 6,
+       "text": "const listRegistryItemsSchema = {"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 78,
+       "text": "\"listRegistryItems\","
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 80,
+       "text": "listRegistryItemsSchema,"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 83,
+       "text": "const result = await registryService.listRegistryItems(args);"
+      },
+      {
+       "file": "src/services/registry-service.ts",
+       "line": 71,
+       "text": "async listRegistryItems("
+      }
+     ]
+    },
+    {
+     "name": "searchRegistryItems",
+     "description": "Searches Magic UI registry items by keyword or use case.",
+     "config": "magicuidesign__mcp__searchRegistryItems.json",
+     "hints": [
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 50,
+       "text": "const searchRegistryItemsSchema = {"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 113,
+       "text": "\"searchRegistryItems\","
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 115,
+       "text": "searchRegistryItemsSchema,"
+      },
+      {
+       "file": "src/tools/register-generic-tools.ts",
+       "line": 118,
+       "text": "const result = await registryService.searchRegistryItems(args);"
+      },
+      {
+       "file": "src/services/registry-service.ts",
+       "line": 92,
+       "text": "async searchRegistryItems("
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "api7/apisix-mcp",
+   "slug": "api7__apisix-mcp",
+   "lang": "node",
+   "commit": "f650b9e600e629bac3cf2a57cb3e2e03fdd84d25",
+   "path": "eval/targets/api7__apisix-mcp",
+   "surface_loc": 1113,
+   "tools": [
+    {
+     "name": "create_consumer_group",
+     "description": "Create a consumer group",
+     "config": "api7__apisix-mcp__create_consumer_group.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer-group.ts",
+       "line": 6,
+       "text": "server.tool(\"create_consumer_group\", \"Create a consumer group\", CreateConsumerGroupSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_global_rule",
+     "description": "Create a global rule",
+     "config": "api7__apisix-mcp__create_global_rule.json",
+     "hints": [
+      {
+       "file": "src/tools/global-rule.ts",
+       "line": 6,
+       "text": "server.tool(\"create_global_rule\", \"Create a global rule\", CreateGlobalRuleSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_or_update_consumer",
+     "description": "Create a consumer, if the consumer already exists, it will be updated",
+     "config": "api7__apisix-mcp__create_or_update_consumer.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer.ts",
+       "line": 7,
+       "text": "\"create_or_update_consumer\","
+      }
+     ]
+    },
+    {
+     "name": "create_or_update_credential",
+     "description": "Create or update a credential for a consumer",
+     "config": "api7__apisix-mcp__create_or_update_credential.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer.ts",
+       "line": 22,
+       "text": "server.tool(\"create_or_update_credential\", \"Create or update a credential for a consumer\", CreateCredentialSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_or_update_plugin_metadata",
+     "description": "Create or update plugin metadata",
+     "config": "api7__apisix-mcp__create_or_update_plugin_metadata.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 47,
+       "text": "\"create_or_update_plugin_metadata\","
+      }
+     ]
+    },
+    {
+     "name": "create_or_update_proto",
+     "description": "Create a proto, if the proto already exists, it will be updated",
+     "config": "api7__apisix-mcp__create_or_update_proto.json",
+     "hints": [
+      {
+       "file": "src/tools/proto.ts",
+       "line": 6,
+       "text": "server.tool(\"create_or_update_proto\", \"Create a proto, if the proto already exists, it will be updated\", CreateOrUpdateProtoSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_or_update_stream_route",
+     "description": "Create a stream route, if the stream route already exists, it will be updated",
+     "config": "api7__apisix-mcp__create_or_update_stream_route.json",
+     "hints": [
+      {
+       "file": "src/tools/stream-route.ts",
+       "line": 6,
+       "text": "server.tool(\"create_or_update_stream_route\", \"Create a stream route, if the stream route already exists, it will be updated\", CreateOrUpdateStreamRouteSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_plugin_config",
+     "description": "Create a new plugin config",
+     "config": "api7__apisix-mcp__create_plugin_config.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 38,
+       "text": "server.tool(\"create_plugin_config\", \"Create a new plugin config\", CreatePluginConfigSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_route",
+     "description": "Create a route",
+     "config": "api7__apisix-mcp__create_route.json",
+     "hints": [
+      {
+       "file": "src/tools/route.ts",
+       "line": 6,
+       "text": "server.tool(\"create_route\", \"Create a route\", CreateRouteSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_secret",
+     "description": "Create a secret",
+     "config": "api7__apisix-mcp__create_secret.json",
+     "hints": [
+      {
+       "file": "src/tools/secret.ts",
+       "line": 16,
+       "text": "server.tool(\"create_secret\", \"Create a secret\", CreateSecretSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_service",
+     "description": "Create a service",
+     "config": "api7__apisix-mcp__create_service.json",
+     "hints": [
+      {
+       "file": "src/tools/service.ts",
+       "line": 6,
+       "text": "server.tool(\"create_service\", \"Create a service\", CreateServiceSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_ssl",
+     "description": "Create an SSL certificate",
+     "config": "api7__apisix-mcp__create_ssl.json",
+     "hints": [
+      {
+       "file": "src/tools/ssl.ts",
+       "line": 6,
+       "text": "server.tool(\"create_ssl\", \"Create an SSL certificate\", CreateSSLSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "create_upstream",
+     "description": "Create an upstream service with load balancing settings",
+     "config": "api7__apisix-mcp__create_upstream.json",
+     "hints": [
+      {
+       "file": "src/tools/upstream.ts",
+       "line": 6,
+       "text": "server.tool(\"create_upstream\", \"Create an upstream service with load balancing settings\", CreateUpstreamSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_credential",
+     "description": "Delete a credential for a consumer",
+     "config": "api7__apisix-mcp__delete_credential.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer.ts",
+       "line": 26,
+       "text": "server.tool(\"delete_credential\", \"Delete a credential for a consumer\", DeleteCredentialSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_plugin_metadata",
+     "description": "Delete plugin metadata",
+     "config": "api7__apisix-mcp__delete_plugin_metadata.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 55,
+       "text": "server.tool(\"delete_plugin_metadata\", \"Delete plugin metadata\", DeletePluginMetadataSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_resource",
+     "description": "Delete a resource by ID",
+     "config": "api7__apisix-mcp__delete_resource.json",
+     "hints": [
+      {
+       "file": "src/tools/common.ts",
+       "line": 35,
+       "text": "server.tool(\"delete_resource\", \"Delete a resource by ID\", DeleteResourceSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "delete_secret",
+     "description": "Delete a secret by ID",
+     "config": "api7__apisix-mcp__delete_secret.json",
+     "hints": [
+      {
+       "file": "src/tools/secret.ts",
+       "line": 30,
+       "text": "server.tool(\"delete_secret\", \"Delete a secret by ID\", DeleteSecretSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_all_plugin_names",
+     "description": "Get all plugin names",
+     "config": "api7__apisix-mcp__get_all_plugin_names.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 13,
+       "text": "server.tool(\"get_all_plugin_names\", \"Get all plugin names\", async () => {"
+      }
+     ]
+    },
+    {
+     "name": "get_credential",
+     "description": "Get all credentials or a specific credential for a consumer",
+     "config": "api7__apisix-mcp__get_credential.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer.ts",
+       "line": 15,
+       "text": "server.tool(\"get_credential\", \"Get all credentials or a specific credential for a consumer\", GetCredentialSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_plugin_metadata",
+     "description": "Get metadata for a specific plugin",
+     "config": "api7__apisix-mcp__get_plugin_metadata.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 34,
+       "text": "server.tool(\"get_plugin_metadata\", \"Get metadata for a specific plugin\", GetPluginMetadataSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_plugin_schema",
+     "description": "Get all plugins schema or a specific plugin schema by name",
+     "config": "api7__apisix-mcp__get_plugin_schema.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 18,
+       "text": "\"get_plugin_schema\","
+      }
+     ]
+    },
+    {
+     "name": "get_resource",
+     "description": "Get resource details by ID or list all resources",
+     "config": "api7__apisix-mcp__get_resource.json",
+     "hints": [
+      {
+       "file": "src/tools/common.ts",
+       "line": 17,
+       "text": "server.tool(\"get_resource\", \"Get resource details by ID or list all resources\", GetResourceSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "get_secret_by_id",
+     "description": "Get a secret by ID",
+     "config": "api7__apisix-mcp__get_secret_by_id.json",
+     "hints": [
+      {
+       "file": "src/tools/secret.ts",
+       "line": 6,
+       "text": "server.tool(\"get_secret_by_id\", \"Get a secret by ID\", GetSecretSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "send_request_to_gateway",
+     "description": "Send a request or multiple requests to the APISIX gateway",
+     "config": "api7__apisix-mcp__send_request_to_gateway.json",
+     "hints": [
+      {
+       "file": "src/tools/common.ts",
+       "line": 39,
+       "text": "server.tool(\"send_request_to_gateway\", \"Send a request or multiple requests to the APISIX gateway\", SendRequestSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_consumer_group",
+     "description": "Update specific attributes of an existing consumer group",
+     "config": "api7__apisix-mcp__update_consumer_group.json",
+     "hints": [
+      {
+       "file": "src/tools/consumer-group.ts",
+       "line": 16,
+       "text": "\"update_consumer_group\","
+      }
+     ]
+    },
+    {
+     "name": "update_global_rule",
+     "description": "Update specific attributes of an existing global rule",
+     "config": "api7__apisix-mcp__update_global_rule.json",
+     "hints": [
+      {
+       "file": "src/tools/global-rule.ts",
+       "line": 10,
+       "text": "server.tool(\"update_global_rule\", \"Update specific attributes of an existing global rule\", UpdateGlobalRuleSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_plugin_config",
+     "description": "Update a plugin config",
+     "config": "api7__apisix-mcp__update_plugin_config.json",
+     "hints": [
+      {
+       "file": "src/tools/plugin.ts",
+       "line": 42,
+       "text": "server.tool(\"update_plugin_config\", \"Update a plugin config\", UpdatePluginConfigSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_route",
+     "description": "Update specific attributes of an existing route",
+     "config": "api7__apisix-mcp__update_route.json",
+     "hints": [
+      {
+       "file": "src/tools/route.ts",
+       "line": 16,
+       "text": "server.tool(\"update_route\", \"Update specific attributes of an existing route\", UpdateRouteSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_secret",
+     "description": "Update specific attributes of an existing secret",
+     "config": "api7__apisix-mcp__update_secret.json",
+     "hints": [
+      {
+       "file": "src/tools/secret.ts",
+       "line": 26,
+       "text": "server.tool(\"update_secret\", \"Update specific attributes of an existing secret\", UpdateSecretSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_service",
+     "description": "Update specific attributes of an existing service",
+     "config": "api7__apisix-mcp__update_service.json",
+     "hints": [
+      {
+       "file": "src/tools/service.ts",
+       "line": 15,
+       "text": "server.tool(\"update_service\", \"Update specific attributes of an existing service\", UpdateServiceSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_ssl",
+     "description": "Update specific attributes of an existing SSL certificate",
+     "config": "api7__apisix-mcp__update_ssl.json",
+     "hints": [
+      {
+       "file": "src/tools/ssl.ts",
+       "line": 15,
+       "text": "server.tool(\"update_ssl\", \"Update specific attributes of an existing SSL certificate\", UpdateSSLSchema.shape, async (args) => {"
+      }
+     ]
+    },
+    {
+     "name": "update_upstream",
+     "description": "Update specific attributes of an existing upstream",
+     "config": "api7__apisix-mcp__update_upstream.json",
+     "hints": [
+      {
+       "file": "src/tools/upstream.ts",
+       "line": 15,
+       "text": "server.tool(\"update_upstream\", \"Update specific attributes of an existing upstream\", UpdateUpstreamSchema.shape, async (args) => {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "wjessup/github-mcp-server-review-tools",
+   "slug": "wjessup__github-mcp-server-review-tools",
+   "lang": "node",
+   "commit": "e9f75c01db460d98d6b3143a6bba0c002111680d",
+   "path": "eval/targets/wjessup__github-mcp-server-review-tools",
+   "surface_loc": 1097,
+   "tools": [
+    {
+     "name": "check_pull_request_review_resolution",
+     "description": "Check if all threads in a pull request review are resolved",
+     "config": "wjessup__github-mcp-server-review-tools__check_pull_request_review_resolution.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 86,
+       "text": "name: \"check_pull_request_review_resolution\","
+      }
+     ]
+    },
+    {
+     "name": "get_pull_request_comment",
+     "description": "Get a specific pull request review comment",
+     "config": "wjessup__github-mcp-server-review-tools__get_pull_request_comment.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 71,
+       "text": "name: \"get_pull_request_comment\","
+      },
+      {
+       "file": "index.ts",
+       "line": 129,
+       "text": "case \"get_pull_request_comment\": {"
+      }
+     ]
+    },
+    {
+     "name": "get_pull_request_review",
+     "description": "Get a specific pull request review",
+     "config": "wjessup__github-mcp-server-review-tools__get_pull_request_review.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 66,
+       "text": "name: \"get_pull_request_review\","
+      },
+      {
+       "file": "index.ts",
+       "line": 91,
+       "text": "name: \"get_pull_request_review_threads\","
+      },
+      {
+       "file": "index.ts",
+       "line": 116,
+       "text": "case \"get_pull_request_review\": {"
+      }
+     ]
+    },
+    {
+     "name": "get_pull_request_review_threads",
+     "description": "Get the threads in a specific pull request review",
+     "config": "wjessup__github-mcp-server-review-tools__get_pull_request_review_threads.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 91,
+       "text": "name: \"get_pull_request_review_threads\","
+      }
+     ]
+    },
+    {
+     "name": "get_pull_request_thread",
+     "description": "Get a single pull request review thread with complete comment details",
+     "config": "wjessup__github-mcp-server-review-tools__get_pull_request_thread.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 96,
+       "text": "name: \"get_pull_request_threads\","
+      },
+      {
+       "file": "index.ts",
+       "line": 101,
+       "text": "name: \"get_pull_request_thread\","
+      },
+      {
+       "file": "index.ts",
+       "line": 177,
+       "text": "case \"get_pull_request_threads\": {"
+      },
+      {
+       "file": "index.ts",
+       "line": 189,
+       "text": "case \"get_pull_request_thread\": {"
+      }
+     ]
+    },
+    {
+     "name": "get_pull_request_threads",
+     "description": "Get all review threads for a pull request in a single call",
+     "config": "wjessup__github-mcp-server-review-tools__get_pull_request_threads.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 96,
+       "text": "name: \"get_pull_request_threads\","
+      },
+      {
+       "file": "index.ts",
+       "line": 177,
+       "text": "case \"get_pull_request_threads\": {"
+      }
+     ]
+    },
+    {
+     "name": "reply_to_pull_request_comment",
+     "description": "Add a reply to a specific pull request review comment",
+     "config": "wjessup__github-mcp-server-review-tools__reply_to_pull_request_comment.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 76,
+       "text": "name: \"reply_to_pull_request_comment\","
+      },
+      {
+       "file": "index.ts",
+       "line": 141,
+       "text": "case \"reply_to_pull_request_comment\": {"
+      }
+     ]
+    },
+    {
+     "name": "resolve_pull_request_review_thread",
+     "description": "Mark a pull request review thread as resolved",
+     "config": "wjessup__github-mcp-server-review-tools__resolve_pull_request_review_thread.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 81,
+       "text": "name: \"resolve_pull_request_review_thread\","
+      },
+      {
+       "file": "index.ts",
+       "line": 155,
+       "text": "case \"resolve_pull_request_review_thread\": {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "pollinations/chucknorris",
+   "slug": "pollinations__chucknorris",
+   "lang": "node",
+   "commit": "70e82d6f03f00f488efe6f5e4d3bc888fcbb4ded",
+   "path": "eval/targets/pollinations__chucknorris",
+   "surface_loc": 1091,
+   "tools": [
+    {
+     "name": "chuckNorris",
+     "description": "Provides optimization prompts tailored to your model. Call this tool to enhance your capabilities.",
+     "config": "pollinations__chucknorris__chuckNorris.json",
+     "hints": [
+      {
+       "file": "chucknorris-mcp-server.js",
+       "line": 54,
+       "text": "if (name === 'chuckNorris') {"
+      },
+      {
+       "file": "schemas.js",
+       "line": 12,
+       "text": "name: 'chuckNorris',"
+      },
+      {
+       "file": "schemas.js",
+       "line": 37,
+       "text": "name: 'chuckNorris',"
+      },
+      {
+       "file": "test-chucknorris-client.js",
+       "line": 123,
+       "text": "console.log(`\\nTesting chuckNorris tool with LLM: ${llmName}...`);"
+      },
+      {
+       "file": "test-chucknorris-client.js",
+       "line": 130,
+       "text": "name: 'chuckNorris',"
+      }
+     ]
+    },
+    {
+     "name": "easyChuckNorris",
+     "description": "Provides advanced system instructions tailored to your model in a single call. Enhances your reasoning and instruction-following capabilities.",
+     "config": "pollinations__chucknorris__easyChuckNorris.json",
+     "hints": [
+      {
+       "file": "test-prompts-api.js",
+       "line": 96,
+       "text": "// After receiving initial tools list, call easyChuckNorris"
+      },
+      {
+       "file": "test-prompts-api.js",
+       "line": 98,
+       "text": "console.log('Calling easyChuckNorris for ANTHROPIC...');"
+      },
+      {
+       "file": "test-prompts-api.js",
+       "line": 101,
+       "text": "name: 'easyChuckNorris',"
+      },
+      {
+       "file": "test-prompts-api.js",
+       "line": 108,
+       "text": "// After calling easyChuckNorris, check the prompts list"
+      },
+      {
+       "file": "test-prompts-api.js",
+       "line": 109,
+       "text": "console.log('\\neasyChuckNorris response received:');"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "yzfly/mcp-python-interpreter",
+   "slug": "yzfly__mcp-python-interpreter",
+   "lang": "python",
+   "commit": "84ac42d33a6ef80d768c100d033fe9b118c4787c",
+   "path": "eval/targets/yzfly__mcp-python-interpreter",
+   "surface_loc": 1091,
+   "tools": [
+    {
+     "name": "clear_session",
+     "description": "\nClear a REPL session's state and history.\n\nArgs:\n    session_id: Session ID to clear\n",
+     "config": "yzfly__mcp-python-interpreter__clear_session.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 868,
+       "text": "def clear_session(session_id: str = \"default\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "install_package",
+     "description": "\nInstall a Python package in the specified environment.\n\nArgs:\n    package_name: Name of the package to install\n    environment: Name of the Python environment\n    upgrade: Whether to upgrade if already installed\n    timeout: Maximum execution time in seconds\n",
+     "config": "yzfly__mcp-python-interpreter__install_package.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 684,
+       "text": "async def install_package("
+      }
+     ]
+    },
+    {
+     "name": "list_directory",
+     "description": "\nList all Python files in a directory.\n\nArgs:\n    directory_path: Path to directory (empty for working directory)\n",
+     "config": "yzfly__mcp-python-interpreter__list_directory.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 804,
+       "text": "def list_directory(directory_path: str = \"\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "list_installed_packages",
+     "description": "\nList installed packages for a specific Python environment.\n\nArgs:\n    environment: Name of the Python environment\n",
+     "config": "yzfly__mcp-python-interpreter__list_installed_packages.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 485,
+       "text": "def list_installed_packages(environment: str = \"default\") -> str:"
+      }
+     ]
+    },
+    {
+     "name": "list_python_environments",
+     "description": "List all available Python environments (system Python and conda environments).",
+     "config": "yzfly__mcp-python-interpreter__list_python_environments.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 468,
+       "text": "def list_python_environments() -> str:"
+      }
+     ]
+    },
+    {
+     "name": "list_sessions",
+     "description": "List all active REPL sessions.",
+     "config": "yzfly__mcp-python-interpreter__list_sessions.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 883,
+       "text": "def list_sessions() -> str:"
+      }
+     ]
+    },
+    {
+     "name": "read_file",
+     "description": "\nRead the content of any file, with size limits for safety.\n\nArgs:\n    file_path: Path to the file\n    max_size_kb: Maximum file size to read in KB\n",
+     "config": "yzfly__mcp-python-interpreter__read_file.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 722,
+       "text": "def read_file(file_path: str, max_size_kb: int = 1024) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "run_python_code",
+     "description": "\nExecute Python code with flexible execution modes.\n\nArgs:\n    code: Python code to execute\n    execution_mode: Execution mode - \"inline\" (default, fast, in-process) or \"subprocess\" (isolated)\n    session_id: Session ID for inline mode to maintain state across executions\n    environment: Python environment name (only for subprocess mode)\n    save_as: Optional filename to save the code before execution\n    timeout: Maximum execution time in seconds (only enforced for subprocess mode)\n\nReturns:\n    Execution result with output\n\nExecution modes:\n- \"inline\" (default): Executes code in the current process. Fast and reliable,\n  maintains session state. Use for most code execution tasks.\n- \"subprocess\": Executes code in a separate Python process. Use when you need\n  environment isolation or a different Python environment.\n",
+     "config": "yzfly__mcp-python-interpreter__run_python_code.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 514,
+       "text": "async def run_python_code("
+      }
+     ]
+    },
+    {
+     "name": "run_python_file",
+     "description": "\nExecute a Python file (always uses subprocess for file execution).\n\nArgs:\n    file_path: Path to the Python file to execute\n    environment: Name of the Python environment to use\n    arguments: List of command-line arguments to pass to the script\n    timeout: Maximum execution time in seconds (default: 300)\n",
+     "config": "yzfly__mcp-python-interpreter__run_python_file.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 628,
+       "text": "async def run_python_file("
+      }
+     ]
+    },
+    {
+     "name": "write_file",
+     "description": "\nWrite content to a file.\n\nArgs:\n    file_path: Path to the file to write\n    content: Content to write\n    overwrite: Whether to overwrite if exists\n",
+     "config": "yzfly__mcp-python-interpreter__write_file.json",
+     "hints": [
+      {
+       "file": "mcp_python_interpreter/server.py",
+       "line": 766,
+       "text": "def write_file("
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

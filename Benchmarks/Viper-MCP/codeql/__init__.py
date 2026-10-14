@@ -1,0 +1,1 @@
+# CodeQL SARIF conversion utilities

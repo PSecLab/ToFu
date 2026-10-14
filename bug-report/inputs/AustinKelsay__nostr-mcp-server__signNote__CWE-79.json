@@ -1,0 +1,35 @@
+{
+ "repo": "AustinKelsay/nostr-mcp-server",
+ "tool": "signNote",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "010b6dcb5aa87d268e0182554e3f9b0055e8fdab",
+ "draft": "AustinKelsay__nostr-mcp-server__signNote__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'privateKey': '{{\\x7f\\x7f\\x7f{\\x7f\\x7f', 'noteEvent': {'kind': 0.0, 'content': '', 'tags': [], 'created_at': 0.0, 'pubkey': ''}}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to sign note: Error signing note: private key must be hex string or Uint8Array, cause: Error: hex string expected, got non-hex character \"{{\" at index 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'privateKey': '{{\\x7f 1, \"', 'noteEvent': {'kind': 0.0, 'content': '', 'tags': [], 'created_at': 0.0, 'pubkey': ''}}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to sign note: Error signing note: private key must be hex string or Uint8Array, cause: Error: hex string expected, got non-hex character \"{{\" at index 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'privateKey': '{{\\x7f 1{ \"', 'noteEvent': {'kind': 0.0, 'content': '', 'tags': [], 'created_at': 0.0, 'pubkey': ''}}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to sign note: Error signing note: private key must be hex string or Uint8Array, cause: Error: hex string expected, got non-hex character \"{{\" at index 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

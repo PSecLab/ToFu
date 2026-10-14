@@ -1,0 +1,21 @@
+{
+ "repo": "gdli6177/mcp-prompt-server",
+ "tool": "project_architecture",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "a27941f53b81ff263e55358004d156451ab6bb66",
+ "draft": "gdli6177__mcp-prompt-server__project_architecture__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project_type': 'Web应用', 'technologies': 'React', 'features': '<script>while(true){}</script>'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '请为以下项目设计一个合理的架构和目录结构：\\n\\n项目类型：Web应用\\n技术栈：React\\n主要功能：<script>while(true){}</script>\\n\\n请提供：\\n1. 完整的目录结构\\n2. 主要组件/模块的划分\\n3. 数据流设计\\n4. 各组件之间的交互方式\\n5. 开发和部署建议\\n\\n请确保架构设计遵循最佳实践，具有良好的可扩展性、可维护性和性能。'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

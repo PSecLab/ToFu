@@ -1,0 +1,3439 @@
+{
+ "shard_id": "005",
+ "n_repos": 1,
+ "n_configs": 123,
+ "surface_loc": 49134,
+ "repos": [
+  {
+   "repo": "taylorwilsdon/google_workspace_mcp",
+   "slug": "taylorwilsdon__google_workspace_mcp",
+   "lang": "python",
+   "commit": "54b1c56f7f9912ce32681460d7ca38f9c2a37564",
+   "path": "eval/targets/taylorwilsdon__google_workspace_mcp",
+   "surface_loc": 49134,
+   "tools": [
+    {
+     "name": "append_table_rows",
+     "description": "Appends rows to a structured table in a Google Sheet. The rows are added\nto the end of the table body, automatically extending the table range.\n\nUse list_sheet_tables first to find the table ID.",
+     "config": "taylorwilsdon__google_workspace_mcp__append_table_rows.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 15,
+       "text": "append_table_rows,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 27,
+       "text": "\"append_table_rows\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1400,
+       "text": "and column details. Use this to find table IDs for append_table_rows."
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1475,
+       "text": "@handle_http_errors(\"append_table_rows\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1477,
+       "text": "async def append_table_rows("
+      }
+     ]
+    },
+    {
+     "name": "batch_modify_gmail_message_labels",
+     "description": "Adds or removes labels from multiple Gmail messages in a single batch request.\n\nTakes MESSAGE ids, not thread ids. Gmail's batch endpoint returns no\nper-message result and silently ignores ids it does not recognise, so by\ndefault this reads the messages back afterwards and reports which ids\nactually changed.",
+     "config": "taylorwilsdon__google_workspace_mcp__batch_modify_gmail_message_labels.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4139,
+       "text": "f\"[batch_modify_gmail_message_labels] Verification batch failed, \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4151,
+       "text": "log_prefix=\"batch_modify_gmail_message_labels\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4161,
+       "text": "f\"[batch_modify_gmail_message_labels] \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4175,
+       "text": "log_prefix=\"batch_modify_gmail_message_labels\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4210,
+       "text": "@handle_http_errors(\"batch_modify_gmail_message_labels\", service_type=\"gmail\")"
+      }
+     ]
+    },
+    {
+     "name": "batch_update_doc",
+     "description": "Executes multiple low-level document operations in a single atomic batch update.\n\nFor normal header/footer text, prefer update_doc_headers_footers.\nOnly use create_header_footer here for advanced section-break layouts.\n\nRECOMMENDED WORKFLOW FOR BUILDING DOCUMENTS:\n=============================================\nTo avoid index calculation errors, build documents in phases:\n\nPHASE 1 - INSERT ALL CONTENT (use end_of_segment=true, no index math):\n  Append text, section breaks, and page breaks sequentially.\n  Each operation appends to the end of the body. No index needed.\n  Example batch: [\n    {\"type\": \"insert_text\", \"end_of_segment\": true, \"text\": \"Report Title\\n\"},\n    {\"type\": \"insert_text\", \"end_of_segment\": true, \"text\": \"\\nExecutive Summary\\n\"},\n    {\"type\": \"insert_text\", \"end_of_segment\": true, \"text\": \"Revenue grew 15%.\\n\"},\n    {\"type\": \"insert_section_break\", \"end_of_segment\": true, \"section_type\": \"NEXT_PAGE\"},\n    {\"type\": \"insert_text\", \"end_of_segment\": true, \"text\": \"Detailed Analysis\\n\"}\n  ]\n\nPHASE 2 - CREATE HEADERS/FOOTERS (if needed):\n  For normal header/footer text, use update_doc_headers_footers\n  (it auto-creates if missing and writes the content for you).\n  Only include create_header_footer operations in a batch when you are\n  intentionally managing advanced section-break-specific layouts.",
+     "config": "taylorwilsdon__google_workspace_mcp__batch_update_doc.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 435,
+       "text": "To build a rich document after creation, use batch_update_doc with"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 471,
+       "text": "f\"Use batch_update_doc with end_of_segment=true to append content. \""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 793,
+       "text": "placeholders via batch_update_doc, then using this tool to replace them."
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1045,
+       "text": "batch_update_doc with create_header_footer just to set header/footer text;"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1109,
+       "text": "@handle_http_errors(\"batch_update_doc\", service_type=\"docs\")"
+      }
+     ]
+    },
+    {
+     "name": "batch_update_form",
+     "description": "Apply batch updates to a Google Form.\n\nSupports adding, updating, and deleting form items, as well as updating\nform metadata and settings. This is the primary method for modifying form\ncontent after creation.",
+     "config": "taylorwilsdon__google_workspace_mcp__batch_update_form.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 446,
+       "text": "async def _batch_update_form_impl("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 451,
+       "text": "\"\"\"Internal implementation for batch_update_form."
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 506,
+       "text": "@handle_http_errors(\"batch_update_form\", service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 508,
+       "text": "async def batch_update_form("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 537,
+       "text": "f\"[batch_update_form] Invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "batch_update_presentation",
+     "description": "Apply batch updates to a Google Slides presentation.",
+     "config": "taylorwilsdon__google_workspace_mcp__batch_update_presentation.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 69,
+       "text": "intrinsic `size`, and `batch_update_presentation` writes in those same terms,"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 302,
+       "text": "insertText/deleteText on notes, and batch_update_presentation writes"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 387,
+       "text": "@handle_http_errors(\"batch_update_presentation\", service_type=\"slides\")"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 389,
+       "text": "async def batch_update_presentation("
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 425,
+       "text": "f\"[batch_update_presentation] Invoked. Email: '{user_google_email}', ID: '{presentation_id}', Requests: {len(requests)}\""
+      }
+     ]
+    },
+    {
+     "name": "check_drive_file_public_access",
+     "description": "Searches for a file by name and checks if it has public link sharing enabled.",
+     "config": "taylorwilsdon__google_workspace_mcp__check_drive_file_public_access.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1811,
+       "text": "\"check_drive_file_public_access\", is_read_only=True, service_type=\"drive\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1814,
+       "text": "async def check_drive_file_public_access("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1836,
+       "text": "f\"[check_drive_file_public_access] Invoked. \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1840,
+       "text": "logger.debug(f\"[check_drive_file_public_access] Searching for {file_name}\")"
+      }
+     ]
+    },
+    {
+     "name": "copy_drive_file",
+     "description": "Creates a copy of an existing Google Drive file.\n\nThis tool copies the template document to a new location with an optional new name.\nThe copy maintains all formatting and content from the original file.",
+     "config": "taylorwilsdon__google_workspace_mcp__copy_drive_file.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2752,
+       "text": "@handle_http_errors(\"copy_drive_file\", is_read_only=False, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2754,
+       "text": "async def copy_drive_file("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2777,
+       "text": "f\"[copy_drive_file] Invoked. Email: '{user_google_email}', File ID: '{file_id}', New name: '{new_name}', Parent folder: '{parent_folder_id}'\""
+      }
+     ]
+    },
+    {
+     "name": "create_calendar",
+     "description": "Creates a new secondary Google Calendar.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_calendar.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2635,
+       "text": "@handle_http_errors(\"create_calendar\", is_read_only=False, service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2637,
+       "text": "async def create_calendar("
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2657,
+       "text": "f\"[create_calendar] Invoked. Email: '{user_google_email}', summary_len={len(summary)}\""
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2672,
+       "text": "logger.info(f\"[create_calendar] Created calendar with ID: {calendar_id}\")"
+      }
+     ]
+    },
+    {
+     "name": "create_doc",
+     "description": "Creates a new Google Doc and optionally inserts initial content.\n\nAfter creation, the document body starts at index 1. A new empty doc\nhas total length 2 (one section break at index 0, one newline at index 1).\n\nTo build a rich document after creation, use batch_update_doc with\ninsert_text operations using end_of_segment=true to append content\nsequentially without calculating indices. Then call inspect_doc_structure\nto get exact positions before applying formatting in a separate batch call.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_doc.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 421,
+       "text": "@handle_http_errors(\"create_doc\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 423,
+       "text": "async def create_doc("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 449,
+       "text": "f\"[create_doc] Invoked. Email: '{user_google_email}', title_len={len(title)}\""
+      }
+     ]
+    },
+    {
+     "name": "create_drive_file",
+     "description": "Creates a new file in Google Drive, supporting creation within shared drives.\nAccepts direct text content, inline base64 bytes, or a fileUrl to fetch content from.\nThis stores the supplied bytes without converting them to Google Docs, Sheets, or\nSlides. Use the matching import_to_google_* tool for Google-native conversion.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_drive_file.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 997,
+       "text": "@handle_http_errors(\"create_drive_file\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 999,
+       "text": "async def create_drive_file("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1032,
+       "text": "f\"[create_drive_file] Invoked. Email: '{user_google_email}', \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1036,
+       "text": "logger.debug(f\"[create_drive_file] File Name: {file_name}\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1065,
+       "text": "\"create_drive_file. Use import_to_google_doc, import_to_google_sheets, \""
+      }
+     ]
+    },
+    {
+     "name": "create_drive_folder",
+     "description": "Creates a new folder in Google Drive, supporting creation within shared drives.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_drive_folder.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 922,
+       "text": "async def _create_drive_folder_impl("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 928,
+       "text": "\"\"\"Internal implementation for create_drive_folder. Used by tests.\"\"\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 960,
+       "text": "@handle_http_errors(\"create_drive_folder\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 962,
+       "text": "async def create_drive_folder("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 981,
+       "text": "f\"[create_drive_folder] Invoked. Email: '{user_google_email}', Folder: '{folder_name}', Parent: '{parent_folder_id}'\""
+      }
+     ]
+    },
+    {
+     "name": "create_form",
+     "description": "Create a new form using the title given in the provided form message in the request.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_form.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 130,
+       "text": "@handle_http_errors(\"create_form\", service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 132,
+       "text": "async def create_form("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 152,
+       "text": "f\"[create_form] Invoked. Email: '{user_google_email}', title_len={len(title)}\""
+      },
+      {
+       "file": "gdocs/docs_helpers.py",
+       "line": 851,
+       "text": "def create_format_text_request("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 41,
+       "text": "create_format_text_request,"
+      }
+     ]
+    },
+    {
+     "name": "create_presentation",
+     "description": "Create a new Google Slides presentation.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_presentation.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 239,
+       "text": "@handle_http_errors(\"create_presentation\", service_type=\"slides\")"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 241,
+       "text": "async def create_presentation("
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 255,
+       "text": "f\"[create_presentation] Invoked. Email: '{user_google_email}', title_len={len(title)}\""
+      }
+     ]
+    },
+    {
+     "name": "create_reaction",
+     "description": "Adds an emoji reaction to a Google Chat message.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_reaction.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 618,
+       "text": "@handle_http_errors(\"create_reaction\", service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 619,
+       "text": "async def create_reaction("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 635,
+       "text": "logger.info(f\"[create_reaction] Message: '{message_id}', Emoji: '{emoji_unicode}'\")"
+      }
+     ]
+    },
+    {
+     "name": "create_script_project",
+     "description": "Creates a new Apps Script project.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_script_project.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 333,
+       "text": "async def _create_script_project_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 339,
+       "text": "\"\"\"Internal implementation for create_script_project.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 341,
+       "text": "f\"[create_script_project] Email: {user_google_email}, title_len={len(title)}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 362,
+       "text": "logger.info(f\"[create_script_project] Created project {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 375,
+       "text": "@handle_http_errors(\"create_script_project\", service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "create_sheet",
+     "description": "Creates a new sheet or duplicates an existing sheet (user_google_email: str, spreadsheet_id: str, sheet_name: Optional[str] = None, source_sheet_name: Optional[str] = None, insert_sheet_index: Optional[int] = None).",
+     "config": "taylorwilsdon__google_workspace_mcp__create_sheet.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 13,
+       "text": "create_sheet,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 25,
+       "text": "\"create_sheet\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1273,
+       "text": "@handle_http_errors(\"create_sheet\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1275,
+       "text": "async def create_sheet("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1297,
+       "text": "f\"[create_sheet] Duplicate invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "create_spreadsheet",
+     "description": "Creates a new Google Spreadsheet.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_spreadsheet.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 12,
+       "text": "create_spreadsheet,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 24,
+       "text": "\"create_spreadsheet\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1209,
+       "text": "@handle_http_errors(\"create_spreadsheet\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1211,
+       "text": "async def create_spreadsheet("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1229,
+       "text": "f\"[create_spreadsheet] Invoked. Email: '{user_google_email}', title_len={len(title)}\""
+      }
+     ]
+    },
+    {
+     "name": "create_table_with_data",
+     "description": "Creates a table and populates it with data in one reliable operation.\n\nCRITICAL: YOU MUST CALL inspect_doc_structure FIRST TO GET THE INDEX!\n\nMANDATORY WORKFLOW - DO THESE STEPS IN ORDER:\n\nStep 1: ALWAYS call inspect_doc_structure first\nStep 2: Use the 'total_length' value from inspect_doc_structure as your index\nStep 3: Format data as 2D list: [[\"col1\", \"col2\"], [\"row1col1\", \"row1col2\"]]\nStep 4: Call this function with the correct index and data\n\nEXAMPLE DATA FORMAT:\ntable_data = [\n    [\"Header1\", \"Header2\", \"Header3\"],    # Row 0 - headers\n    [\"Data1\", \"Data2\", \"Data3\"],          # Row 1 - first data row\n    [\"Data4\", \"Data5\", \"Data6\"]           # Row 2 - second data row\n]\n\nCRITICAL INDEX REQUIREMENTS:\n- NEVER use index values like 1, 2, 10 without calling inspect_doc_structure first\n- ALWAYS get index from inspect_doc_structure 'total_length' field\n- Index must be a valid insertion point in the document\n\nDATA FORMAT REQUIREMENTS:\n- Must be 2D list of strings only\n- Each inner list = one table row\n- All rows MUST have same number of columns\n- Use empty strings \"\" for empty cells, never None\n- Use debug_table_structure after creation to verify results",
+     "config": "taylorwilsdon__google_workspace_mcp__create_table_with_data.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1861,
+       "text": "@handle_http_errors(\"create_table_with_data\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1863,
+       "text": "async def create_table_with_data("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1918,
+       "text": "logger.debug(f\"[create_table_with_data] Doc={document_id}, index={index}\")"
+      },
+      {
+       "file": "gdocs/docs_tables.py",
+       "line": 212,
+       "text": "def create_table_with_data("
+      },
+      {
+       "file": "gdocs/managers/table_operation_manager.py",
+       "line": 54,
+       "text": "This method extracts the complex logic from create_table_with_data tool function."
+      }
+     ]
+    },
+    {
+     "name": "create_version",
+     "description": "Creates a new immutable version of a script project.\n\nVersions capture a snapshot of the current script code.\nOnce created, versions cannot be modified.",
+     "config": "taylorwilsdon__google_workspace_mcp__create_version.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1054,
+       "text": "async def _create_version_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1060,
+       "text": "\"\"\"Internal implementation for create_version.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1061,
+       "text": "logger.info(f\"[create_version] Email: {user_google_email}, ScriptID: {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1083,
+       "text": "logger.info(f\"[create_version] Created version {version_number}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1096,
+       "text": "@handle_http_errors(\"create_version\", is_read_only=False, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "debug_docs_runtime_info",
+     "description": "Return runtime/source information for diagnosing stale MCP server instances.\n\nThis is a temporary diagnostic tool intended to verify which code checkout\nthe running MCP server has loaded.",
+     "config": "taylorwilsdon__google_workspace_mcp__debug_docs_runtime_info.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1824,
+       "text": "@handle_http_errors(\"debug_docs_runtime_info\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1826,
+       "text": "async def debug_docs_runtime_info("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1842,
+       "text": "inspect.getmodule(debug_docs_runtime_info)"
+      }
+     ]
+    },
+    {
+     "name": "debug_table_structure",
+     "description": "ESSENTIAL DEBUGGING TOOL - Use this whenever tables don't work as expected.\n\nUSE THIS IMMEDIATELY WHEN:\n- Table population put data in wrong cells\n- You get \"table not found\" errors\n- Data appears concatenated in first cell\n- Need to understand existing table structure\n- Planning to use populate_existing_table\n\nWHAT THIS SHOWS YOU:\n- Exact table dimensions (rows \u00d7 columns)\n- Each cell's position coordinates (row,col)\n- Current content in each cell\n- Insertion indices for each cell\n- Table boundaries and ranges\n\nHOW TO READ THE OUTPUT:\n- \"dimensions\": \"2x3\" = 2 rows, 3 columns\n- \"position\": \"(0,0)\" = first row, first column\n- \"current_content\": What's actually in each cell right now\n- \"insertion_index\": Where new text would be inserted in that cell\n\nWORKFLOW INTEGRATION:\n1. After creating table \u2192 Use this to verify structure\n2. Before populating \u2192 Use this to plan your data format\n3. After population fails \u2192 Use this to see what went wrong\n4. When debugging \u2192 Compare your data array to actual table structure",
+     "config": "taylorwilsdon__google_workspace_mcp__debug_table_structure.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1902,
+       "text": "- Use debug_table_structure after creation to verify results"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1979,
+       "text": "@handle_http_errors(\"debug_table_structure\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1981,
+       "text": "async def debug_table_structure("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2025,
+       "text": "f\"[debug_table_structure] Doc={document_id}, table_index={table_index}\""
+      }
+     ]
+    },
+    {
+     "name": "delete_script_project",
+     "description": "Deletes an Apps Script project.\n\nThis permanently deletes the script project. The action cannot be undone.",
+     "config": "taylorwilsdon__google_workspace_mcp__delete_script_project.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 935,
+       "text": "async def _delete_script_project_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 940,
+       "text": "\"\"\"Internal implementation for delete_script_project.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 942,
+       "text": "f\"[delete_script_project] Email: {user_google_email}, ScriptID: {script_id}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 948,
+       "text": "logger.info(f\"[delete_script_project] Deleted script {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 961,
+       "text": "@handle_http_errors(\"delete_script_project\", is_read_only=False, service_type=\"drive\")"
+      }
+     ]
+    },
+    {
+     "name": "download_chat_attachment",
+     "description": "Downloads an attachment from a Google Chat message and saves it to local disk.\n\nIn stdio mode, returns the local file path for direct access.\nIn HTTP mode, returns a temporary download URL (valid for 1 hour).",
+     "config": "taylorwilsdon__google_workspace_mcp__download_chat_attachment.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 292,
+       "text": "f\"  Use download_chat_attachment(message_id='{msg_name}', attachment_index={idx}) to download\""
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 661,
+       "text": "@handle_http_errors(\"download_chat_attachment\", is_read_only=True, service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 663,
+       "text": "async def download_chat_attachment("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 683,
+       "text": "f\"[download_chat_attachment] Message: '{message_id}', Index: {attachment_index}\""
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 713,
+       "text": "f\"[download_chat_attachment] Downloading '{filename}' ({content_type}), \""
+      }
+     ]
+    },
+    {
+     "name": "draft_gmail_message",
+     "description": "Creates a draft email in the user's Gmail account. Supports both new drafts and reply drafts with optional attachments.\nSupports Gmail's \"Send As\" feature to draft from configured alias addresses.\n\nSCHEDULED SEND IS NOT AVAILABLE. Gmail's REST API exposes no send-time\nparameter; the Schedule send feature is web-UI only, and a message cannot be\nplaced in the Scheduled folder through the API. Do not claim a message was\nscheduled. To deliver at a chosen time, create a draft with\ndraft_gmail_message. An external scheduler must retain the message data to\ncreate and send a new message via send_gmail_message then, or call\nusers.drafts.send with the draft ID returned by draft_gmail_message.\nAlternatively, let the user schedule the draft in the Gmail UI.",
+     "config": "taylorwilsdon__google_workspace_mcp__draft_gmail_message.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 780,
+       "text": "``draft_gmail_message`` and most stdlib consumers expect standard base64"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2157,
+       "text": "directly to tools like ``draft_gmail_message`` that expect"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2540,
+       "text": "draft_gmail_message. An external scheduler must retain the message data to"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2542,
+       "text": "call users.drafts.send with the draft ID returned by draft_gmail_message."
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2733,
+       "text": "# draft_gmail_message; one thread fetch serves all three."
+      }
+     ]
+    },
+    {
+     "name": "export_doc_to_pdf",
+     "description": "Exports a Google Doc to PDF format and saves it to Google Drive.",
+     "config": "taylorwilsdon__google_workspace_mcp__export_doc_to_pdf.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2074,
+       "text": "@handle_http_errors(\"export_doc_to_pdf\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2076,
+       "text": "async def export_doc_to_pdf("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2096,
+       "text": "f\"[export_doc_to_pdf] Email={user_google_email}, Doc={document_id}, pdf_filename={pdf_filename}, folder_id={folder_id}\""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2121,
+       "text": "logger.info(f\"[export_doc_to_pdf] Exporting doc {document_id} to PDF\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2181,
+       "text": "f\"[export_doc_to_pdf] Successfully uploaded PDF to Drive: {pdf_file_id}\""
+      }
+     ]
+    },
+    {
+     "name": "find_and_replace_doc",
+     "description": "Finds and replaces text throughout a Google Doc. No index calculation required.\n\nThis is the safest way to update specific text in a document because it\ndoes not require knowing any indices. Use this tool when you need to:\n- Replace placeholder text (e.g., {{TITLE}}) with real content\n- Update specific words or phrases throughout the document\n- Make targeted text changes without risk of index errors\n\nFor building documents from scratch, consider inserting text with unique\nplaceholders via batch_update_doc, then using this tool to replace them.",
+     "config": "taylorwilsdon__google_workspace_mcp__find_and_replace_doc.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2012,
+       "text": "find_and_replace_doc, which edit in place instead of rewriting the file."
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2184,
+       "text": "\"find_and_replace_doc to edit a Google Doc in place.\""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 772,
+       "text": "@handle_http_errors(\"find_and_replace_doc\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 774,
+       "text": "async def find_and_replace_doc("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 807,
+       "text": "f\"[find_and_replace_doc] Doc={document_id}, find_len={len(find_text)}, replace_len={len(replace_text)}, tab='{tab_id}'\""
+      }
+     ]
+    },
+    {
+     "name": "format_sheet_range",
+     "description": "Applies formatting to a range: colors, number formats, text wrapping,\nalignment, and text styling.\n\nColors accept hex strings (#RRGGBB). Number formats follow Sheets types\n(e.g., NUMBER, CURRENCY, DATE, PERCENT). If no sheet name is provided,\nthe first sheet is used.",
+     "config": "taylorwilsdon__google_workspace_mcp__format_sheet_range.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 468,
+       "text": "async def _format_sheet_range_impl("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 483,
+       "text": "\"\"\"Internal implementation for format_sheet_range."
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 716,
+       "text": "@handle_http_errors(\"format_sheet_range\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 718,
+       "text": "async def format_sheet_range("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 765,
+       "text": "\"[format_sheet_range] Invoked. Email: '%s', Spreadsheet: %s, Range: %s\","
+      }
+     ]
+    },
+    {
+     "name": "generate_trigger_code",
+     "description": "Generates Apps Script code for creating triggers.\n\nThe Apps Script API cannot create triggers directly - they must be created\nfrom within Apps Script itself. This tool generates the code you need.",
+     "config": "taylorwilsdon__google_workspace_mcp__generate_trigger_code.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1303,
+       "text": "def _generate_trigger_code_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1308,
+       "text": "\"\"\"Internal implementation for generate_trigger_code.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1529,
+       "text": "async def generate_trigger_code("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1563,
+       "text": "return _generate_trigger_code_impl(trigger_type, function_name, schedule)"
+      }
+     ]
+    },
+    {
+     "name": "get_contact",
+     "description": "Get detailed information about a specific contact.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_contact.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 646,
+       "text": "@handle_http_errors(\"get_contact\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 647,
+       "text": "async def get_contact("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 669,
+       "text": "f\"[get_contact] Invoked. Email: '{user_google_email}', Contact: {resource_name}\""
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1154,
+       "text": "@handle_http_errors(\"get_contact_group\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1155,
+       "text": "async def get_contact_group("
+      }
+     ]
+    },
+    {
+     "name": "get_contact_group",
+     "description": "Get details of a specific contact group including its members.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_contact_group.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1154,
+       "text": "@handle_http_errors(\"get_contact_group\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1155,
+       "text": "async def get_contact_group("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1179,
+       "text": "f\"[get_contact_group] Invoked. Email: '{user_google_email}', Group: {resource_name}\""
+      }
+     ]
+    },
+    {
+     "name": "get_doc_as_markdown",
+     "description": "Reads a Google Doc and returns it as clean Markdown with optional comment context.\n\nUnlike get_doc_content which returns plain text, this tool preserves document\nformatting as Markdown: headings, bold/italic/strikethrough, links, code spans,\nordered/unordered lists with nesting, and tables.\n\nWhen comments are included (the default), each comment's anchor text \u2014 the specific\ntext the comment was attached to \u2014 is preserved, giving full context for the discussion.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_doc_as_markdown.json",
+     "hints": [
+      {
+       "file": "core/file_limits.py",
+       "line": 90,
+       "text": "\"- Use get_doc_content / get_doc_as_markdown for Google Docs\\n\""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2564,
+       "text": "@handle_http_errors(\"get_doc_as_markdown\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2575,
+       "text": "async def get_doc_as_markdown("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2631,
+       "text": "f\"[get_doc_as_markdown] Doc={document_id}, comments={include_comments}, mode={comment_mode}\""
+      }
+     ]
+    },
+    {
+     "name": "get_doc_content",
+     "description": "Retrieves content of a Google Doc or a Drive file (like .docx) identified by document_id.\n- Native Google Docs: Fetches content via Docs API.\n- Office files (.docx, etc.) stored in Drive: Downloads via Drive API and extracts text.\n\nFor native Google Docs the returned text is index-aligned with the document:\nempty paragraphs are preserved and every non-text element that occupies an\nindex (inline object, page break, footnote reference, ...) is rendered as one\nU+FFFC placeholder per index. The document body starts at index 1, so an\noffset n into the text that follows \"--- CONTENT ---\" is document index n + 1,\nand that index can be passed straight to format_text or delete_text. Tables\nand multi-tab documents interleave separators, so alignment holds up to the\nfirst table or tab header.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_doc_content.json",
+     "hints": [
+      {
+       "file": "core/file_limits.py",
+       "line": 90,
+       "text": "\"- Use get_doc_content / get_doc_as_markdown for Google Docs\\n\""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 186,
+       "text": "@handle_http_errors(\"get_doc_content\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 197,
+       "text": "async def get_doc_content("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 239,
+       "text": "f\"[get_doc_content] Invoked. Document/File ID: '{document_id}' for user '{user_google_email}'\""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 256,
+       "text": "f\"[get_doc_content] File '{file_name}' (ID: {document_id}) has mimeType: '{mime_type}'\""
+      }
+     ]
+    },
+    {
+     "name": "get_drive_file_content",
+     "description": "Retrieves the content of a specific Google Drive file by ID, supporting files in shared drives.\n\n\u2022 Native Google Docs, Sheets, Slides \u2192 exported as text / CSV.\n\u2022 Office files (.docx, .xlsx, .pptx) \u2192 unzipped & parsed with std-lib to\n  extract readable text.\n\u2022 PDFs \u2192 text extracted with pypdf when possible; scanned/image-only PDFs\n  fall back to a download hint.\n\u2022 Images \u2192 returned as base64 with MIME metadata for multimodal clients.\n\u2022 Any other file \u2192 downloaded; tries UTF-8 decode, else notes binary.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_drive_file_content.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 338,
+       "text": "@handle_http_errors(\"get_drive_file_content\", is_read_only=True, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 340,
+       "text": "async def get_drive_file_content("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 363,
+       "text": "logger.info(f\"[get_drive_file_content] Invoked. File ID: '{file_id}'\")"
+      },
+      {
+       "file": "core/file_limits.py",
+       "line": 92,
+       "text": "\"- Use get_drive_file_content for text-oriented exports when under the limit\\n\""
+      }
+     ]
+    },
+    {
+     "name": "get_drive_file_download_url",
+     "description": "Downloads a Google Drive file and saves it to local disk.\n\nIn stdio mode, returns the local file path for direct access.\nIn HTTP mode, returns a temporary download URL (valid for 1 hour).\n\nFor Google native files (Docs, Sheets, Slides), exports to a useful format:\n- Google Docs -> PDF (default) or DOCX if export_format='docx'\n- Google Sheets -> XLSX (default), PDF if export_format='pdf', or CSV if export_format='csv'\n- Google Slides -> PDF (default) or PPTX if export_format='pptx'\n\nFor other files, downloads the original file format.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_drive_file_download_url.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 435,
+       "text": "f\"Use get_drive_file_download_url to get a direct download link instead.]\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 467,
+       "text": "\"get_drive_file_download_url\", is_read_only=True, service_type=\"drive\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 470,
+       "text": "async def get_drive_file_download_url("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 501,
+       "text": "f\"[get_drive_file_download_url] Invoked. File ID: '{file_id}', Export format: {export_format}\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 592,
+       "text": "f\"[get_drive_file_download_url] Successfully downloaded {size_kb:.1f} KB file (stateless mode)\""
+      }
+     ]
+    },
+    {
+     "name": "get_drive_file_permissions",
+     "description": "Gets detailed metadata about a Google Drive file including sharing permissions,\nparent folder IDs, ownership, and lifecycle timestamps.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_drive_file_permissions.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1657,
+       "text": "\"get_drive_file_permissions\", is_read_only=True, service_type=\"drive\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1660,
+       "text": "async def get_drive_file_permissions("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1677,
+       "text": "f\"[get_drive_file_permissions] Checking file {file_id} for {user_google_email}\""
+      }
+     ]
+    },
+    {
+     "name": "get_drive_shareable_link",
+     "description": "Gets the shareable link for a Google Drive file or folder.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_drive_shareable_link.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2309,
+       "text": "@handle_http_errors(\"get_drive_shareable_link\", is_read_only=True, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2311,
+       "text": "async def get_drive_shareable_link("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2327,
+       "text": "f\"[get_drive_shareable_link] Invoked. Email: '{user_google_email}', File ID: '{file_id}'\""
+      }
+     ]
+    },
+    {
+     "name": "get_events",
+     "description": "Retrieves events from a specified Google Calendar. Can retrieve a single event by ID or multiple events within a time range.\nYou can also search for events by keyword by supplying the optional \"query\" param.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_events.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 426,
+       "text": "@handle_http_errors(\"get_events\", is_read_only=True, service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 428,
+       "text": "async def get_events("
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 463,
+       "text": "f\"[get_events] Raw parameters - event_id: '{event_id}', time_min: '{time_min}', time_max: '{time_max}', query_len={len(query) if query else 0}, detailed: {detailed}, include_attachments: {include_atta"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 471,
+       "text": "logger.info(f\"[get_events] Retrieving single event with ID: {event_id}\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 485,
+       "text": "\"[get_events] page_token requires time_min. Pass the Pagination \""
+      }
+     ]
+    },
+    {
+     "name": "get_form",
+     "description": "Get a form.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_form.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 187,
+       "text": "@handle_http_errors(\"get_form\", is_read_only=True, service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 189,
+       "text": "async def get_form(service, user_google_email: str, form_id: str) -> str:"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 200,
+       "text": "logger.info(f\"[get_form] Invoked. Email: '{user_google_email}', Form ID: {form_id}\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 314,
+       "text": "@handle_http_errors(\"get_form_response\", is_read_only=True, service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 316,
+       "text": "async def get_form_response("
+      }
+     ]
+    },
+    {
+     "name": "get_form_response",
+     "description": "Get one response from the form.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_form_response.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 314,
+       "text": "@handle_http_errors(\"get_form_response\", is_read_only=True, service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 316,
+       "text": "async def get_form_response("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 331,
+       "text": "f\"[get_form_response] Invoked. Email: '{user_google_email}', Form ID: {form_id}, Response ID: {response_id}\""
+      }
+     ]
+    },
+    {
+     "name": "get_gmail_attachment_content",
+     "description": "Downloads an email attachment and saves it to local disk.\n\nIn stdio mode, returns the local file path for direct access.\nIn HTTP mode, returns a temporary download URL (valid for 1 hour).\nMay re-fetch message metadata to resolve filename and MIME type.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_gmail_attachment_content.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 801,
+       "text": "f\"[get_gmail_attachment_content] Failed to convert attachment \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1893,
+       "text": "f\"   Use get_gmail_attachment_content(message_id='{message_id}', \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2095,
+       "text": "f\"   Use get_gmail_attachment_content(message_id='{mid}', \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2129,
+       "text": "\"get_gmail_attachment_content\", is_read_only=True, service_type=\"gmail\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2132,
+       "text": "async def get_gmail_attachment_content("
+      }
+     ]
+    },
+    {
+     "name": "get_gmail_message_content",
+     "description": "Retrieves the full content (subject, sender, recipients, body) of a specific Gmail message.\n\nBodies are returned inline and truncated at 20,000 characters. Set full=True to\nget the complete, untruncated message instead: it is exported to disk and the\nresponse carries a short-lived download URL (HTTP transport) or file path (stdio\ntransport) rather than the body, so large messages never stream through the model\ncontext. Stateless deployments have no file storage, so there full=True returns the\nuntruncated body inline.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_gmail_message_content.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 502,
+       "text": "f\"[get_gmail_message_content] Returned {size_kb:.1f} KB \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 522,
+       "text": "logger.error(f\"[get_gmail_message_content] Failed to save message: {exc}\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 543,
+       "text": "f\"[get_gmail_message_content] Exported {size_kb:.1f} KB \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1749,
+       "text": "\"get_gmail_message_content\", is_read_only=True, service_type=\"gmail\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1752,
+       "text": "async def get_gmail_message_content("
+      }
+     ]
+    },
+    {
+     "name": "get_gmail_messages_content_batch",
+     "description": "Retrieves the content of multiple Gmail messages in a single batch request.\nSupports up to 25 messages per batch to prevent SSL connection exhaustion.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_gmail_messages_content_batch.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1625,
+       "text": "\"  \u2022 Pass the Message IDs **as a list** to get_gmail_messages_content_batch()\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1626,
+       "text": "\"    e.g. get_gmail_messages_content_batch(message_ids=[...])\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1910,
+       "text": "\"get_gmail_messages_content_batch\", is_read_only=True, service_type=\"gmail\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1913,
+       "text": "async def get_gmail_messages_content_batch("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1947,
+       "text": "f\"[get_gmail_messages_content_batch] Invoked. Message count: {len(message_ids)}, Email: '{user_google_email}'\""
+      }
+     ]
+    },
+    {
+     "name": "get_gmail_thread_content",
+     "description": "Retrieves the complete content of a Gmail conversation thread, including all messages.\n\nOptionally also returns structured ownership analysis so a caller can\ndetermine who sent the last message and who owes whom a response without\nre-parsing the formatted string or making a second tool call.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_gmail_thread_content.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1627,
+       "text": "\"  \u2022 Pass the Thread IDs to get_gmail_thread_content() (single) or get_gmail_threads_content_batch() (batch)\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3411,
+       "text": "@handle_http_errors(\"get_gmail_thread_content\", is_read_only=True, service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3412,
+       "text": "async def get_gmail_thread_content("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3468,
+       "text": "f\"[get_gmail_thread_content] Invoked. Thread ID: '{thread_id}', \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3485,
+       "text": "service, message_ids, log_prefix=\"get_gmail_thread_content\""
+      }
+     ]
+    },
+    {
+     "name": "get_gmail_threads_content_batch",
+     "description": "Retrieves the content of multiple Gmail threads in a single batch request.\nSupports up to 25 threads per batch to prevent SSL connection exhaustion.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_gmail_threads_content_batch.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1627,
+       "text": "\"  \u2022 Pass the Thread IDs to get_gmail_thread_content() (single) or get_gmail_threads_content_batch() (batch)\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3513,
+       "text": "\"get_gmail_threads_content_batch\", is_read_only=True, service_type=\"gmail\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3515,
+       "text": "async def get_gmail_threads_content_batch("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3547,
+       "text": "f\"[get_gmail_threads_content_batch] Invoked. Thread count: {len(thread_ids)}, Email: '{user_google_email}'\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3581,
+       "text": "f\"[get_gmail_threads_content_batch] Batch API failed, falling back to sequential processing: {batch_error}\""
+      }
+     ]
+    },
+    {
+     "name": "get_messages",
+     "description": "Retrieves messages from a Google Chat space.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_messages.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 211,
+       "text": "@handle_http_errors(\"get_messages\", service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 212,
+       "text": "async def get_messages("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 235,
+       "text": "logger.info(f\"[get_messages] Space ID: '{space_id}' for user '{user_google_email}'\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 343,
+       "text": "(e.g. spaces/X/messages/Y, as returned by send_message or get_messages)."
+      }
+     ]
+    },
+    {
+     "name": "get_page",
+     "description": "Get details about a specific page (slide) in a presentation.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_page.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 407,
+       "text": "existing text, call get_page and use a Shape or Table element ID."
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 476,
+       "text": "@handle_http_errors(\"get_page\", is_read_only=True, service_type=\"slides\")"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 478,
+       "text": "async def get_page("
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 504,
+       "text": "f\"[get_page] Invoked. Email: '{user_google_email}', Presentation: '{presentation_id}', Page: '{page_object_id}'\""
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 519,
+       "text": "# This is what makes the documented \"call get_page and use a Shape or Table"
+      }
+     ]
+    },
+    {
+     "name": "get_page_thumbnail",
+     "description": "Generate a thumbnail URL for a specific page (slide) in a presentation.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_page_thumbnail.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 546,
+       "text": "@handle_http_errors(\"get_page_thumbnail\", is_read_only=True, service_type=\"slides\")"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 548,
+       "text": "async def get_page_thumbnail("
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 568,
+       "text": "f\"[get_page_thumbnail] Invoked. Email: '{user_google_email}', Presentation: '{presentation_id}', Page: '{page_object_id}', Size: '{thumbnail_size}'\""
+      }
+     ]
+    },
+    {
+     "name": "get_presentation",
+     "description": "Get details about a Google Slides presentation.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_presentation.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 284,
+       "text": "@handle_http_errors(\"get_presentation\", is_read_only=True, service_type=\"slides\")"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 286,
+       "text": "async def get_presentation("
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 315,
+       "text": "f\"[get_presentation] Invoked. Email: '{user_google_email}', ID: '{presentation_id}', Notes: {include_speaker_notes}\""
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 409,
+       "text": "To write speaker (presenter) notes, call get_presentation with"
+      },
+      {
+       "file": "gslides/slides_helpers.py",
+       "line": 152,
+       "text": "async def _get_presentation_page_ids("
+      }
+     ]
+    },
+    {
+     "name": "get_script_content",
+     "description": "Retrieves content of a specific file within a project.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_script_content.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 263,
+       "text": "async def _get_script_content_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 269,
+       "text": "\"\"\"Internal implementation for get_script_content.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 271,
+       "text": "f\"[get_script_content] Email: {user_google_email}, ID: {script_id}, File: {file_name}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 295,
+       "text": "logger.info(f\"[get_script_content] Retrieved file {file_name} from {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 308,
+       "text": "@handle_http_errors(\"get_script_content\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "get_script_metrics",
+     "description": "Gets execution metrics for a script project.\n\nReturns analytics data including active users, total executions,\nand failed executions over time.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_script_metrics.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1195,
+       "text": "async def _get_script_metrics_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1201,
+       "text": "\"\"\"Internal implementation for get_script_metrics.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1203,
+       "text": "f\"[get_script_metrics] Email: {user_google_email}, ScriptID: {script_id}, Granularity: {metrics_granularity}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1257,
+       "text": "logger.info(f\"[get_script_metrics] Retrieved metrics for {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1270,
+       "text": "@handle_http_errors(\"get_script_metrics\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "get_script_project",
+     "description": "Retrieves complete project details including all source files.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_script_project.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 189,
+       "text": "async def _get_script_project_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 194,
+       "text": "\"\"\"Internal implementation for get_script_project.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 195,
+       "text": "logger.info(f\"[get_script_project] Email: {user_google_email}, ID: {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 229,
+       "text": "logger.info(f\"[get_script_project] Retrieved project {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 242,
+       "text": "@handle_http_errors(\"get_script_project\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "get_search_engine_info",
+     "description": "Retrieves metadata about a Programmable Search Engine.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_search_engine_info.json",
+     "hints": [
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 187,
+       "text": "\"get_search_engine_info\", is_read_only=True, service_type=\"customsearch\""
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 190,
+       "text": "async def get_search_engine_info(service, user_google_email: str) -> str:"
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 214,
+       "text": "f\"[get_search_engine_info] Invoked. Email: '{user_google_email}', CX: '{cx}'\""
+      }
+     ]
+    },
+    {
+     "name": "get_spreadsheet_info",
+     "description": "Gets information about a specific spreadsheet including its sheets.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_spreadsheet_info.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 9,
+       "text": "get_spreadsheet_info,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 21,
+       "text": "\"get_spreadsheet_info\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 115,
+       "text": "@handle_http_errors(\"get_spreadsheet_info\", is_read_only=True, service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 117,
+       "text": "async def get_spreadsheet_info("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 133,
+       "text": "f\"[get_spreadsheet_info] Invoked. Email: '{user_google_email}', Spreadsheet ID: {spreadsheet_id}\""
+      }
+     ]
+    },
+    {
+     "name": "get_task",
+     "description": "Get details of a specific task.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_task.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 192,
+       "text": "@handle_http_errors(\"get_task_list\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 193,
+       "text": "async def get_task_list("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 207,
+       "text": "f\"[get_task_list] Invoked. Email: '{user_google_email}', Task List ID: {task_list_id}\""
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 656,
+       "text": "@handle_http_errors(\"get_task\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 657,
+       "text": "async def get_task("
+      }
+     ]
+    },
+    {
+     "name": "get_task_list",
+     "description": "Get details of a specific task list.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_task_list.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 192,
+       "text": "@handle_http_errors(\"get_task_list\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 193,
+       "text": "async def get_task_list("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 207,
+       "text": "f\"[get_task_list] Invoked. Email: '{user_google_email}', Task List ID: {task_list_id}\""
+      }
+     ]
+    },
+    {
+     "name": "get_version",
+     "description": "Gets details of a specific version.",
+     "config": "taylorwilsdon__google_workspace_mcp__get_version.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1124,
+       "text": "async def _get_version_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1130,
+       "text": "\"\"\"Internal implementation for get_version.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1132,
+       "text": "f\"[get_version] Email: {user_google_email}, ScriptID: {script_id}, Version: {version_number}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1152,
+       "text": "logger.info(f\"[get_version] Retrieved version {ver_num}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1165,
+       "text": "@handle_http_errors(\"get_version\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "import_to_google_doc",
+     "description": "Imports a file (Markdown, DOCX, TXT, HTML, RTF, ODT) into Google Docs format with automatic conversion.\n\nGoogle Drive automatically converts the source file to native Google Docs format,\npreserving formatting like headings, lists, bold, italic, etc.\nBinary sources may be passed directly as base64_content. For batch operations,\nprefer file_path for files on disk so callers do not need\nto load full file contents into their context.",
+     "config": "taylorwilsdon__google_workspace_mcp__import_to_google_doc.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1065,
+       "text": "\"create_drive_file. Use import_to_google_doc, import_to_google_sheets, \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1430,
+       "text": "@handle_http_errors(\"import_to_google_doc\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1432,
+       "text": "async def import_to_google_doc("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1470,
+       "text": "import_to_google_doc(file_name=\"My Doc.md\", file_path=\"/path/to/my-doc.md\", source_format=\"md\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1473,
+       "text": "import_to_google_doc(file_name=\"My Doc.md\", content=\"# Title\\\\n\\\\nHello **world**\")"
+      }
+     ]
+    },
+    {
+     "name": "import_to_google_sheets",
+     "description": "Imports a spreadsheet (XLSX, XLS, ODS, CSV, TSV) into Google Sheets format with automatic conversion.\n\nGoogle Drive automatically converts the source spreadsheet to native Google Sheets format,\npreserving rows, columns, sheets, and values.\nBinary sources may be passed directly as base64_content. For batch operations,\nprefer file_path for files on disk so callers do not need\nto load full file contents into their context.",
+     "config": "taylorwilsdon__google_workspace_mcp__import_to_google_sheets.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1065,
+       "text": "\"create_drive_file. Use import_to_google_doc, import_to_google_sheets, \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1580,
+       "text": "@handle_http_errors(\"import_to_google_sheets\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1582,
+       "text": "async def import_to_google_sheets("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1620,
+       "text": "import_to_google_sheets(file_name=\"Budget\", file_path=\"/path/to/budget.xlsx\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1623,
+       "text": "import_to_google_sheets(file_name=\"Data.csv\", content=\"a,b,c\\\\n1,2,3\", source_format=\"csv\")"
+      }
+     ]
+    },
+    {
+     "name": "import_to_google_slides",
+     "description": "Imports a presentation (PPTX, PPT, ODP) into Google Slides format with automatic conversion.\n\nGoogle Drive automatically converts the source presentation to native Google Slides format,\npreserving slides, layouts, text, and images.\nBinary sources may be passed directly as base64_content. For batch operations,\nprefer file_path for files on disk so callers do not need\nto load full file contents into their context.",
+     "config": "taylorwilsdon__google_workspace_mcp__import_to_google_slides.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1066,
+       "text": "\"or import_to_google_slides so Drive receives separate source and target \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1509,
+       "text": "@handle_http_errors(\"import_to_google_slides\", service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1511,
+       "text": "async def import_to_google_slides("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1547,
+       "text": "import_to_google_slides(file_name=\"Deck\", file_path=\"/path/to/deck.pptx\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1550,
+       "text": "import_to_google_slides(file_name=\"Remote Deck\", file_url=\"https://example.com/deck.pptx\")"
+      }
+     ]
+    },
+    {
+     "name": "insert_doc_elements",
+     "description": "Inserts structural elements like tables, lists, or page breaks into a Google Doc.",
+     "config": "taylorwilsdon__google_workspace_mcp__insert_doc_elements.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2011,
+       "text": "For native Google Docs use insert_doc_elements, modify_doc_text, or"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2183,
+       "text": "\"to splice text in. Use insert_doc_elements, modify_doc_text, or \""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 841,
+       "text": "@handle_http_errors(\"insert_doc_elements\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 843,
+       "text": "async def insert_doc_elements("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 871,
+       "text": "f\"[insert_doc_elements] Doc={document_id}, type={element_type}, index={index}\""
+      }
+     ]
+    },
+    {
+     "name": "insert_doc_image",
+     "description": "Inserts an image into a Google Doc from Drive or a URL.",
+     "config": "taylorwilsdon__google_workspace_mcp__insert_doc_image.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1910,
+       "text": "f\"Use with insert_doc_image_url: {get_drive_image_url(file_id)}\","
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 931,
+       "text": "@handle_http_errors(\"insert_doc_image\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 942,
+       "text": "async def insert_doc_image("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 967,
+       "text": "f\"[insert_doc_image] Doc={document_id}, source={image_source}, index={index}\""
+      }
+     ]
+    },
+    {
+     "name": "inspect_doc_structure",
+     "description": "Essential tool for finding safe insertion points and understanding document structure.\n\nUSE THIS FOR:\n- Finding the correct index for table insertion\n- Understanding document layout before making changes\n- Locating existing tables and their positions\n- Getting document statistics and complexity info\n- Inspecting structure of specific tabs\n\nCRITICAL FOR TABLE OPERATIONS:\nALWAYS call this BEFORE creating tables to get a safe insertion index.\n\nWHAT THE OUTPUT SHOWS:\n- total_elements: Number of document elements\n- total_length: Maximum safe index for insertion\n- tables: Number of existing tables\n- table_details: Position and dimensions of each table\n- headers / footers: Real segment IDs and previews for header/footer editing\n- tabs: List of available tabs in the document (if no tab_id specified)\n- empty_paragraphs: newline-only count, excluding existing/suggested object anchors\n- empty_paragraph_ranges: start/end extents, capped at 100\n- empty_paragraph_ranges_truncated: whether ranges were omitted\n- last_paragraph: is_list_item and is_empty, or null if no body paragraphs\n\nParagraph statistics cover top-level body paragraphs and appear at the top\nlevel in basic mode or under \"statistics\" in detailed mode.\nRanges can include required empty paragraphs. Before cleanup, use detailed=true\nto check adjacent elements, formatting, and object anchors. Preserve the final\nnewline and newlines before tables, tables of contents, or section breaks.\nThe final range has end == total_length and may be omitted by truncation.\n\nWORKFLOW FOR TABLE INSERTION:\nStep 1: Call this function\nStep 2: Note the \"total_length\" value\nStep 3: Use an index < total_length for table insertion\nStep 4: Create your table\n\nFORMATTING WORKFLOW:\nAfter inserting all text via batch_update_doc with end_of_segment=true,\ncall this tool with detailed=true to get exact start_index and end_index\nfor every paragraph. Use those indices directly in format_text and\nupdate_paragraph_style operations in a second batch_update_doc call.\n\nHEADER/FOOTER WORKFLOW:\nFor ordinary header/footer text, use update_doc_headers_footers.\nIf you need low-level segment editing, call this tool first and use the\nreal segment_id values returned under headers/footers. Do not invent IDs.\n\nThe detailed output includes elements[].start_index and elements[].end_index\nwith text_preview for each paragraph, making it easy to identify which\nranges to format.\n\nSUB-PARAGRAPH FORMATTING:\ntext_preview is truncated to 100 characters by default. To compute the index\nof a token inside a longer paragraph, pass preview_chars=0 or None for untruncated\ntext, then add the token's UTF-16 offset within that text to the paragraph's\nstart_index (non-BMP characters such as emoji occupy two UTF-16 units).",
+     "config": "taylorwilsdon__google_workspace_mcp__inspect_doc_structure.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 87,
+       "text": "# Field mask for inspect_doc_structure. It must name every field the structure"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 227,
+       "text": "tab_id: Optional ID of a single tab to read (from inspect_doc_structure)."
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 437,
+       "text": "sequentially without calculating indices. Then call inspect_doc_structure"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 523,
+       "text": "segment ID from inspect_doc_structure output. Do not guess IDs such as"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 530,
+       "text": "inspect_doc_structure. For the main body, 0 is also accepted as an"
+      }
+     ]
+    },
+    {
+     "name": "list_calendars",
+     "description": "Retrieves a list of calendars accessible to the authenticated user.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_calendars.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 362,
+       "text": "@handle_http_errors(\"list_calendars\", is_read_only=True, service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 364,
+       "text": "async def list_calendars("
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 382,
+       "text": "logger.info(f\"[list_calendars] Invoked. Email: '{user_google_email}'\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 448,
+       "text": "calendar_id (str): The ID of the calendar to query. Use 'primary' for the user's primary calendar. Defaults to 'primary'. Calendar IDs can be obtained using `list_calendars`."
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2537,
+       "text": "calendar_ids (Optional[List[str]]): List of calendar identifiers to query. If not provided, queries the primary calendar. Use 'primary' for the user's primary calendar or specific calendar IDs obtaine"
+      }
+     ]
+    },
+    {
+     "name": "list_contact_groups",
+     "description": "List contact groups (labels) for the user.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_contact_groups.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1083,
+       "text": "@handle_http_errors(\"list_contact_groups\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1084,
+       "text": "async def list_contact_groups("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1101,
+       "text": "logger.info(f\"[list_contact_groups] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_contacts",
+     "description": "List contacts for the authenticated user.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_contacts.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 574,
+       "text": "@handle_http_errors(\"list_contacts\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 575,
+       "text": "async def list_contacts("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 594,
+       "text": "logger.info(f\"[list_contacts] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_deployments",
+     "description": "Lists all deployments for a script project, including the bound version\nnumber of each deployment so callers can verify which version is served.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_deployments.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 701,
+       "text": "async def _list_deployments_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 706,
+       "text": "\"\"\"Internal implementation for list_deployments.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 707,
+       "text": "logger.info(f\"[list_deployments] Email: {user_google_email}, ID: {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 743,
+       "text": "logger.info(f\"[list_deployments] Found {len(deployments)} deployments\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 756,
+       "text": "@handle_http_errors(\"list_deployments\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "list_docs_in_folder",
+     "description": "Lists Google Docs within a specific Drive folder.\n\nReturns:\n    str: A formatted list of Google Docs in the specified folder.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_docs_in_folder.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 375,
+       "text": "@handle_http_errors(\"list_docs_in_folder\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 377,
+       "text": "async def list_docs_in_folder("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 387,
+       "text": "f\"[list_docs_in_folder] Invoked. Email: '{user_google_email}', Folder ID: '{folder_id}'\""
+      }
+     ]
+    },
+    {
+     "name": "list_document_comments",
+     "description": "List all comments from a Google Document (optional max_comments to limit results).",
+     "config": "taylorwilsdon__google_workspace_mcp__list_document_comments.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2985,
+       "text": "list_document_comments = _comment_tools[\"list_comments\"]"
+      }
+     ]
+    },
+    {
+     "name": "list_drive_items",
+     "description": "Lists files/folders or shared drive containers, supporting shared drives.\nIf `drive_id` is specified, lists items within that shared drive. `folder_id` is then relative to that drive (or use drive_id as folder_id for root).\nIf `drive_id` is not specified, lists items from user's \"My Drive\" and accessible shared drives (if `include_items_from_all_drives` is True).\nSet `resource_type` to \"shared_drives\" to list shared drive containers instead of folder contents.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_drive_items.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 216,
+       "text": "the Drive web UI and `list_drive_items`. Ignored when `query` already"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 246,
+       "text": "# default so search agrees with list_drive_items and the Drive web UI, but never"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 658,
+       "text": "@handle_http_errors(\"list_drive_items\", is_read_only=True, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 660,
+       "text": "async def list_drive_items("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 714,
+       "text": "f\"[list_drive_items] Invoked. Email: '{user_google_email}', Folder ID: '{folder_id}', \""
+      }
+     ]
+    },
+    {
+     "name": "list_form_responses",
+     "description": "List a form's responses.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_form_responses.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 377,
+       "text": "@handle_http_errors(\"list_form_responses\", is_read_only=True, service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 379,
+       "text": "async def list_form_responses("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 399,
+       "text": "f\"[list_form_responses] Invoked. Email: '{user_google_email}', Form ID: {form_id}\""
+      }
+     ]
+    },
+    {
+     "name": "list_gmail_filters",
+     "description": "Lists all Gmail filters configured in the user's mailbox.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_gmail_filters.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3871,
+       "text": "@handle_http_errors(\"list_gmail_filters\", is_read_only=True, service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3873,
+       "text": "async def list_gmail_filters(service, user_google_email: str) -> str:"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3883,
+       "text": "logger.info(f\"[list_gmail_filters] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_gmail_labels",
+     "description": "Lists labels in the user's Gmail account.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_gmail_labels.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3664,
+       "text": "@handle_http_errors(\"list_gmail_labels\", is_read_only=True, service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3666,
+       "text": "async def list_gmail_labels("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3691,
+       "text": "logger.info(f\"[list_gmail_labels] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_presentation_comments",
+     "description": "List all comments from a Google Presentation (optional max_comments to limit results).",
+     "config": "taylorwilsdon__google_workspace_mcp__list_presentation_comments.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 599,
+       "text": "list_presentation_comments = _comment_tools[\"list_comments\"]"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 603,
+       "text": "list_slide_comments = list_presentation_comments"
+      }
+     ]
+    },
+    {
+     "name": "list_script_processes",
+     "description": "Lists recent execution processes for user's scripts.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_script_processes.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 854,
+       "text": "async def _list_script_processes_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 860,
+       "text": "\"\"\"Internal implementation for list_script_processes.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 862,
+       "text": "f\"[list_script_processes] Email: {user_google_email}, PageSize: {page_size}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 892,
+       "text": "logger.info(f\"[list_script_processes] Found {len(processes)} processes\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 905,
+       "text": "@handle_http_errors(\"list_script_processes\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "list_script_projects",
+     "description": "Lists Google Apps Script projects accessible to the user.\n\nUses Drive API to find Apps Script files.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_script_projects.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 100,
+       "text": "async def _list_script_projects_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 106,
+       "text": "\"\"\"Internal implementation for list_script_projects."
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 112,
+       "text": "f\"[list_script_projects] Email: {user_google_email}, PageSize: {page_size}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 148,
+       "text": "f\"[list_script_projects] Found {len(files)} projects for {user_google_email}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 162,
+       "text": "@handle_http_errors(\"list_script_projects\", is_read_only=True, service_type=\"drive\")"
+      }
+     ]
+    },
+    {
+     "name": "list_sheet_tables",
+     "description": "Lists all structured tables in a spreadsheet with their IDs, names, ranges,\nand column details. Use this to find table IDs for append_table_rows.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_sheet_tables.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 14,
+       "text": "list_sheet_tables,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 26,
+       "text": "\"list_sheet_tables\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1391,
+       "text": "@handle_http_errors(\"list_sheet_tables\", is_read_only=True, service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1393,
+       "text": "async def list_sheet_tables("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1410,
+       "text": "f\"[list_sheet_tables] Invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "list_spaces",
+     "description": "Lists Google Chat spaces (rooms and direct messages) accessible to the user.\n\nReturns:\n    str: A formatted list of Google Chat spaces accessible to the user.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_spaces.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 150,
+       "text": "@handle_http_errors(\"list_spaces\", service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 151,
+       "text": "async def list_spaces("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 163,
+       "text": "logger.info(f\"[list_spaces] Email={user_google_email}, Type={space_type}\")"
+      }
+     ]
+    },
+    {
+     "name": "list_spreadsheet_comments",
+     "description": "List all comments from a Google Spreadsheet (optional max_comments to limit results).",
+     "config": "taylorwilsdon__google_workspace_mcp__list_spreadsheet_comments.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2578,
+       "text": "list_spreadsheet_comments = _comment_tools[\"list_comments\"]"
+      }
+     ]
+    },
+    {
+     "name": "list_spreadsheets",
+     "description": "Lists spreadsheets from Google Drive that the user has access to.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_spreadsheets.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 8,
+       "text": "list_spreadsheets,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 20,
+       "text": "\"list_spreadsheets\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 54,
+       "text": "@handle_http_errors(\"list_spreadsheets\", is_read_only=True, service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 56,
+       "text": "async def list_spreadsheets("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 71,
+       "text": "logger.info(f\"[list_spreadsheets] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_task_lists",
+     "description": "List all task lists for the user.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_task_lists.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 126,
+       "text": "@handle_http_errors(\"list_task_lists\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 127,
+       "text": "async def list_task_lists("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 144,
+       "text": "logger.info(f\"[list_task_lists] Invoked. Email: '{user_google_email}'\")"
+      }
+     ]
+    },
+    {
+     "name": "list_tasks",
+     "description": "List all tasks in a specific task list.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_tasks.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 87,
+       "text": "\"[list_tasks] Unable to parse due_max '%s'; sending unmodified value\","
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 404,
+       "text": "@handle_http_errors(\"list_tasks\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 405,
+       "text": "async def list_tasks("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 443,
+       "text": "f\"[list_tasks] Invoked. Email: '{user_google_email}', Task List ID: {task_list_id}\""
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 468,
+       "text": "\"[list_tasks] Adjusted due_max from '%s' to '%s' to include due date boundary\","
+      }
+     ]
+    },
+    {
+     "name": "list_versions",
+     "description": "Lists all versions of a script project.\n\nVersions are immutable snapshots of your script code.\nThey are created when you deploy or explicitly create a version.",
+     "config": "taylorwilsdon__google_workspace_mcp__list_versions.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 989,
+       "text": "async def _list_versions_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 994,
+       "text": "\"\"\"Internal implementation for list_versions.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 995,
+       "text": "logger.info(f\"[list_versions] Email: {user_google_email}, ScriptID: {script_id}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1017,
+       "text": "logger.info(f\"[list_versions] Found {len(versions)} versions\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 1030,
+       "text": "@handle_http_errors(\"list_versions\", is_read_only=True, service_type=\"script\")"
+      }
+     ]
+    },
+    {
+     "name": "manage_conditional_formatting",
+     "description": "Manages conditional formatting rules on a Google Sheet. Supports adding,\nupdating, and deleting conditional formatting rules via a single tool.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_conditional_formatting.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 803,
+       "text": "@handle_http_errors(\"manage_conditional_formatting\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 805,
+       "text": "async def manage_conditional_formatting("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 860,
+       "text": "\"[manage_conditional_formatting] Invoked. Action: '%s', Email: '%s', Spreadsheet: %s\","
+      }
+     ]
+    },
+    {
+     "name": "manage_contact",
+     "description": "Create, update, or delete a contact. Consolidated tool replacing create_contact,\nupdate_contact, and delete_contact.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_contact.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 760,
+       "text": "@handle_http_errors(\"manage_contact\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 761,
+       "text": "async def manage_contact("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 863,
+       "text": "f\"[manage_contact] Invoked. Action: '{action}', Email: '{user_google_email}'\""
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1053,
+       "text": "f\"[manage_contact] etag conflict on attempt {attempt + 1}, retrying...\""
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1232,
+       "text": "@handle_http_errors(\"manage_contacts_batch\", service_type=\"people\")"
+      }
+     ]
+    },
+    {
+     "name": "manage_contact_group",
+     "description": "Create, update, delete a contact group, or modify its members. Consolidated tool\nreplacing create_contact_group, update_contact_group, delete_contact_group, and\nmodify_contact_group_members.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_contact_group.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1534,
+       "text": "@handle_http_errors(\"manage_contact_group\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1535,
+       "text": "async def manage_contact_group("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1571,
+       "text": "f\"[manage_contact_group] Invoked. Action: '{action}', Email: '{user_google_email}'\""
+      }
+     ]
+    },
+    {
+     "name": "manage_contacts_batch",
+     "description": "Batch create, update, or delete contacts. Consolidated tool replacing\nbatch_create_contacts, batch_update_contacts, and batch_delete_contacts.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_contacts_batch.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1232,
+       "text": "@handle_http_errors(\"manage_contacts_batch\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1233,
+       "text": "async def manage_contacts_batch("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 1285,
+       "text": "f\"[manage_contacts_batch] Invoked. Action: '{action}', Email: '{user_google_email}'\""
+      }
+     ]
+    },
+    {
+     "name": "manage_deployment",
+     "description": "Manages Apps Script deployments. Supports creating, updating, and deleting deployments.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_deployment.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 636,
+       "text": "@handle_http_errors(\"manage_deployment\", service_type=\"script\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 638,
+       "text": "async def manage_deployment("
+      }
+     ]
+    },
+    {
+     "name": "manage_doc_tab",
+     "description": "Manage document tabs: create, rename, delete, or populate from Markdown.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_doc_tab.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2790,
+       "text": "@handle_http_errors(\"manage_doc_tab\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2792,
+       "text": "async def manage_doc_tab("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2821,
+       "text": "logger.info(f\"[manage_doc_tab] action={action}, doc={document_id}, tab_id={tab_id}\")"
+      }
+     ]
+    },
+    {
+     "name": "manage_document_comment",
+     "description": "Manage comments on a Google Document.\n\nActions:\n  - create: Create a new document-level comment. Requires comment_content.\n    Note: The Drive API cannot anchor comments to specific text; only\n    the Google Docs UI can do that.\n  - reply: Reply to a comment. Requires comment_id and comment_content.\n  - resolve: Resolve a comment. Requires comment_id.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_document_comment.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 2986,
+       "text": "manage_document_comment = _comment_tools[\"manage_comment\"]"
+      }
+     ]
+    },
+    {
+     "name": "manage_drive_access",
+     "description": "Consolidated tool for managing Google Drive file and folder access permissions.\n\nSupports granting, batch-granting, updating, revoking permissions, and\ntransferring file ownership -- all through a single entry point.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_drive_access.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2377,
+       "text": "@handle_http_errors(\"manage_drive_access\", is_read_only=False, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2379,
+       "text": "async def manage_drive_access("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2446,
+       "text": "f\"[manage_drive_access] Invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "manage_event",
+     "description": "Manages calendar events. Supports creating, updating, deleting, and RSVP.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_event.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 641,
+       "text": "# These are called by both the consolidated ``manage_event`` tool and the"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1389,
+       "text": "@handle_http_errors(\"manage_event\", service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1391,
+       "text": "async def manage_event("
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1809,
+       "text": "f\"Use manage_event to update regular events.\""
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1893,
+       "text": "f\"Use manage_event to delete regular events.\""
+      }
+     ]
+    },
+    {
+     "name": "manage_focus_time",
+     "description": "Manages Focus Time events on Google Calendar. These special events auto-decline\nmeeting invitations and, by default, set the user's chat status to Do Not\nDisturb, helping protect blocks of uninterrupted work time.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_focus_time.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2397,
+       "text": "@handle_http_errors(\"manage_focus_time\", service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2399,
+       "text": "async def manage_focus_time("
+      }
+     ]
+    },
+    {
+     "name": "manage_gmail_filter",
+     "description": "Manages Gmail filters. Supports creating and deleting filters.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_gmail_filter.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3957,
+       "text": "@handle_http_errors(\"manage_gmail_filter\", service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3959,
+       "text": "async def manage_gmail_filter("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3986,
+       "text": "logger.info(\"[manage_gmail_filter] Creating filter\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4000,
+       "text": "logger.info(f\"[manage_gmail_filter] Deleting filter {filter_id}\")"
+      }
+     ]
+    },
+    {
+     "name": "manage_gmail_label",
+     "description": "Manages Gmail labels: create, update, or delete labels.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_gmail_label.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3758,
+       "text": "@handle_http_errors(\"manage_gmail_label\", service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3760,
+       "text": "async def manage_gmail_label("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 3790,
+       "text": "f\"[manage_gmail_label] Invoked. Email: '{user_google_email}', Action: '{action}'\""
+      }
+     ]
+    },
+    {
+     "name": "manage_out_of_office",
+     "description": "Manages Out of Office events on Google Calendar. These special events auto-decline\nmeeting invitations and set the user's status to \"Out of office\" across Google Workspace.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_out_of_office.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1925,
+       "text": "@handle_http_errors(\"manage_out_of_office\", service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 1927,
+       "text": "async def manage_out_of_office("
+      }
+     ]
+    },
+    {
+     "name": "manage_presentation_comment",
+     "description": "Manage comments on a Google Presentation.\n\nActions:\n  - create: Create a new comment. Requires comment_content.\n    Note: The Drive API cannot anchor comments to arbitrary text;\n    Slides comments are element-scoped via the API.\n  - reply: Reply to a comment. Requires comment_id and comment_content.\n  - resolve: Resolve a comment. Requires comment_id.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_presentation_comment.json",
+     "hints": [
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 600,
+       "text": "manage_presentation_comment = _comment_tools[\"manage_comment\"]"
+      },
+      {
+       "file": "gslides/slides_tools.py",
+       "line": 604,
+       "text": "manage_slide_comment = manage_presentation_comment"
+      }
+     ]
+    },
+    {
+     "name": "manage_sheet_tab",
+     "description": "Manages the lifecycle of an existing sheet tab: rename, delete, hide, unhide or reorder.\n\nUse create_sheet to add a tab, and resize_sheet_dimensions for row and column\nlevel changes. This tool operates on the tab itself.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_sheet_tab.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2178,
+       "text": "@handle_http_errors(\"manage_sheet_tab\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2180,
+       "text": "async def manage_sheet_tab("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2229,
+       "text": "f\"[manage_sheet_tab] Email: '{user_google_email}', Spreadsheet: {spreadsheet_id}, \""
+      }
+     ]
+    },
+    {
+     "name": "manage_spreadsheet_comment",
+     "description": "Manage comments on a Google Spreadsheet.\n\nActions:\n  - create: Create a new comment. Requires comment_content.\n    Note: The Drive API cannot anchor comments to arbitrary text;\n    Sheets comments are cell-scoped via the API.\n  - reply: Reply to a comment. Requires comment_id and comment_content.\n  - resolve: Resolve a comment. Requires comment_id.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_spreadsheet_comment.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2579,
+       "text": "manage_spreadsheet_comment = _comment_tools[\"manage_comment\"]"
+      }
+     ]
+    },
+    {
+     "name": "manage_task",
+     "description": "Manage tasks: create, update, delete, or move tasks within task lists.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_task.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 316,
+       "text": "# --- Consolidated manage_task_list tool ---"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 329,
+       "text": "@handle_http_errors(\"manage_task_list\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 330,
+       "text": "async def manage_task_list("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 350,
+       "text": "f\"[manage_task_list] Invoked. Email: '{user_google_email}', Action: '{action}'\""
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 890,
+       "text": "# --- Consolidated manage_task tool ---"
+      }
+     ]
+    },
+    {
+     "name": "manage_task_list",
+     "description": "Manage task lists: create, update, delete, or clear completed tasks.",
+     "config": "taylorwilsdon__google_workspace_mcp__manage_task_list.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 316,
+       "text": "# --- Consolidated manage_task_list tool ---"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 329,
+       "text": "@handle_http_errors(\"manage_task_list\", service_type=\"tasks\")  # type: ignore"
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 330,
+       "text": "async def manage_task_list("
+      },
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 350,
+       "text": "f\"[manage_task_list] Invoked. Email: '{user_google_email}', Action: '{action}'\""
+      }
+     ]
+    },
+    {
+     "name": "modify_doc_text",
+     "description": "Modifies text in a Google Doc - can insert/replace text and/or apply formatting in a single operation.\n\nTIP: To append text to the end of the document without calculating indices,\nset end_of_segment=true. This avoids index calculation errors.\n\nFor ordinary header/footer text, prefer update_doc_headers_footers.\nOnly pass segment_id when you already have a real header/footer/footnote\nsegment ID from inspect_doc_structure output. Do not guess IDs such as\n\"kix.header\" or \"kix.footer\".",
+     "config": "taylorwilsdon__google_workspace_mcp__modify_doc_text.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2011,
+       "text": "For native Google Docs use insert_doc_elements, modify_doc_text, or"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2183,
+       "text": "\"to splice text in. Use insert_doc_elements, modify_doc_text, or \""
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 489,
+       "text": "@handle_http_errors(\"modify_doc_text\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 491,
+       "text": "async def modify_doc_text("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 555,
+       "text": "f\"[modify_doc_text] Doc={document_id}, start={start_index}, end={end_index}, text={text is not None}, \""
+      }
+     ]
+    },
+    {
+     "name": "modify_gmail_message_labels",
+     "description": "Adds or removes labels from a Gmail message.\nTo archive an email, remove the INBOX label.\nTo delete an email, add the TRASH label.",
+     "config": "taylorwilsdon__google_workspace_mcp__modify_gmail_message_labels.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4034,
+       "text": "@handle_http_errors(\"modify_gmail_message_labels\", service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4036,
+       "text": "async def modify_gmail_message_labels("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4058,
+       "text": "f\"[modify_gmail_message_labels] Invoked. Email: '{user_google_email}', Message ID: '{message_id}'\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4139,
+       "text": "f\"[batch_modify_gmail_message_labels] Verification batch failed, \""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 4151,
+       "text": "log_prefix=\"batch_modify_gmail_message_labels\","
+      }
+     ]
+    },
+    {
+     "name": "modify_sheet_values",
+     "description": "Modifies values in a specific range of a Google Sheet - can write, update, or clear values.",
+     "config": "taylorwilsdon__google_workspace_mcp__modify_sheet_values.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 11,
+       "text": "modify_sheet_values,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 23,
+       "text": "\"modify_sheet_values\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 339,
+       "text": "@handle_http_errors(\"modify_sheet_values\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 341,
+       "text": "async def modify_sheet_values("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 366,
+       "text": "f\"[modify_sheet_values] Invoked. Operation: {operation}, Email: '{user_google_email}', Spreadsheet: {spreadsheet_id}, Range: {range_name}\""
+      }
+     ]
+    },
+    {
+     "name": "move_sheet_rows",
+     "description": "Moves rows from one sheet to another within the same spreadsheet. The move\nis performed in a single batchUpdate (copyPaste followed by\ndeleteDimension). Note: batchUpdate executes requests sequentially but does\nnot roll back on partial failure \u2014 if the copy succeeds but the delete\nfails, rows may be duplicated. Formulas, data types, and formatting are\npreserved (unlike a values.get/append round-trip).\nRow numbers are 1-based (matching the spreadsheet UI).",
+     "config": "taylorwilsdon__google_workspace_mcp__move_sheet_rows.json",
+     "hints": [
+      {
+       "file": "gsheets/__init__.py",
+       "line": 16,
+       "text": "move_sheet_rows,"
+      },
+      {
+       "file": "gsheets/__init__.py",
+       "line": 28,
+       "text": "\"move_sheet_rows\","
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2419,
+       "text": "@handle_http_errors(\"move_sheet_rows\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2421,
+       "text": "async def move_sheet_rows("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2451,
+       "text": "f\"[move_sheet_rows] Invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "query_freebusy",
+     "description": "Returns free/busy information for a set of calendars.",
+     "config": "taylorwilsdon__google_workspace_mcp__query_freebusy.json",
+     "hints": [
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2519,
+       "text": "@handle_http_errors(\"query_freebusy\", is_read_only=True, service_type=\"calendar\")"
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2521,
+       "text": "async def query_freebusy("
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2545,
+       "text": "f\"[query_freebusy] Invoked. Email: '{user_google_email}', time_min: '{time_min}', time_max: '{time_max}'\""
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2569,
+       "text": "f\"[query_freebusy] Request body: timeMin={formatted_time_min}, timeMax={formatted_time_max}, calendar_count={len(calendar_ids)}\""
+      },
+      {
+       "file": "gcalendar/calendar_tools.py",
+       "line": 2621,
+       "text": "f\"[query_freebusy] Successfully retrieved free/busy information for {len(calendars)} calendar(s)\""
+      }
+     ]
+    },
+    {
+     "name": "read_sheet_values",
+     "description": "Reads values from a specific range in a Google Sheet.",
+     "config": "taylorwilsdon__google_workspace_mcp__read_sheet_values.json",
+     "hints": [
+      {
+       "file": "core/file_limits.py",
+       "line": 91,
+       "text": "\"- Use read_sheet_values for Google Sheets\\n\""
+      },
+      {
+       "file": "gsheets/sheets_helpers.py",
+       "line": 20,
+       "text": "# Cap rows fetched by read_sheet_values before calling values().get."
+      },
+      {
+       "file": "gsheets/sheets_helpers.py",
+       "line": 1091,
+       "text": "\"[read_sheet_values] Failed fetching formula values for range '%s': %s\","
+      },
+      {
+       "file": "gsheets/sheets_helpers.py",
+       "line": 1167,
+       "text": "\"[read_sheet_values] Skipping grid metadata fetch for range '%s': \""
+      },
+      {
+       "file": "gsheets/sheets_helpers.py",
+       "line": 1176,
+       "text": "\"[read_sheet_values] Skipping grid metadata fetch for large range \""
+      }
+     ]
+    },
+    {
+     "name": "resize_sheet_dimensions",
+     "description": "Manages sheet-level dimension properties: resize columns/rows, auto-resize\nto fit content, freeze rows/columns, hide/unhide rows/columns, and\ninsert/delete rows/columns.",
+     "config": "taylorwilsdon__google_workspace_mcp__resize_sheet_dimensions.json",
+     "hints": [
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1639,
+       "text": "async def _resize_sheet_dimensions_impl("
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 1661,
+       "text": "\"\"\"Internal implementation for resize_sheet_dimensions."
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2192,
+       "text": "Use create_sheet to add a tab, and resize_sheet_dimensions for row and column"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2300,
+       "text": "@handle_http_errors(\"resize_sheet_dimensions\", service_type=\"sheets\")"
+      },
+      {
+       "file": "gsheets/sheets_tools.py",
+       "line": 2302,
+       "text": "async def resize_sheet_dimensions("
+      }
+     ]
+    },
+    {
+     "name": "run_script_function",
+     "description": "Executes a function in a deployed script.",
+     "config": "taylorwilsdon__google_workspace_mcp__run_script_function.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 492,
+       "text": "async def _run_script_function_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 500,
+       "text": "\"\"\"Internal implementation for run_script_function.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 502,
+       "text": "f\"[run_script_function] Email: {user_google_email}, ID: {script_id}, Function: {function_name}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 529,
+       "text": "logger.info(f\"[run_script_function] Successfully executed {function_name}\")"
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 533,
+       "text": "logger.error(f\"[run_script_function] Execution error: {str(e)}\")"
+      }
+     ]
+    },
+    {
+     "name": "search_contacts",
+     "description": "Search contacts by name, email, phone number, or other fields.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_contacts.json",
+     "hints": [
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 695,
+       "text": "@handle_http_errors(\"search_contacts\", service_type=\"people\")"
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 696,
+       "text": "async def search_contacts("
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 714,
+       "text": "f\"[search_contacts] Invoked. Email: '{user_google_email}', query_len={len(query)}\""
+      },
+      {
+       "file": "gcontacts/contacts_tools.py",
+       "line": 716,
+       "text": "logger.debug(f\"[search_contacts] Query: '{query}'\")"
+      }
+     ]
+    },
+    {
+     "name": "search_custom",
+     "description": "Performs a search using Google Custom Search JSON API.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_custom.json",
+     "hints": [
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 30,
+       "text": "@handle_http_errors(\"search_custom\", is_read_only=True, service_type=\"customsearch\")"
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 32,
+       "text": "async def search_custom("
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 83,
+       "text": "f\"[search_custom] Invoked. Email: '{user_google_email}', query_len={len(q)}, CX: '{cx}'\""
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 85,
+       "text": "logger.debug(f\"[search_custom] Query: '{q}'\")"
+      },
+      {
+       "file": "gsearch/search_tools.py",
+       "line": 91,
+       "text": "logger.debug(f\"[search_custom] Applied site restriction: {sites}\")"
+      }
+     ]
+    },
+    {
+     "name": "search_docs",
+     "description": "Searches for Google Docs by name using Drive API (mimeType filter).\n\nReturns:\n    str: A formatted list of Google Docs matching the search query.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_docs.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 135,
+       "text": "@handle_http_errors(\"search_docs\", is_read_only=True, service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 137,
+       "text": "async def search_docs("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 149,
+       "text": "logger.info(f\"[search_docs] Email={user_google_email}, query_len={len(query)}\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 150,
+       "text": "logger.debug(f\"[search_docs] Query='{query}'\")"
+      }
+     ]
+    },
+    {
+     "name": "search_drive_files",
+     "description": "Searches for files and folders within a user's Google Drive, including shared drives.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_drive_files.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 171,
+       "text": "@handle_http_errors(\"search_drive_files\", is_read_only=True, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 173,
+       "text": "async def search_drive_files("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 224,
+       "text": "f\"[search_drive_files] Invoked. Email: '{user_google_email}', query_len={len(query)}, \""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 235,
+       "text": "f\"[search_drive_files] Using structured query as-is: '{final_query}'\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 242,
+       "text": "f\"[search_drive_files] Reformatting free text query '{query}' to '{final_query}'\""
+      }
+     ]
+    },
+    {
+     "name": "search_gmail_messages",
+     "description": "Searches messages in a user's Gmail account based on a query.\nReturns both Message IDs and Thread IDs for each found message, along with Gmail web interface links for manual verification.\nSupports pagination via page_token parameter.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_gmail_messages.json",
+     "hints": [
+      {
+       "file": "core/cli.py",
+       "line": 11,
+       "text": "uv run workspace-cli call search_gmail_messages query=\"is:unread\" max_results=5"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1487,
+       "text": "f\"[search_gmail_messages] Batch metadata fetch failed, falling back to sequential processing: {batch_error}\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1494,
+       "text": "log_prefix=\"search_gmail_messages\","
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1504,
+       "text": "f\"[search_gmail_messages] Metadata fetch failed for message {mid}, will retry: {entry['error']}\""
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 1514,
+       "text": "f\"[search_gmail_messages] Invalid metadata for message {mid}, will retry: {exc}\""
+      }
+     ]
+    },
+    {
+     "name": "search_messages",
+     "description": "Searches for messages in Google Chat spaces by text content and/or time range.",
+     "config": "taylorwilsdon__google_workspace_mcp__search_messages.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 113,
+       "text": "\"[search_messages] SSL error during %s on attempt %s/%s: %s. Retrying in %s seconds.\","
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 436,
+       "text": "@handle_http_errors(\"search_messages\", is_read_only=True, service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 437,
+       "text": "async def search_messages("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 464,
+       "text": "f\"[search_messages] Email={user_google_email}, query_len={len(query) if query else 0}, has_time_filter={bool(time_filter)}\""
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 467,
+       "text": "logger.debug(f\"[search_messages] Query='{query}'\")"
+      }
+     ]
+    },
+    {
+     "name": "send_gmail_message",
+     "description": "Sends an email using the user's Gmail account. Supports new emails, replies, and\nforwards, with optional attachments. Supports Gmail's \"Send As\" feature to send\nfrom configured alias addresses.\n\nTo forward an existing message, pass forward_message_id. The original subject,\nbody (quoted with a \"Forwarded message\" header), and attachments are carried over.\nIn forward mode, body (if any) is prepended as a note and subject is optional.\nThreading, reply, and signature options do not apply when forwarding.\n\nTHIS TOOL SENDS IMMEDIATELY AND CANNOT SCHEDULE. Gmail's REST API exposes no\nsend-time parameter; Schedule send is a web-UI feature with no API equivalent,\nso no argument to this tool can defer delivery. Never tell a user a message\nwas scheduled. For \"prepare now, deliver later\", create a draft with\ndraft_gmail_message. An external scheduler must retain the message data to\ncreate and send a new message via send_gmail_message at the chosen time, or\ncall users.drafts.send with the draft ID returned by draft_gmail_message.\nAlternatively, let the user schedule that draft in the Gmail UI.",
+     "config": "taylorwilsdon__google_workspace_mcp__send_gmail_message.json",
+     "hints": [
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2424,
+       "text": "@handle_http_errors(\"send_gmail_message\", service_type=\"gmail\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2426,
+       "text": "async def send_gmail_message("
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2541,
+       "text": "create and send a new message via send_gmail_message at the chosen time, or"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2594,
+       "text": "send_gmail_message(to=\"user@example.com\", subject=\"Hello\", body=\"Hi there!\")"
+      },
+      {
+       "file": "gmail/gmail_tools.py",
+       "line": 2597,
+       "text": "send_gmail_message(to=\"user@example.com\", subject=\"Hello\", body=\"Hi there!\", from_name=\"John Doe\")"
+      }
+     ]
+    },
+    {
+     "name": "send_message",
+     "description": "Sends a message to a Google Chat space, or edits a message already sent there.",
+     "config": "taylorwilsdon__google_workspace_mcp__send_message.json",
+     "hints": [
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 326,
+       "text": "@handle_http_errors(\"send_message\", service_type=\"chat\")"
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 327,
+       "text": "async def send_message("
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 343,
+       "text": "(e.g. spaces/X/messages/Y, as returned by send_message or get_messages)."
+      },
+      {
+       "file": "gchat/chat_tools.py",
+       "line": 350,
+       "text": "logger.info(f\"[send_message] Email: '{user_google_email}', Space: '{space_id}'\")"
+      }
+     ]
+    },
+    {
+     "name": "set_drive_file_permissions",
+     "description": "Sets file-level sharing settings and controls link sharing for a Google Drive file or folder.\n\nThis is a high-level tool for the most common permission changes. Use this to toggle\n\"anyone with the link\" access or configure file-level sharing behavior. For managing\nindividual user/group permissions, use share_drive_file or update_drive_permission instead.",
+     "config": "taylorwilsdon__google_workspace_mcp__set_drive_file_permissions.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2833,
+       "text": "\"set_drive_file_permissions\", is_read_only=False, service_type=\"drive\""
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2836,
+       "text": "async def set_drive_file_permissions("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2868,
+       "text": "f\"[set_drive_file_permissions] Invoked. Email: '{user_google_email}', \""
+      }
+     ]
+    },
+    {
+     "name": "set_publish_settings",
+     "description": "Updates the publish settings of a form.",
+     "config": "taylorwilsdon__google_workspace_mcp__set_publish_settings.json",
+     "hints": [
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 259,
+       "text": "@handle_http_errors(\"set_publish_settings\", service_type=\"forms\")"
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 261,
+       "text": "async def set_publish_settings("
+      },
+      {
+       "file": "gforms/forms_tools.py",
+       "line": 281,
+       "text": "f\"[set_publish_settings] Invoked. Email: '{user_google_email}', Form ID: {form_id}\""
+      }
+     ]
+    },
+    {
+     "name": "start_google_auth",
+     "description": "Manually initiate Google OAuth authentication flow.\n\nNOTE: This is a legacy OAuth 2.0 tool and is disabled when OAuth 2.1 is enabled.\nThe authentication system automatically handles credential checks and prompts for\nauthentication when needed. Only use this tool if:\n1. You need to re-authenticate with different credentials\n2. You want to proactively authenticate before using other tools\n3. The automatic authentication flow failed and you need to retry\n\nIn most cases, simply try calling the Google Workspace tool you need - it will\nautomatically handle authentication if required.",
+     "config": "taylorwilsdon__google_workspace_mcp__start_google_auth.json",
+     "hints": [
+      {
+       "file": "gtasks/tasks_tools.py",
+       "line": 49,
+       "text": "\"LLM: Try 'start_google_auth' with the user's email \""
+      },
+      {
+       "file": "core/utils.py",
+       "line": 950,
+       "text": "\"LLM: Try 'start_google_auth' with the user's email \""
+      },
+      {
+       "file": "core/server.py",
+       "line": 282,
+       "text": "if tool.name != \"start_google_auth\":"
+      },
+      {
+       "file": "core/server.py",
+       "line": 903,
+       "text": "async def start_google_auth("
+      },
+      {
+       "file": "core/server.py",
+       "line": 922,
+       "text": "\"start_google_auth is disabled when OAuth 2.1 is enabled. \""
+      }
+     ]
+    },
+    {
+     "name": "update_doc_headers_footers",
+     "description": "Safely creates or updates header/footer text in a Google Doc.\n\nThis is the default tool for header/footer content. Do NOT use\nbatch_update_doc with create_header_footer just to set header/footer text;\nthat low-level operation is only for advanced section-break workflows and\ncan fail when the default header/footer already exists.\n\nThis tool handles both creation and update in one call:\n- If the header/footer does not exist, it is automatically created first.\n- If the header/footer already exists, its content is replaced.\n\nYou do NOT need to create a header/footer separately before calling this tool.\nSimply call it with the desired content and it will work whether the\nheader/footer exists or not.",
+     "config": "taylorwilsdon__google_workspace_mcp__update_doc_headers_footers.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 521,
+       "text": "For ordinary header/footer text, prefer update_doc_headers_footers."
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1031,
+       "text": "@handle_http_errors(\"update_doc_headers_footers\", service_type=\"docs\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1033,
+       "text": "async def update_doc_headers_footers("
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1067,
+       "text": "logger.info(f\"[update_doc_headers_footers] Doc={document_id}, type={section_type}\")"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1120,
+       "text": "For normal header/footer text, prefer update_doc_headers_footers."
+      }
+     ]
+    },
+    {
+     "name": "update_drive_file",
+     "description": "Updates metadata, properties, and/or content of a Google Drive file.\n\nProviding one of ``content``, ``file_path``, or ``file_url`` replaces the file's\ncontent in place, preserving the existing file ID, sharing, comments, and links.\nFor native Google Docs/Sheets/Slides the source is uploaded with its source MIME\ntype so the Drive API applies the same format conversion as import_to_google_doc\n(markdown headings, tables, bold, etc.). For any other file (.md, .txt, .pdf, ...)\nthere is nothing to convert, so the bytes are written back as-is under the file's\nown MIME type. Metadata and content can be updated in a single call.\n\n``mode='append'``/``'prepend'`` splice ``content`` onto the file's existing text\nserver-side, so only the new text has to be supplied \u2014 no need to send the whole\nfile back to rewrite it.\n\nDrive shortcuts are handled according to the kind of update: supported\nresource-local metadata changes (rename, move, trash, star, description, and\ncustom properties) apply to the supplied shortcut, while content replacement\nfollows the shortcut and updates its target. To avoid applying metadata to the\nwrong resource, a shortcut call cannot combine content with resource-local\nmetadata. Update the shortcut metadata and target content in separate calls.",
+     "config": "taylorwilsdon__google_workspace_mcp__update_drive_file.json",
+     "hints": [
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1933,
+       "text": "@handle_http_errors(\"update_drive_file\", is_read_only=False, service_type=\"drive\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 1935,
+       "text": "async def update_drive_file("
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2017,
+       "text": "logger.info(f\"[update_drive_file] Updating file {file_id} for {user_google_email}\")"
+      },
+      {
+       "file": "gdrive/drive_tools.py",
+       "line": 2198,
+       "text": "tool_name=\"update_drive_file\","
+      }
+     ]
+    },
+    {
+     "name": "update_paragraph_style",
+     "description": "Apply paragraph-level formatting, heading styles, and/or list formatting to a range in a Google Doc.\n\nThis tool can apply named heading styles (H1-H6) for semantic document structure,\ncreate bulleted or numbered lists with nested indentation, and customize paragraph\nproperties like alignment, spacing, and indentation. All operations can be applied\nin a single call.",
+     "config": "taylorwilsdon__google_workspace_mcp__update_paragraph_style.json",
+     "hints": [
+      {
+       "file": "gdocs/docs_helpers.py",
+       "line": 918,
+       "text": "def create_update_paragraph_style_request("
+      },
+      {
+       "file": "gdocs/docs_helpers.py",
+       "line": 1879,
+       "text": "\"update_paragraph_style\": [\"start_index\", \"end_index\"],"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 52,
+       "text": "create_update_paragraph_style_request,"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1150,
+       "text": "{\"type\": \"update_paragraph_style\", \"start_index\": 1, \"end_index\": 15,"
+      },
+      {
+       "file": "gdocs/docs_tools.py",
+       "line": 1210,
+       "text": "update_paragraph_style"
+      }
+     ]
+    },
+    {
+     "name": "update_script_content",
+     "description": "Update or create files in a script project.\n\nBy default this merges the supplied files into the existing project by file\nname, leaving other files untouched. Set merge=False to replace the entire\nproject: any existing file omitted from `files` is permanently deleted.",
+     "config": "taylorwilsdon__google_workspace_mcp__update_script_content.json",
+     "hints": [
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 400,
+       "text": "async def _update_script_content_impl("
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 407,
+       "text": "\"\"\"Internal implementation for update_script_content.\"\"\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 409,
+       "text": "f\"[update_script_content] Email: {user_google_email}, ID: {script_id}, \""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 445,
+       "text": "f\"[update_script_content] Pushed {len(files_to_push)} files to {script_id}\""
+      },
+      {
+       "file": "gappsscript/apps_script_tools.py",
+       "line": 459,
+       "text": "@handle_http_errors(\"update_script_content\", service_type=\"script\")"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

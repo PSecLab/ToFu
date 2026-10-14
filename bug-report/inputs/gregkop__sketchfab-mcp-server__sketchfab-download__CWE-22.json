@@ -1,0 +1,42 @@
+{
+ "repo": "gregkop/sketchfab-mcp-server",
+ "tool": "sketchfab-download",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "e5969ef8588d0a47a8c5a0341903f3efacb74b3b",
+ "draft": "gregkop__sketchfab-mcp-server__sketchfab-download__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'modelId': 'validModelId', 'format': 'gltf', 'outputPath': '/etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No Sketchfab API key provided. Please provide an API key using the --api-key parameter or set the SKETCHFAB_API_KEY environment variable.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'modelId': '1234567890abcdef', 'format': 'glb', 'outputPath': '../../../../../etc/shadow'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No Sketchfab API key provided. Please provide an API key using the --api-key parameter or set the SKETCHFAB_API_KEY environment variable.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'modelId': '/etc/passwd\\x00', 'format': 'source', 'outputPath': '/var/tmp/../../root/.ssh/id_rsa'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No Sketchfab API key provided. Please provide an API key using the --api-key parameter or set the SKETCHFAB_API_KEY environment variable.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'modelId': 'validModelId', 'format': 'glb', 'outputPath': '/tmp/../../../../home/user/.bash_history'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'No Sketchfab API key provided. Please provide an API key using the --api-key parameter or set the SKETCHFAB_API_KEY environment variable.'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

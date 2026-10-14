@@ -1,0 +1,84 @@
+{
+ "repo": "gerred/mcp-server-replicate",
+ "tool": "open_image_with_system",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "568024cbab6f7da22a85d7bd5787f2e835e4e54a",
+ "draft": "gerred__mcp-server-replicate__open_image_with_system__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 10,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': \"javascript:alert('XSS')\"}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"javascript:alert(\\'XSS\\')\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['javascript:'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '\\x7f\\x7f\\x7f\\x7fii{{m'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"\\\\u007f\\\\u007f\\\\u007f\\\\u007fii{{m\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '\\x7f\\x7f\\x7f\\x7fi{{{m'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"\\\\u007f\\\\u007f\\\\u007f\\\\u007fi{{{m\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"{{\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"{{{{{\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': 'gg{{zgggggg'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"gg{{zgggggg\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '{{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"{{{\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '\\x00\\x00ffffffffffffffff{{fffffff'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"\\\\u0000\\\\u0000ffffffffffffffff{{fffffff\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '{{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'image_url': '{{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00W\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"success\", \"message\": \"Image opened with system default application\", \"url\": \"{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000W\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

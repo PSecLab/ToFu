@@ -1,0 +1,796 @@
+================================================================
+ToFu — ACTIVE TODO  (lean view, trimmed 2026-09-17 by request)
+Full lab notebook (dated history + all 36 "TO DOUBLE-CHECK" items,
+which are Ananto's to remove) preserved verbatim in:
+    ToFu_src/nazmul.todo.archive
+Nothing was deleted — only moved. Add new dated sections here; sweep
+finished ones into the archive.
+================================================================
+
+1. [RESOLVED — 2026-09-17] WHOLE-CORPUS FUZZ WAS PRODUCING 0 FINDINGS (all-ERR).
+   ROOT CAUSE (confirmed by reading a hung child's /proc/PID/environ):
+     - `.env:14` on the VM hardcoded `TOFU_JS_COV_SLOTS=10000`. run_arm_gpt41.sh
+       sources .env -> exports 10000 -> Atheris instruments the 10000-branch
+       fake_coverage if-chain = 465s, past the 60+60=120s budget+grace kill ->
+       EVERY config SIGKILLed at 120.2s with llm=unknown, 0 findings.
+     - The committed run_full_campaign.sh `${VAR:-1024}` never won because .env
+       had it SET (not unset); the js_runner code default was also 10000.
+     - NOT a contention/leak problem (that was a red herring). Backend was fine
+       (gpt-4.1@openai, 2.8s). Instrument cost is O(slots), superlinear:
+       512->1.4s, 1024->4.7s, 2000->17s, 10000->465s.
+   FIX (committed 3a70d73 + .env edit + reap):
+     - .env -> TOFU_JS_COV_SLOTS=1024 (backup .env.bak.*).
+     - js_runner.py code default 10000 -> 1024 (footgun removed).
+     - Reaped 92 orphan coverage_wrapper.js + leaked `python -m src` (~23h old).
+   VALIDATED E2E (real gpt-4.1, temp0, seed): node markdown-downloader 43s
+   EXEC_SUMMARY n_exec=1024 success=1024 cov moved; python osm-mcp-server 43s
+   real CallToolRequest execution. Both were 100s+ hangs before.
+   FOLLOW-UP (not blocking): (a) js_runner.stop() must reap the node wrapper
+   child (leak); (b) python predict_instrument_packages over-predicts (instruments
+   hundreds of unrelated modules incl. ToFu's own source + junk strings) -> slow,
+   fix the predictor; (c) tests/test_audit_regressions.py::test_no_undefined_names
+   now RecursionErrors in pyflakes on a third-party file under eval/targets/**
+   /.venv (482 prepped venvs) -- ToFu code itself is undefined-name-clean; make
+   the audit skip /targets/ and /.venv/ at the WALK, not just in the report.
+
+   SET E, RECALCULATED (the run to spawn): Benchmarks/extraction/build_set_e2.py
+   -> set_e2.json from the 482 ready repos (310 node + 172 python), 5830 configs,
+   ALL 21 sink families in BOTH langs, tier1=4536 configs. Spawn tier-1-first,
+   resumable, in tmux:  ./eval/run_set_e2.sh   (--status / --limit N to smoke).
+   run_eval gained --priority-repos-file for the tier-1-first ordering.
+
+2. [OPEN] item 91 — cwd/.env isolation. Targets run with cwd=ROOT and write
+   into the source tree (seed pollution, junk files). Give each config its own
+   scratch cwd; keep .env out of any target-reachable cwd.
+
+3. [OPEN] item 94 — PythonStdioRunner fallback. In-process PythonRunner cannot
+   reach servers that build the MCP object inside `main()`/a factory/`__main__`,
+   so importing the module leaves the FastMCP registry empty. Log signature:
+   "Failed to start runner: Could not find callable tool ... (server instance:
+   none found; registered tools: [])" -> the config bails BEFORE LLM selection,
+   so it shows as fast (~3s) llm=unknown in the run summary.
+   IMPACT (measured 2026-09-18, gpt41-corpus run): **592 of 1980 python configs
+   (~30%) fail this way** -- blender-mcp, aliyun/hologres, jvm-mcp-server, ~40
+   repos. Those python targets are NOT fuzzed at all. Not a regression, not a
+   silent-0 (each logs the ERROR honestly), but 30% of python coverage is lost.
+   FIX: when in-process discovery returns registered tools:[], spawn the server
+   as a subprocess + fuzz over MCP stdio (like the node path). Coverage-blind but
+   the oracle still fires. Deferred by Ananto 2026-09-18 (let the current run
+   finish first). ALSO: copy the "Failed to start runner" reason into the index
+   `error` field so these read as in-process-discovery-failed, not bare llm=unknown.
+
+4. [OPEN] item 95 — Viper pyql is broken. `codeql database analyze` exits 2 on
+   ALL python repos ("Anchor enrichment skipped: report not found"), so Viper's
+   python column is an ANALYSIS ERROR, not "ran and found nothing." Fix pyql if
+   a python Viper column is wanted; otherwise report Viper as node-only.
+
+5. [OPTIONAL] FP-column triage for a defensible false-positive rate: sample-
+   triage CodeQL-set-A (309 flags) + all 28 Cisco flags. Needed only if the
+   paper reports an FP rate per baseline.
+
+6. [STATE] Findings so far: 4 confirmed + 3 potential (V1–V7). Canonical index:
+   findings/README.md. Baselines + comparison: findings/baselines/. Latest
+   four-way table: findings/baselines/baseline_comparison_20260916.md (host-39).
+
+7. [GUARD — from CLAUDE.md, before ANY publishable campaign]
+     - python3 -m pytest tests/ -q  → 66 passed, 1 skipped
+     - pip install pyflakes (run_eval preflight skips silently without it)
+     - TOFU_LLM_TEMPERATURE=0 + fixed TOFU_LLM_SEED
+     - JS coverage acceptance (HANDOFF.md §4): cov:/corp:/exec_s must move.
+
+8. [SECURITY, standing] OPENAI_API_KEY rotated 2026-09-15. Run cmds source .env
+   then mv it hidden for the run (restore on exit) until item 91 lands. secrets.py
+   scrubs env from runner logs; keep it wired.
+
+9. [POINTER] 36 "TO DOUBLE-CHECK" items live in nazmul.todo.archive. They are
+   Ananto's to confirm + remove — do not delete them from the archive.
+
+10. [PAPER-NOTE — 2026-09-21] RUNTIME-ORACLE SCOPE — report in the paper
+   (threats-to-validity / design-scope / limitations). ToFu is a RUNTIME (dynamic)
+   analyzer; its oracle observes runtime behavior of a tool driven by adversarial
+   input. Three vuln classes are DELIBERATELY out of scope because they have NO
+   runtime event a dynamic oracle can observe — a principled boundary, NOT a
+   weakness; CodeQL/static tools are the correct complement:
+     1. CORS-permissive (CWE-942): static server CONFIG; no tool input triggers it.
+     2. Regexp / sanitization CORRECTNESS (incomplete-hostname-regexp, missing-anchor,
+        incomplete-multi-char-sanitization): latent code weakness; generic fuzz inputs
+        don't manifest it and the oracle can't know the intended contract.
+     3. TOCTOU file-system-race (CWE-367): needs CONCURRENT access to open the
+        check→use window; ToFu fuzzes one input at a time (execution-model limit).
+   ADDED 2026-09-21 (these DO have a runtime signal): check_introspection_exfil
+   (CWE-201, sensitive-read↔outbound-send correlation) + check_reflected_output
+   (CWE-79/116, dangerous input echoed unescaped). prototype-pollution/ReDoS/XXE
+   already HAVE oracles → those misses are reachability, not oracle-absence. Frame
+   ToFu's ~35–40% blind spot as this principled runtime/static division of labor.
+
+   SINK + SANITIZER CONSTRUCTION — DEFEND in the paper (2026-09-21). Verified counts
+   (pin the exact reported number by DEFINING "sink" first): 21 sink TRACER classes
+   (hooked dangerous operations: FileAccess, FileWrite, NetworkExecution, Command/
+   Code/SQLExecution, Deserialization, XXE, ReDoS, WeakHash/PRNG, NonceReuse,
+   TempFileLeak, SensitiveDataLogging, LogInjection, SSLCertValidation,
+   UnrestrictedIPBinding, UnverifiedCodeDownload, BlockingEventLoopCall,
+   LoopCondition, DataAmplification) == the 21 sink FAMILIES in the corpus scan;
+   ~30 distinct res.* evidence channels; **73 registered AVAILABLE_SANITIZERS**
+   (75 check_ defined; 2 unregistered = check_invalid_git_ref/check_unsafe_s;
+   10 BASE_MANDATORY always-on + 63 LLM/evidence-selected). The 2 newest
+   (exfil, reflected_output) added sanitizers only, NO new sink.
+   DEFENSE the reviewers will demand ("why THESE sinks/sanitizers, not others?"):
+   ground the taxonomy, don't present it as ad-hoc — (a) each maps to a CWE; (b)
+   derived from the MCP tool threat surface + observed sink families in the scan
+   (the 21 are what actually occur in the corpus, not invented); (c) prior-work
+   coverage (Viper's 3 classes ⊂ ours; CodeQL rule families cross-checked); (d) the
+   2 additions were miss-analysis-DRIVEN (evidence, not guesswork). State the
+   mandatory-vs-selected split (attribution trap, CLAUDE.md §2). Open q to answer:
+   completeness ("is 21 the right basis?") + why some CWEs have no oracle (item 10
+   scope note above).
+
+11. [PAPER-NOTE — 2026-09-21] AUTO-TRIAGE CLASSIFIER — report in the paper
+   (methodology / results). Reproducible implementation: eval/triage_findings.py.
+   It runs over the RUN INDEX (runs.<arm>.jsonl), not prose. Pipeline:
+     - INPUT: every config with finding_hits>0 = the silent-bug oracle already
+       fired (adversarial input tripped a sanitizer AND the tool returned success).
+     - CLASS MAP (signal vs noise): each triggered sanitizer → a category.
+       KEPT (security-exploitable): path_traversal→CWE-22; command_injection /
+       blocked_command_bypass→CWE-78; SSRF family (introspection_ssrf,
+       url_ssrf_ip_ranges, url_hostname_canonicalization,
+       url_alternative_ip_representations, strict_url_security_contract)→CWE-918;
+       log_injection→CWE-117; hardcoded_credentials→CWE-798; temp_file_leak→CWE-377.
+       DROPPED (robustness/noise): type_confusion, unexpected_crash, invalid_json,
+       resource_exhaustion, incomplete_cleanup, fd_leaks, weak_prng — quality/DoS
+       or mandatory-layer artifacts (CLAUDE.md §2: 10 always-on sanitizers fire
+       regardless of LLM selection → not evidence of a targeted vuln).
+     - SEVERITY PICK: label a config by its highest-severity kept class
+       (path-traversal + crash → path-traversal).
+     - DEDUP: count distinct (repo, tool, class) — same tool across runs = 1 vuln.
+     - CONFIDENCE TIER by exec_success_rate (fraction of execs the tool swallowed
+       the adversarial input): ≥0.5 = high-confidence (consistent, not flaky);
+       any >0 = full candidate set.
+   RESULT (set_e2): 600 candidates / 281 high-confidence / 148 repos. State it as
+   a noise filter + ranking, NOT a confirmer — candidates still need hand-
+   verification + a false-positive rate; mandatory layer must be subtracted before
+   any LLM-selection (RQ2/RQ3) claim.
+
+12. [RESOLVED — 2026-09-23] NODE TARGET SERVERS LEAKED ON EVERY JS CONFIG.
+   SYMPTOM: VM had 663 orphaned `node src/runners/coverage_wrapper.js
+   eval/targets/<repo>/.../index.js`, all ppid=1, 44-48h old (set_e2 / rerun),
+   ~47 GB RSS, 5 GB free of 38. Killed by hand. Same class as item 1's "92
+   orphans" follow-up (a). The laptop still has ~180 of them from local runs.
+   REPRODUCED (VM, 3 node configs, --time 20, arm leakcheck-baseline, ORIGINAL
+   code): normal exit 3/3 servers leaked; forced timeout 1/3; Ctrl-C 2/3.
+   ROOT CAUSE, two independent holes:
+     (a) JSRunner Popen(start_new_session=True) puts node in its OWN session
+         (needed so its startup watchdog can killpg the server tree), so
+         run_eval's os.killpg(<fuzzer pgid>) on timeout/Ctrl-C never reached it.
+     (b) libFuzzer ends at -max_total_time with a C-level exit(): fuzzer.
+         _cleanup_runner() -> JSRunner.stop() never runs, nor do Python atexit
+         handlers. The wrapper never noticed: it writes stdout once
+         (SOCKET_READY), never reads its real stdin, and the listening socket
+         keeps its event loop alive forever. (Servers that later write to the
+         dead stdout pipe die of EPIPE -- why it was 663 and not every config.)
+     Not libFuzzer forks (no -fork/-jobs used).
+   FIX (layered; any one suffices for the common case):
+     1. coverage_wrapper.js ORPHAN GUARD: on real-stdin EOF (kernel closes it the
+        instant the fuzzer dies, any cause), ppid change, or SIGTERM -> unlink
+        its socket + SIGKILL its whole process group (node + target children).
+     2. JSRunner: Linux `setpriv --pdeathsig TERM` prefix (procreap.
+        pdeathsig_prefix; main-thread only, since PDEATHSIG follows the forking
+        THREAD). NOT KILL -- measured: KILL killed node before the guard ran and
+        orphaned the target's own child. stop() now always SIGKILLs the group
+        after SIGTERM, then sweeps by the unique FUZZER_SOCKET_PATH env; start()
+        reaps a crashed predecessor before restarting; atexit stops live runners.
+     3. run_eval.one(): unique TOFU_REAP_TAG=<config>.<uuid> in the fuzzer env,
+        inherited by every descendant (not stripped by scrub_secrets); after each
+        config (normal / timeout / harness exception) and in _abort, SIGKILL
+        every process whose /proc/PID/environ carries it. Catches setsid'd
+        grandchildren too. Index field `reaped` = how many the sweep had to kill
+        (nonzero => layers 1-2 missed something). SIGHUP now -> _abort too
+        (run_eval + run_repo24), so a closed tmux/ssh reaps instead of orphaning.
+     Code: src/runners/procreap.py (new), js_runner.py, coverage_wrapper.js,
+     eval/run_eval.py, eval/run_repo24.py; tests/test_procreap.py (new).
+   VERIFIED on the VM (py3.13, node v22.23.2), leftover `node coverage_wrapper`
+   count after each run, arms eval/state/runs.leakcheck-*.jsonl:
+     normal exit           0  (reaped=0 x3: guard/PDEATHSIG got them first)
+     forced timeout        0  (TOFU_KILL_GRACE=-95 -> killed at 25s mid-fuzz)
+     Ctrl-C (SIGINT group) 0  (and 0 fuzzers)
+     sweep ONLY (TOFU_NO_ORPHAN_GUARD=1 TOFU_NO_PDEATHSIG=1): normal 0 (reaped=1
+       x3), timeout 0 (reaped=1 x3), Ctrl-C 0  -> layer 3 alone is sufficient.
+     No new /tmp/mcp_fuzz_*.sock left behind (1641 stale ones predate the fix).
+   tests/test_procreap.py::test_js_server_dies... FAILS with both layers off
+   (2 survivors: node + its child) and passes with the fix, VM and laptop.
+   macOS: `ps -E` no longer exposes other processes' env, so layer 3 is
+   Linux-only; the laptop relies on layer 1 (+atexit).
+   RESIDUAL GAP: a target wedged in a synchronous JS loop runs no handler, so
+   layers 1-2 cannot fire; only layer 3 (run_eval, Linux) catches it. A target
+   that CLEARS its env and setsid()s escapes layer 3 too.
+   SIDE NOTES: (i) tests now 160 passed / 1 skipped on the laptop (CLAUDE.md's
+   "66 passed, 1 skipped" is stale); VM also fails test_no_undefined_names_
+   anywhere = pyflakes RecursionError on eval/targets/**/.venv, pre-existing
+   item 1(c). (ii) test_introspection_sanitizer.py:375 leaves
+   os.environ["PATH"]="/tmp/malicious_bin" for every later test.
+   (iii) run_eval.parse_log ignores LLM_SELECTION_CACHE_HIT -> cached runs are
+   indexed llm_selection=unknown (seen on all leakcheck runs); deep24/repo24
+   reuse the cache, so their indexes will misreport selection health until fixed.
+
+13. [RESOLVED — 2026-09-23] CACHED RUNS INDEXED AS llm_selection=unknown; AND
+   THE REPLAY CACHE HOLDS FALLBACK SEEDS.
+   SYMPTOM: every run served by the LLM replay cache (src/llm.py,
+   TOFU_LLM_CACHE_DIR, default eval/state/llm_cache) was indexed
+   llm_selection=unknown / llm_seeds=unknown with no n_selected/n_seeds, because
+   run_eval.parse_log knew only LLM_SELECTION_OK/FAILED and LLM_SEEDGEN_OK/
+   FALLBACK, while a cached run logs LLM_SELECTION_CACHE_HIT / LLM_SEEDGEN_CACHE_HIT.
+   Seen on all item-12 leakcheck runs. deep24/repo24 reuse the cache -> their
+   whole index would have misreported LLM-stage health.
+   SECOND FINDING (why a seed hit is NOT reported as "ok"): eval/gen_llm_cache.py
+   retro-built the cache from corpus seed_*.json, and fuzzer._setup_corpus_seeds
+   writes seed_*.json for WHATEVER seeds it got -- including the deterministic
+   fallback. Cross-checked against the gpt41-corpus logs (VM, 5022 entries,
+   4122 with seeds): llm=3670, fallback=12, unknown=440 (source log has neither
+   marker, mostly runs that were themselves cache hits or timed out). 3 of the
+   12 fallback entries are deep24 configs:
+     CodeLogicIncEngineering__codelogic-mcp-server__lineai-graph-validate-change-scope
+     IncomeStreamSurfer__roo-code-memory-bank-mcp-server__append_memory_bank_entry
+     IncomeStreamSurfer__roo-code-memory-bank-mcp-server__read_memory_bank_file
+   The SELECTION cache is clean: it is only written on the LLM_SELECTION_OK path
+   (live _cache_update; gen_llm_cache's "Sanitizers selected:" is OK-only).
+   FIX:
+     - parse_log: selection CACHE_HIT -> llm_selection="ok", llm_n_selected (no
+       n_dropped: not recorded). Seed CACHE_HIT -> by the entry's provenance:
+       llm -> "ok", fallback -> "fallback", missing/unknown -> NEW bucket
+       "cached". llm_seeds_provenance recorded; llm_cached=True on any hit.
+     - src/llm.py: seed CACHE_HIT line now carries provenance=<llm|fallback|
+       unknown>; live LLM_SEEDGEN_OK writes seeds_provenance="llm" to the cache.
+     - gen_llm_cache.py: tags seeds_provenance from the source log on build;
+       new --backfill-provenance (dry run unless --write; never overwrites an
+       existing tag; atomic) for the EXISTING cache.
+     - summarize(): "LLM replay cache: N/M run(s) made no LLM call" and a !! line
+       counting seeds of unknown provenance.
+   VERIFIED on REAL VM logs (not fixtures): 3 leakcheck-fixed cache-hit logs
+   (old format) -> ok/cached=True/n_selected 5,3,3/seeds=cached; live gpt41-corpus
+   get_jobs -> unchanged ok/ok; live manage_docs -> ok/fallback. New-format e2e
+   (arm prov-check, TEMP copy of 3 entries in ~/leakcheck/cache, real cache
+   untouched): provenance=llm -> ok, =fallback -> fallback, =unknown -> cached.
+   `--arm leakcheck-fixed --reparse`: selection unknown=3 -> ok=3.
+   Old parse_log on the same real log -> unknown/None/unknown (test fails pre-fix).
+   tests/test_parse_log_cache.py + tests/data/parse_log_real/*.txt (verbatim VM
+   logs, .txt because .gitignore has *.log). Laptop suite 169 passed, 1 skipped.
+   NOT DONE -- Ananto's call:
+     (a) run `python3 eval/gen_llm_cache.py --arm gpt41-corpus --backfill-provenance
+         --write` on the VM (tags 3670 llm + 12 fallback; 440 stay untagged ->
+         "cached"). Metadata only, llm.py ignores the key, but it rewrites the
+         live cache a running campaign reads.
+     (b) should a cache entry holding FALLBACK seeds be replayed at all, or
+         dropped so the LLM regenerates? Replaying keeps runs reproducible but
+         fuzzes 3 deep24 configs from deterministic seeds.
+     (c) --reparse existing arm indexes (it backs each up first).
+
+## item 14 (2026-09-24): filesystem sandbox (bwrap) + obsidian-mcp vault escape
+- INCIDENT: repo24 (Monika VM) crashed 15:44:59 -- newtype-01/obsidian-mcp::manage_folder
+  followed a fuzzed ../../ path out of its scratch dir and deleted eval/configs (6231),
+  eval/runs, and 36 tracked files. cwd isolation (item 91) is necessary but NOT sufficient.
+- FIX: TOFU_SANDBOX=bwrap (run_eval._sandbox_cmd, commit 262371a). Each fuzzer runs with /
+  read-only, private /tmp, only its own scratch/corpus/metrics/seeds/llm_cache/target dirs
+  writable. run_repo24.sh sets it by default and refuses to start without bwrap.
+  Verified on node (obsidian manage_folder) AND python (paper-search search_dblp) targets:
+  canary + eval/configs survive. sandbox="bwrap" recorded per run.
+- FINDING: findings/potential/obsidian-mcp_manage_folder_vault-escape.md (live-demonstrated,
+  same class as UltimateCoderMCP / DesktopCommander).
+- DATA LOSS (report honestly, CLAUDE.md 3): corpus per-run logs for ~3150 of 6153 configs and
+  metrics_gpt41-corpus were destroyed; 3001 logs restored from ~/tofu_backup_20260918. Headline
+  numbers come from the intact index; state per-run logs lost for N configs on 2026-09-24.
+- TO DOUBLE-CHECK: PSU PC (repo24-b) almost certainly hit the same wipe (scratch was inside
+  the repo at /scratch/tofu/.tofu_scratch); assess when reachable, move scratch outside repo.
+- repo24 arm quarantined: eval/state/quarantine-2026-09-24-repo24-obsidian-wipe/. Restarted fresh.
+- 2026-09-24 follow-up (7ba41b3): PSU PC sandboxed run lost every tool to
+  "bwrap: setting up uid map: Permission denied" (Ubuntu 24.04 AppArmor
+  unprivileged-userns restriction; fixed by Ananto with
+  kernel.apparmor_restrict_unprivileged_userns=0 in /etc/sysctl.d/60-tofu-userns.conf).
+  Each failed sandbox start had been counted as a TOOL failure. Now: run_repo24.sh
+  preflights bwrap and refuses to start; a bwrap error in a slice log aborts the
+  campaign uncounted. Also 34 "attempt to write a readonly database": targets keep
+  state under $HOME, read-only under bwrap -> each config now gets HOME=<scratch>/home.
+  Both arms restarted clean (quarantine-2026-09-24-repo24-prehome,
+  quarantine-2026-09-24-repo24b-bwrap-uidmap). Smokes: PC MemoryMesh add_npc 455/1024
+  success sandboxed; VM file-context read_context succeeds.
+
+## item 15 [PAPER-NOTE — 2026-09-25] TOOLFUZZ BASELINE — report these in the paper
+- **ToolFuzz's own false-discovery rate is 46% for correctness failures** (Milev et al.
+  2025, Table 3: authors hand-checked every positive, 622 TP / 534 FP). Report it next
+  to any ToolFuzz correctness count, and/or hand-check a sample of our ToolFuzz
+  correctness positives the same way before comparing.
+- Their "runtime detection has no false positives" holds for LangChain tools (exception
+  = crash); MCP servers return errors as protocol replies -> we split ENV / REJECT /
+  CRASH (eval/score_toolfuzz.py). Report ToolFuzz's own number AND the CRASH subset.
+- ToolFuzz targets tool-DOCUMENTATION errors, not security (paper §3/§5.3) — positioning
+  vs ToFu (implementation vs documented security contract).
+- Its taint-guided fuzzer loses taint over MCP (server is a separate process) ->
+  degrades to type-based Faker generation. State as a limitation of applying it to MCP.
+- First campaign's ToolFuzz numbers are withdrawn ("2,030 discrepancies" = tests run;
+  harness artifacts). Final config: gpt-4.1-mini, 1 correctness set x 3 prompts,
+  1 runtime prompt per failing input, cap 40 calls/tool. Details:
+  findings/baselines/toolfuzz_method_20260923.md.
+
+## item 16 (2026-09-25): ToolFuzz H2H run results + a ToFu headline-count issue
+- ToolFuzz H2H on PSU PC finished 03:50: 299 tools / 32 repos, 292 ok, 7 err, 4,665 real
+  calls (3.66M in / 366k out, gpt-4.1-mini), max 23 calls/tool (cap 40 never hit).
+  Pending: 6 repos deferred while repo24-b runs (kanban, cline-mcp-memory-bank,
+  roo-code-memory-bank, Mcp-Reasoning-Server, web3-research, fantasy-pl); CMD-MCP-Server
+  unsafe-skipped by design.
+- 6 of 7 errors were ToolFuzz bugs, patched (PATCH (ToFu)): literal braces in a generated
+  template crashed str.format (4 tools); array schema without "items" (2 tools). Rerun.
+- NASA-MCP-server: server works under bwrap (answers initialize) but emits
+  notifications/message BEFORE its initialize reply; the Python MCP client in ToolFuzz's
+  bridge closes (BrokenResourceError). Likely strict-client incompatibility (not fully
+  confirmed). Excluded from the ToolFuzz comparison set; ToFu had 0 security candidates there.
+- **TO DOUBLE-CHECK — ToFu headline 627 includes 249 candidates from tools with
+  exec_success_rate == 0** (every execution errored; e.g. mcp-trino-python backend absent).
+  triage_findings.py's docstring says "any success>0 = the full candidate set" but the code
+  never filters on success. With success>0: 378 candidates / 126 repos (high-conf 299
+  unchanged). Some zero-success hits are genuine introspection side effects (SSRF connect,
+  temp file, log write) but none can be the silent-success oracle. By class (succ==0): ssrf
+  129, insecure-temp-file 63, log-injection 49, path-traversal 6, os-cmd-inj 1, creds 1.
+  Decide the headline definition before the paper cites 627.
+
+## item 15 (2026-09-26): repo24 deep campaign finished -- RQ4 result
+- Report: findings/repo24_20260926/REPORT.md (numbers regenerate via analyze_rq4.py).
+- 34 repos (VM 10 + PC 24), 398 tools, 408 of 816 worker-h used; 26 repos all_saturated,
+  8 budget_exhausted. 129 candidates (98 hi-conf), unconfirmed.
+- RQ4: 64 candidates not in the 60 s corpus run, but 63 of 64 come from the two oracles
+  added after it (reflected-xss, data-exfiltration) and 44 of 64 appeared within 60 s.
+  Only 1 is a pure budget effect (kanban mcp_kanban_comment_manager, log-injection).
+  116 of 157 first appearances within 60 s, 2 after 1 h. => short budget suffices.
+- TO DOUBLE-CHECK: 59 corpus-only candidates (30 insecure-temp-file) -- hypothesis: shared
+  /tmp across concurrent configs in the unsandboxed corpus run made cross-config "leaks".
+  Settle via a sandboxed 60 s corpus re-run (~11 h on the PC, 12 workers).
+- Sandbox still allows reads anywhere (file-context-server read a harness file): mask $HOME
+  and .env* before the next campaign.
+
+## item 95 update (2026-09-26): Viper python codeql path FIXED + verified (5df1e2a)
+- Root cause confirmed: run_viper.py swapped only jsql/->pyql/ dirs; pyql stems are
+  *FromMcp (PathInjection, not FileAccess) -> analyze exit 2 on every python repo.
+- Verified on meilisearch/meilisearch-mcp (VM, bwrap-sandboxed, niced): analyze ran with
+  pyql/src/{CommandInjection,PathInjection,RequestForgery}FromMcp.ql, "CodeQL analyze
+  completed successfully", report.json produced, anchor enrichment completed, Phase II ran.
+  Evidence: VM eval/viper_verify_meilisearch__meilisearch-mcp/ (+ .log). H2H index untouched.
+- TO DOUBLE-CHECK: that repo gave anchor_count=0, 0 vulns, tools={} ("No target call chains
+  from CodeQL; using single generic target"). pyql has no McpToolRootsForAnchor /
+  JsFunctionCallEdgesForAnchor equivalent, so python anchors may be structurally partial.
+  One repo can't separate "clean" from "gap": run a positive control (a python repo with a
+  ToFu-confirmed path traversal, e.g. openags/paper-search-mcp download_*) before trusting a
+  python Viper column.
+- For a sandboxed full Viper run: bind eval/viper_runs (whole dir, run_viper writes
+  <slug>.log beside each result dir) + eval/state/viper_runs.jsonl + ~/.codeql writable.
+- item 95 anchor-gap check RESOLVED BY POSITIVE CONTROL (2026-09-26; the TO DOUBLE-CHECK
+  above is left for Ananto to strike): openags/paper-search-mcp (VM, bwrap, nice19+idle IO,
+  sweep undisturbed) -> Phase I 35 vulns / 35 anchors / 35 confirmed flows / 57 tools,
+  types mcp-path-injection + mcp-full-ssrf, 14 vulnerable modules; real call chains built.
+  Matches ToFu's download_* path traversal. => python pyql pack works; meilisearch's 0 was
+  genuine. Phase II hits=0 only because the check ran --rounds 1 (H2H uses 10).
+  Evidence: VM eval/viper_verify_openags__paper-search-mcp/ (+ .log, .row.json, .runlog).
+  Next: run Viper (10 rounds) on the 10 python H2H repos that were n/a.
+
+## item 16 (2026-09-26): PC recovery probe of the 231 "unsuccessful" repos
+- Report: findings/recover_pc_20260926/REPORT.md. Re-prepared the 231 repos with 0
+  reachable tools in the corpus run (correct env: harness py3.13 + node22), fuzzed
+  60s sandboxed on the PC's open egress. Arm gpt41-recover-pc.
+- Executability recovered: 155/218 repos executed >=1 tool; 21 repos (58 tools)
+  returned success (vs VM's 0). Rest still 0: (a) creds/backends required
+  (Discord/Ableton/Graphlit/InvalidCredentials) = real exclusions; (b) tool rejects
+  our seeds on a required id ("Board ID required") = seed-quality, STAYS in denominator.
+- New candidates (all net-new, these repos gave 0 before): 56 (4 hi-conf) in 16 repos;
+  ssrf 28, log-inj 12, reflected-xss 9, temp-file 5, path-trav 2. 9 from the new
+  tracers (reflected-xss). Top: korean-spell fix_korean_spell reflected-xss succ=1.0.
+- Guards added (0d05c93): run_corpus_sbx refuses non-v22 node; prepare_targets aborts
+  on python-harness mismatch. Bad first probe quarantined (recover-pc-badenv).
+- PENDING: VM sandboxed sweep gpt41-corpus-sbx (250 reachable repos) still running;
+  merge its new-tracer catches into a combined report when done.
+
+## item 17 (2026-09-26): "high-confidence (succ>=0.5)" tier WITHDRAWN (Ananto's call)
+- exec_success_rate = n_success/n_exec over ALL of a tool's fuzz executions: a
+  reachability measure computed by our harness, not a fuzzer confidence. The silent-bug
+  oracle already requires the tool to accept the specific flagged input, so how often it
+  rejects other (random) inputs says nothing about a given alert; filtering on it would
+  discard real bugs in tools that reject most fuzz inputs.
+- Removed as a tier/filter from: eval/triage_findings.py (rate kept as a descriptive
+  column; --strong gone), RESULTS_SUMMARY.md, repo24 + recovery reports,
+  head_to_head_per_repo, CASE_STUDY_CANDIDATES, sec6_eval.tex (clause commented out,
+  378/126 succ>0 split kept). Dated snapshot docs got a "tier withdrawn" note instead
+  of rewritten history. Candidate totals unchanged (627 / 129 / 56).
+- Paper: report whole candidate counts + hand-verified precision (owed); the rate may
+  appear only as a reachability description, never as confidence.
+
+## item 18 (2026-09-26): triage undercount + sanitizer-table audit (appendix)
+- Appendix sanitizer section rewritten (ToFu_20260922/appendix.tex): 74 sanitizers in 3
+  tables (tab:sanitizers / -contract / -health), old CWE-only table kept commented.
+  Gate audit from fuzzer._run_sanitizers: 10 mandatory, 1 always (check_temp_file_leak),
+  35 evidence-gated (fire unselected), 27 selection-only, 1 never invoked.
+- DEAD SANITIZER: check_har_url_path_security is registered/LLM-selectable but never
+  called (param typed Any -> string loop skips it; strict HAR contract omits it).
+- CWE FIX NEEDED: registry cites CWE-533 for check_introspection_temp_file_leak; MITRE
+  4.20 marks 533 DEPRECATED (server log files). Triage already uses CWE-377. Fix string in
+  src/sanitizers/__init__.py.
+- LLM hallucinated names: llm_n_dropped>0 in 8 of 4,452 configs (10 names). sec4_design
+  "no such cases" is false as written; report the 0.18%.
+- TRIAGE UNDERCOUNT (index tofu_runs_e2_20260922.jsonl, dry run, NOT applied):
+  (a) severity-pick labels each hit with one class; counting all classes a hit carries:
+      627 -> 735 any, hi 299 -> 344.  (b) unmapped introspection exploit classes (cmd/code/
+      sql/path-trav/sensitive-file/upload/symlink/markitdown): +47 any, +29 succ>0, +23 hi.
+      (c) hygiene (perms/weak-hash/sensitive-logging): +156, 106 of them sensitive-data-
+      logging with succ==0 -> noise.
+  Evidence check: only 22 of the 47 tier-A entries still have a same-run log (n_exec match;
+  rest lost 09-24, item 14). Reading those 22: ~6 plausible (sensitive-path open from the
+  argument; one run-code-by-design repo), ~8 no-provenance FPs (library-internal exec/open,
+  tool's own storage dir, fixed internal command), rest duplicates or succ==0.
+  => do NOT expand the map blindly. Needs sink-provenance (sink arg contains fuzzed value).
+- TO DOUBLE-CHECK: tab:sink-families -- DataAmplification sits in the low-specificity
+  column but its patterns are specific (zipfile/tarfile/gzip/zlib/...); probe-validity
+  lists only nine low-spec families. Node/TS column measures sink presence only: tracers
+  are Python-only. Source report lives only in a worktree
+  (.claude/worktrees/infallible-boyd-e1485d/Claude outputs/distribution_report.txt) --
+  commit it to findings/ so the table is traceable. Numbers verified against it.
+
+## item 18 (2026-09-26): VM sandboxed corpus sweep done -- new-tracer catches + temp-file FP proof
+- Report: findings/corpus_sbx_20260926/REPORT.md (arm gpt41-corpus-sbx). 1,481 reachable
+  configs / 250 repos, 60s, bubblewrap. 1,403 executed. 413 candidates / 123 repos:
+  reflected-xss 189, path-trav 94, log-inj 73, ssrf 48, cmd-inj 4, exfil 4, temp-file 1.
+- vs 09-22 same configs (370): +183 new (175 from new tracers reflected-xss/exfil),
+  -140 gone. Of the 140: 77 insecure-temp-file => shared /tmp across 5 concurrent
+  unsandboxed configs faked cross-config temp leaks; private-/tmp sandbox removes them
+  (class 78->1). This CONFIRMS the item-16 hypothesis. Remaining 59 gone = minority, per-case.
+- Combined 09-26 picture in RESULTS_SUMMARY sec 1b: corpus_sbx (413) + repo24 (RQ4) +
+  recover_pc (231 dead repos). Diff per candidate: findings/corpus_sbx_20260926/diff.json.
+- For eval writer: sandboxed sweep is the current corpus headline; 627 is pre-sandbox 09-22.
+
+## item 16 (2026-09-26): Viper python H2H column filled + Viper metric CORRECTED
+- Python Viper on the 10 H2H python repos (PSU PC, 10 rounds, bwrap, LLM record/replay cache):
+  two fixes were required -- 5df1e2a (pyql query stems) and 8e144a6 (launch venv console
+  scripts via the venv python; Viper only injects its python hook when startup_command[0] is
+  python -- first run had hook_injected=False on 9/10, quarantined as
+  eval/state/quarantine-2026-09-26-viper-py-nohook on the PC).
+- Spend (ledger, measured): invalid run 871 upstream calls / 1,865,554 in / 99,201 out tokens;
+  valid run 357 upstream / 589,664 in / 46,416 out (1,247 of 1,604 calls replayed from cache).
+- METRIC CORRECTION: the H2H Viper column ("23 of 35") used n_hit_markers-or-oracle-events-or-
+  max_oracle_hits. n_hit_markers (Viper's confirmed verdict) is 0 on every run, so it fell
+  through to max_oracle_hits_in_round = ~10 x tool calls observed (activity, not findings).
+  Corrected: confirmed exploits 0/45; static Phase I taint flows 11/45 (node 10, python 1).
+  Table: findings/baselines/viper_h2h_corrected_20260926.md (+ .json).
+- TO DOUBLE-CHECK / TO FIX: every place that quotes the old Viper column -- RESULTS_SUMMARY §4
+  row (38/5/12) and §5, head_to_head_per_repo_20260922.md, the two 10-repo H2H tables given in
+  chat, sec6_eval.tex baselines/H2H text, CASE_STUDY_CANDIDATES "viper also flags" lines.
+- item 16 CORRECTION (same day, after recounting from Viper's own output files): the "confirmed 0/45"
+  above is WRONG. n_hit_markers searched for strings Viper never writes; Viper's confirmed verdicts are
+  in fuzz_results/*/triggered_vulnerability_prompts.json. Recounted on all 45 H2H repos (no re-run):
+  confirmed 2 (movibe/memory-bank-mcp: 8 hit-judge-confirmed prompts, 1 distinct chain =
+  initialize_memory_bank -> path_traversal; openags/paper-search-mcp: 1), runtime sink hits 9,
+  static flows 11. The old "23 of 35" = oracle.json lines incl. hook_init (hook loaded), not findings.
+  run_viper.py now records n_confirmed / n_confirmed_distinct / n_sink_events.
+
+## item 19 (2026-09-26): consolidated headline = 648 bugs (all sandboxed campaigns)
+- findings/union_20260926/REPORT.md + analyze_union.py (regenerates from committed indices).
+- 648 bugs / 154 repos / 647 tools. Budget: 633 at 60s, 15 required >60s (deep run,
+  first-appearance up to 4202s). ~98% within 60s.
+- Built: 469 (60s sandboxed reachable+recover) + 150 introspection-on-errored (09-22,
+  tools that ran but returned 0 success; SSRF-dial/file-read legit; temp-file FPs out)
+  + 29 deep (14 60s-reachable, 15 >60s). RESULTS_SUMMARY sec 1a is the headline.
+- Called "bugs" (Ananto's call); a sample hand-verify is optional future work, not a gate.
+
+## item 20 (2026-09-26): ToFu vs Viper H2H at 648 + SSRF introspection tracer FP (backend dial)
+- findings/baselines/h2h_tofu_vs_viper_20260926.{md,json,py} (py regenerates; asserts |U|=648).
+  On the 45 H2H repos: ToFu 33 repos / 266 bugs; Viper static 11 (154 flows), sink hits 9,
+  confirmed 2 distinct. All 11 Viper-static repos ToFu-flagged; both Viper-confirmed path
+  traversals ToFu-flagged same class. ToFu-exclusive (no CodeQL/Cisco/Viper) 15 repos.
+- 498 -> 648 added +103 on the H2H set, ALL from the introspection-on-errored slice (item 19).
+  63 on ocean-zhc/dolphinscheduler-mcp alone -> checked the instrument.
+- FINDING: check_introspection_ssrf (src/sanitizers/introspection.py:555) fires on ANY connect
+  to loopback/private ranges; it does not check the host is input-derived. 140 of the 648
+  (all ssrf) rest ONLY on it (no check_url_* oracle): 91 introspection-on-errored, 49 in the
+  60s sandboxed sweep. Every one of the 47 with a surviving log (VM eval/runs/gpt41-corpus-sbx)
+  shows ONE fixed host:port per repo across thousands of calls = the server's own default
+  backend: meilisearch 127.0.0.1:7700, freecad 9875 (freecad_client.py:27 default), dolphinscheduler
+  12345, trino/searxng 8080, iotdb 6667, obsidian REST 27124, v0-mcp 9222, blender 9876,
+  aws-samples S3 169.254.169.254:80 (boto3 IMDS credential lookup). Not attacker-controlled.
+  The other 93 have no surviving log (09-22 logs overwritten) but are the same repos.
+- Impact: 648 includes ~140 likely tracer FPs (-> ~508 if all dropped). H2H doc reports both
+  columns; RESULTS_SUMMARY sec 1a NOT changed (headline is Ananto's call).
+- TO DOUBLE-CHECK: (a) whether to drop backend-dial SSRF from the headline or gate the tracer
+  on the host appearing in the tool input (outcome-divergence style); (b) the 93 log-less keys;
+  (c) item 19's "SSRF-dial legit" wording -- legit only when the dialed host came from input.
+- item 20 addendum -- SILENT 0-EXEC ROWS in the sandboxed sweep (the codebase's known failure mode):
+  38 rows / 10 repos of runs.gpt41-corpus-sbx.jsonl have n_exec=None, ok=True, 0 hits. First ERROR
+  line of each VM log: AminForou/mcp-gsc 18x "Failed to start runner: No module named 'google'"
+  (ran fine 09-22 at 100% success, 13 SSRF via check_url_* oracles); newtype-01/obsidian-mcp 8x JS
+  "did not signal SOCKET_READY within 25s"; 7 repos "No such file or directory: eval/targets/<repo>"
+  (34892002/bilibili-mcp-js, AbdelStark/bitcoin-mcp, 3mdistal/css-mcp-server, Alec2435/amazon-fresh-server,
+  8bitgentleman/activitywatch-mcp-*, 7gugu/whistle-mcp -- all early-alphabet: item-14 wipe remnant?);
+  Alec2435/python_mcp bad python-local shim; openags 2 rows with no runner error.
+- Effect: 15 bugs the 09-22 run found on tools that RETURNED SUCCESS are absent from 648 only because
+  their sandboxed re-run never executed (mcp-gsc 13, obsidian 2). Also 63 total 09-22 success>0 bugs
+  are absent from 648 (31 re-ran with no hit, 10 re-ran with 0 success, 7 not in sbx, 15 no-exec).
+- H2H: "Viper hits where ToFu 0" (bilibili, mcp-gsc) are these instrument failures, not ToFu misses.
+- TO DOUBLE-CHECK / TO FIX: (a) run_eval must record ok=False when the runner never starts / n_exec is
+  None; (b) restore the 7 missing VM targets + fix mcp-gsc google import under the sandbox, then re-run
+  those 38 configs sandboxed (Ananto's Terminal); (c) the 31 "re-ran, no hit" -- oracle change or loss?
+
+## item 21 (2026-09-27): paper headline 508 (strict SSRF) + sec6 rewritten by RQ
+- Ananto's call: drop every SSRF whose contacted host did not come from the input -> 648 - 140
+  backend-dial = 508 bugs / 147 repos / 507 tools (301 node, 207 python). 60 s 493 (97%), >60 s 15.
+  Detection: 326 introspection/output, 182 outcome. Recorded in RESULTS_SUMMARY §1a banner.
+- 14 host-set issues (tab:identified_issues) dropped from the paper: old macbook host run.
+- ToFu_20260922/sec6_eval.tex restructured into RQ1-RQ4 subsections + baselines, each RQ ending
+  in a framed "Answer to RQn" box; old text commented, 23 Pierre TODOs kept. Backup of the
+  pre-rewrite file: ToFu_20260922/sec_eval_bak.tex. New figure figs/rq4_repo24.pdf from
+  findings/repo24_20260926/plot_rq4.py (reproduces 157 first appearances / 116 <=60 s / 2 >1 h).
+- sec4 C4 paragraph: no re-run wording; cites reflected-output = 222 of 508.
+- OWED: hand-labelled precision (two % NOTE placeholders in sec6 RQ2/RQ3); RQ3 funnel uses the
+  sandboxed sweep (184,406 alerts / 579 configs -> 388 bugs at the strict rule).
+
+## item 22 (2026-09-27): SSRF tracer input-gated + corpus expansion (923 never-fuzzed repos)
+- FIX: check_introspection_ssrf(network_connections, tool_input) now fires only when the
+  contacted internal host appears in the fuzzed input (attacker-controlled). Suppresses the
+  140 backend-dial FPs at the source (item 20/21) for all FUTURE runs; tool_input=None keeps
+  old behavior. fuzzer passes generated_arguments. Test: tests/test_ssrf_input_gated.py.
+- COUNTS: repos fuzzed so far 481; executed >=1 tool successfully 273. set_full tool-exposing
+  corpus = 1404 => 923 NEVER fuzzed (497 node, 426 python). Biggest lever to raise #bugs.
+- EXPANSION: Benchmarks/extraction/corpus_never_fuzzed_repos.txt (923) split PC 648 / VM 275
+  (_pc.txt/_vm.txt, by idle-core ratio 12:5). Plan: prepare_targets --only-repos-file <shard>
+  then run_corpus_sbx.sh CORPUS_MODE=none --only-repos-file <shard> (sandboxed, 60s).
+- ALSO recover 38 silent-0-exec sbx rows (item 20): mcp-gsc "No module named google" (13 real
+  SSRF via check_url_* at 09-22), obsidian socket, 7 wiped targets -> re-prepare + re-run.
+
+## item 23 (2026-09-27): PRECISION of the 508 headline -- LOW. Read before citing any bug count.
+- findings/labels_20260927/: stratified seeded sample of 98 of 508 (census of small classes;
+  only bugs with surviving evidence: 466/508). Labelled from evidence + code at pinned commit,
+  read-only, 6 sub-agents + coordinator reconciliation (RUBRIC.md lists every override).
+- Weighted over 507 (creds unlabelled): STRICT 12% +-6% (~61 bugs) bug-exists view;
+  3% +-2% (~14) alert-grounded view. LENIENT (TP+TP-low) 30% +-8% / 21% +-7%.
+- Per class (bug-exists strict/lenient): reflected-xss 5%/14%, log-inj 20%/35%, path-trav 6%/56%,
+  ssrf 44%/44%, temp-file 0/17%, cmd-inj 0/50%, exfil 0/0.
+- ROOT CAUSES (instrument defects, fixable):
+  (1) check_reflected_output fires on template-brace echoes ({{, ${) with no markup, into plain
+      text/JSON/errors -- 32/37 xss FP. Fix: require real markup; brace-only is not reflection.
+  (2) log-injection: CR/LF comes from the tool's own tracebacks / pydantic / pretty JSON / remote
+      error pages, not from the input -- most of 13/20 FP. Fix: require the CR/LF to be in the input
+      (provenance, same as the strict SSRF rule).
+  (3) outcome oracle on tools that bailed out early (not connected, missing binary/creds) --
+      input never reached the sink. Fix: require evidence the sink was reached.
+  (4) data-exfiltration: tool's own credential file + its own API call (FP), and downloaded-file
+      writes misclassified as exfil (really uncontained writes).
+- DO NOT cite "508 bugs" as bugs. Cite candidates + measured precision, or fix (1)-(3) and re-run.
+## item 24 (2026-09-27): TOFU_NO_LLM probe -> LLM only on executable tools (cost control)
+- Actual state (checked): recovery NOT started; expansion prep NOT done (PC 6/648, VM 1/275).
+- TOFU_NO_LLM (src/llm.py): skips BOTH LLM calls -> selection = BASE_MANDATORY only, seeds =
+  local fallback mapping. $0. Evidence-gated introspection tracers (path/ssrf-input-gated/
+  reflected/exfil/temp/log) still fire, so the probe finds many bugs for free + the executable set.
+- WORKFLOW to avoid wasted LLM $: (1) prep sandboxed (no LLM). (2) TOFU_NO_LLM probe, short
+  budget, arm gpt41-<m>-probe. (3) eval/select_executable.py --arm <probe> -> executable config
+  list. (4) full LLM pass with --only-configs-file <list>. LLM spend only on tools that run.
+- Est: ~$400 unfiltered -> if ~55% executable, LLM pass ~$220-260 + probe $0.
+
+## item 25 (2026-09-28): ABLATION campaign built (eval/run_ablation.sh) -- PSU PC, 12 workers
+- SET: exactly the 251 repos that executed (>=1 successful exec) in the 60s sandboxed headline
+  runs = 230 from gpt41-corpus-sbx + 21 from gpt41-recover-pc (disjoint). Their 1,672 configs
+  (1,461 executed). Lists: Benchmarks/extraction/ablation_251_{repos,configs}.txt. No more, no less.
+- Both headline indices predate the SSRF input gate (b4601ca) -> they are NOT the baseline. The
+  `full` arm is re-run fresh on current code; every arm is compared to it.
+- ARMS (same configs, 60s, bwrap): full (+shadow oracle), nollmseeds, mandatory, nollm, noseeds,
+  allsan. 2x2 LLM grid = {full, nollmseeds, mandatory, nollm}. Oracle ablations (tracers-only,
+  outcome-only, sanitizers-only) derived post hoc from `full` (eval/ablation_report.py).
+- Switches: TOFU_NO_LLM_SEEDS, TOFU_NO_SEEDS (empty corpus -> input_parser FDP path),
+  TOFU_NO_LLM_SANITIZERS=mandatory|all (bad value raises; validated outside the fuzzer's
+  fall-back-to-ALL except), TOFU_ORACLE_SHADOW (logs ORACLE_SHADOW_UNGATED = input sanitizers
+  that would fire on FAILED execs; never reported), TOFU_LLM_CACHE_READONLY. Recorded per row
+  in runs.*.jsonl "ablation". tests/test_ablation_flags.py (6).
+- LLM cost ~$0: dedicated replay cache eval/state/llm_cache_ablation on PC, seeded 2026-09-28
+  with 1,672 entries (VM corpus-sbx cache; PC's own for the 238 recover-pc configs). Only `full`
+  may write it. Seed cache is not keyed on the sanitizer list, so `mandatory`/`allsan` replay the
+  full arm's seeds -> seeds held fixed, only the oracle side varies (and vice versa).
+- PC PREP GAP: PC has 542/1,672 configs. 200 repos need sandboxed prep first:
+  Benchmarks/extraction/ablation_pc_prep_repos.txt. run_ablation.sh aborts until prepared.
+- Est wall ~2.5-3h/arm @12w (VM corpus-sbx mean 67s/config) -> ~16h for six arms.
+- PREVIEW ONLY (pre-gate headline rows, NOT evidence): on these 1,672 configs tracers-only keeps
+  118 of 434 (repo,tool) bugs (all Python), outcome-only keeps 351 (loses 83, mostly Python).
+- Precision caveat (item 23) applies to every arm equally; if the tracer fixes (1)-(3) land, the
+  ablation must be re-run after them.
+- TODO paper: describe the deterministic fallback seed generator (sec4/impl): schema defaults
+  (enum[0], 1, true, [], {}, "test"), per-field boundaries, enum members + 1 out-of-enum, type
+  confusion, and 5 seed-bank payloads per string field (6 banks, 52 payloads; category from the
+  selected sanitizers, else arg-name keywords). Code: src/llm.py _local_fallback_mapping.
+- TODO paper: sanitizer registry is 80 (AVAILABLE_SANITIZERS), not 74/75 -- check what the paper says.
+- 2026-09-28 PC prep: 193/200 ready, 7 skipped. Fixed sandboxed, now 1,672/1,672 prepared:
+  6 x "needs-bun" (build script calls bun, PC has none on PATH). VM had used the bun 1.4.2 that
+  b-open-io/bsv-mcp installs as an npm dep; same binary exists on PC -> re-prepped with
+  PATH=eval/targets/b-open-io__bsv-mcp/node_modules/.bin:$PATH. No new download.
+  ruan11223344/McpDocServer: `npm --silent` hid the error; real cause = puppeteer postinstall
+  fetches Chrome from the repo's .npmrc mirror (npmmirror) -> 404. VM has no puppeteer Chrome
+  either and its headline tool ran 3,071 successful execs, so PUPPETEER_SKIP_DOWNLOAD=1 matches
+  the VM environment. Follow-up (not done): prepare_targets should put a known bun on PATH and
+  surface npm stderr instead of --silent.
+
+## item 26 (2026-09-28): Viper over the 251 executed repos -- campaign c251 prepared (VM)
+- Set = Benchmarks/extraction/ablation_251_repos.txt (230 corpus-sbx + 21 recover-pc; all 251
+  prepared + targets present on the VM). Tag c251: index eval/state/viper_runs.c251.jsonl,
+  outputs eval/viper_runs/c251/ (old eval/viper_runs/<slug> outputs untouched).
+- REUSED 26 old node runs (09-13/09-20, 10 rounds, gpt-4.1) via eval/viper_reuse_runs.py: only
+  those whose own outputs prove the hook ran (hook_init / sink hit). NOT reused: 19 node runs with
+  no hook evidence + 2 failed -> re-run. 225 repos to run.
+- WHY 19 had no evidence: Viper's engine truncates oracle.json between rounds (_clear_oracle),
+  erasing the hooks' hook_init line. Both hooks now also append a never-cleared
+  <oracle>.hook_init sidecar (537e127); run_viper records n_hook_inits.
+- TO DOUBLE-CHECK: the 09-26 H2H Viper column on those 19 (incl. dazeb x2, mcp-media-processor,
+  wordpress, MCP-Facebook, time-mcp, todo-list, revit) is unproven -- replace with c251 numbers.
+- Sandbox fix f2242e3: private writable HOME per sandbox (todo-list-mcp SQLite failed on the
+  read-only real home). Smoke (tag smoke251, 1 round): node todo-list ok, 2 hook marks;
+  python meilisearch ok, 1 hook mark; real targets untouched; work copies cleaned.
+- If any of the 21 recover-pc repos fail on the VM, re-run them on the PC after the ablation.
+
+## item 27 (2026-09-28): ToolFuzz over the 251 executed repos -- prepared, waits for the ablation
+- Set = Benchmarks/extraction/ablation_251_repos.txt (same as items 25/26). Executed tools taken
+  from the sandboxed headline indexes (corpus-sbx VM + recover-pc PC), merged on the PC into
+  eval/state_tf/tofu_sbx_index.jsonl: 1,461 executed configs / 250 unique repos = item 25 exactly.
+- FIX: "executed" must use the index's `executable == "yes"`; exec_success_rate is stored rounded
+  to 3 decimals (1 success in 10k execs reads 0.0) -> the rate-only filter found 1,423 / 248 repos.
+  The H2H ToolFuzz run (item 16) used the rate filter on the 09-22 snapshot; its 298 tools stay
+  valid, and the 251 run fills in what it missed.
+- psu_toolfuzz_run.sh now skips repos of ANY running ToFu campaign (run_eval.py / run_repo24.py,
+  incl. --only-configs-file). With the ablation running it skips all 251 -> launch after it ends.
+- Estimate (from H2H: ~16 calls, ~12.4k in / 1.3k out tokens per tool, gpt-4.1-mini): ~1.2k new
+  tools -> ~19k calls, ~$8-10; ~6 h at nice 19 on the PC; counter is cumulative (4,708 so far) ->
+  run with TOOLFUZZ_MAX_CALLS=30000.
+- 2026-09-28 arm smoke (2 configs x 5 read-only arms, run_eval direct, DUMMY API key so any live
+  call would 401; ablsmoke-* indices): nollmseeds / mandatory / nollm / noseeds behave as designed
+  (fallback seeds / mandatory selection / NO_SEEDS marker, 0 live LLM calls, cache unchanged).
+  allsan was BROKEN: string loop called check_reflected_output(val) -> TypeError -> target exit
+  after 3 execs. Fixed a92dc8a (two-arg sanitizers excluded from the one-arg loop; per-call
+  try/except + SANITIZER_ERROR). No-op for every other arm: the only cached LLM selection holding
+  check_reflected_output (google_workspace_mcp::manage_document_comment) has 0/500 successful execs,
+  and the string loop runs only on successes. Also latent on the "LLM selection failed -> all
+  sanitizers" fallback path. PC campaign started at be2529b; needs the fix before allsan starts.
+- 2026-09-28 04:48 allsan fixed MID-CAMPAIGN (Ananto's call): PC fast-forwarded be2529b/e07ed6e ->
+  f608f20 at abl-full row 217 (eval/state/abl_commit_boundary.txt on PC). The only runner change
+  in that range is a92dc8a (src/fuzzer.py), unreachable in full/nollmseeds/mandatory/nollm/noseeds
+  (see above), so abl-full rows 1-217 (be2529b) and 218+ (f608f20) are behaviour-identical.
+  Re-smoke on f608f20: allsan 2/2 ok, full 60s, 0 SANITIZER_ERROR, 0 live LLM; alerts 291 / 1380
+  vs 41 / 13 under LLM selection. No quarantine/re-run of allsan needed any more.
+- CORRECTION: the sanitizer registry is len(AVAILABLE_SANITIZERS) = 73 at runtime (allsan logs
+  n_selected=73), NOT 80 as written in item 25 (a line-range grep over-counted).
+- item 26 RESULT (2026-09-28): findings/viper_c251_20260928/REPORT.md (+ analyze_viper_c251.py regen).
+  251/251 have a row, 244 ok (7 failed: 6 server-init, 1 timeout), hook proven on 244/244.
+  Viper static 45 repos (295 flows), sink hits 110, CONFIRMED 10 repos / 10 chains (21 verdicts).
+  ToFu (508 restricted to the 251) 137 repos. Confirmed vs ToFu: 7 ToFu-flagged (same tool on 5),
+  3 ToFu 0: peakmojo/applescript-mcp, recursechat/mcp-server-apple-shortcuts, yonaka15/mcp-pyodide
+  (code/command-exec tools). Spend (fresh 225): 19,804 upstream calls, 27.5M in / 2.43M out tokens.
+- TO DOUBLE-CHECK: the 508 is NOT all on the 251 -- 489 bugs / 137 repos inside, 19 bugs / 10 repos
+  outside (11 from 60s rows on repos with 0 successful execs, 5 introspection-on-errored, 3 deep run;
+  one is weidwonder/terminal-mcp-server, on the unsafe-skip list). "508 bugs in the 251" is wrong as stated.
+- TO DOUBLE-CHECK: hand-verify the 10 Viper-confirmed chains; paper-search not re-confirmed this run;
+  45 upstream HTTP 400s unexplained.
+
+## item 28 (2026-09-28): dataset denominator = EXECUTED set (417), not the 251
+- Benchmarks/extraction/build_executed_set.py -> executed_repos.txt (417) + executed_succ_repos.txt (273).
+  Definition: repo where ToFu executed >= 1 tool call in a headline campaign (corpus-sbx, recover-pc,
+  repo24/-b, e2 09-22). 481 attempted -> 417 executed -> 273 with >= 1 successful call.
+  ablation_251_repos.txt (>= 1 successful call in the 60 s sandboxed sweeps only) is a strict subset.
+- Why: every 648/508 bug comes from an executed tool (introspection fires on errored calls), so the
+  headline is drawn from the 417. All 648-flagged repos and all 45 H2H repos are inside it; with the
+  251 as denominator, 10 flagged repos / 19 bugs and 9 of the 45 H2H repos fell outside.
+- Baseline coverage of the sets (ok runs): Sonnet-5 251/251, 417/417; CodeQL 249/251, 414/417
+  (matlab-mcp-server analyze failed, CircleCI never run); Cisco 247/251, 404/417 (4 stdio-connect /
+  pydantic errors); Viper c251 244/251 and 0 of the 166 added repos; ToolFuzz committed snapshot 31.
+- TO DOUBLE-CHECK: paper sec6 says "starts 408"; this script gives 417 executed. 408 came from an
+  earlier source set -- reconcile before changing the text. weidwonder/terminal-mcp-server (unsafe-skip
+  list) is in the 417 only via the unsandboxed e2 run.
+- 2026-09-28 DECISION (Ananto): head-to-head set = the 273 (>= 1 successful call); Viper and ToolFuzz
+  are matched to it, nothing beyond (budget). Benchmarks/extraction/build_h2h_273.py writes
+  h2h_273_repos.txt (273), h2h_273_dynamic_repos.txt (266 = 273 minus 7 unsafe-list host-control
+  servers: CMD-MCP-Server, win-cli-mcp-server, frida-mcp, mobile-mcp, tmux-mcp, xcode-mcp-server,
+  ClaudeComputerCommander), viper_273_todo_repos.txt (15 = dynamic minus the c251 251), and
+  tofu_exec_index_273.jsonl (1,585 executed tools / 266 repos) for ToolFuzz TOOLFUZZ_TOFU_INDEX.
+  ToFu on the 273: 493 bugs / 139 repos / 492 tools (the 7 unsafe repos carry 0 ToFu bugs).
+- TO DOUBLE-CHECK: the 22 repos 273 adds over the 251 succeeded ONLY in the unsandboxed 09-22 run;
+  some may not start under Viper's sandbox (mcp-gsc: "No module named 'google'"; bilibili-mcp-js:
+  target dir missing on the VM) -- check prep on the VM before launching Viper on the 15.
+- item 26 EXTENSION (2026-09-28): Viper now covers the H2H-273 dynamic set (266 = 273 minus 7 unsafe;
+  Benchmarks/extraction/h2h_273_dynamic_repos.txt). 15 added: 3 reused (hook evidence), 12 fresh
+  (923 upstream calls, 1,218,085 in / 118,213 out tokens). findings/viper_c251_20260928/REPORT.md now
+  reports the 266: 259 ok, hook proven 259/259; Viper static 48, sink 118, confirmed 11 chains / 11 repos;
+  ToFu (508 on the 266) 139 repos / 493 bugs; Viper-confirmed where ToFu 0: 4 (new: Alec2435/python_mcp
+  python_repl, eval/system). RESULTS_SUMMARY sec 4/5 Viper row -> c251; h2h_tofu_vs_viper_20260926 marked superseded.
+
+## item 28 (2026-09-28): ToolFuzz over the H2H-273 dynamic set -- DONE, reported
+- Report: findings/toolfuzz_h2h273_20260928/REPORT.md; paper brief PAPER_NOTES.md; regen
+  analyze_toolfuzz_273.py (ToFu side = the 508 headline, loaded exactly as the Viper c251 report).
+- 266 repos / 1,585 ToFu-executed tools; ToolFuzz completed 1,516 (VM; 296 merged from the PSU H2H
+  run, identical config). Not completed: 48 tools on 8 servers ToolFuzz's MCP bridge cannot load,
+  15 ToolFuzz internal errors (8 of them "maximum recursion depth"), 5 timeouts, 1 not run.
+- Genuine crashes 14 tools / 10 repos, all ToFu-flagged; correctness 0 with a real output (114 by
+  formula were all tool errors). ToFu 428 flagged tools / 129 repos, 380 ToolFuzz-silent.
+- Classifier: all 43 unclassified triggers hand-labelled; non-ToolException -> HARNESS rule (a
+  mermaid-validator IndexError came from ToolFuzz's own extract_error, not the tool).
+- Ops lessons: launcher now traps SIGHUP (closing the tmux window orphaned 4 shards); env paths are
+  anchored to the repo root (runner chdirs into ToolFuzz); prep_sbx.sh on the VM needs UV_CACHE_DIR /
+  npm_config_cache / XDG_CACHE_HOME set or installs fail read-only.
+- 2026-09-28 CORRECTION to item 28 (Ananto): report ToolFuzz ONLY in its own units -- runtime failures and
+  correctness failures as ToolFuzz counts them (verified with its tool_stats.py). The "14 genuine crashes" /
+  "0 correctness with a real output" figures above were our own diagnostics, NOT ToolFuzz results; do not
+  report them. Final: runtime 200 tools / 77 repos; correctness 114 tools / 52 repos (342 / 3,441 prompts).
+
+## item 28 (2026-09-28): ABLATION RESULTS -- findings/ablation_20260928/REPORT.md
+- 6 arms x 1,672 configs complete, 0 live LLM calls, switches verified per row (eval/ablation_check.py).
+- bugs: full 408 | nollmseeds 369 | mandatory 303 | nollm 286 | noseeds 223 | allsan 928 raw.
+- LLM seeds' measurable effect = REACH: 1,450 vs 1,328 tools executed (+64 py, +58 js).
+- LLM selection's effect = CLASSES: without it path-traversal 95->0, ssrf 24->0/4; what remains
+  is reflected-xss + log-injection (evidence-gated, run regardless of selection; lowest precision).
+- allsan: exec/s unchanged (45.9 vs 45.7) -> the "per-exec cost" defense of selection is NOT
+  supported; the defense must rest on precision of allsan's +535 tools (log-injection 492).
+- Oracle: tracer adds 61 Python bugs (outcome-only 347); tracers-only 85 (all Python; JS 0 by
+  construction); no success gate: same 408 total but 51 swapped, JS 254->290.
+- OPEN: no repeat runs -> run-to-run noise of `full` unknown (one more full arm ~2.6h would give it).
+- 2026-09-28 ABLATION SCOPE -> 266 (Ananto: match the H2H-273). 273 = 251 + 22; the 22 = 7 unsafe
+  host-control servers (no dynamic tool runs them; H2H dynamic set is 266 for Viper/ToolFuzz too)
+  + 15 repos that succeeded only in the unsandboxed 09-22 run. Ablation now = 266 repos / 1,801
+  configs (ablation_266_{repos,configs}.txt; +129 configs in ablation_extra15_*). PC prep of the
+  12 missing repos sandboxed (uv needs a login shell on PC: `bash -lc`); 129 VM cache entries
+  copied (no overwrite) -> llm_cache_ablation 1,801. Same code as the campaign (no src change
+  since f608f20). Run: `./eval/run_ablation.sh` (defaults to the 266; arms resume, only the 129 run).
+
+## item 29 (2026-09-28): allsan TP/FP CENSUS -- findings/ablation_20260928/allsan_labels/REPORT.md
+- All 928 allsan reports (251 set) labelled, 24 LLM agents, same rubric as item 23 + allsan notes,
+  source at fuzzed commit (185 repos, read only), coordinator spot-checks (crypto-indicators 77 FP ok;
+  wordpress SSRF TP verified in code + log). 0 UNCLEAR.
+- allsan precision: strict 4.5% (42) / lenient 19.6% (182). On the 535 tools only allsan flagged:
+  482 FP (90.1%), 13 TP, 40 TP-low -> ~37 FP per extra strict bug.
+- ToFu FALSE NEGATIVES vs allsan: 13 strict (6 alert-grounded, 7 code-only) / 53 lenient, 5 repos.
+  5 = wordpress-mcp-server SSRF: LLM selected check_introspection_ssrf (Python-only tracer) for a JS
+  target, not the input-side check_url_* that fired -> language-aware selection = future work.
+- TODO: +129 configs (266 set) allsan reports not yet labelled; full arm's 408 not labelled here.
+- item 26 CHECK vs the Viper paper (Sun et al. 2026, arXiv 2605.21392v2, read in full 2026-09-28):
+  (a) our "confirmed" (hit_judge effect_success) == their end-to-end-exploitable bar (validator stage
+      effect_observed, sec 5.2; hit_judge.py: effect_success true only for effect_observed). OK.
+  (b) SCOPE MISMATCH: sec 2.2 "tools designed to perform privileged operations (e.g. a shell-execution
+      tool ...) are not considered vulnerable". Our 11 confirmed are raw hit-judge output with no such
+      filter; python_repl, applescript_execute, pyodide_execute, run_process, run_python_code look
+      by-design -> Viper's own definition would not count them. Needs manual pass before quoting 11.
+  (c) 6 of 11 chains have no Phase I chain ("none"/"No static findings") = artifact's general-target
+      fallback, not the anchored-chain pipeline the paper describes.
+  (d) PROTOCOL DEVIATIONS: paper uses GPT-5.4 (scan + RQ2) and per-role temps (agent 0.7, generator
+      0.4/0.7, mutators 0.5/0.6, scheduler 0.1, scorer 0.2, validator 0.1); we ran gpt-4.1 at T=0 for
+      all roles. RQ4 shows the analytical model dominates (TP 20..88). Paper mean 926 s/server; ours
+      ~190-260 s at the artifact default of 10 rounds.
+  (e) 3 of the paper's own CVE repos are in our 266: pixelsock/directus-mcp (SSRF), pskill9/website-
+      downloader (CMDi), WilliamCloudQi/matlab-mcp-server (path trav). Our Viper run confirmed 0 of 3
+      (commits may differ from their pinned vulnerable ones -- unchecked). ToFu flags directus (ssrf)
+      and matlab (path-traversal), 0 on website-downloader. => our Viper numbers likely UNDER-state Viper.
+- 2026-09-28 ABLATION ON 266 DONE (6 arms x 1,801). full 436 | nollmseeds 396 | mandatory 311 |
+  nollm 293 | noseeds 244 | allsan 960. allsan census now 960/960 (47 TP / 141 TP-low / 772 FP);
+  ToFu FN vs allsan unchanged: 13 strict / 53 lenient. obsidian-mcp wiped its own target dir inside
+  the sandbox during `mandatory` -> could not start in nollm/noseeds/allsan; re-prepped before each
+  and its 11 tools re-run (failed rows in quarantine-abl-*-obsidian-wiped.jsonl). NOTE for the unsafe
+  list: obsidian-mcp is self-destructive (manage_folder/delete_note on its own tree). 5 live LLM calls
+  in full (VM cache entries without seeds). PAPER_RESULTS.md / tables.tex rewritten on the 266.
+
+## item 27 (2026-09-29): Cisco yara+llm+behavioral campaign prepared (VM, tag c273)
+- eval/run_cisco_sbx.sh (bwrap per repo, private HOME, target copy, LLM ledger) over
+  Benchmarks/extraction/h2h_273_repos.txt. llm analyzer gpt-4.1-mini; behavioral gpt-5.4-mini (cheap).
+- SILENT-ZERO #1: in `stdio` mode the scanner never runs behavioral on source -- placeholder SAFE rows
+  (smoke: 85 LLM calls = 85 tools). SILENT-ZERO #2: the `behavioral` subcommand drops VULNERABILITY
+  rows. Fixed by eval/cisco_behavioral.py (direct BehavioralCodeAnalyzer, THREAT+VULNERABILITY kept).
+- Model check on tmux-mcp behavioral: gpt-4.1 -> execute-command HIGH VULNERABILITY; gpt-4.1-mini 23-26/32
+  inconclusive (drops required `summary` field); gpt-4o-mini 20/32 inconclusive; gpt-5-mini and
+  gpt-5.4-mini 32/32 SAFE, 0 inconclusive, 0 flagged. Cheap run = lower recall; report the model.
+- Extractor gap: memory-bank-mcp 8 functions for 15 tools (initialize_memory_bank not analysed).
+- Cisco AI Defense `api` analyzer: laptop .env CISCO_API_KEY (36 chars) -> 401 Unauthorized on
+  us/eu/ap inspect endpoints (30/30 each), and mcp-scanner STILL EXITS 0 on 401 (silent). Not usable
+  yet; key not copied to the VM. TO DOUBLE-CHECK: key type (inspection vs management API key).
+- item 27 update (2026-09-29): Ananto: gpt-4.1-mini for BOTH llm and behavioral (launch with
+  CISCO_BEHAVIORAL_MODEL=openai/gpt-4.1-mini). Expect many inconclusive behavioral functions (tmux-mcp 21/32).
+  Cache fix de64329: Cisco's per-call UNTRUSTED_INPUT nonce masked in the proxy key -> identical re-run
+  replays 39/39 calls at 0 tokens with identical results (was 0 replays).
+- 2026-09-29 FULL REPEATS DONE (eval/run_full_repeats.sh; abl-r2-full, abl-r3-full; 0 live LLM):
+  bugs 436 / 428 / 427 -> 430.3 +- 4.9; executed 1,507 / 1,503 / 1,495. Found by all 3: 342, any: 507,
+  pairwise Jaccard 0.75-0.81. Every ablation arm outside the Full range (smallest: nollmseeds 396,
+  ~7 SD below). Table A now uses the 3-run mean; Table E added (PAPER_RESULTS.md, tables.tex).
+- item 27 RESULT (2026-09-29): findings/cisco_c273_20260929/REPORT.md (+ analyze_cisco_c273.py regen).
+  273 repos, 266 ok; all gpt-4.1-mini; 4,713 upstream calls, 34.5M in / 0.64M out tokens (~$15 list).
+  Flagged repos: yara 29 (09-21 yara-only: 30), llm 14, behavioral 11 (VULN 5, THREAT 9); any 46, 23 shared
+  with ToFu. Behavioral 55% of checks inconclusive (gpt-4.1-mini schema) -> lower bound; 53/75 flagged
+  rows in Antonytm/mcp-sitecore-server, 2 of its claims verified FABRICATED against source (.ssh key write,
+  /etc/passwd read). TO DOUBLE-CHECK: hand-verify behavioral flags before quoting; api analyzer key (401).

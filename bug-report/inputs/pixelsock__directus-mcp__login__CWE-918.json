@@ -1,0 +1,1414 @@
+{
+ "repo": "pixelsock/directus-mcp",
+ "tool": "login",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "a1ccda361c3125b34de54697e05c95896cf8647d",
+ "draft": "pixelsock__directus-mcp__login__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1318,
+ "note": "1318 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '/etc/passwd\\x00', 'email': 'admin', 'password': 'admin'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://[::1]:8080', 'email': 'ipv6@example.com', 'password': 'ipv6pass'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'file:///etc/shadow', 'email': 'file@example.com', 'password': 'filepass'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'email': 'root@example.com', 'password': 'toor'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://0177.0.0.1', 'email': 'octal@example.com', 'password': 'octalpass'}",
+   "triggered_sanitizers": "['check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: connect ECONNREFUSED 127.0.0.1:80'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'email': 'user@example.com', 'password': 'hunter2'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'email': 'admin@example.com', 'password': 'password123'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: connect ECONNREFUSED 127.0.0.1:8500'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'email': 'evil@example.com', 'password': 'password'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"admin\", \"password\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \"email\": \"a: \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":n \"/etc/passwd\\\\u0000\", \"email\": \"a: \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":n \"/etc/passwd\\\\u0001\", \"email\": \"a: \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r', 'password': '\\U000e3a22'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"&assword\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"&ass\\n\\x00\\x00\\x00\\x00\\x00\\x00\\x00admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產汲㨢∠支捴瀯獡睳層〰〰≵䀬攢慭汩㨢∠摡業≮\\u202c☢獡ੳ\\x00\\x00\\x00愀浤湩', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產汲㨢∠支捴瀯獡睳層〰〰≵䀬攢慭汩㨢∠摡獭≮\\u202c☢獡ੳ\\x00\\x00\\x00愀浤湩', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '產汲㨢∠支捴瀯獡睳牵≬›⼢瑥⽣慰獳摷ぜ〰田Ⱒ≀浥楡≬›\\x00\\x00愀浤湩', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email \"password\": \"admin\"d\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email \"pas{word\": \"admin\"d\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email \"pas{word\": \"adm\\x1a\\x11]\\x1b\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",G\"email \"pas{word\": \"adm\\x1a\\x11]\\x1b\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",G\"email \"pas{word\": \"adm\\x1a\\x11#d]< \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\\",@\"email\": \"admin\", \"passwoassword\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x18\\x13]E \"/etc/passwd\\\\\",@\"email\": \"admin\", \"passwoassword\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x18\\x13]E \"/etc/passwd\\\\\",@\"email\": \": \"admin\", \"password\": \"admimin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x18\\x13]E \"/etc/passwd\\\\\",@\"{\"ur', 'email': '㨢\\U0010652f𗀯\\U00047773\\U00103075\\U000c2230\\U0009616d㨢', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x18\\x13]E \"/etc/pass,wd\\\\\",@\"{\"u', 'email': '≬›⼢瑥⽣慰獳摷畜', 'password': '\\U00103030\\U000d652c𦱩'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admn\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"adminsw \"password\": \"admn\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000asswd\\\\0000u\",@\"email\": \"adminsd\": \"admn\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000asswd\\\\0000u\",@\"ecail\": \"adminsd\": \"admn\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000asswd\\\\0000u\",@\";cail\": \"adminsd\": \"admn\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\0000u\",@\"email\": \"admiC\", \"password\": \"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc{\"ur/pas ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"admin\", \"password\": \"adiin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"admin\", \"password\": \"adin\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f!c/passwd\\\\u0000\",@\"email\": \"admin\", \"password\": \"adin\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f!c/passwd\\\\u0000\",@\"email\": \"adord\": \"adin\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc\\x0f\"ur/pas ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": b/etc\\x0f\"ur/pas ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url+++++++++\": b/etc\\x0f\"ur/', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url#\\x00\\x00\\x00\\x00\\x00\\x00\\x00+\": b/etc\\x0f\"ur/', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url#\\x00\\x00\\x00\\x00\\x00\\x00\\x00+\":c\\x0f\"ur/pas ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@exam\\x14le.com\", \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@exam\\x14le.com\", \": \"evord\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\k.\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@exam\\x14le.com\", \": \"evord\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\k.\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@exam\\x14le.com\": \"evord\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\k.\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@exam\\x14le.hcom\": \"evord\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@example.comb, \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@example.#omb, \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.i-i\", \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"adm]n', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"adm]n\"}', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urB\\x00\\x00\\x00tc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"adm]n\"}', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urB\\x00\\x00\\x00tc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"adm]n\"}\\x08', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urB\\x00\\x00\\x00tc/passwd\\\\0001u\",@\"email\": \"admin\", \"password\": \"adm]n\"}\\x08', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"rl\": \"/etc{\"ur/pas', 'email': '\\U0010652f\\U0010227b', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"rl\": sword\": \"p\"/e', 'email': '𧭣\\U0010af72\\U000f2073\\U00106374\\U000f7275', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"rl\": sword2: \"p\"/e', 'email': '𧭣\\U0010af72\\U000f2073\\U00106374\\U000f7275', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"rl\": sword2: \"p\"/etc{\"ur/pas /etc{\"ur/pa{\"url\": \"..\\\\\\\\..\\\\', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc{\"ur/\\x10as ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc{\"ur/zas ', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00103075\\U000c2230\\U000d6522𦱩𒈠\\U000e696d𢀬\\U00107361\\U0004726f𢀺\\U00096d64', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00103075\\U000c2230\\U000d6522𦱩𒈠\\U000e696d𢀬\\U00107361\\U0004726f\\U00106422\\U00096d20', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00103075\\U000c2230\\U000d6522𦱩𒈠\\U000e696d𢀬\\U00107361\\U0004726f\\U000d6422𦱩', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\U00103075', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r', 'password': '\\U00063a22'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..{\"url\":n \"/et\"a*min\"}++++++++++++++evil@example.com\", \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..{\"url\\\\..\\\\\\\\..{\"url\":n \"/et\"a*min\"}++++++++++++++evil@example.com\", \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urlt\"a*min\"}++++++++++++++evil@example.com\", \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urlt\\x7f\\x7f\"a*min\"}++++++++++++++evil@example.com\", \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"adminad', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"passwordd :\"aim\"nad', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"/etc/passwd\\\\0000\\x7f\\x7f\\x7f\\x7f\"email\": \"admin\", \"passwordd :\"aim\"nad', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur l\": \"admin\", \"passwordd :\"aim\"nad', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1c\\x00\\x00\\x00\\x00\\x00\\x00\\x00ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1c\\x00\\x00\\x00\\x00\\x00\\x00\\x00ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1c\\x00\\x00\\x00\\x00\\x00)\\x00\\x00ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00{\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00G\\x00\\x00\\x00\\x00\\x1c\\x00\\x00\\x00\\x00\\x00)\\x00\\x00ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'i', 'password': '索'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '索', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '索', 'password': '+++++++'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '索', 'password': '+++0++++'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't', 'email': '索', 'password': '+++0++++'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 't', 'email': '索ꮫꮫ', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '\\U00032e65', 'password': '\"'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ile.com\", \"passwordn\"}++;+++++++++{\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'idn\"}++;+++++++++{\"url\": \"..\\\\\\\\.+++{\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'idn\"}++;+++++++++{\"url\": \"..\\\\\\x7f\\x7f\\x7f\\x7f\\x7f\\\\.+++{\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '+', 'password': '}'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '索', 'password': '\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f++}n+\"+\\x7f\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f++}n+\"+\\x7f\\x7f\\x7f&$\\x17\\x00\\x00\\x00\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f++}n+\"+\\x7f\\x7f\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"adm\\x7f&$\\x17\\x00\\x00\\x00\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f++}n+\"+\\x7f\\x7f\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"adm\\x7f&$\\x17\\x00\\x7f\\x7f\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f++}n+\"+\\x7f\\x7f\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"adm\\x7f&$\\x17\\x00\\x7f\\x7f<<<<\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\0000u\",@\"*email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r */etc/passwd\\\\0000u\",@\"*email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r *et/c/passwd\\\\0000u\",@\"*email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r *et/c/pass\\\\0dw000u\",@\"*email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r *et/c/pa0dw000u\",@\"*email\": \"admin\", \"password\": \": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"admin\", \"pass\": \"adm\"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/ctc/passwd\\\\u0000\",@\"email\": \"admin\", \"pass\": \"adm\"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/ctc/passwd\\\\u0*00\",@\"email\": \"admin\", \"pass\": \"adm\"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/ctc/passwd\\\\u0*00\",@\"email\": \"admin\", \"pass\": \"adm\"ad\\x1din', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/ctc/passwd\\\\u0*00\",@\"email\": \"admin\", \"pass\": \"admaad\\x1din', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00', 'email': '\\U000b7d00', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@example.{\"url\": \"/etcom\", \"passwor', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u_l\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@example.{\"url\": \"/etcom\", \"passwor', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u_l\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windo\\x7f\\x7f\\x7f\\x7fwin.ini\", \"email\": \"evil@example.{\"url\": \"/etcom\", \"passwor', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'do\\x7f\\x7f\\x7f\\x7fwin.ini\", \"email\": \"evil@example.{\"url\": \"/etcom\", \"passwor', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'in\"}++++}++++++++++++++hhhhhhhhhhh', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'in\"}++++}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00++++++++++++++hhhhhhhhhhh', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'in\"}++\\x00\\x00\\x00\\x00++++++++++++++hhhhhhhhhhh', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'in\"}++\\x00\\x00\\x00\\x00+++++++++++++\\x7f\\x7f\\x7f\\x7f+hhhhhhhhhhh', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"ad\"admin', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",@\"email\": \"ad\"admin\\x00\\x7f\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur00\",@\"email\": \"ad\"admin\\x00\\x7f\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\"* \"email\": \"evil@example.com\", \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\"* \"email\": \"evil@example.com\", \"password\":(\"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\{i\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00ni\"* \"email\": \"evil@example.com\", \"password\":(\"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\{i\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00ni\"* \"email\": \"evil@example\"m.oc, \"password\":(\"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\{i\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00ni\"* \"email\": \"evil@example\"m.oc, \"passwor<\":(\"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': 'i\\x7f\\x7f&+\\x17\\x00\\x7f\\x7f\\x7f\\x01\\x7f\\x7f', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '#ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '=#ur{\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '=#ur{\\x7f\\x7f\\x7f\\x7f\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '=#\\x7f\\x7f\\x7f\\x7fur{\\x7f\\x7f\\x7f\\x7f\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00nnnnnnnnnnnnnnnnnnnnnnnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '㈢', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '⼯', 'password': '/'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i', 'email': '⼯', 'password': 'O'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x00\\x00...............................'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x19\\x00...............................'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x19\\x08...............................'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x19\\x08..........................................'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"emaiom\", \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\"&&&&&&&&&&&&&&, \"emaiom\", \"password\": \"password', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": {\"ur \"/etc/\"..passwd\\\\000\\\\', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": {\"ur \"/e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'email': '\\x00\\x00\\x00\\x00\\U000f6374\\U00102e2e\\U00107373', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": {\"ur \"/e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00.passwd\\\\000\\\\', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': 'i\\x7f\\x7f&+\\x7f\\x7f\\x7f\\x01\\x7f\\x7f', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admi\\x7f\\x7f~', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur (/etc/passwd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admi\\x7f\\x7f~', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur (/etc/passwd\\\\0000u\",@\"email\": \"admi\\x1b\", \"password\": \"admi\\x7f\\x7f~', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur (/etc/passwd\\\\0000u\",@\"email\": \"ad]mi\\x1b\", \"password\": \"admi\\x7f\\x7f~', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/\\x7f\\x7f\\x7f\\x7fpasswd\\\\0000u\",@\"email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/\\x7f\\x7f\\x7f\\x7fpasswd\\\\0000u\",@\"emlai:\"\"a dmin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/\\x7f\\x7f\\x7f\\x7fpasswd\\\\00\"\"a dmin\", \"password\": \"admssword\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/\\x7f\\x7f\\x7f\\x7fpasswd\\\\00\"\"a dmin\", \"pasQword\": \"admssword\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/\\x7f\\x7f\\x7f\\x7fpasswd\\\\0\\x1c\\x00\\x00\\x00\\x00\\x00\\x00\\x00n\", \"pasQword\": \"admssword\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"email\": \"admin\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"emai\\x14]E_]\\x1e\\x1b\\x10in\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"ema\\x14i]E_]\\x1e\\x1b\\x10in\", \"password\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"ema\\x14i]E_]\\x1e\\x1b\\x10ins a,\"\"psword\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r `\"/etc/passwd\\\\\\x17\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"ema\\x14i]E_]\\x1e\\x1b\\x10ins a,\"\"psword\": \"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+\\x17\\x00\\x00\\x00\\x00nnnnnnFnnnnnnnnnnnnnnnnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nnnnnnnnnnnnnnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nn\\x00nnnnnnnnnnnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nn\\x00nnnnnnnnnnnnn\\x1e\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nn\\x00nnnn~nnnnnnnn\\x1e\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&+nn\\x00nnnn~nnnnnnnn\\x1e\\x00nn\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nnn~nnnnnnnnnnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nnn~nn\\x1e\\x00\\x00\\x00\\x00\\x00\\x00\\x00nnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nninnn\\x1e\\x00\\x00\\x00\\x00\\x00\\x00\\x00nnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nninnn\\x1e\\x00z\\x00\\x00\\x00\\x00\\x00nnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&+nninnn\\x1e\\x00z\\x00\\x00\\x00\\x00\\x00nnnnnn\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '+', 'email': '+', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '+', 'email': '4', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x0b', 'email': '4', 'password': '+'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&+nnnnnnnnnnnnnnnnnnnnnn', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&\\x7f\\x7f\\x7f\\x7f+nnnnnnnnnnnnnnnnnnnnnn', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&\\x7f\\x7f\\x7f\\x7f+nnnn\\x7f+nnnnnnnnnnnnnnnnnnnnnnnn', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&\\x7f\\x7f\\x7f\\x7f+nnnn\\x7f+nnnnnnnnnnnnnnnn\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x1c', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&+\\x7f\\x7f\\x01~\\x00\\x00\\\\\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f&+\\x7f\\x7f\\x01~\\x00\\x00\\\\\\x7f\\x7f\\x7f\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': 'i\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x01\\x7f\\x7f', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': 'i\\x7f\\x7f\\x7f\\x7f(\\x7f\\x7f\\x7f\\x01\\x7f\\x7f', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f\\x7f{\"url\": \"/etc/p\\x7f(\\x7f\\x7f\\x7f\\x01', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f\\x7f{\"url\": \"/etc/p)(\\x7f\\x7f\\x7f\\x01', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'i\\x7f\\x7f\\x7f{\"url\":`[/etc/p)(\\x7f\\x7f\\x7f\\x01', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"', 'email': 'r \"/etc/passwd\\\\0000u\",@\"email\": \"adm\"admin', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '', 'password': 'i\\x7f\\x7f&+nnnnnn'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{\"ur\"', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '{\"\\x7f\\x7f\\x7f', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '{\"\\x7f', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': '{\"', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00', 'email': '\\x00\\U00033100\\U00106170\\U00106477\\U00103030Ⱒ\\U00016d65\\U0010226c\\U00046122\\U00046122', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00', 'email': '\\u3100\\U00033100\\U00106170\\U00106477\\U00103030Ⱒ\\U00016d65\\U0010226c\\U00046122\\U00046122', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00', 'email': '\\u3100\\U00033100\\U00106170\\U00106477\\U00103030Ⱒ\\U00046d65\\U00046122', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'email': 'i\\x7f\\x7f&', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"email\": \"evil@example.com\", \"password\": \"pa\\x00\\x00\\x00\\x00\\x00\\x00', 'email': '', 'password': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error: Authentication failed: Invalid URL'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

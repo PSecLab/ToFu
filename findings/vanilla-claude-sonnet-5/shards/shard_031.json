@@ -1,0 +1,924 @@
+{
+ "shard_id": "031",
+ "n_repos": 2,
+ "n_configs": 28,
+ "surface_loc": 21473,
+ "repos": [
+  {
+   "repo": "antoinebou12/uml-mcp",
+   "slug": "antoinebou12__uml-mcp",
+   "lang": "python",
+   "commit": "e3c007de860f0e4cdc9ed98e18e0fe84bba8d532",
+   "path": "eval/targets/antoinebou12__uml-mcp",
+   "surface_loc": 11236,
+   "tools": [
+    {
+     "name": "generate_uml",
+     "description": "Render one diagram. Returns url, playground, and chat markdown. Use output_format=png for inline bytes, or call generate_uml_image.",
+     "config": "antoinebou12__uml-mcp__generate_uml.json",
+     "hints": [
+      {
+       "file": "app.py",
+       "line": 551,
+       "text": "\"\"\"Input for an AG-UI diagram run (mirrors the ``generate_uml`` tool arguments).\"\"\""
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 191,
+       "text": "\"fields as generate_uml. Partial failures stay isolated per index.\""
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 195,
+       "text": "\"generate_uml_batch([{'diagram_type': 'mermaid', 'code': 'graph TD; A-->B;'}])\""
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 200,
+       "text": "def generate_uml_batch("
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 211,
+       "text": "\"Called generate_uml_batch: count=%s, output_dir=%s\","
+      }
+     ]
+    },
+    {
+     "name": "generate_uml_batch",
+     "description": "Render several diagrams with bounded concurrency. Each item uses the same fields as generate_uml. Partial failures stay isolated per index.",
+     "config": "antoinebou12__uml-mcp__generate_uml_batch.json",
+     "hints": [
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 195,
+       "text": "\"generate_uml_batch([{'diagram_type': 'mermaid', 'code': 'graph TD; A-->B;'}])\""
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 200,
+       "text": "def generate_uml_batch("
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 211,
+       "text": "\"Called generate_uml_batch: count=%s, output_dir=%s\","
+      },
+      {
+       "file": "mcp_core/tools/schemas.py",
+       "line": 323,
+       "text": "\"\"\"One indexed item returned by generate_uml_batch.\"\"\""
+      },
+      {
+       "file": "mcp_core/tools/schemas.py",
+       "line": 347,
+       "text": "\"\"\"Structured output for generate_uml_batch.\"\"\""
+      }
+     ]
+    },
+    {
+     "name": "generate_uml_image",
+     "description": "INLINE IMAGE: render a diagram as MCP ImageContent (PNG default) for chat. Use when the user asks to show or display the diagram. Fetches bytes even under URL-only.",
+     "config": "antoinebou12__uml-mcp__generate_uml_image.json",
+     "hints": [
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 242,
+       "text": "\"Use output_format=png for inline bytes, or call generate_uml_image.\""
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 294,
+       "text": "example=\"generate_uml_image('mermaid', 'graph TD; A-->B;', 'png')\","
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 298,
+       "text": "def generate_uml_image("
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 315,
+       "text": "\"Called generate_uml_image tool: type=%s, format=%s, code length=%s\","
+      },
+      {
+       "file": "mcp_core/tools/tool_decorator.py",
+       "line": 24,
+       "text": "_RENDER_TOOL_NAMES = frozenset({\"generate_uml\", \"generate_uml_image\"})"
+      }
+     ]
+    },
+    {
+     "name": "list_diagram_types",
+     "description": "List supported diagram types and formats. Optional filters: query, backend, output_format, limit.",
+     "config": "antoinebou12__uml-mcp__list_diagram_types.json",
+     "hints": [
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 61,
+       "text": "example=\"list_diagram_types(query='sequence', output_format='svg')\","
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 65,
+       "text": "def list_diagram_types("
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 80,
+       "text": "\"Called list_diagram_types: query=%s backend=%s format=%s limit=%s\","
+      },
+      {
+       "file": "mcp_core/tools/schemas.py",
+       "line": 38,
+       "text": "\"Use list_diagram_types when unsure.\""
+      },
+      {
+       "file": "mcp_core/tools/schemas.py",
+       "line": 180,
+       "text": "description=\"Diagram type to validate. Use list_diagram_types when unsure.\","
+      }
+     ]
+    },
+    {
+     "name": "validate_uml",
+     "description": "Validate diagram type, format, and syntax locally (no render). Set strict=true for extra Mermaid/D2 checks.",
+     "config": "antoinebou12__uml-mcp__validate_uml.json",
+     "hints": [
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 15,
+       "text": "from ..core.diagram_validation import validate_uml_inputs"
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 339,
+       "text": "example=\"validate_uml('class', '@startuml\\\\nclass A\\\\n@enduml', 'svg')\","
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 343,
+       "text": "def validate_uml("
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 358,
+       "text": "\"Called validate_uml tool: type=%s, code length=%s, strict=%s\","
+      },
+      {
+       "file": "mcp_core/tools/diagram_tools.py",
+       "line": 363,
+       "text": "return validate_uml_inputs(diagram_type, code, output_format, strict=strict)"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "VeriTeknik/pluggedin-mcp-proxy",
+   "slug": "VeriTeknik__pluggedin-mcp-proxy",
+   "lang": "node",
+   "commit": "ad142dae1aac61f8f9aacdc8aaf7dc75017a6bc8",
+   "path": "eval/targets/VeriTeknik__pluggedin-mcp-proxy",
+   "surface_loc": 10237,
+   "tools": [
+    {
+     "name": "pluggedin_ask_knowledge_base",
+     "description": "Ask questions and get AI-generated answers from your knowledge base. Returns structured JSON with answer, document sources, and metadata.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_ask_knowledge_base.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 23,
+       "text": "Use pluggedin_ask_knowledge_base to query the user's uploaded documents. Check the knowledge base when the user's question might relate to previously uploaded documents."
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 171,
+       "text": "name: \"pluggedin_ask_knowledge_base\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 636,
+       "text": "dataContent += `2. **pluggedin_ask_knowledge_base** - Performs a RAG query against documents\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 756,
+       "text": "staticContent += `**Knowledge Base (1):** pluggedin_ask_knowledge_base\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 845,
+       "text": "forceRefreshContent += `2. **pluggedin_ask_knowledge_base** - Performs a RAG query against documents\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_delete",
+     "description": "Delete clipboard entries by name, index, or clear all entries.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_delete.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 651,
+       "text": "dataContent += `14. **pluggedin_clipboard_delete** - Delete clipboard entries\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 860,
+       "text": "forceRefreshContent += `14. **pluggedin_clipboard_delete** - Delete clipboard entries\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1733,
+       "text": "#### 14. **pluggedin_clipboard_delete**"
+      },
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 305,
+       "text": "name: \"pluggedin_clipboard_delete\","
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_get",
+     "description": "Get clipboard entries. Specify name or idx for a single entry, or omit both to list all entries with pagination.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_get.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 650,
+       "text": "dataContent += `13. **pluggedin_clipboard_get** - Get clipboard entries with pagination\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 859,
+       "text": "forceRefreshContent += `13. **pluggedin_clipboard_get** - Get clipboard entries with pagination\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1723,
+       "text": "#### 13. **pluggedin_clipboard_get**"
+      },
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 284,
+       "text": "name: \"pluggedin_clipboard_get\","
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_list",
+     "description": "List all clipboard entries with metadata. Image values are truncated to first 1000 chars for preview.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_list.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 652,
+       "text": "dataContent += `15. **pluggedin_clipboard_list** - List all clipboard entries (metadata only)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 861,
+       "text": "forceRefreshContent += `15. **pluggedin_clipboard_list** - List all clipboard entries (metadata only)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1741,
+       "text": "#### 15. **pluggedin_clipboard_list**"
+      },
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 317,
+       "text": "name: \"pluggedin_clipboard_list\","
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_pop",
+     "description": "Pop the highest-indexed entry from the clipboard (LIFO behavior). Returns the entry value and removes it.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_pop.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 654,
+       "text": "dataContent += `17. **pluggedin_clipboard_pop** - Pop highest-indexed entry (LIFO)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 863,
+       "text": "forceRefreshContent += `17. **pluggedin_clipboard_pop** - Pop highest-indexed entry (LIFO)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1759,
+       "text": "#### 17. **pluggedin_clipboard_pop**"
+      },
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 351,
+       "text": "name: \"pluggedin_clipboard_pop\","
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_push",
+     "description": "Push a value to the indexed clipboard with auto-incrementing index. Useful for building ordered pipelines or stack-like operations.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_push.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 653,
+       "text": "dataContent += `16. **pluggedin_clipboard_push** - Push to indexed clipboard (auto-increment)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 862,
+       "text": "forceRefreshContent += `16. **pluggedin_clipboard_push** - Push to indexed clipboard (auto-increment)\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1749,
+       "text": "#### 16. **pluggedin_clipboard_push**"
+      },
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 339,
+       "text": "name: \"pluggedin_clipboard_push\","
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_clipboard_set",
+     "description": "Set a clipboard entry by name (semantic key) or index (array-like). Named entries are upserted; indexed entries fail if index exists. Max 2MB per entry.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_clipboard_set.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 26,
+       "text": "Use clipboard tools (pluggedin_clipboard_set/get/delete/list/push/pop) to pass data between agents or persist intermediate results. Named entries for semantic access, indexed entries for ordered pipel"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 649,
+       "text": "dataContent += `12. **pluggedin_clipboard_set** - Set a clipboard entry by name or index\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 759,
+       "text": "staticContent += `**Clipboard (7):** pluggedin_clipboard_set, pluggedin_clipboard_get, pluggedin_clipboard_delete, pluggedin_clipboard_list, pluggedin_clipboard_push, pluggedin_clipboard_pop\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 858,
+       "text": "forceRefreshContent += `12. **pluggedin_clipboard_set** - Set a clipboard entry by name or index\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1711,
+       "text": "#### 12. **pluggedin_clipboard_set**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_create_document",
+     "description": "Create and save AI-generated documents to the user's library in Plugged.in (requires API key)",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_create_document.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 29,
+       "text": "Use pluggedin_create_document for reports, analyses, or generated artifacts. Search with pluggedin_search_documents, list with pluggedin_list_documents, retrieve with pluggedin_get_document, and updat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 643,
+       "text": "dataContent += `7. **pluggedin_create_document** - Create AI-generated documents\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 758,
+       "text": "staticContent += `**Documents (5):** pluggedin_create_document, pluggedin_list_documents, pluggedin_search_documents, pluggedin_get_document, pluggedin_update_document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 852,
+       "text": "forceRefreshContent += `7. **pluggedin_create_document** - Create AI-generated documents\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1664,
+       "text": "#### 7. **pluggedin_create_document**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_delete_notification",
+     "description": "Delete a notification from the Plugged.in system",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_delete_notification.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 38,
+       "text": "Use pluggedin_send_notification to alert the user with optional email delivery. Manage notifications with pluggedin_list_notifications, pluggedin_mark_notification_done, and pluggedin_delete_notificat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 286,
+       "text": "name: \"pluggedin_delete_notification\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 641,
+       "text": "dataContent += `6. **pluggedin_delete_notification** - Delete a notification\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 757,
+       "text": "staticContent += `**Notifications (4):** pluggedin_send_notification, pluggedin_list_notifications, pluggedin_mark_notification_done, pluggedin_delete_notification\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 850,
+       "text": "forceRefreshContent += `6. **pluggedin_delete_notification** - Delete a notification\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_discover_tools",
+     "description": "Triggers discovery of tools (and resources/templates) for configured MCP servers in the Pluggedin App.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_discover_tools.json",
+     "hints": [
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 151,
+       "text": "name: \"pluggedin_discover_tools\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 634,
+       "text": "dataContent += `1. **pluggedin_discover_tools** - Triggers discovery of tools for configured MCP servers\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 755,
+       "text": "staticContent += `**Discovery (1):** pluggedin_discover_tools\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 763,
+       "text": "staticContent += `Note: You can call pluggedin_discover_tools again to see the updated results.`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 843,
+       "text": "forceRefreshContent += `1. **pluggedin_discover_tools** - Triggers discovery of tools for configured MCP servers\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_get_document",
+     "description": "Retrieve a specific document's full content by ID. Use this after pluggedin_search_documents to get the complete content of documents you found. Set includeContent=true to get the full text.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_get_document.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 29,
+       "text": "Use pluggedin_create_document for reports, analyses, or generated artifacts. Search with pluggedin_search_documents, list with pluggedin_list_documents, retrieve with pluggedin_get_document, and updat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 646,
+       "text": "dataContent += `10. **pluggedin_get_document** - Retrieve a specific document by ID\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 758,
+       "text": "staticContent += `**Documents (5):** pluggedin_create_document, pluggedin_list_documents, pluggedin_search_documents, pluggedin_get_document, pluggedin_update_document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 855,
+       "text": "forceRefreshContent += `10. **pluggedin_get_document** - Retrieve a specific document by ID\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1692,
+       "text": "#### 10. **pluggedin_get_document**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_list_documents",
+     "description": "List documents with filtering options from the user's library (requires API key)",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_list_documents.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 29,
+       "text": "Use pluggedin_create_document for reports, analyses, or generated artifacts. Search with pluggedin_search_documents, list with pluggedin_list_documents, retrieve with pluggedin_get_document, and updat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 644,
+       "text": "dataContent += `8. **pluggedin_list_documents** - List documents with filtering\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 758,
+       "text": "staticContent += `**Documents (5):** pluggedin_create_document, pluggedin_list_documents, pluggedin_search_documents, pluggedin_get_document, pluggedin_update_document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 853,
+       "text": "forceRefreshContent += `8. **pluggedin_list_documents** - List documents with filtering\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1675,
+       "text": "#### 8. **pluggedin_list_documents**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_list_notifications",
+     "description": "List notifications from the Plugged.in system with optional filters for unread only and result limit",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_list_notifications.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 38,
+       "text": "Use pluggedin_send_notification to alert the user with optional email delivery. Manage notifications with pluggedin_list_notifications, pluggedin_mark_notification_done, and pluggedin_delete_notificat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 227,
+       "text": "name: \"pluggedin_list_notifications\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 639,
+       "text": "dataContent += `4. **pluggedin_list_notifications** - List notifications with filters\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 757,
+       "text": "staticContent += `**Notifications (4):** pluggedin_send_notification, pluggedin_list_notifications, pluggedin_mark_notification_done, pluggedin_delete_notification\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 848,
+       "text": "forceRefreshContent += `4. **pluggedin_list_notifications** - List notifications with filters\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_mark_notification_done",
+     "description": "Mark a notification as done in the Plugged.in system",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_mark_notification_done.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 38,
+       "text": "Use pluggedin_send_notification to alert the user with optional email delivery. Manage notifications with pluggedin_list_notifications, pluggedin_mark_notification_done, and pluggedin_delete_notificat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 260,
+       "text": "name: \"pluggedin_mark_notification_done\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 640,
+       "text": "dataContent += `5. **pluggedin_mark_notification_done** - Mark a notification as done\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 757,
+       "text": "staticContent += `**Notifications (4):** pluggedin_send_notification, pluggedin_list_notifications, pluggedin_mark_notification_done, pluggedin_delete_notification\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 849,
+       "text": "forceRefreshContent += `5. **pluggedin_mark_notification_done** - Mark a notification as done\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_memory_details",
+     "description": "Get full details for selected memories (progressive disclosure Layer 3). Use after pluggedin_memory_search to retrieve complete content for specific memories.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_memory_details.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 20,
+       "text": "Use pluggedin_memory_search for semantic search (returns lightweight 50-150 token summaries). Follow up with pluggedin_memory_details only for memories you need full content on. This progressive discl"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 660,
+       "text": "dataContent += `22. **pluggedin_memory_details** - Get full details for selected memories\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 760,
+       "text": "staticContent += `**Memory (5):** pluggedin_memory_session_start, pluggedin_memory_session_end, pluggedin_memory_observe, pluggedin_memory_search, pluggedin_memory_details\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 869,
+       "text": "forceRefreshContent += `22. **pluggedin_memory_details** - Get full details for selected memories\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1799,
+       "text": "#### 22. **pluggedin_memory_details**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_memory_observe",
+     "description": "Record an observation during a memory session. Observations are classified by the Analytics Agent into memory ring types (procedures, practice, longterm, shocks).",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_memory_observe.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 12,
+       "text": "During the session, use pluggedin_memory_observe to record important observations:"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 658,
+       "text": "dataContent += `20. **pluggedin_memory_observe** - Record an observation during a session\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 760,
+       "text": "staticContent += `**Memory (5):** pluggedin_memory_session_start, pluggedin_memory_session_end, pluggedin_memory_observe, pluggedin_memory_search, pluggedin_memory_details\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 867,
+       "text": "forceRefreshContent += `20. **pluggedin_memory_observe** - Record an observation during a session\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1779,
+       "text": "#### 20. **pluggedin_memory_observe**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_memory_search",
+     "description": "Search memories using semantic similarity. Returns lightweight results (50-150 tokens each) for token-efficient progressive disclosure. Use pluggedin_memory_details for full content.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_memory_search.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 20,
+       "text": "Use pluggedin_memory_search for semantic search (returns lightweight 50-150 token summaries). Follow up with pluggedin_memory_details only for memories you need full content on. This progressive discl"
+      },
+      {
+       "file": "src/server-instructions.ts",
+       "line": 44,
+       "text": "Use pluggedin_memory_search_with_context instead of pluggedin_cbp_query when you want BOTH personal memories AND collective patterns in one call, filtered through archetypes. It returns results filter"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 659,
+       "text": "dataContent += `21. **pluggedin_memory_search** - Search memories semantically\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 760,
+       "text": "staticContent += `**Memory (5):** pluggedin_memory_session_start, pluggedin_memory_session_end, pluggedin_memory_observe, pluggedin_memory_search, pluggedin_memory_details\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 868,
+       "text": "forceRefreshContent += `21. **pluggedin_memory_search** - Search memories semantically\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_memory_session_end",
+     "description": "End a memory session and trigger Z-report generation (AI-compressed session summary).",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_memory_session_end.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 11,
+       "text": "Start every conversation with pluggedin_memory_session_start, end with pluggedin_memory_session_end (triggers a Z-report \u2014 an end-of-session summary digest)."
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 657,
+       "text": "dataContent += `19. **pluggedin_memory_session_end** - End session and trigger Z-report\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 760,
+       "text": "staticContent += `**Memory (5):** pluggedin_memory_session_start, pluggedin_memory_session_end, pluggedin_memory_observe, pluggedin_memory_search, pluggedin_memory_details\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 866,
+       "text": "forceRefreshContent += `19. **pluggedin_memory_session_end** - End session and trigger Z-report\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1773,
+       "text": "#### 19. **pluggedin_memory_session_end**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_memory_session_start",
+     "description": "Start a new memory session to begin capturing observations. Returns a session UUID and memory_session_id for subsequent operations.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_memory_session_start.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 11,
+       "text": "Start every conversation with pluggedin_memory_session_start, end with pluggedin_memory_session_end (triggers a Z-report \u2014 an end-of-session summary digest)."
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 656,
+       "text": "dataContent += `18. **pluggedin_memory_session_start** - Start a memory session\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 760,
+       "text": "staticContent += `**Memory (5):** pluggedin_memory_session_start, pluggedin_memory_session_end, pluggedin_memory_observe, pluggedin_memory_search, pluggedin_memory_details\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 865,
+       "text": "forceRefreshContent += `18. **pluggedin_memory_session_start** - Start a memory session\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1766,
+       "text": "#### 18. **pluggedin_memory_session_start**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_search_documents",
+     "description": "Search for specific documents in your library. Returns document metadata (ID, title, snippet). To retrieve full content, use pluggedin_get_document with the returned document ID.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_search_documents.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 29,
+       "text": "Use pluggedin_create_document for reports, analyses, or generated artifacts. Search with pluggedin_search_documents, list with pluggedin_list_documents, retrieve with pluggedin_get_document, and updat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 645,
+       "text": "dataContent += `9. **pluggedin_search_documents** - Search documents semantically\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 758,
+       "text": "staticContent += `**Documents (5):** pluggedin_create_document, pluggedin_list_documents, pluggedin_search_documents, pluggedin_get_document, pluggedin_update_document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 854,
+       "text": "forceRefreshContent += `9. **pluggedin_search_documents** - Search documents semantically\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1684,
+       "text": "#### 9. **pluggedin_search_documents**"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_send_notification",
+     "description": "Send custom notifications through the Plugged.in system with optional email delivery. You can provide a custom title or let the system use a localized default.",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_send_notification.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 38,
+       "text": "Use pluggedin_send_notification to alert the user with optional email delivery. Manage notifications with pluggedin_list_notifications, pluggedin_mark_notification_done, and pluggedin_delete_notificat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 183,
+       "text": "name: \"pluggedin_send_notification\","
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 638,
+       "text": "dataContent += `3. **pluggedin_send_notification** - Send custom notifications with optional email\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 757,
+       "text": "staticContent += `**Notifications (4):** pluggedin_send_notification, pluggedin_list_notifications, pluggedin_mark_notification_done, pluggedin_delete_notification\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 847,
+       "text": "forceRefreshContent += `3. **pluggedin_send_notification** - Send custom notifications with optional email\\n`;"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_setup",
+     "description": "Get started with Plugged.in MCP - shows setup instructions and API key configuration (no API key required)",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_setup.json",
+     "hints": [
+      {
+       "file": "src/tools/static-tools.ts",
+       "line": 34,
+       "text": "name: \"pluggedin_setup\","
+      },
+      {
+       "file": "src/utils/prompts.ts",
+       "line": 256,
+       "text": "#### 2. **pluggedin_setup**"
+      },
+      {
+       "file": "src/handlers/static-handlers.ts",
+       "line": 148,
+       "text": "- \\`pluggedin_setup\\` - This help system (no API key required)"
+      },
+      {
+       "file": "src/handlers/static-handlers.ts",
+       "line": 152,
+       "text": "For more help, try: \\`pluggedin_setup\\` with topic: \"api_key\", \"configuration\", or \"troubleshooting\"`;"
+      },
+      {
+       "file": "src/handlers/static-handlers-helpers.ts",
+       "line": 11,
+       "text": "For detailed setup instructions, run: pluggedin_setup"
+      }
+     ]
+    },
+    {
+     "name": "pluggedin_update_document",
+     "description": "Update or append to an existing AI-generated document (requires API key)",
+     "config": "VeriTeknik__pluggedin-mcp-proxy__pluggedin_update_document.json",
+     "hints": [
+      {
+       "file": "src/server-instructions.ts",
+       "line": 29,
+       "text": "Use pluggedin_create_document for reports, analyses, or generated artifacts. Search with pluggedin_search_documents, list with pluggedin_list_documents, retrieve with pluggedin_get_document, and updat"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 647,
+       "text": "dataContent += `11. **pluggedin_update_document** - Update or append to a document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 758,
+       "text": "staticContent += `**Documents (5):** pluggedin_create_document, pluggedin_list_documents, pluggedin_search_documents, pluggedin_get_document, pluggedin_update_document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 856,
+       "text": "forceRefreshContent += `11. **pluggedin_update_document** - Update or append to a document\\n`;"
+      },
+      {
+       "file": "src/mcp-proxy.ts",
+       "line": 1700,
+       "text": "#### 11. **pluggedin_update_document**"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,99 @@
+
+ === Uncaught Python exception: ===
+SystemExit: 0
+Traceback (most recent call last):
+  File "/home/mza6485/toolfuzzer/src/fuzzer.py", line 349, in test_one_input
+    sys.exit(0)
+    ~~~~~~~~^^^
+SystemExit: 0
+
+
+INFO:src.cli:Loaded configuration from /home/mza6485/toolfuzzer/eval/configs/aaronsb__google-workspace-mcp__manage_docs.json
+INFO:src.llm:LLM backend: model=gpt-4.1 base_url=https://api.openai.com/v1 json_mode=True json_attempts=3 temperature=0.0 seed=20260910
+INFO:src.llm:LLM backend: reasoning_effort= max_tokens=4096
+INFO:src.cli:Starting fuzzer on tool 'manage_docs' for 60 seconds...
+INFO:src.fuzzer:
+==================== STARTING COVERAGE-GUIDED FUZZING FOR TOOL: manage_docs ====================
+INFO:src.fuzzer:[manage_docs] Using runner: JSRunner
+INFO:src.fuzzer:[manage_docs] Instrumenting JS fake coverage helper module.
+INFO: Instrumenting src.runners.fake_coverage
+INFO:root:Selecting relevant sanitizers for 'manage_docs'...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:{
+  "selected_sanitizers": [
+    "check_introspection_prototype_pollution",
+    "check_introspection_format_string",
+    "check_introspection_log_injection"
+  ],
+  "rules": {
+    "check_introspection_prototype_pollution": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_format_string": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_log_injection": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    }
+  }
+}
+INFO:src.llm:LLM_SELECTION_OK tool=manage_docs attempt=1 n_selected=3 n_dropped=0
+INFO:root:Sanitizers selected: ['check_introspection_prototype_pollution', 'check_introspection_format_string', 'check_introspection_log_injection']
+INFO:root:Sanitizer rules: {'check_introspection_prototype_pollution': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_format_string': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_log_injection': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}}
+INFO:root:[LLM] Generation of smart seed corpus for 'manage_docs' using Seed Bank...
+INFO:root:SEEDGEN_CLASSES tool=manage_docs categories=['path_traversal'] n_sanitizers_mapped=1 n_unmapped=12
+WARNING:root:SEEDGEN_UNMAPPED tool=manage_docs n=12 sanitizers=['check_introspection_prototype_pollution', 'check_introspection_format_string', 'check_introspection_log_injection', 'check_unexpected_crash', 'check_introspection_memory_access_violation', 'check_resource_exhaustion', 'check_introspection_deadlock', 'check_unhandled_promise_rejection', 'check_process_and_fd_leaks', 'check_introspection_incomplete_cleanup', 'check_introspection_sensitive_error_leak', 'check_introspection_sensitive_data_logging'] -- no adversarial input class exists for these; their oracle can only fire incidentally
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:root:Seed generation attempt 1 failed (no parsable JSON in LLM response (Expecting ',' delimiter: line 32 column 16 (char 787))).
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:root:Seed generation attempt 2 failed (no parsable JSON in LLM response (Unterminated string starting at: line 32 column 13 (char 784))).
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:root:Seed generation attempt 3 failed (no parsable JSON in LLM response (Unterminated string starting at: line 32 column 13 (char 784))).
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+WARNING:root:Seed generation attempt 4 failed (no parsable JSON in LLM response (Expecting ',' delimiter: line 32 column 16 (char 787))).
+WARNING:root:LLM_SEEDGEN_FALLBACK deterministic local mapping in use (no LLM seeds)
+INFO:root:[Seed Gen] Using local fallback mapping mechanism with multi-type fuzzing...
+INFO: Using built-in libfuzzer
+WARNING: Failed to find function "__sanitizer_acquire_crash_state".
+WARNING: Failed to find function "__sanitizer_print_stack_trace".
+WARNING: Failed to find function "__sanitizer_set_death_callback".
+
+
+WARNING: unrecognized flag '-pulse=2'; use -help=1 to list all flags
+
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1829917283
+INFO:       77 files found in /home/mza6485/toolfuzzer/eval/corpora_gpt41-corpus/aaronsb__google-workspace-mcp__manage_docs
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO:src.fuzzer:EXEC_SUMMARY tool=manage_docs n_exec=1 n_success=0 success_rate=0.000
+INFO:src.fuzzer:EXEC_ERROR n=1 detail="[{'type': 'text', 'text': 'Error: A valid email address is required for this operation'}]"
+INFO: seed corpus: files: 77 min: 180b max: 211b total: 14852b rss: 182Mb
+#64	pulse  cov: 370 ft: 786 corp: 5/917b exec/s: 32 rss: 182Mb
+#78	INITED cov: 370 ft: 786 corp: 5/917b exec/s: 39 rss: 182Mb
+#128	pulse  cov: 370 ft: 786 corp: 5/917b lim: 196 exec/s: 32 rss: 182Mb
+#161	REDUCE cov: 370 ft: 786 corp: 5/913b lim: 196 exec/s: 26 rss: 182Mb L: 176/196 MS: 3 InsertRepeatedBytes-InsertRepeatedBytes-EraseBytes-
+#256	pulse  cov: 370 ft: 786 corp: 5/913b lim: 196 exec/s: 28 rss: 182Mb
+#300	REDUCE cov: 370 ft: 786 corp: 5/889b lim: 196 exec/s: 27 rss: 182Mb L: 156/196 MS: 1 EraseBytes-
+INFO:src.fuzzer:EXEC_SUMMARY tool=manage_docs n_exec=500 n_success=0 success_rate=0.000
+INFO:src.fuzzer:EXEC_ERROR n=485 detail="[{'type': 'text', 'text': 'Error: A valid email address is required for this operation'}]"
+INFO:src.fuzzer:EXEC_ERROR n=9 detail="[{'type': 'text', 'text': 'Error: Unknown docs operation: 123'}]"
+INFO:src.fuzzer:EXEC_ERROR n=2 detail="[{'type': 'text', 'text': 'Error: Unknown docs operation: true'}]"
+ERROR:src.fuzzer:NOT_EXECUTABLE tool=manage_docs -- all 2 executions returned an error, so NO sanitizer could fire and coverage cannot vary. This run is NOT evidence that the tool is clean. Most common cause: the tool is a client for a backend/credential that is not present in this environment.
+ERROR:src.fuzzer:FAILFAST tool=manage_docs -- stopping after 500 executions, none of which succeeded. The remaining budget cannot change this. This is NOT a clean run.
+INFO:src.fuzzer:[FUZZING METRICS] Total Executions: 500 | Duration: 19.15s | Speed: 26.11 exec/s
+INFO:src.fuzzer:EXEC_SUMMARY tool=manage_docs n_exec=500 n_success=0 success_rate=0.000
+INFO:src.fuzzer:EXEC_ERROR n=485 detail="[{'type': 'text', 'text': 'Error: A valid email address is required for this operation'}]"
+INFO:src.fuzzer:EXEC_ERROR n=9 detail="[{'type': 'text', 'text': 'Error: Unknown docs operation: 123'}]"
+INFO:src.fuzzer:EXEC_ERROR n=2 detail="[{'type': 'text', 'text': 'Error: Unknown docs operation: true'}]"
+ERROR:src.fuzzer:NOT_EXECUTABLE tool=manage_docs -- all 2 executions returned an error, so NO sanitizer could fire and coverage cannot vary. This run is NOT evidence that the tool is clean. Most common cause: the tool is a client for a backend/credential that is not present in this environment.
+INFO:src.fuzzer:Fuzzing session completed. No silent bugs detected with current coverage.
+==1262526== ERROR: libFuzzer: fuzz target exited
+SUMMARY: libFuzzer: fuzz target exited
+MS: 5 CopyPart-ShuffleBytes-ChangeBit-CopyPart-ChangeBinInt-; base unit: d4a79b62986bac93fc981bc6b69590d5026671c1
+0x7b,0x22,0x6f,0x70,0x65,0x72,0x61,0x74,0x69,0x6f,0x6e,0x22,0x3a,0x20,0x22,0x67,0x65,0x74,0x22,0x2c,0x20,0x22,0x61,0x62,0x49,0x64,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x20,0x22,0x74,0x69,0x74,0x6c,0x65,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x20,0x22,0x74,0x65,0x78,0x74,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x20,0x22,0x69,0x6e,0x64,0x65,0x78,0x22,0x3a,0x20,0x31,0x2c,0x20,0x22,0x66,0x69,0x6e,0x64,0x54,0x2c,0x20,0x22,0x74,0x69,0x74,0x6c,0x65,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x20,0x22,0x74,0x65,0x78,0x74,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x1b,0x2c,0x20,0x22,0x69,0x6e,0x64,0x65,0x78,0x22,0x3a,0x20,0x31,0x2c,0x20,0x22,0x66,0x69,0x4e,0x64,0x54,0x65,0x78,0x74,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x20,0x22,0x72,0x65,0x70,0x6c,0x61,0x63,0x65,0x57,0x69,0x74,0x68,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x6c,0x65,0x22,0x3a,0x20,0x22,0x74,0x65,0x73,0x74,0x22,0x2c,0x65,0x22,0x3a,0x20,0x74,0x72,0x75,0x65,0x7d,
+{\"operation\": \"get\", \"abId\": \"test\", \"title\": \"test\", \"text\": \"test\", \"index\": 1, \"findT, \"title\": \"test\", \"text\": \"test\033, \"index\": 1, \"fiNdText\": \"test\", \"replaceWith\": \"testle\": \"test\",e\": true}
+artifact_prefix='/tmp/'; Test unit written to /tmp/crash-cf647856d58282331c0fc5c41dec32ced90136c3
+Base64: eyJvcGVyYXRpb24iOiAiZ2V0IiwgImFiSWQiOiAidGVzdCIsICJ0aXRsZSI6ICJ0ZXN0IiwgInRleHQiOiAidGVzdCIsICJpbmRleCI6IDEsICJmaW5kVCwgInRpdGxlIjogInRlc3QiLCAidGV4dCI6ICJ0ZXN0GywgImluZGV4IjogMSwgImZpTmRUZXh0IjogInRlc3QiLCAicmVwbGFjZVdpdGgiOiAidGVzdGxlIjogInRlc3QiLGUiOiB0cnVlfQ==

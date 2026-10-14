@@ -1,0 +1,98 @@
+{
+ "repo": "hijaz/postmancer",
+ "tool": "save_request",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "d71f38e14421a3ff5fa65b335f164c1a0b002d5b",
+ "draft": "hijaz__postmancer__save_request__CWE-79.md",
+ "logs_read": 9,
+ "n_distinct_inputs": 12,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'ssrf_collection', 'request_name': 'local_ip_test', 'request': {'url': 'http://127.0.0.1:8500', 'method': 'G{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{ET', 'headers': {}, 'body': '', 'query_params': {}, 'timeout': 1, 'auth': {'type': 'basic', 'username': 'a]min', 'password': 'password'}}, 'description': 'SSRF test with loopback IP'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Validation error: request.method: Invalid enum value. Expected 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS', received 'G{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{ET'\"}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"col\\x1bl\\x1c\\x0b\\x0fon_nme\": \"_test\", \"request\": {\"url\": \"htt://18\\x03.01:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}, \"tion\": \"S{{{{{', 'request_name': '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{SRF tes', 'request': {'url': 'htt://8.01:8500', 'method': 'GET', 'headvt!': {'type': 'bwd'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{SRF tes\\' to collection \\'\"col\\x1bl\\x1c\\x0b\\x0fon_nme\": \"_test\", \"request\": {\"url\": \"htt://18\\x03.01:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}, \"tion\": \"S{{{{{\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"col\\x1bl\\x1c\\x0b\\x0fon_nme\": \"_test\", \"request\": {\"url\": \"htt://18\\x03.01:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}, \"tion\": \"S{{{{{', 'request_name': '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{n{{{{{{{{{{{{{{{{{{{{{{{{{{{{SRF te', 'request': {'url': 'htt://8.01:8500', 'method': 'GET', 'headvt!': {'type': 'bwd'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{n{{{{{{{{{{{{{{{{{{{{{{{{{{{{SRF te\\' to collection \\'\"col\\x1bl\\x1c\\x0b\\x0fon_nme\": \"_test\", \"request\": {\"url\": \"htt://18\\x03.01:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}, \"tion\": \"S{{{{{\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'ssrf_collection', 'request_name': '{{{{{{{{{{{{{{{ame\": \"_test\", \"request\": {\"url\": \"http://126.0.0.1:8500\", \"method\": \"', 'request': {'url': 'http://126.0.0.1:8500', 'method': 'GET', 'headers': {}, 'timeout': 1, 'auest': {'url': 'http://127.0.0.1ard'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'{{{{{{{{{{{{{{{ame\": \"_test\", \"request\": {\"url\": \"http://126.0.0.1:8500\", \"method\": \"\\' to collection \\'ssrf_collection\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'ssr!_collection', 'request_name': '{{{{{{{{{{{{{{{ame\": \"_test\", \"request\": {\"url\": \"http://126.0.0.1:8500\", \"method\": \"', 'request': {'url': 'http://126.0.0.1:8500', 'method': 'GET', 'headers': {}, 'timeout': 1, 'auest': {'url': 'http://127.0.0.1ard'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'{{{{{{{{{{{{{{{ame\": \"_test\", \"request\": {\"url\": \"http://126.0.0.1:8500\", \"method\": \"\\' to collection \\'ssr!_collection\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"collec\\x7f\\x7f\\x7f\\x7f_name\": \"ssrf_collectionl_pi_test\", \"requ\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fest\": {\"url\": \"http://127.0.0.1:8500\", \"method\": \"GET\", \"header', 'request_name': 'amsimeout\": 1, \"auth\": {\"type\": \"ubasic\\x7f\\x7f\\x7f\\x7f\", \"{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'request': {'url': 'http://127.0.0.1:8500', 'method': 'GET', 'headersamsimeout': 1, 'auth': {'type': 'basic', 'username': 'a]min', 'password': 'password'}}, 'description': 'SSRF tesP'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'amsimeout\": 1, \"auth\": {\"type\": \"ubasic\\x7f\\x7f\\x7f\\x7f\", \"{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\' to collection \\'\"collec\\x7f\\x7f\\x7f\\x7f_name\": \"ssrf_collectionl_pi_test\", \"requ\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fest\": {\"url\": \"http://127.0.0.1:8500\", \"method\": \"GET\", \"header\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'p{{{{{{{{{{{{{{{ath_travein_url', 'request_name': '䕇≔\\u202c栢慥敤獲㨢笠ⱽ∠潢祤㨢∠Ⱒ∠畱牥役慰慲獭㨢笠ⱽ∠楴敭畯≴›〱\\u202c愢瑵≨›≻祴数㨢∠灡彩敫≹\\u202c欢祥㨢∠灡歩祥Ⱒ∠慶畬≥›猢捥敲≴\\u202c椢≮›栢慥敤≲\\u202c渢浡≥›堢䄭䥐䬭奅索ⱽ∠敤捳楲瑰潩≮›倢瑡\\u2068牴癡牥慳\\u206c湩唠', 'request': {'url': 'http://example.com/../../.3/../etc/passwd', 'method': 'GET', 'headers': {}, 'body': '', 'query_params': {}, 'timeout': 10, 'auth': {'type': 'api_key', 'key': 'apikey', 'value': 'secret', 'in': 'header', 'name': 'X-API-KEY'}}, 'description': 'Path traversal in URL'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Successfully saved request '䕇≔\\u202c栢慥敤獲㨢笠ⱽ∠潢祤㨢∠Ⱒ∠畱牥役慰慲獭㨢笠ⱽ∠楴敭畯≴›〱\\u202c愢瑵≨›≻祴数㨢∠灡彩敫≹\\u202c欢祥㨢∠灡歩祥Ⱒ∠慶畬≥›猢捥敲≴\\u202c椢≮›栢慥敤≲\\u202c渢浡≥›堢䄭䥐䬭奅索ⱽ∠敤捳楲瑰潩≮›倢瑡\\u2068牴癡牥慳\\u206c湩唠' to collection 'p{{{{{{{{{{{{{{{ath_travein_url'.\"}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'ssrf_collection', 'request_name': 'T\", \"headers\": {}, \"bod{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{y\": \"\", \"query,_param', 'request': {'url': 'http://127.0.0.1:8500', 'method': 'GET', 'headers': {}, 'bod{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{y': '', 'query,_params': {}, 'timeout': 1, 'auth': {'type': 'basic', 'username': 'admin', 'password': 'password'}}, 'description': 'SSRF test with loopback IP'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'T\", \"headers\": {}, \"bod{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{y\": \"\", \"query,_param\\' to collection \\'ssrf_collection\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"coll\\x1b\\x1c\\x0b\": \"_test\", \"request\": {\"url\": \"htt://14\\x03.01{{{{{{{{{{{{{{{{{{{{{{{:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}},', 'request_name': '\\U00097422\\U0010226e\\U00105322\\U00102046瑳楯\\U000c6874\\U00036162', 'request': {'url': 'htt://4.01{{{{{{{{{{{{{{{{{{{{{{{:8500', 'method': 'GET', 'headvt!': {'type': 'bwd'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'\\U00097422\\U0010226e\\U00105322\\U00102046瑳楯\\U000c6874\\U00036162\\' to collection \\'\"coll\\x1b\\x1c\\x0b\": \"_test\", \"request\": {\"url\": \"htt://14\\x03.01{{{{{{{{{{{{{{{{{{{{{{{:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}},\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"coll\\x1b\\x1c\\x0b\": \"_test\", \"request\": {\"url\": \"htt://14\\x03.01{{{{{{{:{{{{{{{{{{{{{{{{:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}', 'request_name': '\\U00102220𦹯\\U00102220䙒\\U00107365\\U00096f77\\U00087470\\U0001626f', 'request': {'url': 'htt://4.01{{{{{{{{{{{{{{{{{{{{{{{:8500', 'method': 'GET', 'headvt!': {'type': 'bwd'}}, 'description': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'\\U00102220𦹯\\U00102220䙒\\U00107365\\U00096f77\\U00087470\\U0001626f\\' to collection \\'\"coll\\x1b\\x1c\\x0b\": \"_test\", \"request\": {\"url\": \"htt://14\\x03.01{{{{{{{:{{{{{{{{{{{{{{{{:8500\", \"method\": \"GET\", \"headvt!\": {\"type\": \"bwd\"}}\\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': 'ssrf_collectio{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{nl_pi_test', 'request_name': '瑨灴⼺ㄯ㜲〮〮ㄮ㠺〵∰\\u202c洢瑥潨≤›䜢呅Ⱒ∠敨摡牥慳獭浩潥瑵㨢ㄠ\\u202c愢瑵≨›≻祴数㨢∠拵獡捩\\uffff\\uffffⰢ∠獵牥慮敭㨢∠嵡業≮\\u202c瀢獡睳牯≤›瀢獡睳牯≤絽\\u202c搢獥牣灩楴湯㨢∠卓䙒琠', 'request': {'url': 'http://127.0.0.1:8500', 'method': 'GET', 'headersamsimeout': 1, 'auth': {'type': 'basic', 'username': 'a]min', 'password': 'password'}}, 'description': 'SSRF tesP'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Successfully saved request '瑨灴⼺ㄯ㜲〮〮ㄮ㠺〵∰\\u202c洢瑥潨≤›䜢呅Ⱒ∠敨摡牥慳獭浩潥瑵㨢ㄠ\\u202c愢瑵≨›≻祴数㨢∠拵獡捩\\uffff\\uffffⰢ∠獵牥慮敭㨢∠嵡業≮\\u202c瀢獡睳牯≤›瀢獡睳牯≤絽\\u202c搢獥牣灩楴湯㨢∠卓䙒琠' to collection 'ssrf_collectio{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{nl_pi_test'.\"}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'collection_name': '\"clolection_name\": \"ssrf_collectio{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{nl_pi_test\", \"request\": {\"url\": ', 'request_name': '瑨灴⼺ㄯ㜲〮〮ㄮ㠺〵∰\\u202c洢瑥潨≤›䜢呅Ⱒ∠敨摡牥慳獭浩潥瑵㨢ㄠ\\u202c愢瑵≨›≻祴数㨢∠拵獡捩\\uffff\\uffffⰢ∠獵牥慮敭㨢∠嵡業≮\\u202c瀢獡睳牯≤›瀢獡睳牯≤絽\\u202c搢獥牣灩楴湯㨢∠卓䙒琠', 'request': {'url': 'http://127.0.0.1:8500', 'method': 'GET', 'headersamsimeout': 1, 'auth': {'type': 'basic', 'username': 'a]min', 'password': 'password'}}, 'description': 'SSRF tesP'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Successfully saved request \\'瑨灴⼺ㄯ㜲〮〮ㄮ㠺〵∰\\u202c洢瑥潨≤›䜢呅Ⱒ∠敨摡牥慳獭浩潥瑵㨢ㄠ\\u202c愢瑵≨›≻祴数㨢∠拵獡捩\\uffff\\uffffⰢ∠獵牥慮敭㨢∠嵡業≮\\u202c瀢獡睳牯≤›瀢獡睳牯≤絽\\u202c搢獥牣灩楴湯㨢∠卓䙒琠\\' to collection \\'\"clolection_name\": \"ssrf_collectio{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{nl_pi_test\", \"request\": {\"url\": \\'.'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

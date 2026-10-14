@@ -1,0 +1,111 @@
+[
+ {
+  "id": 38,
+  "label": "TP-low",
+  "reason": "Tool's documented purpose is setting an arbitrary custom Memory Bank path; resolved and used with no containment, only existence probed.",
+  "code_ref": "src/server/tools/CoreTools.ts:144"
+ },
+ {
+  "id": 39,
+  "label": "TP-low",
+  "reason": "inputPath/outputPath documented as arbitrary absolute paths; reached fs.access and mkdir of output dir with no containment; ffmpeg absent.",
+  "code_ref": "src/index.ts:30"
+ },
+ {
+  "id": 40,
+  "label": "FP",
+  "reason": "Returned 'scratchpad not found' before filename used; workspace attach path goes through resolveWorkspacePath plus realpath containment checks.",
+  "code_ref": "src/server/scratchpad/handler.ts:521"
+ },
+ {
+  "id": 41,
+  "label": "TP-low",
+  "reason": "outputPath resolved and written (ensureDir, package.json) with no containment; documented as arbitrary output dir. Observed backslash inputs stayed in cwd.",
+  "code_ref": "src/index.ts:127"
+ },
+ {
+  "id": 42,
+  "label": "FP",
+  "reason": "read_paper for OpenAlex is a stub returning a fixed message; save_path never used.",
+  "code_ref": "paper_search_mcp/academic_platforms/openalex.py:165"
+ },
+ {
+  "id": 43,
+  "label": "TP",
+  "reason": "file_name joined to memory-bank dir with no containment, then appended/written; dot-dot segments escape the memory bank scope.",
+  "code_ref": "src/index.ts:190",
+  "basis": "code-only"
+ },
+ {
+  "id": 44,
+  "label": "TP-low",
+  "reason": "outputPath unvalidated; mkdir attempted on the dot-dot directory (ENOENT under sandbox). Generic ffmpeg helper with arbitrary paths by design.",
+  "code_ref": "src/utils/file.ts:23"
+ },
+ {
+  "id": 45,
+  "label": "TP-low",
+  "reason": "validatePath only checks existence; input/output paths unconstrained by design for a generic ffmpeg helper. Run reached existsSync only.",
+  "code_ref": "src/utils/file.ts:23"
+ },
+ {
+  "id": 46,
+  "label": "FP",
+  "reason": "ImageMagick availability check exited before any path was used; evidence shows no file operation on the argument.",
+  "code_ref": "src/index.ts:284"
+ },
+ {
+  "id": 47,
+  "label": "FP",
+  "reason": "mkdir path sanitized per segment, dot-dot rejected, containment and realpath checks; output shows directory created inside workspace.",
+  "code_ref": "src/executor/workspace.ts:161"
+ },
+ {
+  "id": 48,
+  "label": "TP-low",
+  "reason": "project_path opened and tokenized with no check against configured projects dir; non-RPP content not echoed, so disclosure limited.",
+  "code_ref": "src/reaper_mcp_server/rpp_parser.py:66"
+ },
+ {
+  "id": 49,
+  "label": "TP-low",
+  "reason": "save_path used unconstrained for PDF existence check, makedirs and write; caller-chosen save dir by design. Run returned empty (download failed).",
+  "code_ref": "paper_search_mcp/academic_platforms/medrxiv.py:133"
+ },
+ {
+  "id": 50,
+  "label": "TP-low",
+  "reason": "base_path walked and output_path written with no containment; generic PDF tool by design. Evidence matches merge-pdfs-ordered schema, not merge-pdfs.",
+  "code_ref": "src/pdf_tools/server.py:276"
+ },
+ {
+  "id": 51,
+  "label": "FP",
+  "reason": "Credential-less stub handler returned before folderPath was touched; no file operation on the argument occurred.",
+  "code_ref": "tools/register-tools.js:38"
+ },
+ {
+  "id": 52,
+  "label": "FP",
+  "reason": "Garbled path string resolves under cwd, not outside; output None shows no read. Code lacks containment but evidence shows nothing.",
+  "code_ref": "src/index.ts:483"
+ },
+ {
+  "id": 53,
+  "label": "FP",
+  "reason": "commonpath containment check after realpath rejects escapes; run only hit refused RPC connection to FreeCAD.",
+  "code_ref": "addon/FreeCADMCP/rpc_server/parts_library.py:14"
+ },
+ {
+  "id": 54,
+  "label": "TP-low",
+  "reason": "Local file URL passed to git clone unrestricted (clone ran); file_paths joined to repo root without containment. Clone failed here.",
+  "code_ref": "src/mcp_git_ingest/main.py:108"
+ },
+ {
+  "id": 55,
+  "label": "FP",
+  "reason": "CrossRef read_paper is a stub returning a fixed message; save_path documented unused.",
+  "code_ref": "paper_search_mcp/academic_platforms/crossref.py:249"
+ }
+]

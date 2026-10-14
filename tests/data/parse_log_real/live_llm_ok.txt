@@ -1,0 +1,88 @@
+
+INFO:src.cli:Loaded configuration from /home/mza6485/toolfuzzer/eval/configs/0xDAEF0F__job-searchoor__get_jobs.json
+INFO:src.llm:LLM backend: model=gpt-4.1 base_url=https://api.openai.com/v1 json_mode=True json_attempts=3 temperature=0.0 seed=20260910
+INFO:src.llm:LLM backend: reasoning_effort= max_tokens=4096
+INFO:src.cli:Starting fuzzer on tool 'get_jobs' for 60 seconds...
+INFO:src.fuzzer:
+==================== STARTING COVERAGE-GUIDED FUZZING FOR TOOL: get_jobs ====================
+INFO:src.fuzzer:[get_jobs] Using runner: JSRunner
+INFO:src.fuzzer:[get_jobs] Instrumenting JS fake coverage helper module.
+INFO: Instrumenting src.runners.fake_coverage
+INFO:root:Selecting relevant sanitizers for 'get_jobs'...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:{
+  "selected_sanitizers": [
+    "check_introspection_prototype_pollution",
+    "check_introspection_format_string",
+    "check_introspection_sql_injection",
+    "check_introspection_command_injection",
+    "check_introspection_redos"
+  ],
+  "rules": {
+    "check_introspection_prototype_pollution": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_format_string": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_sql_injection": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_command_injection": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    },
+    "check_introspection_redos": {
+      "on_trigger": "raise_exception",
+      "expected_fallback_values": []
+    }
+  }
+}
+INFO:src.llm:LLM_SELECTION_OK tool=get_jobs attempt=1 n_selected=5 n_dropped=0
+INFO:root:Sanitizers selected: ['check_introspection_prototype_pollution', 'check_introspection_format_string', 'check_introspection_sql_injection', 'check_introspection_command_injection', 'check_introspection_redos']
+INFO:root:Sanitizer rules: {'check_introspection_prototype_pollution': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_format_string': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_sql_injection': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_command_injection': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}, 'check_introspection_redos': {'on_trigger': 'raise_exception', 'expected_fallback_values': []}}
+INFO:root:[LLM] Generation of smart seed corpus for 'get_jobs' using Seed Bank...
+INFO:root:SEEDGEN_CLASSES tool=get_jobs categories=['sql_injection', 'wildcards', 'path_traversal'] n_sanitizers_mapped=3 n_unmapped=12
+WARNING:root:SEEDGEN_UNMAPPED tool=get_jobs n=12 sanitizers=['check_introspection_prototype_pollution', 'check_introspection_format_string', 'check_introspection_command_injection', 'check_unexpected_crash', 'check_introspection_memory_access_violation', 'check_resource_exhaustion', 'check_introspection_deadlock', 'check_unhandled_promise_rejection', 'check_process_and_fd_leaks', 'check_introspection_incomplete_cleanup', 'check_introspection_sensitive_error_leak', 'check_introspection_sensitive_data_logging'] -- no adversarial input class exists for these; their oracle can only fire incidentally
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+INFO:root:LLM_SEEDGEN_OK tool=get_jobs attempt=1 n_seeds=9 n_rejected=0 validated=1
+INFO: Using built-in libfuzzer
+WARNING: Failed to find function "__sanitizer_acquire_crash_state".
+WARNING: Failed to find function "__sanitizer_print_stack_trace".
+WARNING: Failed to find function "__sanitizer_set_death_callback".
+
+
+WARNING: unrecognized flag '-pulse=2'; use -help=1 to list all flags
+
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 4011132121
+INFO:        9 files found in /home/mza6485/toolfuzzer/eval/corpora_gpt41-corpus/0xDAEF0F__job-searchoor__get_jobs
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+[JSRunner] WARNING: JS coverage index space exhausted (1024 slots). Further coverage items alias onto existing slots and coverage is UNDER-reported from here. Raise TOFU_JS_COV_SLOTS and re-run before using this run's coverage numbers.
+INFO:src.fuzzer:EXEC_SUMMARY tool=get_jobs n_exec=1 n_success=0 success_rate=0.000
+INFO:src.fuzzer:EXEC_ERROR n=1 detail='MCP error -32602: Invalid get_jobs parameters'
+INFO: seed corpus: files: 9 min: 77b max: 192b total: 1094b rss: 188Mb
+#8	pulse  cov: 1290 ft: 1601 corp: 6/631b exec/s: 4 rss: 188Mb
+#10	INITED cov: 1290 ft: 1601 corp: 6/631b exec/s: 5 rss: 188Mb
+#12	NEW    cov: 1290 ft: 1609 corp: 7/751b lim: 126 exec/s: 4 rss: 188Mb L: 120/126 MS: 2 ShuffleBytes-CMP- DE: "\377\377\377\377\377\377\000\361"-
+#16	pulse  cov: 1290 ft: 1609 corp: 7/751b lim: 126 exec/s: 5 rss: 188Mb
+#32	pulse  cov: 1290 ft: 1609 corp: 7/751b lim: 126 exec/s: 5 rss: 188Mb
+#64	pulse  cov: 1290 ft: 1609 corp: 7/751b lim: 126 exec/s: 5 rss: 188Mb
+#81	REDUCE cov: 1290 ft: 1609 corp: 7/707b lim: 126 exec/s: 6 rss: 188Mb L: 47/126 MS: 1 EraseBytes-
+#128	pulse  cov: 1290 ft: 1609 corp: 7/707b lim: 126 exec/s: 6 rss: 188Mb
+#192	NEW    cov: 1290 ft: 1687 corp: 8/833b lim: 126 exec/s: 6 rss: 188Mb L: 126/126 MS: 1 ChangeBinInt-
+#204	REDUCE cov: 1290 ft: 1687 corp: 8/816b lim: 126 exec/s: 6 rss: 188Mb L: 30/126 MS: 2 InsertByte-EraseBytes-
+#246	REDUCE cov: 1290 ft: 1687 corp: 8/807b lim: 126 exec/s: 6 rss: 188Mb L: 21/126 MS: 2 EraseBytes-ShuffleBytes-
+#251	REDUCE cov: 1290 ft: 1687 corp: 8/806b lim: 126 exec/s: 6 rss: 188Mb L: 20/126 MS: 5 ChangeByte-ShuffleBytes-CopyPart-PersAutoDict-CrossOver- DE: "\377\377\377\377\377\377\000\361"-
+#256	pulse  cov: 1290 ft: 1687 corp: 8/806b lim: 126 exec/s: 6 rss: 188Mb
+#269	REDUCE cov: 1290 ft: 1687 corp: 8/802b lim: 126 exec/s: 6 rss: 188Mb L: 16/126 MS: 1 EraseBytes-
+#270	NEW    cov: 1290 ft: 1693 corp: 9/879b lim: 126 exec/s: 6 rss: 188Mb L: 77/126 MS: 1 ChangeBit-
+#297	NEW    cov: 1290 ft: 1714 corp: 10/1000b lim: 126 exec/s: 6 rss: 188Mb L: 121/126 MS: 1 InsertByte-
+#329	REDUCE cov: 1290 ft: 1714 corp: 10/972b lim: 126 exec/s: 6 rss: 188Mb L: 92/126 MS: 2 ChangeBit-EraseBytes-
+#340	REDUCE cov: 1290 ft: 1714 corp: 10/968b lim: 126 exec/s: 6 rss: 188Mb L: 12/126 MS: 1 EraseBytes-
+#382	REDUCE cov: 2047 ft: 3200 corp: 11/981b lim: 126 exec/s: 6 rss: 188Mb L: 13/126 MS: 2 ChangeByte-InsertByte-
+#383	REDUCE cov: 2047 ft: 3203 corp: 12/993b lim: 126 exec/s: 6 rss: 188Mb L: 12/126 MS: 1 ChangeByte-
+#385	NEW    cov: 2047 ft: 3207 corp: 13/1005b lim: 126 exec/s: 6 rss: 188Mb L: 12/126 MS: 2 ChangeBinInt-ShuffleBytes-

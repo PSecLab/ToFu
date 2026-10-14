@@ -1,0 +1,49 @@
+{
+ "repo": "StarRocks/mcp-server-starrocks",
+ "tool": "table_overview",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "88e782b0f3ff660c871f47cf8477773ac02d9e92",
+ "draft": "StarRocks__mcp-server-starrocks__table_overview__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 5,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table': '\"ta{{\"mee.table\"e\\x00me.', 'refresh': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'--- Overview for `\"ta{{\"mee`.`table\"e\\x00me.` ---\\n\\nCould not determine total row count.\\nError: Error executing statement \\'SELECT COUNT(*) FROM `\"ta{{\"mee`.`table\"e\\x00me.`\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table': '\\x00\\x00\\x00\\x00{{&.\"e\\x00&.\\x00\\x00\"e\\x00t', 'refresh': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'--- Overview for `\\x00\\x00\\x00\\x00{{&`.`\"e\\x00&.\\x00\\x00\"e\\x00t` ---\\n\\nCould not determine total row count.\\nError: Error executing statement \\'SELECT COUNT(*) FROM `\\x00\\x00\\x00\\x00{{&`.`\"e\\x00&.\\x00\\x00\"e\\x00t`\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table': '\\x00\\x00\\x00\\x00{{%.\"e\\x00&.\\x00\\x00\"e\\x00t', 'refresh': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'--- Overview for `\\x00\\x00\\x00\\x00{{%`.`\"e\\x00&.\\x00\\x00\"e\\x00t` ---\\n\\nCould not determine total row count.\\nError: Error executing statement \\'SELECT COUNT(*) FROM `\\x00\\x00\\x00\\x00{{%`.`\"e\\x00&.\\x00\\x00\"e\\x00t`\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table': '\\x00\\x00\\x00\\x00{{%.\"e\\x00&.\\x00\\x00\"e-\\x00t', 'refresh': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'--- Overview for `\\x00\\x00\\x00\\x00{{%`.`\"e\\x00&.\\x00\\x00\"e-\\x00t` ---\\n\\nCould not determine total row count.\\nError: Error executing statement \\'SELECT COUNT(*) FROM `\\x00\\x00\\x00\\x00{{%`.`\"e\\x00&.\\x00\\x00\"e-\\x00t`\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table': '{{=', 'refresh': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"Error: Database name not specified for table '{{=' and no default database is set.\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

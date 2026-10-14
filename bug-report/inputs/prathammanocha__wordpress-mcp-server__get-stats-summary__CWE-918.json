@@ -1,0 +1,1414 @@
+{
+ "repo": "prathammanocha/wordpress-mcp-server",
+ "tool": "get-stats-summary",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "904dbe20dab259fdf65d51dc55c6db024a53dc90",
+ "draft": "prathammanocha__wordpress-mcp-server__get-stats-summary__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 569,
+ "note": "569 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'user', 'password': 'pass', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'user', 'password': 'pass', 'siteId': 2147483647}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://127.0.0.1:8500', 'username': 'admin', 'password': 'password123', 'siteId': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: connect ECONNREFUSED 127.0.0.1:8500'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://2130706433:8080', 'username': 'intuser', 'password': 'intpass', 'siteId': 3.14159}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://0177.0.0.1:8080', 'username': 'octaluser', 'password': 'octalpass', 'siteId': -2147483648}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/p0asswd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/p0asswd', 'username': 'fileuser', 'password': '', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etcs/passwd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'xttp://localhost:8080', 'username': 'user', 'password': 'pass', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol xttp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passw$', 'username': 'fileuser', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/ser', 'username': '', 'password': 'pass', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN ser'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/ser', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN ser'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fiseuser', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passw`', 'username': 'fiseuser', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '', 'password': '', 'siteId': 1}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fileuser', 'password': '', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:/RRRR//etc/passwd', 'username': 'fileuser', 'password': '', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 200}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/erss', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN erss'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'fileuser', 'password': 'filepass', 'siteId': 303}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': 'f]ileuser', 'password': 'filepass', 'siteId': 303}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passwd', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etc/passw~d', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:///etcpassw~d', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filepass', 'siteId': 104}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:ьs', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN xn--s-tub'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': '', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'filer:e', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol filer:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filpeass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '', 'password': '', 'siteId': 5}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filepass', 'siteId': 200}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fife:er', 'username': '', 'password': '', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fife:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httpes:r/s', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol httpes:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htp:/sers', 'username': '', 'password': '', 'siteId': 5}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol htp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er:/se', 'username': '', 'password': 'filepass', 'siteId': 100}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filepass', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filepa=s', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': 'filexass', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/se2s', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN se2s'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:er', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'filM:er', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol film:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'files: e ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol files:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '\"siteUrl\": \"http:/sers\", \"siteId\": 0OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/sers', 'username': '\"siteUrl\": \"http:/sers\"%%%%, \"siteId\": 0OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN sers'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file1111111111111111111111111111111111111111111111111111111:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol file1111111111111111111111111111111111111111111111111111111:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'hvtp:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol hvtp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fhvtp:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fhvtp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fhvtp:sr/es', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fhvtp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/serw', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN serw'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/ser(w', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo ENOTFOUND ser(w'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",file:e\",  \"steId\":  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",file:eteId\":  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",file:eeItd\":  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7file:eeItd\":  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fz\\x7file:eeItd\":  \"steId\": 10', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",  \"steId\": 05', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\",  \"ste5', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'ile:e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:--------------------------------------------------------------------------------e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:---------------------------------------:/ser-----------------------------------------e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:---------------------------------------:/ser---------VR------------------------------e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:---------------------------------------:/ser---------VR----------------~-------------e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:---------------------------------------:/ser---------VR----------------~-------------e\"~', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:.\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fi:lee\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fi:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fi:leeg\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fi:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fi:leeg\"v', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fi:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fi:keeg\"v', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fi:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fi:keeg\"v, nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fi:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:fi', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'ile:fi', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htt0:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol htt0:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00file:e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:777777777777777777e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:7777777777e\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:777777777C\\x1a\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d777777777C\\x1a\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x1dV\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d\\x1d777777777C\\x1a\"', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/seps', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN seps'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/esrs', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN esrs'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/esrs', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: getaddrinfo EAI_AGAIN esrs'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fe:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fe:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\tile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:ele{\"siteUrl\": e:ele\"http:/sers\", \"siteId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:ele{\"siteUrl\": e:ele\"htdp:/sers\", \"siteId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:ele{\"siteUrl\": e:el\\x05\\x00\\x00\\x00\\x00\\x00\\x00\\x00e\"htdp:/sers\", \"siteId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:ele{\"siteUrl\": e:el\\x05\\x00\\x00\\x00\\x00\\x00\\x00\\x00e\"htdile:elp:/sers\", \"siteId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:-e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'pttp:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol pttp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'pttp:/sers', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol pttp:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'iile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol iile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'i:lile', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol i:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'i:\": \"lile', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol i:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httz:/sers', 'username': '', 'password': '', 'siteId': 0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol httz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httz:/sers', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol httz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el{file:el', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x1a\\x13\\x13\\x1a\\x04\\x16\\x1a\\ril:ele:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol il:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\\n', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el{feile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el{e:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:ee:el{e:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'le:\\x00\\x0f:el{e:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol le:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII', 'username': 'I', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:IIIIIIIIIIIIIIIIIIbIIIIIIIIIIIIIIIIIIIe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:IIIile:eleIIIIIIIIIIIIIIIbIIIIIIIIIIIIIIIIIIIe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:{', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'iffj:{', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol iffj:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'filee:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol filee:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'f.ilee:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol f.ilee:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'f.ile:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol f.ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'f.ilf.ilee:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol f.ilf.ilee:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef.ilf.ilee:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeef.ilf.ilee:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': \"httz:/s'rs\", 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol httz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:E', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'lflei:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol lflei:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fide:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fide:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fide:el', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fide:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fid: \"l', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fid:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fileile:e:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fileile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'el:eli', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol el:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:+e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'lile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol lile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'ehttz:*s\\x18\\r\\x0c]S_]\\x1aId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ehttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:*s\\x18\\r\\x0c]S_]\\x1aId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:*s]\\x1aId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:*s]\\x1aId.\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:*s]\\x1a>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Id.\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fiil:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fiil:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fili:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fili:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fili:e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fili:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'five:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol five:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'five:ele{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol five:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'five:ele{{{{{{{{{{{{{{{{{{{*s]\\x1aId\": 5}{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol five:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'five:ele{{{{{{{{{{{{{{{{{{{*s]\\x1aId\": 5}{{{{{{{+{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol five:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:/e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'f0ile:/e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol f0ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a*s]\\x1aId\": ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a*s ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:efile:en', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fileenfile:en', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fileenfile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fileenfile:en:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fileenfile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fileenn:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fileenn:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a*s\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'username': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a*s\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f}\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'username': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fielttz:a*s 5}le:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fielttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fielttz:a*s 5}de:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fielttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elefile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elefile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'efl:ie', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol efl:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e{file:ele', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e{file:\\x1b\\x13\\x1a', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e\\x7f\\x7f\\x7f\\x7fe:\\x1b\\x13\\x1a', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el[[[[[[[[', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el[Y[[[[[[', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el[Y:[[[[[', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el[Y:[[[[?[', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el[Y:[[e:e[', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x10ile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x10ile:ele', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x10ile:elE', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol ile:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{elttz:a*s 5}\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{elttz:a*s 5}\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{elttz:a*s 5}\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f{elttz:a*s 5}\\x7f\\x7f\\x7f\\x7f\\x7f@\\x7f\\x7f\\x7f\\x7f{elttz:a*s 5}\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fe', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'tetlz:a*s ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol tetlz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'tetlz:a*si', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol tetlz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'twwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwetlz:a*si', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol twwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwetlz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM\\x15MMMMMMMMMMMMMMMMMMMMMMMMMM', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM\\x15MMMMMMMMMMMMMMMMMMMMMMMMMMMs\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:A*s ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:A*m ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:A*m* ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:A*m( ', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fle:eleile:e', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fle:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'fle:eleiele:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol fle:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': '\\x01\\x00\\x00Meleiele:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol meleiele:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:el\\x00\\x00\\x00\\x00\\x00\\x00\\x00{elttz:a\\x00}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'file:e%\\x00\\x00\\x00\\x00\\x00\\x00\\x00{elttz:a\\x00}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: protocol mismatch'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a}{elttz:', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:a}{elttz:a\\x16\\x00\\x00\\x00\\x00\\x00\\x00', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'elttz:ae:el', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol elttz:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'el:el', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol el:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'el:e?', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol el:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'el:el66666666666666666666666666666666666666666666666666666', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol el:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'el:el66666666666666646666666666666666666666666666666666666', 'username': '', 'password': '', 'siteId': 0.0}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error retrieving stats summary: Unsupported protocol el:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

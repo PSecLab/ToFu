@@ -1,0 +1,86 @@
+# ToFu evaluation sandbox — run untrusted MCP servers here, NOT on the host.
+# arm64 (Apple Silicon). One image holds the whole harness because ToFu imports
+# Python targets in-process (src/runners/python_runner.py), so fuzzer + target
+# share a process and therefore a container.
+#
+# INTERPRETER = 3.13 (item 86, 2026-09-15). In-process import means the target
+# venv MUST be the same CPython as ToFu's: a cp313 wheel cannot load into a
+# cp311 process. atheris 3.0.0 supports 3.11-3.13 (atheris/version_dependent.py);
+# of the corpus' Python targets, 3.13 satisfies every lockfile's requires-python
+# (uml >=3.12,<3.15; osm & mcp-text-editor >=3.13; the rest >=3.10/3.11) where
+# 3.11 satisfied 5 of 8. TOFU_TARGET_PYTHON below pins prepare_targets to it.
+FROM python:3.13-slim-bookworm
+
+# --- system toolchain ---------------------------------------------------------
+# clang/llvm: atheris builds libFuzzer bindings from source on Linux.
+# libclang-rt-dev: ships libclang_rt.fuzzer_no_main-aarch64.a. It is only a
+# RECOMMENDED dep of clang, so --no-install-recommends silently drops it and
+# atheris then cannot link libFuzzer (first two builds failed exactly here).
+# build-essential + python3-dev: native wheels (pydantic-core fallback, etc.).
+# git: prepare clones targets. node comes from nodesource (host used v22).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        git curl ca-certificates build-essential python3-dev \
+        clang llvm libclang-rt-dev procps lsof \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- uv -----------------------------------------------------------------------
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && ln -sf /root/.local/bin/uv /usr/local/bin/uv
+
+# --- ToFu's OWN Linux venv (the macOS .venv is not portable) -------------------
+# Built at image time from requirements.txt so a rebuild is cache-friendly.
+# CLANG=... lets atheris find libFuzzer.
+ENV TOFU_VENV=/opt/tofu-venv
+COPY requirements.txt /tmp/requirements.txt
+# libFuzzer archive: clang -print-file-name echoes the NAME back when the file
+# is missing (it never fails), so test for an absolute path and abort the build
+# with a clear message instead of letting atheris fail obscurely.
+RUN LIB="$(clang -print-file-name=libclang_rt.fuzzer_no_main-aarch64.a)" \
+    && case "$LIB" in /*) [ -f "$LIB" ] ;; *) false ;; esac \
+       || { echo "FATAL: libFuzzer archive not found (got: $LIB). Install the clang compiler-rt package."; exit 1; } \
+    && echo "$LIB" > /etc/libfuzzer_lib \
+    && uv venv "$TOFU_VENV" --python 3.13 \
+    && CC=clang CXX=clang++ LIBFUZZER_LIB="$LIB" \
+       uv pip install --python "$TOFU_VENV/bin/python" -r /tmp/requirements.txt \
+    && "$TOFU_VENV/bin/python" -c "import atheris, mcp; print('atheris+mcp import OK')"
+
+# uv was installed into /root/.local and symlinked into /usr/local/bin, but
+# /root is mode 700 so the non-root `tofu` user cannot traverse it -> uv is
+# invisible and every per-target Python venv is skipped. Copy the REAL binary
+# to a world-executable location. (Kept in a late layer so the atheris build
+# above stays cached.)
+RUN rm -f /usr/local/bin/uv /usr/local/bin/uvx \
+    && cp -L /root/.local/bin/uv /usr/local/bin/uv \
+    && (cp -L /root/.local/bin/uvx /usr/local/bin/uvx 2>/dev/null || true) \
+    && chmod 0755 /usr/local/bin/uv /usr/local/bin/uvx 2>/dev/null; chmod 0755 /usr/local/bin/uv
+
+# bun: several corpus repos build with `bun build src/index.ts` (memory-bank-
+# mcp, cal-mcp, ...). Without it their dist/ never exists and they were skipped
+# as "no node entrypoint". Installed for the non-root user below via a
+# world-readable prefix.
+# bun's installer needs unzip (absent on slim). Do NOT suppress output: the
+# first attempt hid the failure and produced an image with no bun.
+RUN apt-get update && apt-get install -y --no-install-recommends unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -fsSL https://bun.sh/install | BUN_INSTALL=/opt/bun bash \
+    && ln -sf /opt/bun/bin/bun /usr/local/bin/bun && chmod -R a+rX /opt/bun \
+    && bun --version
+
+# The repo is mounted at /work at run time (mounting it at its own
+# /Users/... path collides with Docker Desktop's auto-shared /Users and
+# yields an EMPTY mount). Bake a symlink so the absolute paths in
+# prepared.jsonl (/Users/.../eval/targets/...) still resolve -> /work.
+ARG REPO_PATH=/Users/nazmulislamananto/pseclab/ToFu
+RUN mkdir -p "$(dirname "$REPO_PATH")" && ln -sfn /work "$REPO_PATH"
+
+# non-root: the target's postinstall/exec runs as this user, no host home.
+RUN useradd -m -u 1000 tofu
+USER tofu
+ENV PATH="/opt/tofu-venv/bin:${PATH}" \
+    TOFU_LLM_TEMPERATURE=0 \
+    TOFU_TARGET_PYTHON=3.13 \
+    PYTHONUNBUFFERED=1
+WORKDIR /work
+CMD ["/bin/bash"]

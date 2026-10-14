@@ -1,0 +1,224 @@
+import { Readable, Writable } from 'node:stream';
+import inspector from 'node:inspector';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+if (process.argv.length < 3) {
+  console.error("Usage: node coverage_wrapper.js <target_script> [args...]");
+  process.exit(1);
+}
+
+const targetScript = path.resolve(process.argv[2]);
+const targetArgs = process.argv.slice(3);
+
+// Set process.argv so the target script gets its expected arguments
+process.argv = [process.argv[0], targetScript, ...targetArgs];
+
+// Setup V8 Inspector session
+const session = new inspector.Session();
+session.connect();
+
+// Enable Profiler and start precise coverage once at startup
+session.post('Profiler.enable');
+session.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
+
+// Track and profile Node.js Worker threads dynamically
+const workerSessions = new Map();
+session.on('NodeWorker.attachedToWorker', (event) => {
+  const info = event.params || event;
+  const workerSession = new inspector.Session();
+  try {
+    workerSession.connect(info.sessionId);
+    workerSession.post('Profiler.enable');
+    workerSession.post('Profiler.startPreciseCoverage', { callCount: true, detailed: true });
+    workerSessions.set(info.sessionId, workerSession);
+  } catch (e) {}
+});
+
+session.on('NodeWorker.detachedFromWorker', (event) => {
+  const info = event.params || event;
+  workerSessions.delete(info.sessionId);
+});
+
+session.post('NodeWorker.enable', { waitForDebuggerOnStart: false });
+
+// Intercept stdin and stdout
+const realStdin = process.stdin;
+const realStdout = process.stdout;
+
+// Custom streams that the target script will think are the standard ones
+const customStdin = new Readable({
+  read() {}
+});
+
+const customStdout = new Writable({
+  write(chunk, encoding, callback) {
+    handleTargetStdout(chunk);
+    callback();
+  }
+});
+
+Object.defineProperty(process, 'stdin', { value: customStdin, writable: true, configurable: true });
+Object.defineProperty(process, 'stdout', { value: customStdout, writable: true, configurable: true });
+
+import net from 'node:net';
+
+const socketPath = process.env.FUZZER_SOCKET_PATH || '/tmp/mcp_fuzzer.sock';
+
+const socketServer = net.createServer((socket) => {
+  let socketBuffer = '';
+
+  socket.on('data', (chunk) => {
+    socketBuffer += chunk.toString();
+    let lineEnd;
+    while ((lineEnd = socketBuffer.indexOf('\n')) !== -1) {
+      const line = socketBuffer.slice(0, lineEnd).trim();
+      socketBuffer = socketBuffer.slice(lineEnd + 1);
+      if (line) {
+        handleSocketMessage(socket, line);
+      }
+    }
+  });
+});
+
+try {
+  if (fs.existsSync(socketPath)) {
+    fs.unlinkSync(socketPath);
+  }
+} catch (e) {}
+
+socketServer.listen(socketPath, () => {
+  realStdout.write(`SOCKET_READY:${socketPath}\n`);
+});
+
+function handleSocketMessage(socket, line) {
+  try {
+    const msg = JSON.parse(line);
+    if (msg.method === 'tools/call') {
+      activeSocket = socket;
+      isFuzzingCall = true;
+    }
+  } catch (e) {}
+  // Forward to target script stdin
+  customStdin.push(line + '\n');
+}
+
+let activeSocket = null;
+let isFuzzingCall = false;
+
+function handleTargetStdout(chunk) {
+  const dataStr = chunk.toString();
+  if (isFuzzingCall && activeSocket) {
+    const targetSocket = activeSocket;
+    isFuzzingCall = false;
+    
+    // Take precise coverage without stopping it
+    session.post('Profiler.takePreciseCoverage', (err, covRes) => {
+      const combinedResults = [];
+      if (!err && covRes && covRes.result) {
+        combinedResults.push(...covRes.result);
+      }
+
+      const coverageReport = processCoverage(combinedResults);
+      const payload = JSON.stringify({
+        response: dataStr.trim(),
+        coverage: coverageReport
+      }) + '\n';
+
+      targetSocket.write(payload);
+    });
+  } else {
+    realStdout.write(chunk);
+  }
+}
+
+// Line offset caching logic
+const fileLineOffsets = new Map();
+
+function getLineOffsets(filePath) {
+  if (fileLineOffsets.has(filePath)) {
+    return fileLineOffsets.get(filePath);
+  }
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const offsets = [0];
+    for (let i = 0; i < content.length; i++) {
+      if (content[i] === '\n') {
+        offsets.push(i + 1);
+      }
+    }
+    fileLineOffsets.set(filePath, offsets);
+    return offsets;
+  } catch (e) {
+    return null;
+  }
+}
+
+function offsetToLine(offsets, offset) {
+  let low = 0;
+  let high = offsets.length - 1;
+  while (low <= high) {
+    const mid = (low + high) >> 1;
+    if (offsets[mid] <= offset) {
+      if (mid === offsets.length - 1 || offsets[mid + 1] > offset) {
+        return mid + 1; // 1-based line number
+      }
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+  return 1;
+}
+
+// Find package root (directory containing package.json or the parent of build/src)
+let targetDir = path.dirname(targetScript);
+while (targetDir !== path.parse(targetDir).root) {
+  if (fs.existsSync(path.join(targetDir, 'package.json'))) {
+    break;
+  }
+  targetDir = path.dirname(targetDir);
+}
+
+const localFileCache = new Map();
+
+function isLocalFile(fileUrl) {
+  if (!fileUrl.startsWith('file://')) return false;
+  if (localFileCache.has(fileUrl)) return localFileCache.get(fileUrl);
+  const filePath = fileURLToPath(fileUrl);
+  const matched = filePath.startsWith(targetDir) && !filePath.includes('node_modules') && !filePath.includes('.venv');
+  localFileCache.set(fileUrl, matched);
+  return matched;
+}
+
+function processCoverage(result) {
+  const coveredLines = [];
+  
+  for (const script of result) {
+    if (!isLocalFile(script.url)) continue;
+    const filePath = fileURLToPath(script.url);
+    const fileName = path.basename(filePath);
+    const lineOffsets = getLineOffsets(filePath);
+    if (!lineOffsets) continue;
+    
+    for (const func of script.functions) {
+      for (const range of func.ranges) {
+        if (range.count > 0) {
+          const startLine = offsetToLine(lineOffsets, range.startOffset);
+          const endLine = offsetToLine(lineOffsets, range.endOffset);
+          for (let line = startLine; line <= endLine; line++) {
+            coveredLines.push(`${fileName}:${line}`);
+          }
+        }
+      }
+    }
+  }
+  return [...new Set(coveredLines)];
+}
+
+// Dynamically import the target script (supports both ESM and CommonJS via dynamic import)
+import(pathToFileURL(targetScript).href).catch((err) => {
+  console.error("Failed to load target script:", err);
+  process.exit(1);
+});

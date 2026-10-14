@@ -1,0 +1,49 @@
+{
+ "repo": "qiniu/qiniu-mcp-server",
+ "tool": "live_streaming_list_streams",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "52dd33532655721816b3efb61285522ec94c485a",
+ "draft": "qiniu__qiniu-mcp-server__live_streaming_list_streams__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 5,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'bucket_id': '\"u{{ccb\"\"k'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'status\\': \\'error\\', \\'bucket_id\\': \\'\"u{{ccb\"\"k\\', \\'message\\': \\'Failed to list streams: {\"code\":\"1103\",\"connectId\":\"Qz0AAOZKn5j4_9gY\",\"message\":\"invalid header\"}\\', \\'status_code\\': 401}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'bucket_id': '\"u{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'status\\': \\'error\\', \\'bucket_id\\': \\'\"u{{\\', \\'message\\': \\'Failed to list streams: {\"code\":\"1103\",\"connectId\":\"OG4AAFEOONP4_9gY\",\"message\":\"invalid header\"}\\', \\'status_code\\': 401}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'bucket_id': '\"u{{{\"u{{cc'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\'status\\': \\'error\\', \\'bucket_id\\': \\'\"u{{{\"u{{cc\\', \\'message\\': \\'Failed to list streams: {\"code\":\"1103\",\"connectId\":\"pp8AAEF2W0f5_9gY\",\"message\":\"invalid header\"}\\', \\'status_code\\': 401}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'bucket_id': '\"\\x7f\\x7f{\"u{{cc\\x04]\\n\\x04\\x04\\x1cc'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\\'status\\': \\'error\\', \\'bucket_id\\': \\'\"\\\\x7f\\\\x7f{\"u{{cc\\\\x04]\\\\n\\\\x04\\\\x04\\\\x1cc\\', \\'message\\': \\'Failed to list streams: {\"code\":\"1103\",\"connectId\":\"Qz0AAO-g4vX5_9gY\",\"message\":\"invalid header\"}\\', \\'status_code\\': 401}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:qiniu-mcp)! Logged content: 'Listing streams in bucket: \"{\"u{{cc\u0004]\\n\u0004\u0004\u001cc'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'bucket_id': '\"\\x7f\\x7f{\"u{{cc\\x04]\\x04c\\n\\x04\\x1c'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\\'status\\': \\'error\\', \\'bucket_id\\': \\'\"\\\\x7f\\\\x7f{\"u{{cc\\\\x04]\\\\x04c\\\\n\\\\x04\\\\x1c\\', \\'message\\': \\'Failed to list streams: {\"code\":\"1103\",\"connectId\":\"c3cAAAR9QS76_9gY\",\"message\":\"invalid header\"}\\', \\'status_code\\': 401}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:qiniu-mcp)! Logged content: 'Listing streams in bucket: \"{\"u{{cc\u0004]\u0004c\\n\u0004\u001c'."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,55 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcpsafety"
+version = "0.0.1"
+authors = [
+    { name = "Brandon Radosevich"},
+    { name = "John Halloran", email="johnhalloran321@gmail.com" },
+
+]
+license = { file = "LICENSE" }
+description = "MCPSafetyScanner"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 1 - Alpha",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MPL-2.0 License",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "agno",
+    "pyfiglet",
+    "rich",
+    "mcp",
+    "beautifulsoup4",
+    "sqlalchemy",
+    "pgvector",
+    "duckduckgo-search",
+    "arxiv",
+    "pypdf",
+    "openai"
+]
+
+[project.scripts]
+mcp_safety_scan = "mcpsafety.scanner.scan:main"
+
+[tool.setuptools]
+packages = ["mcpsafety"]
+
+[tool.setuptools.package-data]
+"mcpsafety.resources" = ["*"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore",
+    "default:::mcpsafety",
+]
+
+[tool.coverage.run]
+source = ["./mcpsafety"]
+omit = ["tests/*"]

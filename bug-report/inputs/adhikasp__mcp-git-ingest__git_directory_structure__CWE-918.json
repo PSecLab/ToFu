@@ -1,0 +1,1414 @@
+{
+ "repo": "adhikasp/mcp-git-ingest",
+ "tool": "git_directory_structure",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "cd392d5bee561b3978cc2acf6b1305c6d377812f",
+ "draft": "adhikasp__mcp-git-ingest__git_directory_structure__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 389,
+ "note": "389 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v --  /tmp/github_tools_e3b0c44298fc\\n  stderr: 'fatal: repository '' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'file:///etc/passwd'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- file:///etc/passwd /tmp/github_tools_0e7a5a5c10cb\\n  stderr: 'Cloning into '/tmp/github_tools_0e7a5a5c10cb'...\\nfatal: invalid gitfile format: /etc/passwd\\nfatal: Could not read from remote repository.\\n\\nPlease make sure you have the correct access rights\\nand the repository exists.\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'http://127.0.0.1:8500'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- http://127.0.0.1:8500 /tmp/github_tools_2ccb8b36d429\\n  stderr: 'Cloning into '/tmp/github_tools_2ccb8b36d429'...\\nfatal: unable to access 'http://127.0.0.1:8500/': Failed to connect to 127.0.0.1 port 8500 after 0 ms: Connection refused\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'http://[::1]/repo.git'}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: The `http://[::` protocol looks suspicious, use `allow_unsafe_protocols=True` to allow it.'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'http://localhost:8080'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- http://localhost:8080 /tmp/github_tools_a76d8c3e94eb\\n  stderr: 'Cloning into '/tmp/github_tools_a76d8c3e94eb'...\\nfatal: unable to access 'http://localhost:8080/': Failed to connect to localhost port 8080 after 0 ms: Connection refused\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ../../../../etc/passwd /tmp/github_tools_a032902ca26b\\n  stderr: 'Cloning into '/tmp/github_tools_a032902ca26b'...\\nfatal: invalid gitfile format: /home/mza6485/.tofu_scratch/adhikasp__mcp-git-ingest__git_directory_structure/../../../../etc/passwd\\nfatal: Could not read from remote repository.\\n\\nPlease make sure you have the correct access rights\\nand the repository exists.\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ../../../../windows/win.ini /tmp/github_tools_f8fc64cd6e5c\\n  stderr: 'fatal: repository '../../../../windows/win.ini' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ssh://user@127.0.0.1:22/repo.git'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ssh://*****@127.0.0.1:22/repo.git /tmp/github_tools_f7b643e595ff\\n  stderr: 'Cloning into '/tmp/github_tools_f7b643e595ff'...\\nHost key verification failed.\\nfatal: Could not read from remote repository.\\n\\nPlease make sure you have the correct access rights\\nand the repository exists.\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'http://169.254.169.254/latest/meta-data/'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- http://169.254.169.254/latest/meta-data/ /tmp/github_tools_195fe4b8c8c0\\n  stderr: 'Cloning into '/tmp/github_tools_195fe4b8c8c0'...\\nfatal: unable to access 'http://169.254.169.254/latest/meta-data/': Failed to connect to 169.254.169.254 port 80 after 3065 ms: No route to host\\n'\"",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.11 seconds (Limit: 2.0s). Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›∢牽≬›'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬›∢牽≬› /tmp/github_tools_235726a5bd3e\\n  stderr: 'fatal: repository '≬›∢牽≬›' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›∢'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬›∢ /tmp/github_tools_bee1954c2e31\\n  stderr: 'fatal: repository '≬›∢' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›∢}\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›\"索\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬:\"索\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬:⤢∀}\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00102272'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00102272 /tmp/github_tools_674cef9f46d6\\n  stderr: 'fatal: repository '\\U00102272' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00102272\\x00\\U00107d20'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›∢牽'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬›∢牽 /tmp/github_tools_4f03e549c486\\n  stderr: 'fatal: repository '≬›∢牽' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›∢綑'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬›∢綑 /tmp/github_tools_ef6979600f60\\n  stderr: 'fatal: repository '≬›∢綑' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬›'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬› /tmp/github_tools_1a118eb5ee7c\\n  stderr: 'fatal: repository '≬›' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '≬߆'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ≬߆ /tmp/github_tools_99fe25f07e43\\n  stderr: 'fatal: repository '≬߆' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x0c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x0c /tmp/github_tools_ef6cbd2161ea\\n  stderr: 'fatal: repository '?' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'SSSSSSSSSS'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- SSSSSSSSSS /tmp/github_tools_0478862f61b3\\n  stderr: 'fatal: repository 'SSSSSSSSSS' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'SSSSS-,,0S'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- SSSSS-,,0S /tmp/github_tools_c468f33f09a2\\n  stderr: 'fatal: repository 'SSSSS-,,0S' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'SSPSS-,,0S'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- SSPSS-,,0S /tmp/github_tools_8ecdfc677f3c\\n  stderr: 'fatal: repository 'SSPSS-,,0S' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f /tmp/github_tools_4977021028c4\\n  stderr: 'fatal: repository '???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010ffff\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010ffff\\U0010ffff /tmp/github_tools_c8d83ef156d0\\n  stderr: 'fatal: repository '\\U0010ffff\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '⨪⨪⨪⨪'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ⨪⨪⨪⨪ /tmp/github_tools_7883fa885717\\n  stderr: 'fatal: repository '⨪⨪⨪⨪' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '⨪⨪⨪⨲'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ⨪⨪⨪⨲ /tmp/github_tools_c28de220d244\\n  stderr: 'fatal: repository '⨪⨪⨪⨲' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00109696\\U00109696'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00109696\\U00109696 /tmp/github_tools_173d53b587a4\\n  stderr: 'fatal: repository '\\U00109696\\U00109696' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00109696\\U0010963c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00109696\\U0010963c /tmp/github_tools_05f13055277c\\n  stderr: 'fatal: repository '\\U00109696\\U0010963c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U001096b6\\U0010963c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U001096b6\\U0010963c /tmp/github_tools_2e56c1d1fa04\\n  stderr: 'fatal: repository '\\U001096b6\\U0010963c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00107cb6'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00107cb6 /tmp/github_tools_a12930f37339\\n  stderr: 'fatal: repository '\\U00107cb6' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0004647c\\U00046464'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0004647c\\U00046464 /tmp/github_tools_aaa5ddac25da\\n  stderr: 'fatal: repository '\\U0004647c\\U00046464' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '??????????'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ?????????? /tmp/github_tools_2b7485b9e3db\\n  stderr: 'fatal: repository '??????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- | /tmp/github_tools_cbe5cfdf7c21\\n  stderr: 'fatal: repository '|' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010747c\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010747c\\U0010ffff /tmp/github_tools_2f553fa56565\\n  stderr: 'fatal: repository '\\U0010747c\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010ff7c\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010ff7c\\U0010ffff /tmp/github_tools_6b0074f66e0d\\n  stderr: 'fatal: repository '\\U0010ff7c\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010ff7c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010ff7c /tmp/github_tools_432b7897ea14\\n  stderr: 'fatal: repository '\\U0010ff7c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000c8c8c\\U000c8c8c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000c8c8c\\U000c8c8c /tmp/github_tools_d544d5aee251\\n  stderr: 'fatal: repository '\\U000c8c8c\\U000c8c8c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000c8c8c\\U000c9c8c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000c8c8c\\U000c9c8c /tmp/github_tools_02109f31240c\\n  stderr: 'fatal: repository '\\U000c8c8c\\U000c9c8c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000c8c8c\\U000c9c8c\\U000c7c8c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000c8c8c\\U000c9c8c\\U000c7c8c /tmp/github_tools_57c2763a420a\\n  stderr: 'fatal: repository '\\U000c8c8c\\U000c9c8c\\U000c7c8c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000c8c8c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000c8c8c /tmp/github_tools_d6748f70147a\\n  stderr: 'fatal: repository '\\U000c8c8c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ϛϛϛϛϛϛ'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ϛϛϛϛϛϛ /tmp/github_tools_718beaa40221\\n  stderr: 'fatal: repository 'ϛϛϛϛϛϛ' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ϛϛϛ'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ϛϛϛ /tmp/github_tools_9c2f1aefdfbf\\n  stderr: 'fatal: repository 'ϛϛϛ' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '†††'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ††† /tmp/github_tools_228a29c34342\\n  stderr: 'fatal: repository '†††' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000bebeb\\U000bebeb'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000bebeb\\U000bebeb /tmp/github_tools_2e4a5e33ea8d\\n  stderr: 'fatal: repository '\\U000bebeb\\U000bebeb' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U000bebeb\\U000bcbeb'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U000bebeb\\U000bcbeb /tmp/github_tools_dd6c7d93d04b\\n  stderr: 'fatal: repository '\\U000bebeb\\U000bcbeb' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': \"'\"}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ' /tmp/github_tools_265fda17a346\\n  stderr: 'fatal: repository ''' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '縀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 縀 /tmp/github_tools_de03c8fb13cb\\n  stderr: 'fatal: repository '縀' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '䩊䩊䩊䩊'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 䩊䩊䩊䩊 /tmp/github_tools_55ec3271113c\\n  stderr: 'fatal: repository '䩊䩊䩊䩊' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '䩊ൊ䩊䩊'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 䩊ൊ䩊䩊 /tmp/github_tools_e820fb5658b7\\n  stderr: 'fatal: repository '䩊ൊ䩊䩊' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\U00050000'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00\\x1a'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '뱼벼벼벼벼'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 뱼벼벼벼벼 /tmp/github_tools_bfa8ac230ff2\\n  stderr: 'fatal: repository '뱼벼벼벼벼' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_04cebc0e8743\\n  stderr: 'fatal: repository '??????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_46194707528a\\n  stderr: 'fatal: repository '????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\uff00\\uffff\\x00\\uffff\\uffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\uff00\\uffff\\x00\\uffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_be116c915b61\\n  stderr: 'fatal: repository '?????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f /tmp/github_tools_11cde0734f50\\n  stderr: 'fatal: repository '?????|???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f```\\x7f\\x7f|\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f```\\x7f\\x7f|\\x7f\\x7f\\x7f /tmp/github_tools_15e6fa6f7d06\\n  stderr: 'fatal: repository '???```??|???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'mmmmmmmmmmmmm'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- mmmmmmmmmmmmm /tmp/github_tools_cb56febed411\\n  stderr: 'fatal: repository 'mmmmmmmmmmmmm' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'mmmmmmmmm\\x19mmm'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- mmmmmmmmm\\x19mmm /tmp/github_tools_4cb6424f6424\\n  stderr: 'fatal: repository 'mmmmmmmmm?mmm' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010b4b4\\U0010b4b4\\U0010b4b4'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010b4b4\\U0010b4b4\\U0010b4b4 /tmp/github_tools_4303b5a6b9c7\\n  stderr: 'fatal: repository '\\U0010b4b4\\U0010b4b4\\U0010b4b4' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '뒴뒴뒴뒴뒴뒴'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 뒴뒴뒴뒴뒴뒴 /tmp/github_tools_bc9944daf0fd\\n  stderr: 'fatal: repository '뒴뒴뒴뒴뒴뒴' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x15\\x15\\x15\\x15\\x15'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x15\\x15\\x15\\x15\\x15 /tmp/github_tools_d7624b47aee6\\n  stderr: 'fatal: repository '?????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x15g\\x15\\x15\\x15'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x15g\\x15\\x15\\x15 /tmp/github_tools_6b13518da2b3\\n  stderr: 'fatal: repository '?g???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x15g\\x15\\x08\\x15'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x15g\\x15\\x08\\x15 /tmp/github_tools_803fd0d7dc61\\n  stderr: 'fatal: repository '?g???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_b669d595c944\\n  stderr: 'fatal: repository '????????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7fo\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7fo\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_c3be21af8218\\n  stderr: 'fatal: repository '?????o??????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00\\t'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00101212'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00101212 /tmp/github_tools_18c74a0b4d1e\\n  stderr: 'fatal: repository '\\U00101212' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00101212\\U00101212'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00101212\\U00101212 /tmp/github_tools_c0cb3993f3f0\\n  stderr: 'fatal: repository '\\U00101212\\U00101212' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00101212\\U0005e5e5\\U001012e5'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00101212\\U0005e5e5\\U001012e5 /tmp/github_tools_f94a5cdca7a2\\n  stderr: 'fatal: repository '\\U00101212\\U0005e5e5\\U001012e5' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|7qqqqqqq'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- |7qqqqqqq /tmp/github_tools_b36aa856b104\\n  stderr: 'fatal: repository '|7qqqqqqq' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '⸮'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ⸮ /tmp/github_tools_78a9ba151ea3\\n  stderr: 'fatal: repository '⸮' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00109797'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00109797 /tmp/github_tools_6f91408ae7d4\\n  stderr: 'fatal: repository '\\U00109797' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00109797鞗\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x17\\x17\\x17\\x17\\x17\\x17\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x17\\x17\\x17\\x17\\x17\\x17\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '_________'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- _________ /tmp/github_tools_167688c97967\\n  stderr: 'fatal: repository '_________' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_21b4421c3e51\\n  stderr: 'fatal: repository '?????????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7fq\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7fq\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_43aa12e1c855\\n  stderr: 'fatal: repository '????q?????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x0f\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010137c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010137c /tmp/github_tools_dcda43a2060e\\n  stderr: 'fatal: repository '\\U0010137c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00107c7c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00107c7c /tmp/github_tools_d5249e48ff75\\n  stderr: 'fatal: repository '\\U00107c7c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '繾繾'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 繾繾 /tmp/github_tools_1236e8da4419\\n  stderr: 'fatal: repository '繾繾' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '11'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 11 /tmp/github_tools_4fc82b26aecb\\n  stderr: 'fatal: repository '11' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b /tmp/github_tools_4dc7623f1481\\n  stderr: 'fatal: repository '????????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 't\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- t\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b /tmp/github_tools_448fba9a2edc\\n  stderr: 'fatal: repository 't???????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 't\\x0b\\x0b\\x0bF\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- t\\x0b\\x0b\\x0bF\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b\\x0b /tmp/github_tools_adc5fbf90a66\\n  stderr: 'fatal: repository 't???F???????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 't\\x0b\\x0b\\x0bF\\x0b\\x0b\\x0b\\x0b\\x0b\\x0bK'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- t\\x0b\\x0b\\x0bF\\x0b\\x0b\\x0b\\x0b\\x0b\\x0bK /tmp/github_tools_b0285b5ac0a4\\n  stderr: 'fatal: repository 't???F??????K' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f /tmp/github_tools_365475d471c6\\n  stderr: 'fatal: repository '????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': ')'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ) /tmp/github_tools_ba5ec51d07a4\\n  stderr: 'fatal: repository ')' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f)'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f) /tmp/github_tools_93b26135b605\\n  stderr: 'fatal: repository '????)' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00107cdd'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00107cdd /tmp/github_tools_4e1d4e903a46\\n  stderr: 'fatal: repository '\\U00107cdd' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '='}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- = /tmp/github_tools_380918b946a5\\n  stderr: 'fatal: repository '=' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '耀耀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 耀耀 /tmp/github_tools_1d98446f686d\\n  stderr: 'fatal: repository '耀耀' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00048000耀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00048000耀 /tmp/github_tools_e9a076af4882\\n  stderr: 'fatal: repository '\\U00048000耀' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00048000\\x00簀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x01\\x01\\x01\\x01\\x01\\x01'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x01\\x01\\x01\\x01\\x01\\x01 /tmp/github_tools_dfea2964b5de\\n  stderr: 'fatal: repository '??????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\xa0\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ฎฎ\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ÿ\\U0010ffff\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ÿ\\U0010ffff\\U0010ffff /tmp/github_tools_d878091419f3\\n  stderr: 'fatal: repository 'ÿ\\U0010ffff\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ÿ\\uffff\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ÿ\\uffff\\U0010ffff /tmp/github_tools_a9b773cc3909\\n  stderr: 'fatal: repository 'ÿ\\uffff\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ÿ\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ÿ\\x00\\U00100000'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': \"'''|))\\x00\"}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': \"'''\"}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ''' /tmp/github_tools_be24f5ee6f33\\n  stderr: 'fatal: repository ''''' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|\\x0bi'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- |\\x0bi /tmp/github_tools_6925e8d10394\\n  stderr: 'fatal: repository '|?i' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00050000'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00050000 /tmp/github_tools_927fb0de8775\\n  stderr: 'fatal: repository '\\U00050000' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'kkkkkkkkk'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- kkkkkkkkk /tmp/github_tools_e2304f1cbb56\\n  stderr: 'fatal: repository 'kkkkkkkkk' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|kkkkkkkk'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- |kkkkkkkk /tmp/github_tools_11a098948725\\n  stderr: 'fatal: repository '|kkkkkkkk' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|k\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00kkkkkkk'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|k\\x00\\x002\\x00\\x00\\x00\\x00\\x00kkkkkkk'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|k\\x00\\x002\\x00\\x00\\x00\\x00\\nkkkkkkk'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ｼ\\ufffe'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ｼ\\ufffe /tmp/github_tools_d6615ec741a7\\n  stderr: 'fatal: repository 'ｼ\\ufffe' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00080808'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00080808 /tmp/github_tools_4e3c74fd0f2a\\n  stderr: 'fatal: repository '\\U00080808' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00080308'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00080308 /tmp/github_tools_30505820cc7a\\n  stderr: 'fatal: repository '\\U00080308' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00簀\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x00簀Ѐ'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00101414\\U00101414\\U00101414'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00101414\\U00101414\\U00101414 /tmp/github_tools_07be2a54ceff\\n  stderr: 'fatal: repository '\\U00101414\\U00101414\\U00101414' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'CCCCCCCCC'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- CCCCCCCCC /tmp/github_tools_108f43e75351\\n  stderr: 'fatal: repository 'CCCCCCCCC' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'CCCCCCC|C'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- CCCCCCC|C /tmp/github_tools_94ca8633dcd8\\n  stderr: 'fatal: repository 'CCCCCCC|C' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'CCC|CCCC|C'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- CCC|CCCC|C /tmp/github_tools_d9c8296a0b17\\n  stderr: 'fatal: repository 'CCC|CCCC|C' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'CCC|CCBC|C'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- CCC|CCBC|C /tmp/github_tools_18b675f3da6e\\n  stderr: 'fatal: repository 'CCC|CCBC|C' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|\\x00\\U0010ff00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|ÿ\\U0010ff00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- |ÿ\\U0010ff00 /tmp/github_tools_5731a40ac437\\n  stderr: 'fatal: repository '|ÿ\\U0010ff00' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'UUUUUUUU'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- UUUUUUUU /tmp/github_tools_e0b5711a5b1b\\n  stderr: 'fatal: repository 'UUUUUUUU' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'UUUUUUU\\x00\\x00\\x00\\x00\\x00\\x00\\x00U'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'UUU+UUU\\x00\\x00\\x00\\x00\\x00\\x00\\x00U'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'UUU+UUU\\x00\\x00\\x00\\x00\\x00\\x00\\x00U|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '䙆䙆䙆䙆䙆䙆䙆䙆'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 䙆䙆䙆䙆䙆䙆䙆䙆 /tmp/github_tools_a76eab20599b\\n  stderr: 'fatal: repository '䙆䙆䙆䙆䙆䙆䙆䙆' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '㙆䙆䙆䙆䙆䙆䙆䙆'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 㙆䙆䙆䙆䙆䙆䙆䙆 /tmp/github_tools_2b1533676f42\\n  stderr: 'fatal: repository '㙆䙆䙆䙆䙆䙆䙆䙆' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '㙆䙆䙆䙆䙆䙆䙆둆'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 㙆䙆䙆䙆䙆䙆䙆둆 /tmp/github_tools_6fbbd3417063\\n  stderr: 'fatal: repository '㙆䙆䙆䙆䙆䙆䙆둆' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f.'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f. /tmp/github_tools_2259eb8a4793\\n  stderr: 'fatal: repository '???.' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '0|\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 0|\\x7f\\x7f /tmp/github_tools_3a433f9f6b68\\n  stderr: 'fatal: repository '0|??' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '0|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 0| /tmp/github_tools_3d3bc3d06f18\\n  stderr: 'fatal: repository '0|' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f /tmp/github_tools_4ca3666b5447\\n  stderr: 'fatal: repository '??' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_fb6ea09cd99c\\n  stderr: 'fatal: repository '?????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f| /tmp/github_tools_ccf93e396782\\n  stderr: 'fatal: repository '????|' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f| /tmp/github_tools_3cdf43e5bc82\\n  stderr: 'fatal: repository '????|??????|' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f| /tmp/github_tools_d4d56ca7687b\\n  stderr: 'fatal: repository '?????????|??????|' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '|\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- |\\x7f /tmp/github_tools_3a403e670fea\\n  stderr: 'fatal: repository '|?' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_dc08e3653d23\\n  stderr: 'fatal: repository '??????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '88888888'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 88888888 /tmp/github_tools_615ed7fb1504\\n  stderr: 'fatal: repository '88888888' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '8888888|8'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 8888888|8 /tmp/github_tools_dda51b6c0a5a\\n  stderr: 'fatal: repository '8888888|8' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010ffff\\U0010ffff\\U0010ffff\\U0010ffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010ffff\\U0010ffff\\U0010ffff\\U0010ffff /tmp/github_tools_eb8d4f5acb73\\n  stderr: 'fatal: repository '\\U0010ffff\\U0010ffff\\U0010ffff\\U0010ffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00047c00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00047c00 /tmp/github_tools_f1c699d48992\\n  stderr: 'fatal: repository '\\U00047c00' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00107c00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00107c00 /tmp/github_tools_702c46a335c5\\n  stderr: 'fatal: repository '\\U00107c00' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\t\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\t\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010767c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010767c /tmp/github_tools_89956ffccb08\\n  stderr: 'fatal: repository '\\U0010767c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0009767c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0009767c /tmp/github_tools_157ec916af88\\n  stderr: 'fatal: repository '\\U0009767c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '}\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- }\\x7f\\x7f\\x7f /tmp/github_tools_25ab0fe0a595\\n  stderr: 'fatal: repository '}???' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7fBBBBBBBBBBB\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7fBBBBBBBBBBB\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_775501b3ee87\\n  stderr: 'fatal: repository '??BBBBBBBBBBB????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7fBBA\\x7f\\x7fBBBBBB\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7fBBA\\x7f\\x7fBBBBBB\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_3dfcf6b4edf5\\n  stderr: 'fatal: repository '??BBA??BBBBBB????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7fBBA\\x7f\\x7fBBBBB:\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7fBBA\\x7f\\x7fBBBBB:\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_f081a5994799\\n  stderr: 'Cloning into '/tmp/github_tools_f081a5994799'...\\nhostname contains invalid characters\\nfatal: Could not read from remote repository.\\n\\nPlease make sure you have the correct access rights\\nand the repository exists.\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'KKK'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- KKK /tmp/github_tools_0cbaa22a4a59\\n  stderr: 'fatal: repository 'KKK' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '쬀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 쬀 /tmp/github_tools_fb461ee3462a\\n  stderr: 'fatal: repository '쬀' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ô\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010b3b3'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010b3b3 /tmp/github_tools_51f7578cebd3\\n  stderr: 'fatal: repository '\\U0010b3b3' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010b39d\\U0010b3b3'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010b39d\\U0010b3b3 /tmp/github_tools_e1bb4a3d121d\\n  stderr: 'fatal: repository '\\U0010b39d\\U0010b3b3' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010b39d\\U00107cb3'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010b39d\\U00107cb3 /tmp/github_tools_dbb62ee5d59d\\n  stderr: 'fatal: repository '\\U0010b39d\\U00107cb3' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00109db3\\U00107cb3'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00109db3\\U00107cb3 /tmp/github_tools_4fab99ea02cf\\n  stderr: 'fatal: repository '\\U00109db3\\U00107cb3' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00107c7c\\U00103939'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00107c7c\\U00103939 /tmp/github_tools_ea7645271157\\n  stderr: 'fatal: repository '\\U00107c7c\\U00103939' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7fO'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7fO /tmp/github_tools_0ba01164c6eb\\n  stderr: 'fatal: repository '????O' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00100000\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00100080\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U00100080'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U00100080 /tmp/github_tools_c4b4cc1a1de3\\n  stderr: 'fatal: repository '\\U00100080' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '銒'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 銒 /tmp/github_tools_7775c7bd69a4\\n  stderr: 'fatal: repository '銒' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '銒銒'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 銒銒 /tmp/github_tools_94016442a38b\\n  stderr: 'fatal: repository '銒銒' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '銒銒鉼'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 銒銒鉼 /tmp/github_tools_ca5b620aefd0\\n  stderr: 'fatal: repository '銒銒鉼' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '銒粒銒'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 銒粒銒 /tmp/github_tools_37764ddfb1aa\\n  stderr: 'fatal: repository '銒粒銒' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '銒纒鉼'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 銒纒鉼 /tmp/github_tools_cb35700edbf7\\n  stderr: 'fatal: repository '銒纒鉼' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_09d1b9b4e758\\n  stderr: 'fatal: repository '???????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f|\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x04'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x04 /tmp/github_tools_e52d9c508c50\\n  stderr: 'fatal: repository '?' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x01'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x01 /tmp/github_tools_4bf5122f3445\\n  stderr: 'fatal: repository '?' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7fw\\x00\\x7f\\x01\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '簀\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '簀\\x00\\x00}'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0003a37c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0003a37c /tmp/github_tools_4d5c9fea109b\\n  stderr: 'fatal: repository '\\U0003a37c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\U0010a37c'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\U0010a37c /tmp/github_tools_669fb0e0d33e\\n  stderr: 'fatal: repository '\\U0010a37c' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ż'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ż /tmp/github_tools_97306aa9ffb6\\n  stderr: 'fatal: repository 'ż' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'ⅼ\\uffff\\uffff\\uffff\\uffff'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- ⅼ\\uffff\\uffff\\uffff\\uffff /tmp/github_tools_6e7c4ea8629d\\n  stderr: 'fatal: repository 'ⅼ\\uffff\\uffff\\uffff\\uffff' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '𐀀'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- 𐀀 /tmp/github_tools_31237b174ba6\\n  stderr: 'fatal: repository '𐀀' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6 /tmp/github_tools_fec33adaa727\\n  stderr: 'fatal: repository '\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': 'æ\\x00\\ue600\\ue6e6\\ue6e6\\ue6e6\\ue6e6\\ue6e6'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f`\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Failed to clone repository: Cmd('git') failed due to: exit code(128)\\n  cmdline: git clone -v -- \\x7f\\x7f\\x7f`\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f /tmp/github_tools_f59b50fbfe81\\n  stderr: 'fatal: repository '???`??????????' does not exist\\n'\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x7f\\x7f\\x7f#\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'repo_url': '\\x00\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x7f\\x7f\\x7f'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Failed to clone repository: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

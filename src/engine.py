@@ -31,6 +31,13 @@ class AtherisFuzzingEngine:
             f"-max_total_time={self.time_per_iteration}",
             "-artifact_prefix=/tmp/",
         ]
+        # item 93 (2026-09-15): code-executor tools (mcp-python-interpreter
+        # run_python_code, text-editor on huge inputs) legitimately allocate
+        # past libFuzzer's default 2048MB rss cap, which aborts the run rc=71
+        # mid-campaign and truncates coverage. Make it tunable; 0 disables.
+        _rss = os.environ.get("TOFU_RSS_LIMIT_MB", "2048")
+        if _rss and _rss != "2048":
+            atheris_args.append(f"-rss_limit_mb={_rss}")
         if self.pulse_interval and self.pulse_interval > 0:
             atheris_args.append(f"-pulse={self.pulse_interval}")
         if self.dict_file:

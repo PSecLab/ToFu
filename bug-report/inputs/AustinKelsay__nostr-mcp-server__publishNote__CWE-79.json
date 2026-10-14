@@ -1,0 +1,56 @@
+{
+ "repo": "AustinKelsay/nostr-mcp-server",
+ "tool": "publishNote",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "010b6dcb5aa87d268e0182554e3f9b0055e8fdab",
+ "draft": "AustinKelsay__nostr-mcp-server__publishNote__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 6,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '\"signedNote\":{{\"id\": \"../../../../e\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7ftc/passwdl content\", \"sig\": \"sig1/relay1.nos*r.c\\x14m\"', 'pubkey': '', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nNote ID: \"signedNote\":{{\"id\": \"../../../../e\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7ftc/passwdl content\", \"sig\": \"sig1/relay1.nos*r.c\\x14m\"\\nContent: \"\"\\nAuthor: unknown\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '\"signedNote\":${\"id\": \"id10\", \"pubkey\": \"pubey1k0\", \"created_at\": 1, \"kind\": 1, \"tags\": [[\"tag1\"], [\"tag2\"]], \"content\": \"Valid content\", \"sig\": \"sig10\"}, \"relays\": [\"wss://relay3.nostr.co', 'pubkey': '\", \"../../../.pcet//.a../', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nNote ID: \"signedNote\":${\"id\": \"id10\", \"pubkey\": \"pubey1k0\", \"created_at\": 1, \"kind\": 1, \"tags\": [[\"tag1\"], [\"tag2\"]], \"content\": \"Valid content\", \"sig\": \"sig10\"}, \"relays\": [\"wss://relay3.nostr.co\\nContent: \"\"\\nAuthor: \", \"../../../.pcet//.a../\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '\"signedNote\":${\"id\": \"id10\", \"pubkey\": \"pubey1k0\", \"created_at\": 1, \"kind\": 1, \"tags\": [[\"tag1\"], [\"tag2\"]], \"content\"\"Vial: d content\", \"sig\": \"sig10\"}, \"relays\": [\"wss://relay3.nostr.co', 'pubkey': '\", \"../../../.pcet//.a../', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nNote ID: \"signedNote\":${\"id\": \"id10\", \"pubkey\": \"pubey1k0\", \"created_at\": 1, \"kind\": 1, \"tags\": [[\"tag1\"], [\"tag2\"]], \"content\"\"Vial: d content\", \"sig\": \"sig10\"}, \"relays\": [\"wss://relay3.nostr.co\\nContent: \"\"\\nAuthor: \", \"../../../.pcet//.a../\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '', 'pubkey': '{{\\x7f\\x04\\x00\\x00', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nContent: \"\"\\nAuthor: {{\\x7f\\x04\\x00\\x00\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '', 'pubkey': '{{\\x7f\\x00\\x00\\x00', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nContent: \"\"\\nAuthor: {{\\x7f\\x00\\x00\\x00\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'signedNote': {'id': '', 'pubkey': '{{\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'created_at': 0.0, 'kind': 0.0, 'tags': [], 'content': '', 'sig': ''}, 'relays': []}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Note published successfully!\\n\\nNote is valid and ready to publish (no relays specified)\\nContent: \"\"\\nAuthor: {{\\x7f\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\n'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

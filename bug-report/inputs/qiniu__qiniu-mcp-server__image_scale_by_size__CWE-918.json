@@ -1,0 +1,1414 @@
+{
+ "repo": "qiniu/qiniu-mcp-server",
+ "tool": "image_scale_by_size",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "52dd33532655721816b3efb61285522ec94c485a",
+ "draft": "qiniu__qiniu-mcp-server__image_scale_by_size__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 651,
+ "note": "651 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http://127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '/etc/passwd\\x00', 'width': 150000001, 'height': 1}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '/etc/passwd\\\\x00?imageMogr2%2Fthumbnail%2F150000001x1'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 11 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '/etc/passwd\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etc/passwd', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../../etc/passwd?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etc/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../../etc/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'width': 100, 'height': None}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini?imageMogr2%2Fthumbnail%2F100x'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'width': 30000, 'height': 30000}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini?imageMogr2%2Fthumbnail%2F30000x30000'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.0.0:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http://127.0.0.0:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.0]. Input: 'http://127.0.0.0:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etc/passwd', 'width': None, 'height': 967}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../../etc/passwd?imageMogr2%2Fthumbnail%2Fx967'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 96', 'width': None, 'height': 967}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 96?imageMogr2%2Fthumbnail%2Fx967\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 96'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\": \"../', 'width': 774843950, 'height': 774778670}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\": \"../?imageMogr2%2Fthumbnail%2F774843950x774778670\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\": \"../'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"o`ject_url\"A \"../', 'width': 774843950, 'height': 774778670}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"o`ject_url\"A \"../?imageMogr2%2Fthumbnail%2F774843950x774778670\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"o`ject_url\"A \"../'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etF/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../../etF/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etF/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http:/&127.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http:///&127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing or empty hostname (e.g. https:///path) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'http:/&127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http:/&117.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http:///&117.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing or empty hostname (e.g. https:///path) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'http:/&117.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': \"http://1'7.0.0.1:8500\", 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "'{\\'object_url\\': \"http://1\\'7.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100\"}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | Canonicalization Error: Invalid characters in DNS label '1'7']. Input: 'http://1'7.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.0.1:8500', 'width': 100, 'height': 101}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http://127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x101'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://12/.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'object_url': 'http://12/.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [IP Representation Error: Non-canonical integer/octal/hex IPv4 detected: '12']. Input: 'http://12/.0.0.1:8500'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1651450491, 'height': 1952671098}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obj', 'width': 1601463141, 'height': 577532533}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"obj?imageMogr2%2Fthumbnail%2F1601463141x577532533\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obj'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obeujrct_l\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"obeujrct_l\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obeujrct_l\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"obeujrct_l\": \"../../../../ct/epasswd\", \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"obeujrct_l\": \"../../../../ct/epasswd\", \"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"obeujrct_l\": \"../../../../ct/epasswd\", \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../1./etc/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../1./etc/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../1./etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../2./etc/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../2./etc/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../2./etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../4./etc/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../4./etc/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../4./etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../5./etc/passwd', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../5./etc/passwd?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../5./etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"A{oect_url\": \"../../../5./etc/passwd\", \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"A{oect_url\": \"../../../5./etc/passwd\", \"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"A{oect_url\": \"../../../5./etc/passwd\", \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"../../../../etc/passwd\", \"wi', 'width': 577270884, 'height': 1970151482}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"../../../../etc/passwd\", \"wi?imageMogr2%2Fthumbnail%2F577270884x1970151482\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"../../../../etc/passwd\", \"wi'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url\": \"../../.url\": \"../../../../et', 'width': 1634742115, 'height': 1685549939}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url\": \"../../.url\": \"../../../../et?imageMogr2%2Fthumbnail%2F1634742115x1685549939\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url\": \"../../.url\": \"../../../../et'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'l\"/../../etc/pa', 'width': 1685549939, 'height': 572533794}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'l\"/../../etc/pa?imageMogr2%2Fthumbnail%2F1685549939x572533794\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_ur''''''''''''''''''l\"/../../etc/pa'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_ur\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'\\'l\"/../../etc/pas', 'width': 577009523, 'height': 1998725164}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_ur\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'\\\\\\'l\"/../../etc/pas?imageMogr2%2Fthumbnail%2F577009523x1998725164\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_ur''''''''''''''''''l\"/../../etc/pas'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 943337774}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 943341358}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.0.1:8500', 'width': 100, 'height': 1001}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http://127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x1001'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://126.0.0.1:8500', 'width': 100, 'height': 1001}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "\"{'object_url': 'http://126.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x1001'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443)]. Input: 'http://126.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 540684590}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objekt_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"objekt_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objekt_url\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"oj_btekurl\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"oj_btekurl\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"oj_btekurl\": \"../../../../etc/passwd\", \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '../../../../etc/passwd', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '../../../../etc/passwd?imageMogr2%2Fthumbnail%2Fx200'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '..//..../../etc/passwd', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '..//..../../etc/passwd?imageMogr2%2Fthumbnail%2Fx200'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..//..../../etc/passwd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'swd', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'swd?imageMogr2%2Fthumbnail%2Fx200'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'swd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url{\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url{\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10?imageMogr2%2Fthumbnail%2F100x100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 14 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url{\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'swd', 'width': None, 'height': 488}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'swd?imageMogr2%2Fthumbnail%2Fx488'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'swd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 1647980846}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'sw%d', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'sw%d?imageMogr2%2Fthumbnail%2Fx200'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'sw%d'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'sw%d', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'sw%d?imageMogr2%2Fthumbnail%2Fx100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'sw%d'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 1647980838}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 808333435, 'height': 832532262}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 807678075, 'height': 832532262}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2133078139, 'height': 2139062143}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0)0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "\"{'object_url': 'http://127.0)0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | Canonicalization Error: Invalid characters in DNS label '0)0']. Input: 'http://127.0)0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 774910075, 'height': 1647980846}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"ojject_url\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"ojject_url\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10?imageMogr2%2Fthumbnail%2F100x100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"ojject_url\": \"http://127.0.0.1:8500\", \"width\": 100, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'object_//127.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'object_//127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'object_//127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'll, Iheiswd', 'width': None, 'height': 199}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'll, Iheiswd?imageMogr2%2Fthumbnail%2Fx199'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 3 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'll, Iheiswd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'll, Iheiswd', 'width': None, 'height': 194}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'll, Iheiswd?imageMogr2%2Fthumbnail%2Fx194'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 3 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'll, Iheiswd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 936497275, 'height': 1647980856}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 936497275, 'height': 809120056}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://127.0.5.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'http://127.0.5.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.5.1]. Input: 'http://127.0.5.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url&\": \"http://127.0.5.1:8500\", \"width\": 100, \"height\": 10', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url&\": \"http://127.0.5.1:8500\", \"width\": 100, \"height\": 10?imageMogr2%2Fthumbnail%2F100x100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 14 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url&\": \"http://127.0.5.1:8500\", \"width\": 100, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url&\": \"http://127.0.5.1:8500D\", \"width\": 100, \"height\": 10', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url&\": \"http://127.0.5.1:8500D\", \"width\": 100, \"height\": 10?imageMogr2%2Fthumbnail%2F100x100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 14 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url&\": \"http://127.0.5.1:8500D\", \"width\": 100, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 936497275, 'height': 809160392}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'ht:pt//127.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'ht:pt//127.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Scheme 'ht' not in whitelist (http, https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ht:pt//127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 936497275, 'height': 805777720}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://188.0.0.1:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "\"{'object_url': 'http://188.0.0.1:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443)]. Input: 'http://188.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'http://188.0.01:8500', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "\"{'object_url': 'http://188.0.01:8500?imageMogr2%2Fthumbnail%2F100x100'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | IP Representation Error: Shortened non-canonical IPv4 notation detected: '188.0.01']. Input: 'http://188.0.01:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url.\": \"http://188.0.0\\x031:8500\", \"width\": 100, \"height\": 10', 'width': 100, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url.\": \"http://188.0.0\\\\x031:8500\", \"width\": 100, \"height\": 10?imageMogr2%2Fthumbnail%2F100x100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 30 (code 0x3) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url.\": \"http://188.0.0\u00031:8500\", \"width\": 100, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1140850687, 'height': 905969663}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"', 'width': 1701470827, 'height': 1969189987}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"?imageMogr2%2Fthumbnail%2F1701470827x1969189987\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠楷', 'width': 577270884, 'height': 1970151482}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠楷?imageMogr2%2Fthumbnail%2F577270884x1970151482'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠楷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷ȂȂȂ', 'width': 33686018, 'height': 33686018}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷ȂȂȂ?imageMogr2%2Fthumbnail%2F33686018x33686018'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷ȂȂȂ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷ȂȂȂ', 'width': 33686018, 'height': 40829442}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷ȂȂȂ?imageMogr2%2Fthumbnail%2F33686018x40829442'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷ȂȂȂ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '{wd', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '{wd?imageMogr2%2Fthumbnail%2Fx200'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '{wd'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"objecto_url\": \"{wd\", \"width\": null, \"height\": 20', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"objecto_url\": \"{wd\", \"width\": null, \"height\": 20?imageMogr2%2Fthumbnail%2Fx200\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 14 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"objecto_url\": \"{wd\", \"width\": null, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_urm\": \"swd\", \"width\": null, \"height\": 20', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_urm\": \"swd\", \"width\": null, \"height\": 20?imageMogr2%2Fthumbnail%2Fx200\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 13 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_urm\": \"swd\", \"width\": null, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 936475600, 'height': 809120056}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 111, 'height': 572533760}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\"object_url \":\"swd\", \"width\": null, \"height\": 20', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"object_url \":\"swd\", \"width\": null, \"height\": 20?imageMogr2%2Fthumbnail%2Fx200\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 11 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"object_url \":\"swd\", \"width\": null, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 745303125, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303125x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\uea3a賝鮈폝⋟湷', 'width': 745303125, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\uea3a賝鮈폝⋟湷?imageMogr2%2Fthumbnail%2F745303125x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+EA3A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '賝鮈폝⋟湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 745303153, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303153x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 1998725233, 'height': 1819046254}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F1998725233x1819046254'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 594308213, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F594308213x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ':\\u2000猢摷Ⱒ∠', 'width': 1819635319, 'height': 572533868}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': ':\\\\u2000猢摷Ⱒ∠?imageMogr2%2Fthumbnail%2F1819635319x572533868'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode whitespace separator detected: U+2000 (Zs) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ': 猢摷Ⱒ∠'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ':\\u2000猢摷Ⱒ∠', 'width': 1819635326, 'height': 572533868}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': ':\\\\u2000猢摷Ⱒ∠?imageMogr2%2Fthumbnail%2F1819635326x572533868'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode whitespace separator detected: U+2000 (Zs) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ': 猢摷Ⱒ∠'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ':\\u2000猢摷\\x00\\x00\\x00', 'width': 740425728, 'height': 1853760032}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': ':\\\\u2000猢摷\\\\x00\\\\x00\\\\x00?imageMogr2%2Fthumbnail%2F740425728x1853760032'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 4 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ': 猢摷\u0000\u0000\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 3160625}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢\\uffff\\uffff\\uffff\\uffff', 'width': 1685585919, 'height': 572533794}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢\\\\uffff\\\\uffff\\\\uffff\\\\uffff?imageMogr2%2Fthumbnail%2F1685585919x572533794'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+FFFF (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢￿￿￿￿'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 2071670833}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 539807867, 'height': 1768253474}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 578054247, 'height': 808591418}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953258107, 'height': 3160625}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \"width\": null, \"height\": 20', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"width\": null, \"height\": 20?imageMogr2%2Fthumbnail%2Fx200\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 0 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \"width\": null, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猣摷Ⱒ∠湷', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猣摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猣摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猣摷∬∠湷', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猣摷∬∠湷?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猣摷∬∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 5}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ2\\x00', 'width': 8, 'height': 1853301280}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ2\\\\x00?imageMogr2%2Fthumbnail%2F8x1853301280'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 5 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ2\u0000'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 970051707, 'height': 3160625}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 809135921}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 892353073}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 49}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \"width\": null, \"height\": 20', 'width': None, 'height': 201}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"width\": null, \"height\": 20?imageMogr2%2Fthumbnail%2Fx201\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 0 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \"width\": null, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 745303157, 'height': 572548456}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x572548456'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›≴睳≤\\u202c眢', 'width': 1819047278, 'height': 543516716}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›≴睳≤\\\\u202c眢?imageMogr2%2Fthumbnail%2F1819047278x543516716'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+202C (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›≴睳≤‬眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›≴睳≤睬⁵', 'width': 1819159586, 'height': 543516716}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›≴睳≤睬⁵?imageMogr2%2Fthumbnail%2F1819159586x543516716'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›≴睳≤睬⁵'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'CRRR', 'width': 1381126738, 'height': 1381126738}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'CRRR?imageMogr2%2Fthumbnail%2F1381126738x1381126738'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'CRRR'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'CRRR', 'width': 1381126738, 'height': 978473554}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'CRRR?imageMogr2%2Fthumbnail%2F1381126738x978473554'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'CRRR'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 986828923, 'height': 3223608}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 986828923, 'height': 3242552}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 981127291, 'height': 416364593}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猢摷Ⱒ∠湷', 'width': 745303157, 'height': 1747066924}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猢摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1747066924'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猢摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›猱摷Ⱒ∠湷', 'width': 745303157, 'height': 1747066924}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›猱摷Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1747066924'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›猱摷Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 3159345}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 3723728}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 14544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347997, 'height': 14544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077348061, 'height': 14544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 813421008}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '獤眢›Ⱒ∠湷', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '獤眢›Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '獤眢›Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '獤眢›Ⱒ∠湷', 'width': 745303157, 'height': 1684546080}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '獤眢›Ⱒ∠湷?imageMogr2%2Fthumbnail%2F745303157x1684546080'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '獤眢›Ⱒ∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤猢∠湷', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤猢∠湷?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤猢∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤猢∠湷', 'width': 745303157, 'height': 1701324576}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤猢∠湷?imageMogr2%2Fthumbnail%2F745303157x1701324576'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤猢∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ搬≷\\u2073眢', 'width': 1819047278, 'height': 1931638628}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ搬≷\\\\u2073眢?imageMogr2%2Fthumbnail%2F1819047278x1931638628'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+2073 (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ搬≷⁳眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ搬≷\\u206f眢', 'width': 1819047278, 'height': 1931638628}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ搬≷\\\\u206f眢?imageMogr2%2Fthumbnail%2F1819047278x1931638628'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+206F (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ搬≷⁯眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›≌搬≷\\u2073眢', 'width': 1819047278, 'height': 1747066924}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›≌搬≷\\\\u2073眢?imageMogr2%2Fthumbnail%2F1819047278x1747066924'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+2073 (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›≌搬≷⁳眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›≌搬≷\\u2073眢', 'width': 67372036, 'height': 67372036}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›≌搬≷\\\\u2073眢?imageMogr2%2Fthumbnail%2F67372036x67372036'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+2073 (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›≌搬≷⁳眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077282427, 'height': 14544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077282427, 'height': 3685072}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077279867, 'height': 3685072}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 956301264}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 956301098}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1865076859, 'height': 14591}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 31696}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 953274491, 'height': 8114241}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 970051707, 'height': 8114241}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 970030715, 'height': 8114241}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 953155584}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 950075392}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2077347963, 'height': 950075520}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 947585152, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \"width\": null, \"height\": 10', 'width': None, 'height': 100}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"width\": null, \"height\": 10?imageMogr2%2Fthumbnail%2Fx100\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 0 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \"width\": null, \"height\": 10'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2063630385, 'height': 31544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤猢∠湷', 'width': 745303157, 'height': 1752458345}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤猢∠湷?imageMogr2%2Fthumbnail%2F745303157x1752458345'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤猢∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\U00100000𧝤\\U00102220\\U000c6c75\\U00106469㨢', 'width': 745303157, 'height': 1701323296}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\U00100000𧝤\\\\U00102220\\\\U000c6c75\\\\U00106469㨢?imageMogr2%2Fthumbnail%2F745303157x1701323296'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+100000 (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '􀀀𧝤􂈠󆱵􆑩㨢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 947624320, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 947640704, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤猢∠湷', 'width': 745303157, 'height': 947593760}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤猢∠湷?imageMogr2%2Fthumbnail%2F745303157x947593760'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤猢∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '㨢∠搬≷\\u2073眢', 'width': 1819047278, 'height': 2065834028}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '㨢∠搬≷\\\\u2073眢?imageMogr2%2Fthumbnail%2F1819047278x2065834028'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+2073 (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '㨢∠搬≷⁳眢'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '㨢∠ﯻﯻ搬≷', 'width': 1998725235, 'height': 1819047278}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '㨢∠ﯻﯻ搬≷?imageMogr2%2Fthumbnail%2F1998725235x1819047278'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '㨢∠ﯻﯻ搬≷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '㨢\\x80㡻⁻ﬢﯻ', 'width': 2003053819, 'height': 572551970}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '㨢\\\\x80㡻⁻ﬢﯻ?imageMogr2%2Fthumbnail%2F2003053819x572551970'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+0080 (Cc) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '㨢㡻⁻ﬢﯻ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤猢∠湷', 'width': 745303157, 'height': 6824480}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤猢∠湷?imageMogr2%2Fthumbnail%2F745303157x6824480'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤猢∠湷'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤產汬\\u202c', 'width': 26658, 'height': 808464999}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F26658x808464999'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+202C (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 8388736, 'height': 897267835}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1082130560, 'height': 897267835}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›', 'width': 2003053602, 'height': 1819047202}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›?imageMogr2%2Fthumbnail%2F2003053602x1819047202'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›', 'width': 1684286498, 'height': 975333492}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›?imageMogr2%2Fthumbnail%2F1684286498x975333492'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›', 'width': 1684286498, 'height': 577270837}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›?imageMogr2%2Fthumbnail%2F1684286498x577270837'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': ' \"width\": nulTl, \"height\": 20', 'width': None, 'height': 200}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'\"width\": nulTl, \"height\": 20?imageMogr2%2Fthumbnail%2Fx200\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 0 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ' \"width\": nulTl, \"height\": 20'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 930807936, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\ue03a폝瞤產汬\\u202c', 'width': 26658, 'height': 808464999}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\ue03a폝瞤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F26658x808464999'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+E03A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '폝瞤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\ue03a폝瞤產汬\\u202c', 'width': 26658, 'height': 808464743}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\ue03a폝瞤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F26658x808464743'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+E03A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '폝瞤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\ue03a폝瞤產汬\\u202c', 'width': 26658, 'height': 960049255}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\ue03a폝瞤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F26658x960049255'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+E03A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '폝瞤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\ue03a폝瞤產汬\\u202c', 'width': 1962960930, 'height': 959212652}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\ue03a폝瞤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F1962960930x959212652'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+E03A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '폝瞤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\ue03a폝瞤產汬\\u202c', 'width': 1962960930, 'height': 875326572}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\ue03a폝瞤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F1962960930x875326572'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+E03A (Co) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '폝瞤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 964362368, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 880476288, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 914030720, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '›Ⱒ睤產汬\\u202c', 'width': 6842112, 'height': 808464930}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '›Ⱒ睤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F6842112x808464930'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+202C (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '›Ⱒ睤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺搬≷汵ⱬ ', 'width': 570452071, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺搬≷汵ⱬ ?imageMogr2%2Fthumbnail%2F570452071x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺搬≷汵ⱬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '䀺Ⱒ睤產汬\\u202c', 'width': 6842112, 'height': 808464930}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '䀺Ⱒ睤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F6842112x808464930'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+202C (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '䀺Ⱒ睤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '䀺Ⱒ睤產汬\\u202c', 'width': 15230720, 'height': 808464930}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '䀺Ⱒ睤產汬\\\\u202c?imageMogr2%2Fthumbnail%2F15230720x808464930'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+202C (Cf) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '䀺Ⱒ睤產汬‬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1998725243, 'height': 1752458345}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2063630427, 'height': 31544}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2063630427, 'height': 8075387}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 2063630427, 'height': 8075131}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 930839296, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 930839296, 'height': 2063630459}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '䄺搬≷汵ⱬ ', 'width': 570452071, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '䄺搬≷汵ⱬ ?imageMogr2%2Fthumbnail%2F570452071x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '䄺搬≷汵ⱬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '䄺搬≷汵ⱬ ', 'width': 570443879, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '䄺搬≷汵ⱬ ?imageMogr2%2Fthumbnail%2F570443879x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '䄺搬≷汵ⱬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\U000c413a\\U00102277ⱬ䡧\\U00102232\\U00087464', 'width': 1970151482, 'height': 539782252}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\U000c413a\\\\U00102277ⱬ䡧\\\\U00102232\\\\U00087464?imageMogr2%2Fthumbnail%2F1970151482x539782252'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+C413A (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '󄄺􂉷ⱬ䡧􂈲򇑤'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '\\U000c413a\\U00102277ⱬ\\U00014867𧝤\\U000c6c6c', 'width': 570451712, 'height': 1769415218}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '\\\\U000c413a\\\\U00102277ⱬ\\\\U00014867𧝤\\\\U000c6c6c?imageMogr2%2Fthumbnail%2F570451712x1769415218'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Unicode control/format character detected: U+C413A (Cn) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '󄄺􂉷ⱬ𔡧𧝤󆱬'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺搬≷汵ⱬ ', 'width': 704669799, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺搬≷汵ⱬ ?imageMogr2%2Fthumbnail%2F704669799x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺搬≷汵ⱬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'ᘺ搬≷汵ⱬ ', 'width': 704669799, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'ᘺ搬≷汵ⱬ ?imageMogr2%2Fthumbnail%2F704669799x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ᘺ搬≷汵ⱬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'ᘺ搬≷汵⡬ ', 'width': 704669799, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'ᘺ搬≷汵⡬ ?imageMogr2%2Fthumbnail%2F704669799x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ᘺ搬≷汵⡬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'ᘺ搬≷汵⡬ ', 'width': 704669799, 'height': 3158068}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'ᘺ搬≷汵⡬ ?imageMogr2%2Fthumbnail%2F704669799x3158068'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ᘺ搬≷汵⡬ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'ᘺ搬≷汵⡬†', 'width': 704669799, 'height': 3158068}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'ᘺ搬≷汵⡬†?imageMogr2%2Fthumbnail%2F704669799x3158068'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'ᘺ搬≷汵⡬†'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 943390848, 'height': 123}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 8401024, 'height': 8077691}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 8401024, 'height': 16763}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 1998725243, 'height': 1752523881}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 947585152, 'height': 31527}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '', 'width': 128, 'height': 947585024}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'object_url is required'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'E]Sdw\"', 'width': 745303157, 'height': 1751580704}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'{\\'object_url\\': \\'E]Sdw\"?imageMogr2%2Fthumbnail%2F745303157x1751580704\\'}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'E]Sdw\"'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'E]2Sdw', 'width': 1819047202, 'height': 1728061484}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'E]2Sdw?imageMogr2%2Fthumbnail%2F1819047202x1728061484'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'E]2Sdw'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': 'E]2Sdw', 'width': 1819616034, 'height': 2108524}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': 'E]2Sdw?imageMogr2%2Fthumbnail%2F1819616034x2108524'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: 'E]2Sdw'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺搬≷汵Ⅼ ', 'width': 570452071, 'height': 3158066}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺搬≷汵Ⅼ ?imageMogr2%2Fthumbnail%2F570452071x3158066'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 5 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺搬≷汵Ⅼ 'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺搬≷汵㨢Ⱒ', 'width': 1965193060, 'height': 539061356}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺搬≷汵㨢Ⱒ?imageMogr2%2Fthumbnail%2F1965193060x539061356'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺搬≷汵㨢Ⱒ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺搬≷汵㨢Ⱒ', 'width': 1965193060, 'height': 956329068}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺搬≷汵㨢Ⱒ?imageMogr2%2Fthumbnail%2F1965193060x956329068'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺搬≷汵㨢Ⱒ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺\\x00搬≷汵ⱬ', 'width': 1751580704, 'height': 808591872}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺\\\\x00搬≷汵ⱬ?imageMogr2%2Fthumbnail%2F1751580704x808591872'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 1 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺\u0000搬≷汵ⱬ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'object_url': '∺\\x00搬≷汵ⱬ', 'width': 1751582752, 'height': 808591872}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"{'object_url': '∺\\\\x00搬≷汵ⱬ?imageMogr2%2Fthumbnail%2F1751582752x808591872'}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 1 (code 0x0) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '∺\u0000搬≷汵ⱬ'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

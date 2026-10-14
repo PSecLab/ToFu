@@ -1,0 +1,210 @@
+{
+ "repo": "movibe/memory-bank-mcp",
+ "tool": "initialize_memory_bank",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "7851e066a8cdfa216c7411ea5f70cce378bb1271",
+ "draft": "movibe__memory-bank-mcp__initialize_memory_bank__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 28,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /etc/passwd\\x00/memory-bank: The argument 'path' must be a string, Uint8Array, or URL without null bytes. Received '/etc/passwd\\\\x00/memory-bank'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/etc/passwd/memory-bank: ENOENT: no such file or directory, mkdir '/home/mza6485/etc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '/var/run/../../root/.ssh/id_rsa'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /root/.ssh/id_rsa/memory-bank: EACCES: permission denied, mkdir '/root/.ssh/id_rsa/memory-bank'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"path\"* \"../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/etc/passwd/memory-bank: ENOENT: no such file or directory, mkdir '/home/mza6485/toolfuzzer/eval/etc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"path\"* \"..,,,,,,,,/../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/etc/passwd/memory-bank: ENOENT: no such file or directory, mkdir '/home/mza6485/toolfuzzer/eval/etc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"path\"* \"..,,,,,,,,/etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\"path\"* \"..,,,,,,,,/etc/passwd/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"path\": \"../\"\"\"../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/etc/passwd/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"rath\": \"../\"\"\"../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/etc/passwd/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"rath\": \"../\"\"\"../..../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\"rath\": \"../etc/passwd/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"=rath\": \"../\"\"\"../..../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\"=rath\": \"../etc/passwd/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa\"ht: \"../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/etc/passwd/memory-bank: ENOENT: no such file or directory, mkdir '/home/mza6485/toolfuzzer/eval/etc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"ht: \"../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': \"Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/etc/passwd/memory-bank: ENOENT: no such file or directory, mkdir '/home/mza6485/toolfuzzer/etc'\"}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"ht: \".'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/targets/..\"ht: \"./memory-bank: ENOENT: no such file or directory, mkdir \\'/home/mza6485/toolfuzzer/eval/targets/..\"ht: \".\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': 'a{.\"p./../..\"ht: \".'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/..\"ht: \"./memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': 'a{.\"p./../..\"ht \"/d'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/..\"ht \"/d/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\" t:hp\"a\"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\" t:hp\"a\"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\" t:hp\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\" t:hp\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\" t:h(\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\" t:h(\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\" t:h(\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win]ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/\" t:h(\"a\"..\\\\\\\\..\\\\\\\\..]\\\\..\\\\\\\\windows\\\\\\\\win]ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': ': \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/: \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"h:t \".'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/targets/..\"h:t \"./memory-bank: ENOENT: no such file or directory, mkdir \\'/home/mza6485/toolfuzzer/eval/targets/..\"h:t \".\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"h:t \".)'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/targets/..\"h:t \".)/memory-bank: ENOENT: no such file or directory, mkdir \\'/home/mza6485/toolfuzzer/eval/targets/..\"h:t \".)\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"h:t \\x0e\".)'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/targets/..\"h:t \\x0e\".)/memory-bank: ENOENT: no such file or directory, mkdir \\'/home/mza6485/toolfuzzer/eval/targets/..\"h:t \\x0e\".)\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../../..\"ht: \\x0e\".)'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Failed to initialize Memory Bank: Error: Failed to initialize Memory Bank: Error: Failed to create directory /home/mza6485/toolfuzzer/eval/targets/..\"ht: \\x0e\".)/memory-bank: ENOENT: no such file or directory, mkdir \\'/home/mza6485/toolfuzzer/eval/targets/..\"ht: \\x0e\".)\\''}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '\"pa/../..\\x0f..\"ht: \".'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/..\\x0f..\"ht: \"./memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': ': \"..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x14.\\\\\\\\windows\\\\\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/: \"..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x14.\\\\\\\\windows\\\\\\\\win.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': ': \"..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x14.\\\\\\\\.ini'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Memory Bank initialized at /home/mza6485/toolfuzzer/eval/targets/movibe__memory-bank-mcp/: \"..\\\\\\\\..\\\\\\\\..\\\\\\\\\\x14.\\\\\\\\.ini/memory-bank'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,1480 @@
+{
+ "shard_id": "051",
+ "n_repos": 7,
+ "n_configs": 76,
+ "surface_loc": 23166,
+ "repos": [
+  {
+   "repo": "StarRocks/mcp-server-starrocks",
+   "slug": "StarRocks__mcp-server-starrocks",
+   "lang": "python",
+   "commit": "88e782b0f3ff660c871f47cf8477773ac02d9e92",
+   "path": "eval/targets/StarRocks__mcp-server-starrocks",
+   "surface_loc": 3421,
+   "tools": [
+    {
+     "name": "analyze_query",
+     "description": "Analyze a query and get analyze result using query profile. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__analyze_query.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/query_profile_analytics.py",
+       "line": 253,
+       "text": "workload_insights.update(self._analyze_query_patterns(slow_queries))"
+      },
+      {
+       "file": "src/mcp_server_starrocks/query_profile_analytics.py",
+       "line": 459,
+       "text": "def _analyze_query_patterns("
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 425,
+       "text": "def analyze_query("
+      }
+     ]
+    },
+    {
+     "name": "analyze_slow_queries_topn",
+     "description": "Analyze top N slowest queries and identify performance bottlenecks",
+     "config": "StarRocks__mcp-server-starrocks__analyze_slow_queries_topn.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/query_profile_analytics.py",
+       "line": 207,
+       "text": "def analyze_slow_queries_topn("
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 406,
+       "text": "def analyze_slow_queries_topn("
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 413,
+       "text": "result = query_profile_analytics_tools.analyze_slow_queries_topn("
+      }
+     ]
+    },
+    {
+     "name": "collect_query_dump_and_profile",
+     "description": "Run a query to get it's query dump and profile, output very large, need special tools to do further processing",
+     "config": "StarRocks__mcp-server-starrocks__collect_query_dump_and_profile.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 448,
+       "text": "def collect_query_dump_and_profile("
+      }
+     ]
+    },
+    {
+     "name": "db_summary",
+     "description": "Quickly get summary of a database with tables' schema and size information. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__db_summary.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/db_summary_manager.py",
+       "line": 401,
+       "text": "_db_summary_manager: Optional[DatabaseSummaryManager] = None"
+      },
+      {
+       "file": "src/mcp_server_starrocks/db_summary_manager.py",
+       "line": 404,
+       "text": "def get_db_summary_manager(db_client) -> DatabaseSummaryManager:"
+      },
+      {
+       "file": "src/mcp_server_starrocks/db_summary_manager.py",
+       "line": 406,
+       "text": "global _db_summary_manager"
+      },
+      {
+       "file": "src/mcp_server_starrocks/db_summary_manager.py",
+       "line": 407,
+       "text": "if _db_summary_manager is None:"
+      },
+      {
+       "file": "src/mcp_server_starrocks/db_summary_manager.py",
+       "line": 408,
+       "text": "_db_summary_manager = DatabaseSummaryManager(db_client)"
+      }
+     ]
+    },
+    {
+     "name": "query_and_plotly_chart",
+     "description": "using sql `query` to extract data from database, then using python `plotly_expr` to generate a chart for UI to display. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__query_and_plotly_chart.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 154,
+       "text": "# Directory where interactive HTML charts are written by query_and_plotly_chart"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 158,
+       "text": "# How plotly.js is included in HTML charts written by query_and_plotly_chart."
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 174,
+       "text": "# Default output format for query_and_plotly_chart when the caller does not"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 580,
+       "text": "def query_and_plotly_chart("
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 606,
+       "text": "logger.info(f'query_and_plotly_chart query:{one_line_summary(query)}, plotly:{one_line_summary(plotly_expr)} format:{format}, db:{db}')"
+      }
+     ]
+    },
+    {
+     "name": "read_query",
+     "description": "Execute a SELECT query or commands that return a ResultSet. Set output_file to write the full result to disk instead of returning it inline (useful for large results).. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__read_query.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 80,
+       "text": "# Directory where read_query writes result files when output_file is a relative path."
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 335,
+       "text": "def read_query(query: Annotated[str, Field(description=\"SQL query to execute\")],"
+      }
+     ]
+    },
+    {
+     "name": "set_session_db",
+     "description": "Set or clear the default database for THIS MCP session. Subsequent tool calls without an explicit `db` argument will use this database. Pass an empty string or null to clear and fall back to the server's global default. Returns the new effective default for this session.",
+     "config": "StarRocks__mcp-server-starrocks__set_session_db.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 151,
+       "text": "description_suffix = f\". Global default db is `{db_client.default_database}`; use set_session_db to override per session\" \\"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 152,
+       "text": "if db_client.default_database else \". Use set_session_db to set a per-session default database\""
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 834,
+       "text": "def set_session_db("
+      }
+     ]
+    },
+    {
+     "name": "table_overview",
+     "description": "Get an overview of a specific table: columns, sample rows (up to 3), and total row count. Uses cache unless refresh=true. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__table_overview.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 78,
+       "text": "global_table_overview_cache = {}"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 273,
+       "text": "global global_table_overview_cache"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 328,
+       "text": "global_table_overview_cache[cache_key] = overview_string"
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 692,
+       "text": "def table_overview("
+      },
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 726,
+       "text": "if not refresh and cache_key in global_table_overview_cache:"
+      }
+     ]
+    },
+    {
+     "name": "top_bad_tables",
+     "description": "Get top bad tables by table health score",
+     "config": "StarRocks__mcp-server-starrocks__top_bad_tables.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 111,
+       "text": "def get_top_bad_tables("
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 120,
+       "text": "sql = self._build_top_bad_tables_sql(db=db, table=table, top_n=limit)"
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 127,
+       "text": "\"top_bad_tables\": [],"
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 166,
+       "text": "\"top_bad_tables\": top_tables,"
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 209,
+       "text": "def _build_top_bad_tables_sql("
+      }
+     ]
+    },
+    {
+     "name": "top_hot_tables",
+     "description": "Get top hot tables by audit-log visit count",
+     "config": "StarRocks__mcp-server-starrocks__top_hot_tables.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 50,
+       "text": "def get_top_hot_tables("
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 61,
+       "text": "sql = self._build_top_hot_tables_sql("
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 75,
+       "text": "\"top_hot_tables\": [],"
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 108,
+       "text": "\"top_hot_tables\": top_tables,"
+      },
+      {
+       "file": "src/mcp_server_starrocks/table_management_tools.py",
+       "line": 170,
+       "text": "def _build_top_hot_tables_sql("
+      }
+     ]
+    },
+    {
+     "name": "write_query",
+     "description": "Execute a DDL/DML or other StarRocks command that do not have a ResultSet. Use set_session_db to set a per-session default database",
+     "config": "StarRocks__mcp-server-starrocks__write_query.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_starrocks/server.py",
+       "line": 391,
+       "text": "def write_query(query: Annotated[str, Field(description=\"SQL to execute\")],"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "hijaz/postmancer",
+   "slug": "hijaz__postmancer",
+   "lang": "node",
+   "commit": "d71f38e14421a3ff5fa65b335f164c1a0b002d5b",
+   "path": "eval/targets/hijaz__postmancer",
+   "surface_loc": 3358,
+   "tools": [
+    {
+     "name": "get_environment_variables",
+     "description": "Retrieves all environment variables from the specified environment",
+     "config": "hijaz__postmancer__get_environment_variables.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 121,
+       "text": "name: \"get_environment_variables\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 324,
+       "text": "// Handle get_environment_variables tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 325,
+       "text": "else if (name === \"get_environment_variables\") {"
+      }
+     ]
+    },
+    {
+     "name": "http_request",
+     "description": "Sends HTTP requests to specified URLs with optional authentication, headers, and body",
+     "config": "hijaz__postmancer__http_request.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 23,
+       "text": "// Create tool schema for the http_request tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 91,
+       "text": "name: \"http_request\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 136,
+       "text": "// Handle the http_request tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 137,
+       "text": "if (name === \"http_request\") {"
+      }
+     ]
+    },
+    {
+     "name": "list_collections",
+     "description": "Lists all available request collections",
+     "config": "hijaz__postmancer__list_collections.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 96,
+       "text": "name: \"list_collections\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 161,
+       "text": "// Handle list_collections tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 162,
+       "text": "else if (name === \"list_collections\") {"
+      }
+     ]
+    },
+    {
+     "name": "list_requests",
+     "description": "Lists all requests in a specified collection",
+     "config": "hijaz__postmancer__list_requests.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 101,
+       "text": "name: \"list_requests\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 193,
+       "text": "// Handle list_requests tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 194,
+       "text": "else if (name === \"list_requests\") {"
+      }
+     ]
+    },
+    {
+     "name": "request_from_collection",
+     "description": "Retrieves and optionally executes a request from a collection",
+     "config": "hijaz__postmancer__request_from_collection.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 111,
+       "text": "name: \"request_from_collection\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 253,
+       "text": "// Handle request_from_collection tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 254,
+       "text": "else if (name === \"request_from_collection\") {"
+      }
+     ]
+    },
+    {
+     "name": "save_request",
+     "description": "Saves an HTTP request to a collection for future use",
+     "config": "hijaz__postmancer__save_request.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 106,
+       "text": "name: \"save_request\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 225,
+       "text": "// Handle save_request tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 226,
+       "text": "else if (name === \"save_request\") {"
+      }
+     ]
+    },
+    {
+     "name": "set_environment_variable",
+     "description": "Sets an environment variable for use in HTTP requests",
+     "config": "hijaz__postmancer__set_environment_variable.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 116,
+       "text": "name: \"set_environment_variable\","
+      },
+      {
+       "file": "src/index.ts",
+       "line": 300,
+       "text": "// Handle set_environment_variable tool"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 301,
+       "text": "else if (name === \"set_environment_variable\") {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "MammothGrowth/dbt-cli-mcp",
+   "slug": "MammothGrowth__dbt-cli-mcp",
+   "lang": "python",
+   "commit": "6283b0507a074347dbc08ad95cd335068ef7c65c",
+   "path": "eval/targets/MammothGrowth__dbt-cli-mcp",
+   "surface_loc": 3295,
+   "tools": [
+    {
+     "name": "dbt_build",
+     "description": "Run build command (seeds, tests, snapshots, and models). An AI agent should use this tool when it needs to execute a comprehensive build process that runs seeds, snapshots, models, and tests in the correct order. This is ideal for complete project deployment or ensuring all components work together.\n\nReturns:\n    Output from the dbt build command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_build.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_build.py",
+       "line": 3,
+       "text": "Integration test for the dbt_build tool that runs seeds, tests, snapshots, and models."
+      },
+      {
+       "file": "integration_tests/test_dbt_build.py",
+       "line": 17,
+       "text": "def test_dbt_build():"
+      },
+      {
+       "file": "integration_tests/test_dbt_build.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_build tool by running a comprehensive build process\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_build.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_build tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_build.py",
+       "line": 25,
+       "text": "# Call the dbt_build tool to run a comprehensive build"
+      }
+     ]
+    },
+    {
+     "name": "dbt_compile",
+     "description": "Compile dbt models. An AI agent should use this tool when it needs to generate the SQL that will be executed without actually running it against the database. This is valuable for validating SQL syntax, previewing transformations, or investigating how dbt interprets models before committing to execution.\n\nReturns:\n    Output from the dbt compile command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_compile.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_compile.py",
+       "line": 3,
+       "text": "Integration test for the dbt_compile tool that compiles dbt models."
+      },
+      {
+       "file": "integration_tests/test_dbt_compile.py",
+       "line": 17,
+       "text": "def test_dbt_compile():"
+      },
+      {
+       "file": "integration_tests/test_dbt_compile.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_compile tool by compiling a specific model\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_compile.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_compile tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_compile.py",
+       "line": 25,
+       "text": "# Call the dbt_compile tool to compile the customers model"
+      }
+     ]
+    },
+    {
+     "name": "dbt_debug",
+     "description": "Run dbt debug to validate the project setup. An AI agent should use this tool when it needs to troubleshoot configuration issues, check database connectivity, or verify that all project dependencies are properly installed. This is essential for diagnosing problems before attempting to run models or tests.\n\nReturns:\n    Output from the dbt debug command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_debug.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_debug.py",
+       "line": 3,
+       "text": "Integration test for the dbt_debug tool that validates project setup."
+      },
+      {
+       "file": "integration_tests/test_dbt_debug.py",
+       "line": 17,
+       "text": "def test_dbt_debug():"
+      },
+      {
+       "file": "integration_tests/test_dbt_debug.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_debug tool by validating the project setup\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_debug.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_debug tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_debug.py",
+       "line": 22,
+       "text": "# Call the dbt_debug tool to validate the project setup"
+      }
+     ]
+    },
+    {
+     "name": "dbt_deps",
+     "description": "Install dbt package dependencies. An AI agent should use this tool when it needs to install or update external packages that the dbt project depends on. This ensures that all required modules, macros, and models from other packages are available before running the project.\n\nReturns:\n    Output from the dbt deps command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_deps.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_deps.py",
+       "line": 3,
+       "text": "Integration test for the dbt_deps tool that installs package dependencies."
+      },
+      {
+       "file": "integration_tests/test_dbt_deps.py",
+       "line": 17,
+       "text": "def test_dbt_deps():"
+      },
+      {
+       "file": "integration_tests/test_dbt_deps.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_deps tool by installing package dependencies\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_deps.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_deps tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_deps.py",
+       "line": 22,
+       "text": "# Call the dbt_deps tool to install package dependencies"
+      }
+     ]
+    },
+    {
+     "name": "dbt_ls",
+     "description": "List dbt resources. An AI agent should use this tool when it needs to discover available models, tests, sources, and other resources within a dbt project. This helps the agent understand the project structure, identify dependencies, and select specific resources for other operations like running or testing.\n\nReturns:\n    When output_format is 'json' (default):\n      - With verbose=False (default): returns a simplified JSON with only name, resource_type, and depends_on.nodes\n      - With verbose=True: returns a full JSON with all resource details\n    When output_format is 'name', 'path', or 'selector', returns plain text with the respective format.\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_ls.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_ls.py",
+       "line": 3,
+       "text": "Integration test for the dbt_ls tool that lists dbt resources."
+      },
+      {
+       "file": "integration_tests/test_dbt_ls.py",
+       "line": 17,
+       "text": "def test_dbt_ls():"
+      },
+      {
+       "file": "integration_tests/test_dbt_ls.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_ls tool by listing models\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_ls.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_ls tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_ls.py",
+       "line": 22,
+       "text": "# Call the dbt_ls tool to list all models"
+      }
+     ]
+    },
+    {
+     "name": "dbt_run",
+     "description": "Run dbt models. An AI agent should use this tool when it needs to execute dbt models to transform data and build analytical tables in the data warehouse. This is essential for refreshing data or implementing new data transformations in a project.\n\nReturns:\n    Output from the dbt run command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_run.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 3,
+       "text": "Integration test for the dbt_run tool that runs dbt models."
+      },
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 17,
+       "text": "def test_dbt_run():"
+      },
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_run tool by running a specific model\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_run tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 37,
+       "text": "# Call the dbt_run tool to run the customers model"
+      }
+     ]
+    },
+    {
+     "name": "dbt_seed",
+     "description": "Load CSV files as seed data. An AI agent should use this tool when it needs to load initial data from CSV files into the database. This is essential for creating reference tables, test datasets, or any static data that models will depend on.\n\nReturns:\n    Output from the dbt seed command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_seed.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 25,
+       "text": "# First run dbt_seed to load the seed data"
+      },
+      {
+       "file": "integration_tests/test_dbt_run.py",
+       "line": 26,
+       "text": "print(\"Running dbt_seed to load test data...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 25,
+       "text": "# First run dbt_seed to load the seed data"
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 26,
+       "text": "print(\"Running dbt_seed to load test data...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_seed.py",
+       "line": 3,
+       "text": "Integration test for the dbt_seed tool that loads CSV files as seed data."
+      }
+     ]
+    },
+    {
+     "name": "dbt_show",
+     "description": "Preview the results of a model. An AI agent should use this tool when it needs to preview data from a specific model without materializing it. This helps inspect transformation results, debug issues, or demonstrate how data looks after processing without modifying the target database.\n\nReturns:\n    Output from the dbt show command, defaulting to JSON format if not specified\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_show.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 3,
+       "text": "Integration test for the dbt_show tool that previews model results."
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 17,
+       "text": "def test_dbt_show():"
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_show tool by previewing a model's results\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_show tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_show.py",
+       "line": 37,
+       "text": "# Test 1: Call the dbt_show tool to preview the customers model"
+      }
+     ]
+    },
+    {
+     "name": "dbt_test",
+     "description": "Run dbt tests. An AI agent should use this tool when it needs to validate data quality and integrity by running tests defined in a dbt project. This helps ensure that data transformations meet expected business rules and constraints before being used for analysis or reporting.\n\nReturns:\n    Output from the dbt test command as text (this command does not support JSON output format)\n",
+     "config": "MammothGrowth__dbt-cli-mcp__dbt_test.json",
+     "hints": [
+      {
+       "file": "integration_tests/test_dbt_test.py",
+       "line": 3,
+       "text": "Integration test for the dbt_test tool that runs tests on dbt models."
+      },
+      {
+       "file": "integration_tests/test_dbt_test.py",
+       "line": 17,
+       "text": "def test_dbt_test():"
+      },
+      {
+       "file": "integration_tests/test_dbt_test.py",
+       "line": 18,
+       "text": "\"\"\"Test the dbt_test tool by running tests on a specific model\"\"\""
+      },
+      {
+       "file": "integration_tests/test_dbt_test.py",
+       "line": 19,
+       "text": "print(\"Testing dbt_test tool...\")"
+      },
+      {
+       "file": "integration_tests/test_dbt_test.py",
+       "line": 49,
+       "text": "# Call the dbt_test tool to test the models"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "yokingma/one-search-mcp",
+   "slug": "yokingma__one-search-mcp",
+   "lang": "node",
+   "commit": "16eb424608888949165f6a668d476cbdf79afc20",
+   "path": "eval/targets/yokingma__one-search-mcp",
+   "surface_loc": 3283,
+   "tools": [
+    {
+     "name": "one_extract",
+     "description": "Fetch and preprocess page content from one or more URLs. Returns cleaned text blocks that can be passed to downstream tools or models.",
+     "config": "yokingma__one-search-mcp__one_extract.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 23,
+       "text": "name: 'one_extract',"
+      }
+     ]
+    },
+    {
+     "name": "one_map",
+     "description": "Discover URLs from a starting point by loading a page in the browser and extracting links from its HTML.",
+     "config": "yokingma__one-search-mcp__one_map.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 11,
+       "text": "name: 'one_map',"
+      }
+     ]
+    },
+    {
+     "name": "one_scrape",
+     "description": "Scrape a single webpage and return markdown, HTML, links, or a screenshot. Supports navigation timeout, TLS verification control, full-page screenshots, bounded pre-scrape actions, and advanced executeJavascript only when allowExecuteJavascript is true.",
+     "config": "yokingma__one-search-mcp__one_scrape.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 17,
+       "text": "name: 'one_scrape',"
+      }
+     ]
+    },
+    {
+     "name": "one_search",
+     "description": "Search and retrieve content from web pages. Returns SERP results by default (url, title, description).",
+     "config": "yokingma__one-search-mcp__one_search.json",
+     "hints": [
+      {
+       "file": "src/tools.ts",
+       "line": 5,
+       "text": "name: 'one_search',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "thomasgazzoni/vsc-mcp",
+   "slug": "thomasgazzoni__vsc-mcp",
+   "lang": "node",
+   "commit": "535ef45d060cf6a7925ad80d6e1858a37d50e519",
+   "path": "eval/targets/thomasgazzoni__vsc-mcp",
+   "surface_loc": 3275,
+   "tools": [
+    {
+     "name": "edit_symbol",
+     "description": "Edits a symbol (function, class, etc.) by name and type in a given file using LSP.",
+     "config": "thomasgazzoni__vsc-mcp__edit_symbol.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 46,
+       "text": "logger.info(\"Registering edit_symbol tool\");"
+      },
+      {
+       "file": "src/tools/edit-symbol.ts",
+       "line": 12,
+       "text": "name: \"edit_symbol\","
+      }
+     ]
+    },
+    {
+     "name": "find_references",
+     "description": "Finds all references to a symbol (function, class, etc.) by name and type in a given file using LSP.",
+     "config": "thomasgazzoni__vsc-mcp__find_references.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 124,
+       "text": "logger.info(\"Registering find_references tool\");"
+      },
+      {
+       "file": "src/tools/find-references.ts",
+       "line": 19,
+       "text": "name: \"find_references\","
+      }
+     ]
+    },
+    {
+     "name": "get_errors",
+     "description": "Fetches code errors and issues for a specific file using the LSP textDocument/diagnostic API.",
+     "config": "thomasgazzoni__vsc-mcp__get_errors.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 111,
+       "text": "logger.info(\"Registering get_errors tool\");"
+      },
+      {
+       "file": "src/tools/get-errors.ts",
+       "line": 12,
+       "text": "name: \"get_errors\","
+      }
+     ]
+    },
+    {
+     "name": "read_file",
+     "description": "Reads the content of a file.",
+     "config": "thomasgazzoni__vsc-mcp__read_file.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 98,
+       "text": "logger.info(\"Registering read_file tool\");"
+      },
+      {
+       "file": "src/tools/read-file.ts",
+       "line": 8,
+       "text": "name: \"read_file\","
+      }
+     ]
+    },
+    {
+     "name": "read_symbol",
+     "description": "Reads a symbol (function, class, etc.) by name and type in a given file using LSP.",
+     "config": "thomasgazzoni__vsc-mcp__read_symbol.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 85,
+       "text": "logger.info(\"Registering read_symbol tool\");"
+      },
+      {
+       "file": "src/tools/read-symbol.ts",
+       "line": 6,
+       "text": "name: \"read_symbol\","
+      }
+     ]
+    },
+    {
+     "name": "search_replace_file",
+     "description": "Searches for content in a file and replaces it with new content, ignoring whitespace differences.",
+     "config": "thomasgazzoni__vsc-mcp__search_replace_file.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 72,
+       "text": "logger.info(\"Registering search_replace_file tool\");"
+      },
+      {
+       "file": "src/tools/search-replace-file.ts",
+       "line": 8,
+       "text": "name: \"search_replace_file\","
+      }
+     ]
+    },
+    {
+     "name": "write_file",
+     "description": "Creates a new file or overwrites an existing file with the provided content.",
+     "config": "thomasgazzoni__vsc-mcp__write_file.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 59,
+       "text": "logger.info(\"Registering write_file tool\");"
+      },
+      {
+       "file": "src/tools/write-file.ts",
+       "line": 8,
+       "text": "name: \"write_file\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "jfrog/mcp-jfrog",
+   "slug": "jfrog__mcp-jfrog",
+   "lang": "node",
+   "commit": "410b1a8ccc5061b59abd36ab07639ade82b18ed5",
+   "path": "eval/targets/jfrog__mcp-jfrog",
+   "surface_loc": 3269,
+   "tools": [
+    {
+     "name": "jfrog_check_availability",
+     "description": "Check if JFrog platform is ready and functioning or not",
+     "config": "jfrog__mcp-jfrog__jfrog_check_availability.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 104,
+       "text": "name: \"jfrog_check_availability\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_create_local_repository",
+     "description": "Create a new local repository in artifactroy",
+     "config": "jfrog__mcp-jfrog__jfrog_create_local_repository.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 125,
+       "text": "name: \"jfrog_create_local_repository\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_create_permission_target",
+     "description": "Create a new permission target in the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_create_permission_target.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 194,
+       "text": "name: \"jfrog_create_permission_target\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_create_project",
+     "description": "Create a new project in the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_create_project.json",
+     "hints": [
+      {
+       "file": "tools/access.ts",
+       "line": 62,
+       "text": "name: \"jfrog_create_project\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_create_remote_repository",
+     "description": "Create a new remote repository in Artifactory to proxy external package registries",
+     "config": "jfrog__mcp-jfrog__jfrog_create_remote_repository.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 136,
+       "text": "name: \"jfrog_create_remote_repository\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_create_virtual_repository",
+     "description": "Create a new virtual repository in Artifactory that aggregates multiple repositories",
+     "config": "jfrog__mcp-jfrog__jfrog_create_virtual_repository.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 147,
+       "text": "name: \"jfrog_create_virtual_repository\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_delete_permission_resource",
+     "description": "Delete a specific resource type from a permission target",
+     "config": "jfrog__mcp-jfrog__jfrog_delete_permission_resource.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 274,
+       "text": "name: \"jfrog_delete_permission_resource\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_delete_permission_target",
+     "description": "Delete a permission target from the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_delete_permission_target.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 218,
+       "text": "name: \"jfrog_delete_permission_target\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_execute_aql_query",
+     "description": "Execute an Artifactory Query Language (AQL) query to search for artifacts, builds, or other entities in JFrog Artifactory. AQL is a powerful query language for searching and filtering artifacts in Artifactory repositories. It supports complex criteria, sorting, pagination, and more.",
+     "config": "jfrog__mcp-jfrog__jfrog_execute_aql_query.json",
+     "hints": [
+      {
+       "file": "tools/aql.ts",
+       "line": 72,
+       "text": "name: \"jfrog_execute_aql_query\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_artifacts_summary",
+     "description": "Get the summary of artifacts, one or many",
+     "config": "jfrog__mcp-jfrog__jfrog_get_artifacts_summary.json",
+     "hints": [
+      {
+       "file": "tools/security.ts",
+       "line": 84,
+       "text": "name: \"jfrog_get_artifacts_summary\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_package_curation_status",
+     "description": "Useful for checking the curation status of a specific package version. Returns one of the following statuses: approved, blocked, inconclusive.",
+     "config": "jfrog__mcp-jfrog__jfrog_get_package_curation_status.json",
+     "hints": [
+      {
+       "file": "tools/curation.ts",
+       "line": 52,
+       "text": "name: \"jfrog_get_package_curation_status\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_package_info",
+     "description": "Useful for when you need to get publicly available information about a software package. it will provide you with the following information on it, if available in public sources: a short description of the package, its latest published version, the software license this software is distributed under, along with urls of its version control system, its homepage and whether it is known to be a malicious package (in any version).",
+     "config": "jfrog__mcp-jfrog__jfrog_get_package_info.json",
+     "hints": [
+      {
+       "file": "tools/catalog.ts",
+       "line": 349,
+       "text": "name: \"jfrog_get_package_info\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_package_version_vulnerabilities",
+     "description": "Useful for when you need the list of known vulnerabilities affecting a specific version of an open source package.",
+     "config": "jfrog__mcp-jfrog__jfrog_get_package_version_vulnerabilities.json",
+     "hints": [
+      {
+       "file": "tools/catalog.ts",
+       "line": 376,
+       "text": "name: \"jfrog_get_package_version_vulnerabilities\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_package_versions",
+     "description": "Useful for when you need to get a list of versions of a publicly available package. it can tell you each version's publication date. Can also filter based on version vulnerability status.",
+     "config": "jfrog__mcp-jfrog__jfrog_get_package_versions.json",
+     "hints": [
+      {
+       "file": "tools/catalog.ts",
+       "line": 364,
+       "text": "name: \"jfrog_get_package_versions\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_permission_resource",
+     "description": "Get details of a specific resource type within a permission target",
+     "config": "jfrog__mcp-jfrog__jfrog_get_permission_resource.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 233,
+       "text": "name: \"jfrog_get_permission_resource\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_permission_target",
+     "description": "Get detailed information about a specific permission target",
+     "config": "jfrog__mcp-jfrog__jfrog_get_permission_target.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 182,
+       "text": "name: \"jfrog_get_permission_target\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_runtime_specific_cluster",
+     "description": "return a runtime cluster by id",
+     "config": "jfrog__mcp-jfrog__jfrog_get_runtime_specific_cluster.json",
+     "hints": [
+      {
+       "file": "tools/runtime.ts",
+       "line": 67,
+       "text": "name: \"jfrog_get_runtime_specific_cluster\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_specific_build",
+     "description": "Get details for a specific build by name, optionally scoped to a project",
+     "config": "jfrog__mcp-jfrog__jfrog_get_specific_build.json",
+     "hints": [
+      {
+       "file": "tools/builds.ts",
+       "line": 33,
+       "text": "name: \"jfrog_get_specific_build\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_specific_project",
+     "description": "Get detailed information about a specific project in the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_get_specific_project.json",
+     "hints": [
+      {
+       "file": "tools/access.ts",
+       "line": 72,
+       "text": "name: \"jfrog_get_specific_project\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_get_vulnerability_info",
+     "description": "Useful for when you need to get a specific vulnerability information, including its affected packages and versions.",
+     "config": "jfrog__mcp-jfrog__jfrog_get_vulnerability_info.json",
+     "hints": [
+      {
+       "file": "tools/catalog.ts",
+       "line": 387,
+       "text": "name: \"jfrog_get_vulnerability_info\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_builds",
+     "description": "return a list of all my build in the jfrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_list_builds.json",
+     "hints": [
+      {
+       "file": "tools/builds.ts",
+       "line": 44,
+       "text": "name: \"jfrog_list_builds\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_environments",
+     "description": "Get a list of all environments types (e.g. dev, prod, etc.) in the JFrog platform with their details",
+     "config": "jfrog__mcp-jfrog__jfrog_list_environments.json",
+     "hints": [
+      {
+       "file": "tools/access.ts",
+       "line": 42,
+       "text": "name: \"jfrog_list_environments\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_permission_targets",
+     "description": "Get a list of all permission targets in the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_list_permission_targets.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 169,
+       "text": "name: \"jfrog_list_permission_targets\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_projects",
+     "description": "Get a list of all projects in the JFrog platform with their details",
+     "config": "jfrog__mcp-jfrog__jfrog_list_projects.json",
+     "hints": [
+      {
+       "file": "tools/access.ts",
+       "line": 52,
+       "text": "name: \"jfrog_list_projects\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_repositories",
+     "description": "List all repositories in Artifactory with optional filtering by type, package type, and project",
+     "config": "jfrog__mcp-jfrog__jfrog_list_repositories.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 158,
+       "text": "name: \"jfrog_list_repositories\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_running_images",
+     "description": "List all running container images across runtime clusters with their security and operational status",
+     "config": "jfrog__mcp-jfrog__jfrog_list_running_images.json",
+     "hints": [
+      {
+       "file": "tools/runtime.ts",
+       "line": 78,
+       "text": "name: \"jfrog_list_running_images\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_list_runtime_clusters",
+     "description": "return a list of all my runtime clusters in the jfrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_list_runtime_clusters.json",
+     "hints": [
+      {
+       "file": "tools/runtime.ts",
+       "line": 56,
+       "text": "name: \"jfrog_list_runtime_clusters\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_replace_permission_resource",
+     "description": "Replace a specific resource type within a permission target",
+     "config": "jfrog__mcp-jfrog__jfrog_replace_permission_resource.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 260,
+       "text": "name: \"jfrog_replace_permission_resource\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_set_folder_property",
+     "description": "Set properties on a folder in Artifactory, with optional recursive application",
+     "config": "jfrog__mcp-jfrog__jfrog_set_folder_property.json",
+     "hints": [
+      {
+       "file": "tools/repositories.ts",
+       "line": 114,
+       "text": "name: \"jfrog_set_folder_property\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_update_permission_resource",
+     "description": "Update a specific resource type within a permission target",
+     "config": "jfrog__mcp-jfrog__jfrog_update_permission_resource.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 246,
+       "text": "name: \"jfrog_update_permission_resource\","
+      }
+     ]
+    },
+    {
+     "name": "jfrog_update_permission_target",
+     "description": "Update an existing permission target in the JFrog platform",
+     "config": "jfrog__mcp-jfrog__jfrog_update_permission_target.json",
+     "hints": [
+      {
+       "file": "tools/permissions.ts",
+       "line": 204,
+       "text": "name: \"jfrog_update_permission_target\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "dragon1086/kospi-kosdaq-stock-server",
+   "slug": "dragon1086__kospi-kosdaq-stock-server",
+   "lang": "python",
+   "commit": "8455054a043376cfde22e472c3fb3241bcc57f32",
+   "path": "eval/targets/dragon1086__kospi-kosdaq-stock-server",
+   "surface_loc": 3265,
+   "tools": [
+    {
+     "name": "get_index_ohlcv",
+     "description": "Retrieves OHLCV data for a specific index.\n\nArgs:\n    fromdate (str): Start date for retrieval (YYYYMMDD)\n    todate   (str): End date for retrieval (YYYYMMDD)\n    ticker   (str): Index ticker (1001 for KOSPI, 2001 for KOSDAQ)\n    freq     (str): d - daily / m - monthly / y - yearly. Defaults to 'd'.\n\nReturns:\n    Dict with date keys containing index OHLCV data.\n    Columns: Open, High, Low, Close, Volume, Amount\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_index_ohlcv.json",
+     "hints": [
+      {
+       "file": "krx_data_client.py",
+       "line": 1834,
+       "text": "def get_index_ohlcv("
+      },
+      {
+       "file": "krx_data_client.py",
+       "line": 2274,
+       "text": "def get_index_ohlcv_by_date("
+      },
+      {
+       "file": "krx_data_client.py",
+       "line": 2281,
+       "text": "\"\"\"pykrx \ud638\ud658: get_index_ohlcv\uc758 \ubcc4\uce6d\"\"\""
+      },
+      {
+       "file": "krx_data_client.py",
+       "line": 2282,
+       "text": "return self.get_index_ohlcv(fromdate, todate, ticker, freq)"
+      },
+      {
+       "file": "krx_data_client.py",
+       "line": 2541,
+       "text": "def get_index_ohlcv_by_date(fromdate: str, todate: str, ticker: str, freq: str = \"d\") -> DataFrame:"
+      }
+     ]
+    },
+    {
+     "name": "get_sector_info",
+     "description": "Retrieves sector/industry classification for all stocks in a market.\n\nArgs:\n    market (str): Market to query. \"KOSPI\" or \"KOSDAQ\". Defaults to \"KOSPI\".\n\nReturns:\n    Dict[str, str]: Mapping of ticker codes to sector names.\n    Example: {\"005930\": \"\uc804\uae30\uc804\uc790\", \"000660\": \"\uc804\uae30\uc804\uc790\", \"005380\": \"\uc6b4\uc218\uc7a5\ube44\"}\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_sector_info.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 494,
+       "text": "def get_sector_info("
+      }
+     ]
+    },
+    {
+     "name": "get_stock_fundamental",
+     "description": "Retrieves fundamental data (PER/PBR/Dividend Yield) for a specific stock.\n\nArgs:\n    fromdate (str): Start date for retrieval (YYYYMMDD)\n    todate   (str): End date for retrieval (YYYYMMDD)\n    ticker   (str): Stock ticker symbol\n\nReturns:\n    Dict with date keys containing BPS, PER, PBR, EPS, DIV, DPS.\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_stock_fundamental.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 333,
+       "text": "def get_stock_fundamental("
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 622,
+       "text": "get_stock_fundamental(\"start_date\", \"end_date\", \"ticker\")"
+      }
+     ]
+    },
+    {
+     "name": "get_stock_market_cap",
+     "description": "Retrieves market capitalization data for a specific stock.\n\nArgs:\n    fromdate (str): Start date for retrieval (YYYYMMDD)\n    todate   (str): End date for retrieval (YYYYMMDD)\n    ticker   (str): Stock ticker symbol\n\nReturns:\n    Dict with date keys containing MarketCap, Volume, Amount.\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_stock_market_cap.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 284,
+       "text": "def get_stock_market_cap("
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 619,
+       "text": "get_stock_market_cap(\"start_date\", \"end_date\", \"ticker\")"
+      }
+     ]
+    },
+    {
+     "name": "get_stock_ohlcv",
+     "description": "Retrieves OHLCV (Open/High/Low/Close/Volume) data for a specific stock.\n\nArgs:\n    fromdate (str): Start date for retrieval (YYYYMMDD)\n    todate   (str): End date for retrieval (YYYYMMDD)\n    ticker   (str): Stock ticker symbol\n    adjusted (bool, optional): Whether to use adjusted prices. Defaults to True.\n\nReturns:\n    Dict with date keys containing OHLCV data.\n    Columns: Open, High, Low, Close, Volume, Amount, MarketCap\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_stock_ohlcv.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 232,
+       "text": "def get_stock_ohlcv("
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 616,
+       "text": "get_stock_ohlcv(\"start_date\", \"end_date\", \"ticker\", adjusted=True)"
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 637,
+       "text": "3. get_stock_ohlcv(\"20251201\", \"20251220\", \"005930\")"
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 652,
+       "text": "Example) get_stock_ohlcv(\"20240101\", \"20240301\", \"005930\", adjusted=True)"
+      }
+     ]
+    },
+    {
+     "name": "get_stock_trading_volume",
+     "description": "Retrieves trading volume by investor type for a specific stock.\n\nArgs:\n    fromdate (str): Start date for retrieval (YYYYMMDD)\n    todate   (str): End date for retrieval (YYYYMMDD)\n    ticker   (str): Stock ticker symbol\n    detail   (bool): If True, returns 12 investor types. If False, returns 5 types.\n                    False: \uae30\uad00\ud569\uacc4, \uae30\ud0c0\ubc95\uc778, \uac1c\uc778, \uc678\uad6d\uc778\ud569\uacc4, \uc804\uccb4\n                    True: \uae08\uc735\ud22c\uc790, \ubcf4\ud5d8, \ud22c\uc2e0, \uc0ac\ubaa8, \uc740\ud589, \uae30\ud0c0\uae08\uc735, \uc5f0\uae30\uae08, \uae30\ud0c0\ubc95\uc778, \uac1c\uc778, \uc678\uad6d\uc778, \uae30\ud0c0\uc678\uad6d\uc778, \uc804\uccb4\n\nReturns:\n    Dict with date keys containing investor type net trading volumes.\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__get_stock_trading_volume.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 382,
+       "text": "def get_stock_trading_volume("
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 625,
+       "text": "get_stock_trading_volume(\"start_date\", \"end_date\", \"ticker\", detail=False)"
+      }
+     ]
+    },
+    {
+     "name": "load_all_tickers",
+     "description": "Loads all ticker symbols and names for KOSPI and KOSDAQ into memory.\n\nReturns:\n    Dict[str, str]: A dictionary mapping tickers to stock names.\n    Example: {\"005930\": \"\uc0bc\uc131\uc804\uc790\", \"035720\": \"\uce74\uce74\uc624\", ...}\n",
+     "config": "dragon1086__kospi-kosdaq-stock-server__load_all_tickers.json",
+     "hints": [
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 166,
+       "text": "def load_all_tickers() -> Dict[str, str]:"
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 224,
+       "text": "\"Please run the load_all_tickers() tool first.\""
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 608,
+       "text": "load_all_tickers()"
+      },
+      {
+       "file": "kospi_kosdaq_stock_server.py",
+       "line": 635,
+       "text": "1. load_all_tickers()"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,376 @@
+{
+ "shard_id": "022",
+ "n_repos": 1,
+ "n_configs": 14,
+ "surface_loc": 13760,
+ "repos": [
+  {
+   "repo": "johnhuang316/code-index-mcp",
+   "slug": "johnhuang316__code-index-mcp",
+   "lang": "python",
+   "commit": "d395cbf99e8e3e8bc280255a76a84a9ac6cb5528",
+   "path": "eval/targets/johnhuang316__code-index-mcp",
+   "surface_loc": 13760,
+   "tools": [
+    {
+     "name": "build_deep_index",
+     "description": "\nBuild the deep index (full symbol extraction) for the current project.\n\nThis performs a complete re-index and loads it into memory.\nUses parallel processing by default. For large codebases (3000+ files),\ntuning max_workers can significantly improve build times.\n\nArgs:\n    max_workers: Maximum number of parallel workers for file processing.\n        Defaults to min(4, cpu_count) when not specified.\n        Increase for I/O-bound workloads on machines with many cores.\n    timeout: Parallel build timeout in seconds. When not specified,\n        scales dynamically based on file count (0.5s per file,\n        min 30s, max 600s).\n",
+     "config": "johnhuang316__code-index-mcp__build_deep_index.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 446,
+       "text": "def build_deep_index("
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 466,
+       "text": "return IndexManagementService(ctx).rebuild_deep_index("
+      },
+      {
+       "file": "src/code_index_mcp/services/code_intelligence_service.py",
+       "line": 73,
+       "text": "\"message\": \"Deep index not available. Please run build_deep_index before calling get_file_summary.\","
+      },
+      {
+       "file": "src/code_index_mcp/services/index_management_service.py",
+       "line": 50,
+       "text": "For deep/symbol rebuilds, use build_deep_index() tool instead."
+      },
+      {
+       "file": "src/code_index_mcp/services/index_management_service.py",
+       "line": 286,
+       "text": "def rebuild_deep_index("
+      }
+     ]
+    },
+    {
+     "name": "check_temp_directory",
+     "description": "Check the temporary directory used for storing index data.",
+     "config": "johnhuang316__code-index-mcp__check_temp_directory.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 488,
+       "text": "def check_temp_directory() -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/tools/config/settings_tool.py",
+       "line": 62,
+       "text": "def check_temp_directory(self) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/services/settings_service.py",
+       "line": 24,
+       "text": "Handles the logic for create_temp_directory and check_temp_directory MCP tools."
+      }
+     ]
+    },
+    {
+     "name": "clear_settings",
+     "description": "Clear all settings and cached data.",
+     "config": "johnhuang316__code-index-mcp__clear_settings.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 495,
+       "text": "def clear_settings(ctx: Context) -> str:"
+      },
+      {
+       "file": "src/code_index_mcp/services/settings_service.py",
+       "line": 175,
+       "text": "Handles the logic for clear_settings MCP tool."
+      }
+     ]
+    },
+    {
+     "name": "configure_file_watcher",
+     "description": "Configure file watcher service settings.\n\nArgs:\n    enabled: Whether to enable file watcher\n    debounce_seconds: Debounce time in seconds before triggering rebuild\n    additional_exclude_patterns: Additional directory/file patterns to exclude\n    observer_type: Observer backend to use. Options:\n        - \"auto\" (default): platform default observer\n        - \"kqueue\": Force kqueue observer (macOS/BSD)\n        - \"fsevents\": Force FSEvents observer (macOS only, has known reliability issues)\n        - \"polling\": Cross-platform polling fallback (slower but most compatible)\n",
+     "config": "johnhuang316__code-index-mcp__configure_file_watcher.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 519,
+       "text": "def configure_file_watcher("
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 538,
+       "text": "return SystemManagementService(ctx).configure_file_watcher("
+      },
+      {
+       "file": "src/code_index_mcp/services/system_management_service.py",
+       "line": 64,
+       "text": "def configure_file_watcher(self, enabled: Optional[bool] = None,"
+      }
+     ]
+    },
+    {
+     "name": "create_temp_directory",
+     "description": "Create the temporary directory used for storing index data.",
+     "config": "johnhuang316__code-index-mcp__create_temp_directory.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 481,
+       "text": "def create_temp_directory() -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/tools/config/settings_tool.py",
+       "line": 34,
+       "text": "def create_temp_directory(self) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/services/settings_service.py",
+       "line": 24,
+       "text": "Handles the logic for create_temp_directory and check_temp_directory MCP tools."
+      }
+     ]
+    },
+    {
+     "name": "find_files",
+     "description": "\nFind files matching glob pattern using in-memory index.\nSupports path patterns (*.py, test_*.js) and filename-only matching (README.md).\n",
+     "config": "johnhuang316__code-index-mcp__find_files.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 383,
+       "text": "def find_files(pattern: str, ctx: Context) -> list[str]:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 388,
+       "text": "return FileDiscoveryService(ctx).find_files(pattern)"
+      },
+      {
+       "file": "src/code_index_mcp/utils/response_formatter.py",
+       "line": 120,
+       "text": "Format a file list response for find_files operations."
+      },
+      {
+       "file": "src/code_index_mcp/utils/error_handler.py",
+       "line": 102,
+       "text": "def find_files(pattern: str, ctx: Context) -> Dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/utils/error_handler.py",
+       "line": 104,
+       "text": "return FileDiscoveryService(ctx).find_files(pattern)"
+      }
+     ]
+    },
+    {
+     "name": "get_file_summary",
+     "description": "\nGet a summary of a specific file, including:\n- Line count\n- Function/class definitions (for supported languages)\n- Import statements\n- Basic complexity metrics\n",
+     "config": "johnhuang316__code-index-mcp__get_file_summary.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 394,
+       "text": "def get_file_summary(file_path: str, ctx: Context) -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/indexing/deep_index_manager.py",
+       "line": 53,
+       "text": "def get_file_summary(self, file_path: str) -> Optional[Dict[str, Any]]:"
+      },
+      {
+       "file": "src/code_index_mcp/indexing/deep_index_manager.py",
+       "line": 54,
+       "text": "return self._mgr.get_file_summary(file_path)"
+      },
+      {
+       "file": "src/code_index_mcp/indexing/sqlite_index_manager.py",
+       "line": 233,
+       "text": "def get_file_summary(self, file_path: str) -> Optional[Dict[str, Any]]:"
+      },
+      {
+       "file": "src/code_index_mcp/services/code_intelligence_service.py",
+       "line": 66,
+       "text": "summary = index_manager.get_file_summary(file_path)"
+      }
+     ]
+    },
+    {
+     "name": "get_file_watcher_status",
+     "description": "Get file watcher service status and statistics.",
+     "config": "johnhuang316__code-index-mcp__get_file_watcher_status.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 512,
+       "text": "def get_file_watcher_status(ctx: Context) -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 514,
+       "text": "return SystemManagementService(ctx).get_file_watcher_status()"
+      },
+      {
+       "file": "src/code_index_mcp/services/system_management_service.py",
+       "line": 47,
+       "text": "def get_file_watcher_status(self) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "get_settings_info",
+     "description": "Get information about the project settings.",
+     "config": "johnhuang316__code-index-mcp__get_settings_info.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 474,
+       "text": "def get_settings_info(ctx: Context) -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 476,
+       "text": "return SettingsService(ctx).get_settings_info()"
+      },
+      {
+       "file": "src/code_index_mcp/services/settings_service.py",
+       "line": 120,
+       "text": "def get_settings_info(self) -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/services/settings_service.py",
+       "line": 124,
+       "text": "Handles the logic for get_settings_info MCP tool."
+      }
+     ]
+    },
+    {
+     "name": "get_symbol_body",
+     "description": "\nGet the source code body of a specific symbol (function, method, or class).\n\nThis tool retrieves only the code for the specified symbol, enabling efficient\ncontext usage by avoiding loading entire files.\n\nArgs:\n    file_path: Path to the file containing the symbol\n    symbol_name: Name of the symbol to retrieve (e.g., \"process_data\", \"MyClass.my_method\")\n\nReturns:\n    Dictionary containing:\n    - status: \"success\" or \"error\"\n    - symbol_name: Name of the symbol\n    - type: Type of symbol (function, method, class)\n    - line: Start line number\n    - end_line: End line number\n    - code: The actual source code\n    - signature: Function/method signature (if available)\n    - docstring: Documentation string (if available)\n    - called_by: List of symbols that call this symbol\n",
+     "config": "johnhuang316__code-index-mcp__get_symbol_body.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 408,
+       "text": "def get_symbol_body(file_path: str, symbol_name: str, ctx: Context) -> dict[str, Any]:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 431,
+       "text": "return CodeIntelligenceService(ctx).get_symbol_body(file_path, symbol_name)"
+      },
+      {
+       "file": "src/code_index_mcp/services/code_intelligence_service.py",
+       "line": 14,
+       "text": "# Configuration for get_symbol_body (conservative for stability)"
+      },
+      {
+       "file": "src/code_index_mcp/services/code_intelligence_service.py",
+       "line": 105,
+       "text": "def get_symbol_body(self, file_path: str, symbol_name: str) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "refresh_index",
+     "description": "\nManually rebuild the project file index. Use after git operations or when index seems stale.\n",
+     "config": "johnhuang316__code-index-mcp__refresh_index.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 436,
+       "text": "def refresh_index(ctx: Context) -> str:"
+      },
+      {
+       "file": "src/code_index_mcp/indexing/deep_index_manager.py",
+       "line": 40,
+       "text": "def refresh_index("
+      },
+      {
+       "file": "src/code_index_mcp/indexing/deep_index_manager.py",
+       "line": 45,
+       "text": "return self._mgr.refresh_index("
+      },
+      {
+       "file": "src/code_index_mcp/indexing/index_provider.py",
+       "line": 111,
+       "text": "def refresh_index(self, force: bool = False) -> bool:"
+      },
+      {
+       "file": "src/code_index_mcp/indexing/sqlite_index_manager.py",
+       "line": 161,
+       "text": "def refresh_index("
+      }
+     ]
+    },
+    {
+     "name": "refresh_search_tools",
+     "description": "\nManually re-detect the available command-line search tools on the system.\nThis is useful if you have installed a new tool (like ripgrep) after starting the server.\n",
+     "config": "johnhuang316__code-index-mcp__refresh_search_tools.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 502,
+       "text": "def refresh_search_tools(ctx: Context) -> str:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 507,
+       "text": "return SearchService(ctx).refresh_search_tools()"
+      },
+      {
+       "file": "src/code_index_mcp/services/search_service.py",
+       "line": 87,
+       "text": "def refresh_search_tools(self) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "search_code_advanced",
+     "description": "\nSearch for code pattern with pagination. Auto-selects best search tool (ugrep/ripgrep/ag/grep).\nSupports glob file_pattern (e.g., \"*.py\"), explicit regex mode, and fuzzy matching (ugrep only).\nRegex matching requires passing regex=True and may require an external search tool.\n",
+     "config": "johnhuang316__code-index-mcp__search_code_advanced.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 353,
+       "text": "def search_code_advanced("
+      },
+      {
+       "file": "src/code_index_mcp/utils/error_handler.py",
+       "line": 44,
+       "text": "def search_code_advanced(pattern: str, ctx: Context, **kwargs) -> Dict[str, Any]:"
+      }
+     ]
+    },
+    {
+     "name": "set_project_path",
+     "description": "Set the base project path for indexing.",
+     "config": "johnhuang316__code-index-mcp__set_project_path.json",
+     "hints": [
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 345,
+       "text": "def set_project_path(path: str, ctx: Context) -> str:"
+      },
+      {
+       "file": "src/code_index_mcp/server.py",
+       "line": 569,
+       "text": "help=\"Set the project path on startup (equivalent to calling set_project_path).\","
+      },
+      {
+       "file": "src/code_index_mcp/tools/config/project_config_tool.py",
+       "line": 117,
+       "text": "index_manager.set_project_path(self._settings.base_path)"
+      },
+      {
+       "file": "src/code_index_mcp/utils/context_helper.py",
+       "line": 107,
+       "text": "return (\"Project path not set. Please use set_project_path to set a \""
+      },
+      {
+       "file": "src/code_index_mcp/utils/error_handler.py",
+       "line": 38,
+       "text": "def set_project_path(path: str, ctx: Context) -> str:"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

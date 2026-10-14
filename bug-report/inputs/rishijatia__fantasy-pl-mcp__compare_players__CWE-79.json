@@ -1,0 +1,77 @@
+{
+ "repo": "rishijatia/fantasy-pl-mcp",
+ "tool": "compare_players",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "fdaef005143347455fc500cb1f934d451f95251a",
+ "draft": "rishijatia__fantasy-pl-mcp__compare_players__CWE-79.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 9,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'player_names': ['\"play{{\"playe\"player_names\": [\"../../../../etc/passwd\", \"Mohamed Salah\"', ', r_names\"\"met: ric', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"play{{\\\\\"playe\\\\\"player_names\\\\\": [\\\\\"../../../../etc/passwd\\\\\", \\\\\"Mohamed Salah\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'player_names': ['\"play{{\"playe\"player_names\": [\"../../../../ptec/asswd\", \"Mohamed Salah\"', ', r_names\"\"met: ric', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"play{{\\\\\"playe\\\\\"player_names\\\\\": [\\\\\"../../../../ptec/asswd\\\\\", \\\\\"Mohamed Salah\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"player\\x1dnames\": [Br\\ryn\\x1ae\"], \")metrics\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{,\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"imeweeks\": trrue, \"', '', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player\\\\u001dnames\\\\\": [Br\\\\ryn\\\\u001ae\\\\\"], \\\\\")metrics\\\\\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.resources.players)! Logged content: 'Finding players by name: \"player\u001dnames\": [Br\\ryn\u001ae\"], \")metrics\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"player\\x1dnames\": [Br\\ryn\\x1ae\"], \")metrics\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{,\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00f\\x14\\x00\\x00\\x00s\\x06\\x155\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"imeweeks\": trrue, \"', '', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player\\\\u001dnames\\\\\": [Br\\\\ryn\\\\u001ae\\\\\"], \\\\\")metrics\\\\\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:fpl_mcp.fpl.resources.players)! Logged content: 'Finding players by name: \"player\u001dnames\": [Br\\ryn\u001ae\"], \")metrics\": []{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{'."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"player\\x1d\\x11{{\"', '', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"player\\\\u001d\\\\u0011{{\\\\\"\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"playe\\x1c\\x00\\x00\\x00\\x00\\x00\\x00\\x00s\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x1c\\x14\\x14\\x14alah\",ics\":includ_Ygam\\x00\\x00\\x00\\x00\\x00\\x00{{{{{{{{\\x00D \"nu', '', '', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"playe\\\\u001c\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000s\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u001c\\\\u0014\\\\u0014\\\\u0014alah\\\\\",ics\\\\\":includ_Ygam\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{{{{{{{\\\\u0000D \\\\\"nu\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"playe\\x1c\\x00\\x00\\x00\\x00\\x00\\x00\\x00s\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x1c\\x14\\x14\\x14alah\",ics\":includ_Ygam\\x00\\x00\\x00\\x00\\x00\\x00{{]{{{{{\\x00D \"nu', '', '', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"playe\\\\u001c\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000s\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u0014\\\\u001c\\\\u0014\\\\u0014\\\\u0014alah\\\\\",ics\\\\\":includ_Ygam\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000{{]{{{{{\\\\u0000D \\\\\"nu\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"player_names\": [\"Erling Haaland\", \"Mohamed Salah\", \"Kevin De Bruyne\", _game{{{{{{{{{', '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', '{{{{{{{{{{{{{{{{{weeks\": true, :', '', ''], 'metrics': [], 'include_gameweeks': False, 'num_gameweeks': 0, 'include_fixture_analysis': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "repo24-b",
+   "input": "{'player_names': ['\"pla\\x00\\x00{{{{{{{{{{{{{{{{{{{{{{{{{', '', '', '', ''], 'metrics': [], 'include_gameweeks': True, 'num_gameweeks': -67372037, 'include_fixture_analysis': True}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"error\": \"No player found matching \\'\\\\\"pla\\\\u0000\\\\u0000{{{{{{{{{{{{{{{{{{{{{{{{{\\'\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

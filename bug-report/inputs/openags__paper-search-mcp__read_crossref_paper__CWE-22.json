@@ -1,0 +1,35 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "read_crossref_paper",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__read_crossref_paper__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '10.5555/12345678', 'save_path': '../\\x00'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"CrossRef papers cannot be read directly through this tool. CrossRef is a citation database that provides metadata about academic papers. Only metadata and abstracts are available through CrossRef's API. To access the full text, please use the paper's DOI or URL to visit the publisher's website.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '10.1000/xyz123', 'save_path': '/etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"CrossRef papers cannot be read directly through this tool. CrossRef is a citation database that provides metadata about academic papers. Only metadata and abstracts are available through CrossRef's API. To access the full text, please use the paper's DOI or URL to visit the publisher's website.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '10.1038/nature12373', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"CrossRef papers cannot be read directly through this tool. CrossRef is a citation database that provides metadata about academic papers. Only metadata and abstracts are available through CrossRef's API. To access the full text, please use the paper's DOI or URL to visit the publisher's website.\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

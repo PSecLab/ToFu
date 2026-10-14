@@ -1,0 +1,35 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "read_citeseerx_paper",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__read_citeseerx_paper__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'valid-paper-id', 'save_path': '/tmp/../etc/'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error reading paper: Paper valid-paper-id not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'valid-paper-id', 'save_path': '../../../../../tmp'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error reading paper: Paper valid-paper-id not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"paper_', 'save_path': 'd\": \"/etc/passwd\\\\u0000\", \"save_path\": \"./dowpath'}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error reading paper: Paper \"paper_ not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

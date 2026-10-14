@@ -1,0 +1,77 @@
+{
+ "repo": "gerred/mcp-server-replicate",
+ "tool": "generate_image",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "568024cbab6f7da22a85d7bd5787f2e835e4e54a",
+ "draft": "gerred__mcp-server-replicate__generate_image__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 9,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': '/etc/passwd\\x00', 'style': '', 'quality': 'low', 'width': '-1', 'height': '0', 'num_outputs': 0, 'seed': '-999999999'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 4.90 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/crash-a72c2eead2fb63bbc33759ee2f038b8b3a0ffdb6']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.85 seconds (attempt 1/3)'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/crash-a72c2eead2fb63bbc33759ee2f038b8b3a0ffdb6']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': '../../../../etc/passwd', 'style': 'realistic', 'quality': 'high', 'width': '512', 'height': '512', 'num_outputs': 1, 'seed': '12345'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.67 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.35 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': 'deadlock test', 'style': 'null', 'quality': 'high', 'width': '2147483647', 'height': '2147483647', 'num_outputs': 999999999, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 4.80 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.69 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'style': 'cartoon', 'quality': 'balanced', 'width': '1024', 'height': '768', 'num_outputs': 2, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 4.61 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.79 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': 'memory access violation', 'style': 'glitch', 'quality': 'balanced', 'width': '4294967295', 'height': '-2147483648', 'num_outputs': 1, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.91 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.12 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': 'argument injection --quality=high --width=9999', 'style': 'minimal', 'quality': '--prompt=malicious', 'width': '512', 'height': '512', 'num_outputs': 1, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.87 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.48 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': 'deadlock test', 'style': 'null', 'quality': 'high', 'width': '2174483647', 'height': '2147483647', 'num_outputs': 999999999, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.45 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.06 seconds (attempt 1/3)'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': 'deadlock test', 'style': 'null', 'quality': 'high', 'width': '1087241823', 'height': '2147483647', 'num_outputs': 999999999, 'seed': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 4.97 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/crash-4f08c8acef8096b1fd0a1ab8c5fad65c66f472db']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.76 seconds (attempt 1/3)'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/crash-4f08c8acef8096b1fd0a1ab8c5fad65c66f472db']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'prompt': '../../../../ec/passwd', 'style': 'realistic', 'quality': 'high', 'width': '512', 'height': '512', 'num_outputs': 1, 'seed': '12345'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 4.06 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_server_replicate.replicate_client)! Logged content: 'Request failed: Client error '401 Unauthorized' for url 'https://api.replicate.com/v1/predictions'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401. Retrying in 1.71 seconds (attempt 1/3)'."
+  }
+ ],
+ "truncated": false
+}

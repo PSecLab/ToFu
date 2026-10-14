@@ -1,0 +1,105 @@
+{
+ "repo": "hanweg/mcp-pdf-tools",
+ "tool": "extract-pages",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "388ba1fcb8cb30b9c938e681cbb5945e74b22596",
+ "draft": "hanweg__mcp-pdf-tools__extract-pages__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 13,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '/etc/passwd\\x00', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwd\u0000' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Error resolving path '/etc/passwd\u0000': lstat: embedded null character in pathSilent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '../../../../etc/passwd', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: EOF marker not found'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '../../../../etc/passwd' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '../../../../etc/passwd' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '../../../../etc/passwd' (canonical: '/etc/passwd')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "\"Error extracting pages: [Errno 2] No such file or directory: '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini'\"",
+   "analysis": "[Sequence Step 1/1] Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '..\\..\\..\\..\\windows\\win.ini' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/..\\..\\..\\..\\windows\\win.ini')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': 'predefined_seed:test1.pdf', 'output_path': '../../../../../tmp/evil.pdf', 'pages': [1, 2]}",
+   "triggered_sanitizers": "['check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "\"Error extracting pages: [Errno 2] No such file or directory: 'predefined_seed:test1.pdf'\"",
+   "analysis": "[Sequence Step 1/1] Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: 'predefined_seed:test1.pdf' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/predefined_seed:test1.pdf')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': 'pat/etc/passwd\\x00', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: 'pat/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: 'pat/etc/passwd\u0000' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Error resolving path 'pat/etc/passwd\u0000': lstat: embedded null character in pathSilent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '/etc/passwd\\x00', 'output_path': 'output.pdf', 'pages': [21]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwd\u0000' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Error resolving path '/etc/passwd\u0000': lstat: embedded null character in pathSilent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '/etc/passwd\\x00', 'output_path': 'output.pdf', 'pages': [42]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwd\u0000' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Error resolving path '/etc/passwd\u0000': lstat: embedded null character in pathSilent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '/etc/passwd\\x00', 'output_path': 'output.df', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: embedded null byte'",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwd\u0000' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwd\u0000' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Error resolving path '/etc/passwd\u0000': lstat: embedded null character in pathSilent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '/etc/passwdᘕ', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "\"Error extracting pages: [Errno 2] No such file or directory: '/etc/passwdᘕ'\"",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '/etc/passwdᘕ' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '/etc/passwdᘕ' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '/etc/passwdᘕ' (canonical: '/etc/passwdᘕ')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '\"inpvt_path\": \"/etc/passwd\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: [Errno 2] No such file or directory: \\'\"inpvt_path\": \"/etc/passwd\\\\\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"inpvt_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"inpvt_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '\"inpvt_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/\"inpvt_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '\"_path\": \"/etc/passwd\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: [Errno 2] No such file or directory: \\'\"_path\": \"/etc/passwd\\\\\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '\"_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/\"_path\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '\"_pZth\": \"/etc/passwd\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: [Errno 2] No such file or directory: \\'\"_pZth\": \"/etc/passwd\\\\\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"_pZth\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"_pZth\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '\"_pZth\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/\"_pZth\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_path': '\"_pat\\x18\\x18\\x18\\x18\\x18\\x18\\x18\\x18\\x18\\x18h\": \"/etc/passwd\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1', 'output_path': 'output.pdf', 'pages': [1]}",
+   "triggered_sanitizers": "['check_introspection_sensitive_file_access', 'check_file_access', 'check_introspection_path_traversal', 'check_path_traversal']",
+   "tool_output": "'Error extracting pages: [Errno 2] No such file or directory: \\'\"_pat\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18\\\\x18h\": \"/etc/passwd\\\\\\\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1\\''",
+   "analysis": "[Sequence Step 1/1] Introspection Sensitive File Access Alert (CWE-552): Access to sensitive file or credential resource detected! Accessed path: '\"_pat\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018h\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (Matched pattern: '/etc/passwd').Introspection alert: Access to restricted system file detected: '\"_pat\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018h\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' matching pattern '/etc/passwd'Introspection Path Traversal Alert: Access to file outside dedicated directory '/home/mza6485/toolfuzzer/eval/targets/hanweg__mcp-pdf-tools' detected: '\"_pat\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018h\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1' (canonical: '/home/mza6485/.tofu_scratch/hanweg__mcp-pdf-tools__extract-pages/\"_pat\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018\u0018h\": \"/etc/passwd\\u0000\", \"output_path\": \"output.pdf\", \"pages\": [1')Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

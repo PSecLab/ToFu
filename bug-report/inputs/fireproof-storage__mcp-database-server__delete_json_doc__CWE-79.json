@@ -1,0 +1,42 @@
+{
+ "repo": "fireproof-storage/mcp-database-server",
+ "tool": "delete_json_doc",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "605dbb7ab63ce607a79f861f48d1904672ce76da",
+ "draft": "fireproof-storage__mcp-database-server__delete_json_doc__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"{{\"id\"'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Deleted document with ID: \"{{\"id\"'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '{{{{{{{{{{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Deleted document with ID: {{{{{{{{{{{{{{{'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '{{{{{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Deleted document with ID: {{{{{{{{{{'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '{{{{{{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_invalid_json']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Deleted document with ID: {{{{{{{{{{{'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Silent Bug Alert: Sanitizers ['check_invalid_json'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

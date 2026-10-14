@@ -1,0 +1,307 @@
+\section{Design}
+\label{sec:design}
+
+\project{} takes a registered tool and constructs a coverage-guided fuzzing target with automatically selected security checks from the information already exposed through
+its orchestration interface. The design has four stages
+(Figure~\ref{fig:tofu-overview}): (1) normalize the tool interface,
+(2) select security sanitizers for each tool,
+(3) generate schema-valid fuzzing inputs and the corresponding semantic
+oracles, and (4) execute the target using conventional and semantic feedback.
+Tool metadata informs both seed generation and sanitizer selection, ensuring that the property being exercised is also the property used to judge the execution.
+
+\subsection{Metadata Extraction}
+\label{sec:design-metadata}
+
+\project{} begins from the metadata already exposed to the LLM. For a tool
+$T$, the Metadata Parser constructs
+
+\[
+T = \langle D_T,\{a_1,\ldots,a_n\}\rangle,
+\]
+
+where $D_T$ is the tool-level description and each argument $a_i$ denotes an entry in the available input schema. The implementation retains the raw schema for use by the LLM and the input decoder, including argument names and types. The tool's natural-language description is additionally provided to the LLM for selecting sanitizers and generating seeds.
+
+The parser obtains this information through the tool registry rather than
+requiring a separate fuzzing specification. This is important because the
+resulting representation captures exactly the interface presented to the LLM
+and therefore the semantic contract that \project{} later tests.
+
+% pierre
+To handle the structural heterogeneity of tool interfaces across different ecosystems (e.g., MCP JSON-RPC declarations, LangChain and AutoGen Pydantic models, and FastMCP/Python type annotations), the Metadata Parser normalizes disparate definitions into a canonical, JSON-Schema-aligned representation. Primitive types (\texttt{string}, \texttt{integer}, \texttt{number}, \texttt{boolean}) and argument-level docstrings are extracted from schema fields or introspected signatures. For compound structures, such as nested objects and arrays, the parser recursively traverses sub-schemas (\texttt{properties} and \texttt{items}), preserving hierarchical access paths while exposing leaf-level attributes as distinct argument descriptors $a_i$ with their own natural-language contexts. Polymorphic parameters specified via unions (\texttt{oneOf}, \texttt{anyOf}, or Python \texttt{Union}) are preserved as multi-type disjunctions, allowing subsequent stages to specialize sanitizers and generate test cases for each candidate branch. Discrete value domains (\texttt{enum} and \texttt{Literal}) are retained as explicit finite sets to constrain baseline generation. Finally, the parser partitions arguments into required and optional sets based on schema constraints and the presence of default values $v_{\text{def}}$, enabling the harness generator to systematically alternate between partial invocations relying on defaults and fully specified adversarial payloads.
+
+\subsection{Semantics-Aware Sanitizers}
+\label{sec:design-mapper}
+
+The central abstraction in \project{} is a \emph{semantics-aware sanitizer}.
+Traditional sanitizers associate a program execution with a largely
+application-independent property, such as whether a memory access is in
+bounds. Tool vulnerabilities instead depend on what an input represents. A
+string interpreted as a path requires different security checks from the same
+string interpreted as a URL or command.
+
+We represent a sanitizer as
+
+\[
+S = \langle A,G,O,I\rangle ,
+\]
+
+where $A$ is an \emph{applicability specification}, $G$ describes adversarial
+input classes, $O$ defines the expected security property, and $I$ describes
+the execution observations required to evaluate that property. The four
+components deliberately connect input generation and bug detection. For
+example, a filesystem-containment sanitizer may apply to path-like arguments,
+generate absolute paths and traversal sequences, require that resolved
+accesses remain beneath an allowed root, and request observations of
+filesystem operations. A URL sanitizer instead generates adversarial schemes
+and destinations and evaluates the resulting network behavior.
+
+The initial Sanitizer Corpus organizes these specifications around recurring
+CWE weakness classes. CWE is used as a source of reusable security knowledge,
+not as the oracle itself: each corpus entry must translate a weakness into
+concrete applicability conditions, input classes, expected behavior, and
+observable evidence. Table \ref{tab:sanitizers} lists the CWE-based sanitizers used for \project{}. 
+
+% pierre
+\iffalse
+\TODO{Pierre: describe the exact representation of a corpus entry. Include one
+complete sanitizer example showing $A$, $G$, $O$, and $I$ as they appear in
+the real system. Explain whether these fields are code, structured JSON,
+natural language, or a combination.}
+\fi
+In \project{}, corpus entries are implemented as hybrid specifications combining declarative metadata for LLM interpretation with executable Python components for fuzzing and monitoring. Specifically, \textbf{Applicability ($A$)} is a structured JSON object with natural-language docstrings and semantic tags (e.g., associating CWE-22 with keywords like \texttt{path} or \texttt{directory}) consumed by the LLM during mapping. \textbf{Adversarial Generation ($G$)} provides structured JSON payload suites (e.g., \texttt{../../etc/passwd}, encoded escapes, and absolute paths) to guide mutation. \textbf{Security Oracle ($O$)} is an executable Python predicate (e.g., \texttt{check\_introspection\_path\_traversal}) evaluated against a behavioral rule (\texttt{on\_trigger: raise\_exception}), verifying that resolved filesystem accesses remain within an authorized root directory. \textbf{Execution Instrumentation ($I$)} comprises executable context-manager tracers (e.g., \texttt{FileAccessTracer} intercepting \texttt{builtins.open}) that collect concrete operations into the execution trace $\tau(T, x, I_S)$.
+
+\subsection{Mapping Sanitizers}
+\label{sec:design-specialization}
+
+For each argument $a_i$, \project{} identifies the sanitizers whose
+applicability conditions match its documented semantics:
+
+\[
+\mathcal{S}(a_i)=
+\{S_j \mid S_j \text{ applies to } a_i\}.
+\]
+
+This decision cannot generally be made from the primitive type alone.
+\project{} therefore considers the argument name, argument description,
+schema, and surrounding tool description. An LLM interprets this
+natural-language context and selects candidate sanitizers from the corpus.
+
+The LLM does not decide whether an execution is vulnerable. Its role is
+restricted to connecting an explicitly defined security property to an
+argument whose semantics are expressed in natural language. The resulting
+security decision remains grounded in the sanitizer's oracle.
+
+To select the sanitizers used for a fuzzing campaign, the LLM is provided with the tool name, description, arguments, and the list of available sanitizers. The LLM then makes a selection based on which sanitizers are applicable to the likely classes of vulnerabilities for the tool.
+
+% \TODO{Pierre - I don't believe there is any fallback or recourse for hallucinated or incorrectly added sanitizers currently. This can be impactful as well, as a file sanitizer on a tool meant to write outside of the work directory will be flagged. You should decide how you want to say this.}
+
+If the LLM hallucinates by listing a non-existing sanitizer, \project{} detects it and simply does not add such sanitizer to the list. However, the LLM does not choose the expected sanitizers it will degrade the performance of \project{}, thus the choice of sanitizers made by the LLM has to be monitored to make sure results are accurate.
+
+% \paragraph{Tool-specific specialization.}
+% \TODO{Remove, no tool-specific specialization}
+% Selecting a sanitizer identifies a general class of security property, but not
+% necessarily its concrete policy. For example, filesystem containment requires
+% a root directory, and a network-access check may require a set of permitted
+% destinations. These values must be derived from the particular tool's
+% interface.
+
+% For every selected pair $(a_i,S_j)$, \project{} therefore produces a
+% tool-specific sanitizer instance $S_{i,j}^{T}$. The instance retains the
+% generic adversarial strategy and oracle structure of $S_j$, but binds
+% tool-specific parameters inferred from $T$. A path argument described as
+% ``within the current workspace,'' for example, specializes the generic
+% containment property to the workspace associated with that tool.
+
+% This specialization also allows \project{} to capture constraints more precise
+% than the corresponding CWE. Tool metadata may restrict access to a particular
+% directory, host, scheme, namespace, or service even though no standalone CWE
+% encodes that exact policy.
+
+% \TODO{Pierre: explain how specialization values are recovered in practice. For
+% example, how does \project{} determine the concrete workspace root, allowed
+% domain, or permitted resource set when the description uses relative or
+% context-dependent terms? State what happens when the metadata does not contain
+% enough information to instantiate the property.}
+
+% \paragraph{Extending beyond the corpus.}
+% \TODO{Remove, no sanitizer extension}
+% A fixed sanitizer corpus would limit \project{} to weaknesses anticipated when
+% the corpus was created. When metadata expresses a security restriction that
+% does not match an existing sanitizer, \project{} may instead specialize a
+% related sanitizer or construct a tool-specific condition from the documented
+% constraint. Crucially, the generated condition must remain tied to an explicit
+% property in the interface rather than to an unconstrained LLM judgment that an
+% execution ``looks unsafe.''
+
+% \TODO{Pierre: this is currently an important but underspecified claim. Explain
+% exactly when \project{} is allowed to synthesize a new condition, the
+% representation of the generated condition, how it becomes executable, and what
+% prevents the LLM from inventing a security requirement not supported by the
+% metadata. If the current implementation does not actually synthesize new
+% sanitizers, remove this claim and present it as future work.}
+
+\subsection{Schema-Aware Harness Generation}
+\label{sec:design-harness}
+
+Once \project{} has instantiated the applicable security properties, it
+constructs a fuzzing harness for the tool. The harness operates on structured
+arguments rather than on the serialized tool request. This distinction is
+important: arbitrary byte-level mutations would frequently violate the
+invocation schema and be rejected before reaching the implementation.
+
+For each execution, the harness constructs a schema-valid invocation
+
+\[
+C = \langle T,\{a_1=v_1,\ldots,a_n=v_n\}\rangle
+\]
+
+and selects one or more arguments for semantic mutation. Values for the
+selected arguments are generated using the corresponding sanitizer's
+adversarial input classes, while the remaining arguments are populated with
+values satisfying their declared schemas. A path sanitizer, for example, can
+vary the path among traversal, absolute-path, normalization, and encoding
+cases without corrupting the surrounding tool invocation.
+
+This design separates \emph{structural validity} from \emph{semantic
+adversariality}: the orchestrator should accept the invocation structurally,
+allowing the test to exercise whether the tool itself enforces the stronger
+security property.
+
+The LLM is provided the target tool's description and arguments to construct a set of initial seeds following the tool's schema. With the initial corpus created, the fuzzer then follows a typical fuzzing campaign using Atheris and its built in mutation engine. The feedback mechanism uses coverage to capture interesting inputs, and captures crashing inputs either from sanitizer output or from actual crashes.
+
+The seed generation is exclusively based on the LLM knowledge combined with the tool's basic information. The assumption is made that the tool is runnable in the current environment. 
+
+\subsection{Semantic Oracles}
+\label{sec:design-oracles}
+
+A schema-valid malicious input is useful only if \project{} can determine
+whether the resulting execution violates its intended property. Crashes,
+exceptions, and conventional sanitizer failures remain useful signals, but
+many target bugs terminate normally. \project{} therefore derives a semantic
+oracle from the same specialized sanitizer used to generate the input.
+
+\project{} evaluates the property through both runtime introspection and outcome sanitization.
+
+\subsubsection{Runtime Introspection}
+\label{sec:design-introspection}
+
+When the target execution can be observed, the sanitizer specifies which
+security-sensitive events are relevant to its oracle. For example,
+filesystem-containment checks require the paths actually accessed by the
+target, whereas SSRF checks require the destination actually contacted. The
+Introspector collects only those event classes required by the active
+sanitizer.
+
+Let $\tau(T,x,I_S)$ denote the execution observations collected for target
+$T$, input $x$, and sanitizer-required instrumentation $I_S$. The specialized
+oracle evaluates
+
+\[
+O_S^T(\tau(T,x,I_S)) =
+\begin{cases}
+1 & \text{if the specialized property is violated},\\
+0 & \text{otherwise}.
+\end{cases}
+\]
+
+For containment, for example, the oracle can canonicalize an observed path and
+test whether it escapes the specialized root. Thus, an execution that
+successfully reads an unintended file becomes a fuzzing failure even though
+the tool returns normally.
+
+Each sanitizer has a mapping to introspection events from Python's introspection library to analyze the tool's behavior at runtime. The majority of these events are for Python runtime API hooking, enabling the fuzzer to observe file operations, system calls, and other interesting API usage based on the sanitizer.
+
+Upon triggering an interesting event, the introspection hook adds details of the event to an internal list. The fuzzer then runs the corresponding sanitizers on the recorded events to check if an event is flagged as a violation. An input flagged by one of the sanitizers is then recorded and fuzzing continues.
+
+Specifically, filesystem introspection hooks intercept raw file paths at the runtime API boundary (e.g., \texttt{open}) before path resolution occurs. The corresponding containment oracle then canonicalizes both the accessed path and the authorized base directory into their absolute, canonical forms (resolving relative traversals such as \texttt{../}, redundant separators, and symbolic links). By computing the relative path from the designated workspace root to the canonical target, the oracle accurately detects directory escapes and symlink traversals regardless of path encoding or aliasing tricks used by the fuzzed input.
+
+\begin{table}[t]
+\centering
+\caption{Introspection hooks and monitored properties.}
+\label{tab:introspection-hooks}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ll}
+\toprule
+\textbf{Hook} & \textbf{Monitored Property} \\
+\midrule
+\texttt{FileAccess} & File access \& directory escape \\
+\texttt{FileWrite} & Dangerous file creation \& upload \\
+\texttt{TempFileLeak} & Uncleaned temporary files \\
+\texttt{CommandExecution} & Command \& CLI flag injection \\
+\texttt{CodeExecution} & Dynamic code evaluation \\
+\texttt{Deserialization} & Unsafe object deserialization \\
+\texttt{SQLExecution} & Raw / unparameterized SQL queries \\
+\texttt{NetworkExecution} & Outbound requests \& SSRF \\
+\texttt{SSLCertValidation} & Disabled TLS certificate checks \\
+\texttt{UnrestrictedIPBinding} & Wildcard interface binding \\
+\texttt{UnverifiedCodeDownload} & Code download without signature \\
+\texttt{BlockingEventLoopCall} & Blocking calls in async loop \\
+\texttt{ReDoS} & Catastrophic regex backtracking \\
+\texttt{DataAmplification} & Decompression \& Zip bombs \\
+\texttt{LoopCondition} & Unchecked loops \& CPU exhaustion \\
+\texttt{NonceReuse} & Cryptographic Nonce/IV reuse \\
+\texttt{WeakPRNG} & Insecure random generation \\
+\texttt{WeakHash} & Broken hash algorithms (MD5/SHA1) \\
+\texttt{SensitiveDataLogging} & Plaintext secrets in logs \\
+\texttt{LogInjection} & CRLF / log forging sequences \\
+\texttt{XXE} & XML entity expansion \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+
+\subsubsection{Outcome Sanitization}
+\label{sec:design-differential}
+
+In addition to introspection, \project{} uses selected sanitizers as \emph{contract-based outcome oracles}. A sanitizer evaluates the fuzzed input $x$ against a security policy and, when $x$ violates that policy, checks whether the target produced an appropriate safe outcome.
+
+Let $V(x)$ denote that the sanitizer considers $x$ invalid or malicious, and let $\mathit{Reject}(T(x), E)$ denote that the target rejected $x$, where $E$ may include observed runtime side effects when available. The primary discrepancy of interest is
+
+\[
+V(x)
+\quad\land\quad
+\neg \mathit{Reject}(T(x), E).
+\]
+
+The oracle therefore answers a narrow question: according to the security contract derived from the tool interface, should this invocation have been accepted? The oracle may also treat network, process, or file-system side effects as evidence to whether an input was accepted or not. However, the most common check is a simpler input to output check for whether a target accepts a malicious input without raising an error or giving a safe fallback. 
+
+Nondeterminism (e.g., dynamic timestamps or network latency) is mitigated by evaluating semantic invariants—such as structured error types and schema rejections—rather than brittle byte-level outputs. For tools with absent side effects (e.g., pure in-memory string or JSON transforms), the oracle relies on output validity predicates and execution health (catching unhandled exceptions or algorithmic stalls like ReDoS). For tools with ambiguous or silent outcomes, the oracle cross-references the tool's return status with runtime introspection traces (e.g., matching logged internal warnings or unperformed sink operations against reported success) to disambiguate whether the input was truly accepted.
+
+\subsection{Fuzzing Loop and Feedback}
+\label{sec:design-fuzzloop}
+
+The fuzzing loop processes tools sequentially. For each tool, a list of appropriate sanitizers are chosen based on the tool's metadata, an initial seed corpus is generated, and the coverage-guided fuzzing engine is invoked. The engine continuously mutates inputs, which are mapped to the schema and executed by the fuzzer. Each execution is then evaluated for expanded coverage, a triggered crash, or sanitizer output.
+
+An execution is interesting when it increases the measured coverage, guiding the input mutation toward deeper program states, while the oracle is responsible for determining if those states violate the security contract. Crash and sanitizer output classify an input as a potential failure or policy violation.
+
+When \project{} detects a violation, the fuzzer records the triggering
+invocation together with the sanitizer, expected property, and evidence that
+caused the oracle to fire. These are outputs of the fuzzing process rather than
+a separate architectural component.
+
+% \subsection{Validating End-to-End Reachability}
+% \label{sec:design-exploitation}
+% \TODO{Remove, there isn't an actual end-to-end through the LLM running the tool to see if we can cause this in a real setup, the threat model is that the LLM can produce whatever}
+
+% \project{} establishes that a tool implementation violates a security property
+% for a concrete argument. Whether an attacker can cause that argument to reach
+% the tool through an LLM agent is a separate question. Separating these two
+% problems allows \project{} to test tools aggressively under the trust-boundary
+% assumption established in Section~\ref{sec:trust-boundary}: every schema-valid
+% tool argument may be attacker influenced, regardless of whether a particular
+% prompt has already been identified that produces it.
+
+% For discovered vulnerabilities, we separately test whether an attacker
+% controlling natural-language input can induce the LLM to emit the triggering
+% structured invocation through the normal orchestration path. This experiment
+% establishes end-to-end exploitability but is not required for vulnerability
+% discovery itself.
+
+% \TODO{Pierre: describe the end-to-end validation procedure precisely:
+% attacker capabilities, model inputs, whether the attacker supplies the tool
+% name or schema, success criteria, number of trials/models, and any defenses or
+% orchestration checks encountered. If the named Repeat-After-Me technique is
+% retained, define it here only after giving this procedure.}
+

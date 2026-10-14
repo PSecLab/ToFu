@@ -1,0 +1,105 @@
+{
+ "repo": "andybrandt/mcp-simple-arxiv",
+ "tool": "search_papers",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "fc9262eaa45089d9149db8e81a49081162f3bf8d",
+ "draft": "andybrandt__mcp-simple-arxiv__search_papers__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 13,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='1\", 'max_results': 0, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '2019-01-01', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%271%29+AND+submittedDate%3A%5B201901010000+TO+201912312359%5D&max_results=0&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'ti:\"neural networks\" AND cat:cs.AI', 'max_results': 10, 'sort_by': 'submitted_date', 'sort_order': 'descending', 'date_from': '', 'date_to': ''}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.80 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=ti%3A%22neural+networks%22+AND+cat%3Acs.AI&max_results=10&sortBy=submittedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'max_results': -1, 'sort_by': 'relevance', 'sort_order': 'descending', 'date_from': '2022-01-01', 'date_to': '2022-12-31'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.94 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28..%5C..%5C..%5C..%5Cwindows%5Cwin.ini%29+AND+submittedDate%3A%5B202201010000+TO+202212312359%5D&max_results=-1&sortBy=relevance&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'UNION SELECT null, username, password FROM users', 'max_results': 100, 'sort_by': 'relevance', 'sort_order': 'ascending', 'date_from': '2020-01-01', 'date_to': '2020-12-31'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.99 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%28UNION+SELECT+null%2C+username%2C+password+FROM+users%29+AND+submittedDate%3A%5B202001010000+TO+202012312359%5D&max_results=10&sortBy=relevance&sortOrder=ascending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='+\", 'max_results': 0, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%27%2B%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=0&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': 'ti:\"neural networks\" AND cat:cs.AI', 'max_results': 1600484449, 'sort_by': 'submitted_date', 'sort_order': 'descending', 'date_from': '', 'date_to': ''}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.85 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=ti%3A%22neural+networks%22+AND+cat%3Acs.AI&max_results=10&sortBy=submittedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='1\", 'max_results': 0, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%271%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=0&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"2' OR '1'='1\", 'max_results': 0, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.64 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%282%27+OR+%271%27%3D%271%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=0&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='+\", 'max_results': 825437490, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.50 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%27%2B%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=10&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='+\", 'max_results': 758722864, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%27%2B%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=10&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='+\", 'max_results': 540680815, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%27%2B%29+AND+submittedDate%3A%5B199108010000+TO+201912312359%5D&max_results=10&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='1\", 'max_results': 1952408948, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '2019-01-01', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%271%29+AND+submittedDate%3A%5B201901010000+TO+201912312359%5D&max_results=10&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': \"1' OR '1'='1\", 'max_results': 1600484449, 'sort_by': 'updated_date', 'sort_order': 'descending', 'date_from': '2019-01-01', 'date_to': '2019-12-31'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 2.92 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while searching: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?search_query=%281%27+OR+%271%27%3D%271%29+AND+submittedDate%3A%5B201901010000+TO+201912312359%5D&max_results=10&sortBy=lastUpdatedDate&sortOrder=descending'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  }
+ ],
+ "truncated": false
+}

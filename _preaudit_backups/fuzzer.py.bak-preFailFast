@@ -1,0 +1,1195 @@
+import sys
+import inspect
+import os
+import subprocess
+import shutil
+import json
+import asyncio
+import time
+import logging
+import glob
+
+from .llm import LLMHandler
+from .client import MCPInspector
+from . import sanitizers
+from .runners import PythonRunner, JSRunner
+from .config import FuzzerConfig
+from .reporters import CompositeVulnerabilityReporter, MongoVulnerabilityReporter, ConsoleVulnerabilityReporter
+from .input_parser import FuzzInputParser
+from .file_manager import FuzzFileManager
+from .engine import AtherisFuzzingEngine
+from .metrics import CoverageTimelineCollector
+
+from .runners.base import BaseRunner
+
+logger = logging.getLogger(__name__)
+
+_STR_CONTRACT_CACHE = {}
+
+
+def _takes_a_string(fn) -> bool:
+    """Is this sanitizer's contract (str, ...) -> ...?
+
+    _check_string_sanitizers used to call EVERY selected sanitizer with a plain
+    string, whatever its declared parameter type. Measured 2026-09-10:
+
+        check_process_and_fd_leaks(leaked_pids: set[int]) -> tuple[bool, str]
+        called with '/var/folders/.../tmp32djxuif.xlsx' returns
+        (True, 'Leaked background subprocess PIDs detected ... <that path>')
+
+    -- a non-empty string is a truthy "set of leaked pids". Combined with the
+    tuple-truthiness bug above, this fired check_file_access,
+    check_unhandled_promise_rejection and check_process_and_fd_leaks on EVERY
+    string argument of EVERY input: 295 identical alerts in one 90s run, all
+    three names from BASE_MANDATORY_SANITIZERS, on the benign input
+    {'filePath': '<temp>.xlsx', 'sheetName': 'Sheet1', 'cell': 'A1'} that ToFu
+    itself constructed. Not one LLM-selected sanitizer fired.
+
+    Unannotated parameters are ALLOWED through: most of the genuine string
+    sanitizers predate the annotations, and excluding them would silently
+    disable the real checks -- the precise failure this codebase keeps having.
+    Only a parameter annotated as something other than `str` is skipped.
+    """
+    cached = _STR_CONTRACT_CACHE.get(fn)
+    if cached is None:
+        try:
+            params = list(inspect.signature(fn).parameters.values())
+            if not params:
+                cached = False
+            else:
+                ann = params[0].annotation
+                cached = ann is inspect.Parameter.empty or ann is str or ann == "str"
+        except (TypeError, ValueError):
+            cached = True
+        _STR_CONTRACT_CACHE[fn] = cached
+    return cached
+
+
+_PROC_SANITIZERS = {"check_process_and_fd_leaks", "check_terminal_dos_and_leak"}
+
+
+def _ps_snapshot() -> dict:
+    """pid -> (ppid, comm) for every process, portable across Linux and macOS.
+
+    The code this replaces read os.listdir("/proc") directly. THERE IS NO /proc
+    ON macOS -- the eval machine. Every read raised FileNotFoundError into a
+    bare `except Exception: pass`, so before_pids and after_pids were always
+    empty, leaked_pids was always empty, and check_process_and_fd_leaks /
+    check_terminal_dos_and_leak could NEVER fire on the platform the campaign
+    actually runs on. Silently: no error, no warning, just a sanitizer family
+    that reports nothing forever. Verified 2026-09-10:
+        os.listdir('/proc') -> FileNotFoundError [Errno 2] on Darwin-arm64
+    """
+    if os.path.isdir("/proc"):
+        out = {}
+        for x in os.listdir("/proc"):
+            if not x.isdigit():
+                continue
+            try:
+                with open(f"/proc/{x}/stat") as f:
+                    stat = f.read()
+                # comm sits in parens and may itself contain spaces or parens,
+                # so split on the LAST ')'.
+                r = stat.rindex(")")
+                out[int(x)] = (int(stat[r + 2:].split()[1]), stat[stat.index("(") + 1:r])
+            except Exception:
+                continue
+        return out
+    # macOS / BSD
+    try:
+        res = subprocess.run(["ps", "-Ao", "pid=,ppid=,comm="],
+                             capture_output=True, timeout=10)
+        out = {}
+        for line in res.stdout.decode(errors="ignore").splitlines():
+            parts = line.split(None, 2)
+            if len(parts) < 2:
+                continue
+            try:
+                out[int(parts[0])] = (int(parts[1]),
+                                      (parts[2].strip() if len(parts) > 2 else ""))
+            except ValueError:
+                continue
+        return out
+    except Exception:
+        return {}
+
+
+class MCPDifferentialFuzzer:
+    def __init__(self, command: str, args: list, target_tool: str, api_key: str, 
+                 corpus_dir: str = "./fuzz_corpus", override_rules: dict = None, 
+                 file_backed_params: dict = None, config: FuzzerConfig = None, 
+                 reporter = None, metadata_provider = None, runner_factory = None,
+                 predefined_seeds: list = None, dict_file: str = None):
+        self.command = command
+        self.args = args
+        self.target_tool = target_tool
+        self.corpus_dir = corpus_dir
+        self.llm = LLMHandler(api_key=api_key)
+        self.override_rules = override_rules or {}
+        self.file_backed_params = file_backed_params or {}
+        self.config = config or FuzzerConfig()
+        self.predefined_seeds = predefined_seeds or []
+        self.dict_file = dict_file
+        self.target_tool_desc = ""
+        
+        # Inject metadata provider
+        if metadata_provider is None:
+            from .client import MCPInspector
+            self.inspector = MCPInspector(command=command, args=args)
+        else:
+            self.inspector = metadata_provider
+
+        # Inject runner factory
+        if runner_factory is None:
+            self.runner_factory = self._default_runner_factory
+        else:
+            self.runner_factory = runner_factory
+
+        if reporter is None:
+            # The Mongo sink was unconditional while FuzzerConfig.export_mongo
+            # (default False) was ignored. With no mongod running, EVERY finding
+            # cost a 2s serverSelectionTimeoutMS: the 2026-09-10 appium run spent
+            # ~124s of its 540.4s wall clock on 62 connection-refused retries,
+            # which silently corrupts the per-run time budget the campaign
+            # accounts in. Console only unless the config asks for Mongo.
+            # This changes where findings are LOGGED, never what is found.
+            sinks = [ConsoleVulnerabilityReporter()]
+            if getattr(self.config, "export_mongo", False):
+                sinks.append(MongoVulnerabilityReporter())
+            self.reporter = CompositeVulnerabilityReporter(sinks)
+        else:
+            self.reporter = reporter
+            
+        self.current_runner = None
+        self.current_schema = None
+        self.selected_sanitizer_names = []
+        self.selected_sanitizer_rules = {}
+        self.silent_bug_found = False
+        self.target_tool_name = ""
+        self.exec_count = 0
+        # EXECUTABILITY ACCOUNTING. A tool whose every execution returns
+        # isError/JSON-RPC-error never really ran, so no sanitizer can fire and
+        # the run reports a healthy "0 findings". Measured 2026-09-10 on
+        # api7/apisix-mcp::delete_resource: every input returned
+        #   "Status: undefined\nMessage: connect ECONNREFUSED 127.0.0.1:9180"
+        # because the tool is an Admin-API client and no APISIX is running. All
+        # 32 apisix tools are in that state, and libFuzzer's cov: is flat by
+        # construction because there is exactly one reachable path.
+        # "Ran and found nothing" and "never actually ran" must not look alike.
+        self.exec_success = 0
+        self.exec_total = 0
+        self.exec_error_counts = {}
+        self.start_fuzz_time = None
+
+        # Instantiated helpers
+        self.file_manager = FuzzFileManager(self.file_backed_params)
+        self.input_parser = None
+
+        # Metrics collection
+        if getattr(self.config, "enable_metrics", True):
+            self.metrics_collector = CoverageTimelineCollector(
+                output_dir=getattr(self.config, "metrics_dir", "metrics"),
+                export_csv=getattr(self.config, "export_csv", True),
+                export_mongo=getattr(self.config, "export_mongo", False),
+                sample_interval_sec=getattr(self.config, "metrics_sample_interval_sec", 60.0)
+            )
+        else:
+            self.metrics_collector = None
+
+    def _default_runner_factory(self, tool: str) -> BaseRunner:
+        is_js = (
+            any(arg.endswith(".js") for arg in self.args) or 
+            any(js_cmd in self.command for js_cmd in ("node", "npx", "npm", "yarn", "pnpm"))
+        )
+        if is_js:
+            from .runners import JSRunner
+            return JSRunner(self.command, self.args, tool)
+        else:
+            from .runners import PythonRunner
+            return PythonRunner(self.command, self.args, tool)
+
+    def test_one_input(self, data: bytes) -> None:
+        """The callback executed by Atheris for each input permutation."""
+        if self.current_runner is None or self.current_schema is None:
+            return
+
+        self.exec_count += 1
+        if self.start_fuzz_time is None:
+            self.start_fuzz_time = time.time()
+        if self.metrics_collector:
+            self.metrics_collector.record_execution_progress(self.exec_count)
+
+        # 1. Sequence mode. OFF BY DEFAULT -- it used to default to 2.
+        #
+        # FuzzerConfig has no `sequence_steps` field, so the getattr default of
+        # 2 always won and EVERY corpus entry was sliced into fragments before
+        # parsing. Measured 2026-09-10 on a real LLM-generated seed:
+        #   original : {"filePath": "predefined_seed:test_file.xlsx", "sheetName": "Sheet1", "cell": "A1"}
+        #     chunk 0: {"filePath": "predefined_seed:test_file.x       -> not JSON
+        #     chunk 1: lsx", "sheetName": "Sheet1", "cell": "A1"       -> not JSON
+        #     chunk 2: }                                               -> not JSON
+        # None of the three parses, so input_parser fell through to
+        # FuzzedDataProvider on every fragment and the tool received garbage:
+        #   EXEC_ERROR n=1304 detail='MCP error -32600: Invalid cell address: '
+        #   EXEC_SUMMARY tool=get_cell n_exec=512 n_success=0
+        #
+        # This silently defeated the JSON-first parse order (audit Fix 3), the
+        # restored seed_bank/, LLM seed generation and the seed validation --
+        # all of which exist to deliver a COMPLETE argument object. A seed can
+        # be perfect and still never arrive.
+        #
+        # Splitting a serialised argument object at an arbitrary byte offset is
+        # not a sequence of tool calls; it is corruption. If stateful multi-call
+        # testing is wanted it needs its own representation, not a byte slice.
+        # Opt in explicitly with FuzzerConfig.sequence_steps.
+        sequence_steps = getattr(self.config, "sequence_steps", 1) if hasattr(self, "config") else 1
+        
+        # Split data if sequence mode is active
+        data_chunks = [data[i:i+len(data)//sequence_steps] for i in range(0, len(data), max(1, len(data)//sequence_steps))] if sequence_steps > 1 else [data]
+
+        for step_idx, chunk in enumerate(data_chunks):
+            # 1. Parse Input using delegated parser helper
+            generated_arguments, parsed_successfully = self.input_parser.parse(chunk)
+
+            # 2. Prepare File-Backed Parameters using delegated file manager helper
+            generated_arguments, created_temp_files = self.file_manager.prepare_file_params(generated_arguments)
+
+            # 3. Execute and Measure
+            res, elapsed, leaked_files, leaked_pids = self._execute_and_time(generated_arguments, created_temp_files)
+
+            # Counted per EXECUTION. self.exec_count increments once per
+            # test_one_input, but sequence mode can run several executions
+            # inside one call, so the two were on different bases: a log showed
+            # n_exec=512 alongside an error bucket of n=1304.
+            self.exec_total += 1
+            if getattr(res, "success", False):
+                self.exec_success += 1
+            else:  # noqa: E501
+                # Bucket by the error's shape, not its full text, so one
+                # recurring cause does not become thousands of distinct keys.
+                key = (str(getattr(res, "error", "") or "unknown"))[:120]
+                self.exec_error_counts[key] = self.exec_error_counts.get(key, 0) + 1
+
+            # EMIT PERIODICALLY, NOT AT THE END. libFuzzer terminates the
+            # process itself when -max_total_time expires, so everything after
+            # engine.fuzz() is dead code: "[FUZZING METRICS]" and "Fuzzing
+            # session completed" appear in ZERO of the logs this repo has ever
+            # produced, and libFuzzer's own closing "Done ... runs" line is lost
+            # with them (the stderr reader is a daemon thread and the pipe is
+            # not drained on a hard exit). A summary that only prints at the end
+            # is a summary that never prints. run_eval takes the LAST one.
+            if self.exec_count == 1 or self.exec_count % 512 == 0:
+                self._emit_exec_summary()
+
+            # 4. Run Sanitizers
+            sanitizer_triggered, triggered_by, err_details = self._run_sanitizers(
+                generated_arguments, res, elapsed, leaked_files, leaked_pids
+            )
+
+            # 5. Handle Violations
+            if sanitizer_triggered:
+                self._handle_violation(generated_arguments, res.result if hasattr(res, 'result') else res, triggered_by, f"[Sequence Step {step_idx+1}/{len(data_chunks)}] {err_details}")
+                break
+
+
+    def _emit_exec_summary(self) -> None:
+        """One greppable line per tool. eval/run_eval.py parses the LAST one."""
+        n = self.exec_total or self.exec_count
+        rate = (self.exec_success / n) if n else 0.0
+        logger.info(f"EXEC_SUMMARY tool={self.target_tool_name} n_exec={n} "
+                    f"n_success={self.exec_success} success_rate={rate:.3f}")
+        for err, n in sorted(self.exec_error_counts.items(), key=lambda kv: -kv[1])[:3]:
+            logger.info(f"EXEC_ERROR n={n} detail={err!r}")
+        if (self.exec_total or self.exec_count) >= 64 and self.exec_success == 0:
+            logger.error(
+                f"NOT_EXECUTABLE tool={self.target_tool_name} -- all {n} "
+                f"executions returned an error, so NO sanitizer could fire and coverage "
+                f"cannot vary. This run is NOT evidence that the tool is clean. Most "
+                f"common cause: the tool is a client for a backend/credential that is "
+                f"not present in this environment.")
+
+    def _handle_violation(self, inputs: dict, result: any, triggered_by: list[str], err_details: str) -> None:
+        """Logs the triggered security exception and marks bug found without stopping the session."""
+        self.reporter.report(
+            self.target_tool_name,
+            inputs,
+            result,
+            triggered_by,
+            err_details
+        )
+        self.silent_bug_found = True
+
+    def _execute_and_time(self, generated_arguments: dict, created_temp_files: list[str]) -> tuple[any, float, set[str], set[int]]:
+        """Executes the runner, measures duration, and detects leaked temporary files."""
+        import tempfile as tf_mod
+        temp_dir = tf_mod.gettempdir()
+        try:
+            before_files = set(glob.glob(os.path.join(temp_dir, "*")))
+        except Exception:
+            before_files = set()
+
+        before_pids = set()
+        ps_before = {}
+        # Gate on EITHER consumer. _check_process_leak fires for
+        # check_process_and_fd_leaks OR check_terminal_dos_and_leak, but the
+        # snapshot was only taken for the latter -- and the former is one of the
+        # 10 BASE_MANDATORY_SANITIZERS, i.e. always on. So a mandatory sanitizer
+        # could never fire: leaked_pids was empty whenever the opt-in one was
+        # not also selected.
+        if _PROC_SANITIZERS & set(self.selected_sanitizer_names):
+            ps_before = _ps_snapshot()
+            before_pids = set(ps_before)
+            if not ps_before and not getattr(self, "_ps_warned", False):
+                self._ps_warned = True
+                logger.error(
+                    "check_terminal_dos_and_leak is selected but the process "
+                    "snapshot is EMPTY, so process-leak detection cannot fire. "
+                    "Do not read a clean run as evidence of no leak.")
+
+        start_time = time.time()
+        try:
+            res = self.current_runner.execute(generated_arguments)
+        finally:
+            self.file_manager.clean_temp_files(created_temp_files)
+        elapsed = time.time() - start_time
+
+        try:
+            after_files = set(glob.glob(os.path.join(temp_dir, "*")))
+        except Exception:
+            after_files = set()
+        
+        leaked_files = {f for f in (after_files - before_files) if not f.endswith((".cpuprofile", ".cpuprofile.json")) and "systemd-private-" not in f}
+
+        after_pids = set()
+        ps_after = {}
+        if _PROC_SANITIZERS & set(self.selected_sanitizer_names):
+            ps_after = _ps_snapshot()
+            after_pids = set(ps_after)
+
+        leaked_pids = after_pids - before_pids
+        if leaked_pids and self.current_runner and self.current_runner.process:
+            ancestor_pid = self.current_runner.process.pid
+            filtered_leaked_pids = set()
+            self._last_ps = ps_after
+            for pid in leaked_pids:
+                curr = pid
+                is_child = False
+                for _ in range(100):
+                    if curr == ancestor_pid:
+                        is_child = True
+                        break
+                    if curr <= 1:
+                        break
+                    parent = ps_after.get(curr)
+                    if parent is None:
+                        break
+                    curr = parent[0]
+                if is_child:
+                    filtered_leaked_pids.add(pid)
+            leaked_pids = filtered_leaked_pids
+
+        return res, elapsed, leaked_files, leaked_pids
+
+    def _run_sanitizers(self, generated_arguments: dict, res: any, elapsed: float, leaked_files: set[str], leaked_pids: set[int]) -> tuple[bool, list[str], str]:
+        """Runs the fuzzer's active security sanitizers on input/execution details."""
+        triggered_by = []
+        err_details = ""
+
+        # 1. Check temp file leaks
+        leak_triggered, leak_err = self._check_temp_file_leak(leaked_files)
+        if leak_triggered:
+            triggered_by.append("check_temp_file_leak")
+            err_details += leak_err
+
+        # 2. Check process leaks / terminal DoS
+        if "check_process_and_fd_leaks" in self.selected_sanitizer_names or "check_terminal_dos_and_leak" in self.selected_sanitizer_names:
+            proc_leak_triggered, proc_leak_err = self._check_process_leak(leaked_pids)
+            if proc_leak_triggered:
+                triggered_by.append("check_process_and_fd_leaks")
+                err_details += proc_leak_err
+
+        # 3. Check resource exhaustion / timeout (e.g. ReDoS)
+        timeout_triggered, timeout_err = self._check_resource_exhaustion(elapsed)
+        if timeout_triggered:
+            triggered_by.append("check_resource_exhaustion")
+            err_details += timeout_err
+
+        # 4. Check unexpected library/runtime crashes
+        crash_triggered, crash_err = self._check_unexpected_crash(res)
+        if crash_triggered:
+            triggered_by.append("check_unexpected_crash")
+            err_details += crash_err
+
+        # 4.c Run Introspection Sanitizers: check file system accesses, deserialization, command execution, SQL queries, file uploads, code injection, SSRF, and temp leaks
+        from .sanitizers import (
+            check_unhandled_promise_rejection, check_file_access, check_introspection_path_traversal, 
+            check_untrusted_deserialization, check_introspection_command_injection, check_introspection_sql_injection,
+            check_unrestricted_file_upload, check_introspection_code_injection, check_introspection_ssrf,
+            check_introspection_temp_file_leak, check_introspection_log_injection, check_introspection_sensitive_data_logging,
+            check_introspection_ssl_verification, check_introspection_sensitive_file_access,
+            check_introspection_unrestricted_ip_binding, check_introspection_redos,
+            check_introspection_blocking_event_loop_call, check_introspection_hardcoded_credentials,
+            check_introspection_weak_hash, check_introspection_weak_prng, check_introspection_nonce_reuse,
+            check_introspection_unverified_code_download, check_introspection_xxe, check_introspection_data_amplification,
+            check_introspection_argument_injection, check_introspection_csv_formula_injection,
+            check_introspection_symlink_following, check_introspection_insecure_temp_permissions,
+            check_introspection_sensitive_error_leak, check_introspection_reachable_assertion,
+            check_introspection_cleartext_sensitive_storage, check_introspection_cleartext_sensitive_transmission,
+            check_introspection_failed_init_non_exit, check_introspection_incomplete_cleanup,
+            check_introspection_unchecked_loop_condition, check_introspection_memory_access_violation,
+            check_introspection_divide_by_zero, check_introspection_insecure_file_permissions,
+            check_introspection_deadlock, check_introspection_file_descriptor_leak,
+            check_introspection_prototype_pollution, check_introspection_external_config_control,
+            check_introspection_format_string, check_introspection_type_confusion,
+            check_introspection_cross_session_data_leak, check_introspection_unnecessary_root_privileges
+        )
+        if "check_unhandled_promise_rejection" in self.selected_sanitizer_names:
+            unhandled_triggered, unhandled_err = check_unhandled_promise_rejection(res.result if hasattr(res, 'result') else res)
+            if unhandled_triggered:
+                triggered_by.append("check_unhandled_promise_rejection")
+                err_details += unhandled_err
+
+        prev_session_data = getattr(res, "prev_session_data", "")
+        current_out = str(getattr(res, "result", ""))
+        if "check_introspection_cross_session_data_leak" in self.selected_sanitizer_names or (prev_session_data and current_out):
+            cs_triggered, cs_err = check_introspection_cross_session_data_leak(prev_session_data, current_out)
+            if cs_triggered:
+                triggered_by.append("check_introspection_cross_session_data_leak")
+                err_details += cs_err
+
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_type_confusion" in self.selected_sanitizer_names or error_string:
+            tc_triggered, tc_err = check_introspection_type_confusion(error_string)
+            if tc_triggered:
+                triggered_by.append("check_introspection_type_confusion")
+                err_details += tc_err
+
+        error_string = str(getattr(res, "error", ""))
+        logs_list = getattr(res, "logs", [])
+        if "check_introspection_format_string" in self.selected_sanitizer_names or error_string or logs_list:
+            fmt_triggered, fmt_err = check_introspection_format_string(error_string, logs_list)
+            if fmt_triggered:
+                triggered_by.append("check_introspection_format_string")
+                err_details += fmt_err
+
+        mod_env = getattr(res, "modified_env_vars", [])
+        if "check_introspection_external_config_control" in self.selected_sanitizer_names or mod_env:
+            env_triggered, env_err = check_introspection_external_config_control(mod_env)
+            if env_triggered:
+                triggered_by.append("check_introspection_external_config_control")
+                err_details += env_err
+
+        # Check prototype pollution in test input / payload
+        input_args = getattr(res, "input_args", None)
+        if "check_introspection_prototype_pollution" in self.selected_sanitizer_names or input_args:
+            proto_triggered, proto_err = check_introspection_prototype_pollution(input_args)
+            if proto_triggered:
+                triggered_by.append("check_introspection_prototype_pollution")
+                err_details += proto_err
+
+        leaked_fds = getattr(res, "leaked_fds", [])
+        if "check_introspection_file_descriptor_leak" in self.selected_sanitizer_names or leaked_fds:
+            fd_triggered, fd_err = check_introspection_file_descriptor_leak(len(leaked_fds), leaked_fds)
+            if fd_triggered:
+                triggered_by.append("check_introspection_file_descriptor_leak")
+                err_details += fd_err
+
+        is_timeout = getattr(res, "timed_out", False)
+        active_locks = getattr(res, "active_locks_count", 0)
+        if "check_introspection_deadlock" in self.selected_sanitizer_names or is_timeout:
+            dead_triggered, dead_err = check_introspection_deadlock(is_timeout, active_locks)
+            if dead_triggered:
+                triggered_by.append("check_introspection_deadlock")
+                err_details += dead_err
+
+        exit_code = getattr(res, "exit_code", 0)
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_divide_by_zero" in self.selected_sanitizer_names or error_string:
+            div_triggered, div_err = check_introspection_divide_by_zero(error_string)
+            if div_triggered:
+                triggered_by.append("check_introspection_divide_by_zero")
+                err_details += div_err
+
+        if "check_introspection_memory_access_violation" in self.selected_sanitizer_names or exit_code or error_string:
+            mem_triggered, mem_err = check_introspection_memory_access_violation(exit_code, error_string)
+            if mem_triggered:
+                triggered_by.append("check_introspection_memory_access_violation")
+                err_details += mem_err
+
+        loop_count = getattr(res, "loop_iterations", 0)
+        if "check_introspection_unchecked_loop_condition" in self.selected_sanitizer_names or loop_count:
+            loop_triggered, loop_err = check_introspection_unchecked_loop_condition(loop_count)
+            if loop_triggered:
+                triggered_by.append("check_introspection_unchecked_loop_condition")
+                err_details += loop_err
+
+        logged_msgs = getattr(res, "logged_messages", [])
+        is_success = getattr(res, "success", True)
+        if "check_introspection_failed_init_non_exit" in self.selected_sanitizer_names or logged_msgs:
+            init_triggered, init_err = check_introspection_failed_init_non_exit(is_success, logged_msgs)
+            if init_triggered:
+                triggered_by.append("check_introspection_failed_init_non_exit")
+                err_details += init_err
+
+        leaked_temps = getattr(res, "leaked_temp_files", [])
+        if "check_introspection_incomplete_cleanup" in self.selected_sanitizer_names or leaked_temps:
+            clean_triggered, clean_err = check_introspection_incomplete_cleanup(leaked_temps)
+            if clean_triggered:
+                triggered_by.append("check_introspection_incomplete_cleanup")
+                err_details += clean_err
+
+        net_conns = getattr(res, "network_connections", [])
+        if "check_introspection_cleartext_sensitive_transmission" in self.selected_sanitizer_names or net_conns:
+            trans_triggered, trans_err = check_introspection_cleartext_sensitive_transmission(net_conns)
+            if trans_triggered:
+                triggered_by.append("check_introspection_cleartext_sensitive_transmission")
+                err_details += trans_err
+
+        # Check errors / stack traces for sensitive disclosures (CWE-209) and reachable assertion DoS (CWE-617)
+        error_string = str(getattr(res, "error", ""))
+        if "check_introspection_sensitive_error_leak" in self.selected_sanitizer_names or error_string:
+            leak_triggered, leak_err = check_introspection_sensitive_error_leak(error_string)
+            if leak_triggered:
+                triggered_by.append("check_introspection_sensitive_error_leak")
+                err_details += leak_err
+
+        if "check_introspection_reachable_assertion" in self.selected_sanitizer_names or error_string:
+            assert_triggered, assert_err = check_introspection_reachable_assertion(error_string)
+            if assert_triggered:
+                triggered_by.append("check_introspection_reachable_assertion")
+                err_details += assert_err
+
+        accessed_files = getattr(res, "accessed_files", [])
+        if "check_introspection_symlink_following" in self.selected_sanitizer_names or accessed_files:
+            sym_triggered, sym_err = check_introspection_symlink_following(accessed_files)
+            if sym_triggered:
+                triggered_by.append("check_introspection_symlink_following")
+                err_details += sym_err
+
+        written_files = getattr(res, "written_files", [])
+        if "check_introspection_insecure_file_permissions" in self.selected_sanitizer_names or written_files:
+            file_perm_triggered, file_perm_err = check_introspection_insecure_file_permissions(written_files)
+            if file_perm_triggered:
+                triggered_by.append("check_introspection_insecure_file_permissions")
+                err_details += file_perm_err
+
+        if "check_introspection_cleartext_sensitive_storage" in self.selected_sanitizer_names or written_files:
+            store_triggered, store_err = check_introspection_cleartext_sensitive_storage(written_files)
+            if store_triggered:
+                triggered_by.append("check_introspection_cleartext_sensitive_storage")
+                err_details += store_err
+
+        if "check_introspection_insecure_temp_permissions" in self.selected_sanitizer_names or written_files:
+            perm_triggered, perm_err = check_introspection_insecure_temp_permissions(written_files)
+            if perm_triggered:
+                triggered_by.append("check_introspection_insecure_temp_permissions")
+                err_details += perm_err
+
+        if "check_introspection_csv_formula_injection" in self.selected_sanitizer_names or written_files:
+            csv_triggered, csv_err = check_introspection_csv_formula_injection(written_files)
+            if csv_triggered:
+                triggered_by.append("check_introspection_csv_formula_injection")
+                err_details += csv_err
+
+        executed_cmds = getattr(res, "executed_commands", [])
+        if "check_introspection_unnecessary_root_privileges" in self.selected_sanitizer_names or executed_cmds:
+            root_triggered, root_err = check_introspection_unnecessary_root_privileges(executed_cmds)
+            if root_triggered:
+                triggered_by.append("check_introspection_unnecessary_root_privileges")
+                err_details += root_err
+
+        if "check_introspection_argument_injection" in self.selected_sanitizer_names or executed_cmds:
+            arg_triggered, arg_err = check_introspection_argument_injection(executed_cmds)
+            if arg_triggered:
+                triggered_by.append("check_introspection_argument_injection")
+                err_details += arg_err
+
+        xxe_ops = getattr(res, "xxe_calls", [])
+        if "check_introspection_xxe" in self.selected_sanitizer_names or xxe_ops:
+            xxe_triggered, xxe_err = check_introspection_xxe(xxe_ops)
+            if xxe_triggered:
+                triggered_by.append("check_introspection_xxe")
+                err_details += xxe_err
+
+        amp_ops = getattr(res, "amplification_calls", [])
+        if "check_introspection_data_amplification" in self.selected_sanitizer_names or amp_ops:
+            amp_triggered, amp_err = check_introspection_data_amplification(amp_ops)
+            if amp_triggered:
+                triggered_by.append("check_introspection_data_amplification")
+                err_details += amp_err
+
+        unverified_dl = getattr(res, "unverified_downloads", [])
+        if "check_introspection_unverified_code_download" in self.selected_sanitizer_names or unverified_dl:
+            dl_triggered, dl_err = check_introspection_unverified_code_download(unverified_dl)
+            if dl_triggered:
+                triggered_by.append("check_introspection_unverified_code_download")
+                err_details += dl_err
+
+        reused_nonces = getattr(res, "reused_nonces", [])
+        if "check_introspection_nonce_reuse" in self.selected_sanitizer_names or reused_nonces:
+            nonce_triggered, nonce_err = check_introspection_nonce_reuse(reused_nonces)
+            if nonce_triggered:
+                triggered_by.append("check_introspection_nonce_reuse")
+                err_details += nonce_err
+
+        weak_hashes = getattr(res, "weak_hash_calls", [])
+        if "check_introspection_weak_hash" in self.selected_sanitizer_names or weak_hashes:
+            hash_triggered, hash_err = check_introspection_weak_hash(weak_hashes)
+            if hash_triggered:
+                triggered_by.append("check_introspection_weak_hash")
+                err_details += hash_err
+
+        weak_prngs = getattr(res, "weak_prng_calls", [])
+        if "check_introspection_weak_prng" in self.selected_sanitizer_names or weak_prngs:
+            prng_triggered, prng_err = check_introspection_weak_prng(weak_prngs)
+            if prng_triggered:
+                triggered_by.append("check_introspection_weak_prng")
+                err_details += prng_err
+
+        # Check logged messages and result string for hardcoded credentials (CWE-798)
+        logged_msgs = getattr(res, "logged_messages", [])
+        runtime_strings = [str(res.result)] + [m.get("message", "") for m in logged_msgs if isinstance(m, dict)]
+        if "check_introspection_hardcoded_credentials" in self.selected_sanitizer_names or runtime_strings:
+            cred_triggered, cred_err = check_introspection_hardcoded_credentials(runtime_strings)
+            if cred_triggered:
+                triggered_by.append("check_introspection_hardcoded_credentials")
+                err_details += cred_err
+
+        blocking_ops = getattr(res, "blocking_calls", [])
+        if "check_introspection_blocking_event_loop_call" in self.selected_sanitizer_names or blocking_ops:
+            block_triggered, block_err = check_introspection_blocking_event_loop_call(blocking_ops)
+            if block_triggered:
+                triggered_by.append("check_introspection_blocking_event_loop_call")
+                err_details += block_err
+
+        slow_regex = getattr(res, "slow_regex_calls", [])
+        if "check_introspection_redos" in self.selected_sanitizer_names or slow_regex:
+            redos_triggered, redos_err = check_introspection_redos(slow_regex)
+            if redos_triggered:
+                triggered_by.append("check_introspection_redos")
+                err_details += redos_err
+
+        bound_addrs = getattr(res, "bound_addresses", [])
+        if "check_introspection_unrestricted_ip_binding" in self.selected_sanitizer_names or bound_addrs:
+            bind_triggered, bind_err = check_introspection_unrestricted_ip_binding(bound_addrs)
+            if bind_triggered:
+                triggered_by.append("check_introspection_unrestricted_ip_binding")
+                err_details += bind_err
+
+        acc_files = getattr(res, "accessed_files", [])
+        if "check_introspection_sensitive_file_access" in self.selected_sanitizer_names or acc_files:
+            sens_file_triggered, sens_file_err = check_introspection_sensitive_file_access(acc_files)
+            if sens_file_triggered:
+                triggered_by.append("check_introspection_sensitive_file_access")
+                err_details += sens_file_err
+
+        unverified_ssl = getattr(res, "unverified_ssl_calls", [])
+        if "check_introspection_ssl_verification" in self.selected_sanitizer_names or unverified_ssl:
+            ssl_triggered, ssl_err = check_introspection_ssl_verification(unverified_ssl)
+            if ssl_triggered:
+                triggered_by.append("check_introspection_ssl_verification")
+                err_details += ssl_err
+
+        logged_msgs = getattr(res, "logged_messages", [])
+        if "check_introspection_log_injection" in self.selected_sanitizer_names or logged_msgs:
+            log_inj_triggered, log_inj_err = check_introspection_log_injection(logged_msgs)
+            if log_inj_triggered:
+                triggered_by.append("check_introspection_log_injection")
+                err_details += log_inj_err
+
+        if "check_introspection_sensitive_data_logging" in self.selected_sanitizer_names or logged_msgs:
+            sens_triggered, sens_err = check_introspection_sensitive_data_logging(logged_msgs)
+            if sens_triggered:
+                triggered_by.append("check_introspection_sensitive_data_logging")
+                err_details += sens_err
+
+        leaked_tmp = getattr(res, "leaked_temp_files", [])
+        if "check_introspection_temp_file_leak" in self.selected_sanitizer_names or leaked_tmp:
+            temp_triggered, temp_err = check_introspection_temp_file_leak(leaked_tmp)
+            if temp_triggered:
+                triggered_by.append("check_introspection_temp_file_leak")
+                err_details += temp_err
+
+        net_calls = getattr(res, "network_connections", [])
+        if "check_introspection_ssrf" in self.selected_sanitizer_names or net_calls:
+            ssrf_triggered, ssrf_err = check_introspection_ssrf(net_calls)
+            if ssrf_triggered:
+                triggered_by.append("check_introspection_ssrf")
+                err_details += ssrf_err
+
+        code_calls = getattr(res, "evaluated_code_calls", [])
+        if "check_introspection_code_injection" in self.selected_sanitizer_names and code_calls:
+            code_triggered, code_err = check_introspection_code_injection(code_calls)
+            if code_triggered:
+                triggered_by.append("check_introspection_code_injection")
+                err_details += code_err
+
+        written_calls = getattr(res, "written_files", [])
+        if "check_unrestricted_file_upload" in self.selected_sanitizer_names and written_calls:
+            upload_triggered, upload_err = check_unrestricted_file_upload(written_calls)
+            if upload_triggered:
+                triggered_by.append("check_unrestricted_file_upload")
+                err_details += upload_err
+
+        sql_calls = getattr(res, "sql_queries", [])
+        if "check_introspection_sql_injection" in self.selected_sanitizer_names and sql_calls:
+            sql_triggered, sql_err = check_introspection_sql_injection(sql_calls)
+            if sql_triggered:
+                triggered_by.append("check_introspection_sql_injection")
+                err_details += sql_err
+
+        cmd_calls = getattr(res, "executed_commands", [])
+        if "check_introspection_command_injection" in self.selected_sanitizer_names and cmd_calls:
+            cmd_triggered, cmd_err = check_introspection_command_injection(cmd_calls)
+            if cmd_triggered:
+                triggered_by.append("check_introspection_command_injection")
+                err_details += cmd_err
+
+        deser_calls = getattr(res, "deserialization_calls", [])
+        if "check_untrusted_deserialization" in self.selected_sanitizer_names and deser_calls:
+            deser_triggered, deser_err = check_untrusted_deserialization(deser_calls)
+            if deser_triggered:
+                triggered_by.append("check_untrusted_deserialization")
+                err_details += deser_err
+
+        accessed_files = getattr(res, "accessed_files", [])
+        if "check_file_access" in self.selected_sanitizer_names or True: # always active or if selected
+            file_access_triggered, file_access_err = check_file_access(accessed_files)
+            if file_access_triggered:
+                triggered_by.append("check_file_access")
+                err_details += file_access_err
+
+        if "check_introspection_path_traversal" in self.selected_sanitizer_names:
+            allowed_dir = getattr(self.config, "allowed_workspace_dir", None) or os.getcwd()
+            pt_triggered, pt_err = check_introspection_path_traversal(accessed_files, allowed_base_dir=allowed_dir)
+            if pt_triggered:
+                triggered_by.append("check_introspection_path_traversal")
+                err_details += pt_err
+
+        if "check_strict_url_security_contract" in self.selected_sanitizer_names:
+            url_sec_triggered, url_sec_err = sanitizers.check_strict_url_security_contract(generated_arguments, res)
+            if url_sec_triggered:
+                triggered_by.append("check_strict_url_security_contract")
+                err_details += url_sec_err
+
+        if "check_strict_har_security_contract" in self.selected_sanitizer_names:
+            har_sec_triggered, har_sec_err = sanitizers.check_strict_har_security_contract(generated_arguments, res)
+            if har_sec_triggered:
+                triggered_by.append("check_strict_har_security_contract")
+                err_details += har_sec_err
+
+        if "check_strict_markitdown_security_contract" in self.selected_sanitizer_names:
+            md_sec_triggered, md_sec_err = sanitizers.check_strict_markitdown_security_contract(generated_arguments, res)
+            if md_sec_triggered:
+                triggered_by.append("check_strict_markitdown_security_contract")
+                err_details += md_sec_err
+
+
+
+        # 5. Check standard string-based sanitizers
+        string_triggered, string_triggered_by, string_err = self._check_string_sanitizers(generated_arguments, res)
+        if string_triggered:
+            for s_name in string_triggered_by:
+                if s_name not in triggered_by:
+                    triggered_by.append(s_name)
+            err_details += string_err
+
+        sanitizer_triggered = bool(triggered_by)
+        return sanitizer_triggered, triggered_by, err_details
+
+    def _check_temp_file_leak(self, leaked_files: set[str]) -> tuple[bool, str]:
+        """Returns True and diagnostic message if temporary files were leaked."""
+        if "check_temp_file_leak" in self.selected_sanitizer_names and leaked_files:
+            err = f"Temp file leak detected: {list(leaked_files)}. "
+            for f in leaked_files:
+                try:
+                    if os.path.isdir(f):
+                        shutil.rmtree(f)
+                    else:
+                        os.remove(f)
+                except Exception:
+                    pass
+            return True, err
+        return False, ""
+
+    def _check_process_leak(self, leaked_pids: set[int]) -> tuple[bool, str]:
+        """Returns True and diagnostic message if background processes were leaked."""
+        if ("check_process_and_fd_leaks" in self.selected_sanitizer_names or "check_terminal_dos_and_leak" in self.selected_sanitizer_names) and leaked_pids:
+            details = []
+            snap = getattr(self, "_last_ps", None) or _ps_snapshot()
+            for pid in leaked_pids:
+                info = snap.get(pid)
+                details.append(f"PID {pid} ({info[1]})" if info and info[1] else f"PID {pid}")
+            err = f"Process leak/leftover detected: {', '.join(details)}. "
+            return True, err
+        return False, ""
+
+    def _check_resource_exhaustion(self, elapsed: float) -> tuple[bool, str]:
+        """Returns True and diagnostic message if execution duration exceeds config limits."""
+        if "check_resource_exhaustion" in self.selected_sanitizer_names and elapsed > self.config.timeout_limit:
+            err = f"Resource exhaustion/Timeout detected: Execution took {elapsed:.2f} seconds (Limit: {self.config.timeout_limit}s). "
+            return True, err
+        return False, ""
+
+    def _check_unexpected_crash(self, res: any) -> tuple[bool, str]:
+        """Returns True and diagnostic message if an unhandled library exception is captured."""
+        if not res.success and res.error:
+            if any(crash_name in res.error for crash_name in self.config.unexpected_crashes):
+                err = f"Unexpected library/runtime crash: {res.error}. "
+                return True, err
+        return False, ""
+
+    def _check_string_sanitizers(self, generated_arguments: dict, res: any) -> tuple[bool, list[str], str]:
+        """Checks string inputs against selected security vulnerability checkers."""
+        if not res.success:
+            return False, [], ""
+
+        triggered_by = []
+        err_details = ""
+        
+        for prop_name, val in generated_arguments.items():
+            if not isinstance(val, str):
+                continue
+                
+            for sanitizer_name in self.selected_sanitizer_names:
+                if sanitizer_name.startswith("check_introspection_") or sanitizer_name in ("check_temp_file_leak", "check_resource_exhaustion", "check_terminal_dos_and_leak"):
+                    continue
+                
+                # Context checks
+                if sanitizer_name in ("check_unsafe_url_ssrf", "check_local_file_uri", "check_directory_jailbreak_write"):
+                    prop_lower = prop_name.lower()
+                    if not ("url" in prop_lower or "uri" in prop_lower or "link" in prop_lower or "path" in prop_lower):
+                        continue
+
+                sanitizer_fn = getattr(sanitizers, sanitizer_name, None)
+                if sanitizer_fn and _takes_a_string(sanitizer_fn):
+                    rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
+                    triggered = False
+                    if sanitizer_name == "check_blocked_command_bypass":
+                        triggered = sanitizer_fn(val, blocked_commands=rule.get("blocked_commands"))
+                    elif sanitizer_name == "check_directory_jailbreak_write":
+                        triggered = sanitizer_fn(val, allowed_dirs=rule.get("allowed_directories"))
+                    else:
+                        triggered = sanitizer_fn(val)
+
+                    # Some sanitizers return bool, others (bool, detail). A
+                    # 2-tuple is ALWAYS truthy -- (False, '') included -- so a
+                    # bare `if triggered:` fired every tuple-returning sanitizer
+                    # on every string argument. Normalise before testing.
+                    if isinstance(triggered, tuple):
+                        triggered = triggered[0]
+
+                    if triggered:
+                        rule = self.selected_sanitizer_rules.get(sanitizer_name, {})
+                        if rule.get("on_trigger") == "allow_success_always":
+                            continue
+                        elif rule.get("on_trigger") == "allow_success_with_fallback":
+                            expected_fallbacks = rule.get("expected_fallback_values", [])
+                            if self._matches_fallback_value(res.result, expected_fallbacks):
+                                continue
+                        
+                        if sanitizer_name not in triggered_by:
+                            triggered_by.append(sanitizer_name)
+
+        if triggered_by:
+            err_details = f"Silent Bug Alert: Sanitizers {triggered_by} flagged this input as malicious, but the target tool executed successfully without raising any exception. "
+            return True, triggered_by, err_details
+            
+        return False, [], ""
+
+    def _matches_fallback_value(self, result_val: any, expected_fallbacks: list) -> bool:
+        """Determines if the success output matches configured fallback options."""
+        actual_fallbacks = list(expected_fallbacks) if expected_fallbacks else [[]]
+        if result_val in actual_fallbacks:
+            return True
+        for fb in actual_fallbacks:
+            if str(result_val) == str(fb):
+                return True
+            try:
+                if isinstance(result_val, str) and json.loads(result_val) == fb:
+                    return True
+            except Exception:
+                pass
+        return False
+
+    def run(self, max_iterations: int = 5, time_per_iteration: int = 20):
+        tools_to_fuzz = self._discover_tools()
+        if not tools_to_fuzz:
+            return
+        
+        try:
+            for tool in tools_to_fuzz:
+                logger.info(f"\n{'='*20} STARTING COVERAGE-GUIDED FUZZING FOR TOOL: {tool} {'='*20}")
+                
+                modules_to_instrument = self._resolve_instrumented_modules()
+                started = self._start_runner(tool, modules_to_instrument)
+                if not started:
+                    continue
+
+                initialized = self._initialize_tool_fuzzing(tool)
+                if not initialized:
+                    self._cleanup_runner()
+                    continue
+
+                self._setup_corpus_seeds()
+
+                self._execute_fuzzing(time_per_iteration)
+                self._cleanup_runner()
+        finally:
+            if self.metrics_collector:
+                self.metrics_collector.close()
+
+    def _discover_tools(self) -> list[str]:
+        """Discovers the list of target tools from the MCP server."""
+        loop = asyncio.new_event_loop()
+        if self.target_tool in ["*", None]:
+            logger.info("Scanning MCP server to discover all tools")
+            try:
+                tools = loop.run_until_complete(self.inspector.fetch_all_tools())
+                logger.info(f"Found {len(tools)} tools to fuzz: {tools}")
+                return tools
+            except Exception as e:
+                logger.error(f"Failed to list tools from MCP server: {e}")
+                return []
+        else:
+            return [self.target_tool]
+
+    def _initialize_tool_fuzzing(self, tool: str) -> bool:
+        """Performs LLM sanitizer selection and initial setups for a target tool."""
+        if self.override_rules and self.current_runner and hasattr(self.current_runner, "get_tool_metadata"):
+            try:
+                t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
+            except Exception:
+                t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+        else:
+            loop = asyncio.new_event_loop()
+            try:
+                t_name, t_desc, t_schema = loop.run_until_complete(self.inspector.fetch_tool_metadata(tool))
+            except Exception as e:
+                if self.current_runner and hasattr(self.current_runner, "get_tool_metadata"):
+                    try:
+                        t_name, t_desc, t_schema = self.current_runner.get_tool_metadata(tool)
+                    except Exception as ex:
+                        logger.warning(f"MCP metadata inspection for '{tool}' failed: {ex}. Using runner inspected schema.")
+                        t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+                else:
+                    logger.warning(f"MCP metadata inspection for '{tool}' failed: {e}. Using default tool schema.")
+                    t_name, t_desc, t_schema = tool, f"Target CLI tool {tool}", {"type": "object", "properties": {}}
+
+
+        self.target_tool_name = tool
+        self.target_tool_desc = t_desc
+        if self.override_rules:
+            self.selected_sanitizer_names = list(self.override_rules.keys())
+            self.selected_sanitizer_rules = dict(self.override_rules)
+        else:
+            try:
+                self.selected_sanitizer_names, self.selected_sanitizer_rules = self.llm.select_sanitizers(
+                    t_name, t_desc, t_schema, sanitizers.AVAILABLE_SANITIZERS
+                )
+            except Exception as e:
+                logger.warning(f"LLM API selection failed ({e}). Falling back to default sanitizers.")
+                self.selected_sanitizer_names = list(sanitizers.AVAILABLE_SANITIZERS.keys())
+                self.selected_sanitizer_rules = {}
+
+        # Hybrid Architecture: Merge Layer 1 mandatory base sanitizers with Layer 2 LLM/override sanitizers
+        base_mandatory = getattr(sanitizers, "BASE_MANDATORY_SANITIZERS", [])
+        for base_s in base_mandatory:
+            if base_s not in self.selected_sanitizer_names:
+                self.selected_sanitizer_names.append(base_s)
+
+        if not self.selected_sanitizer_names:
+            raise ValueError(f"No sanitizers selected for tool '{tool}'. Fuzzing cannot proceed without active security sanitizers.")
+
+        
+        self.current_schema = t_schema
+        self.silent_bug_found = False
+
+        if self.metrics_collector:
+            self.metrics_collector.set_tool(tool, start_time=time.time())
+
+        # Initialize the parser adapter with the current tool schema
+        self.input_parser = FuzzInputParser(self.current_schema, self.file_backed_params, self.current_runner)
+        return True
+
+    def _setup_corpus_seeds(self) -> None:
+        """Generates the initial fuzzing corpus via LLM or uses predefined seeds."""
+        if self.predefined_seeds:
+            seeds = self.predefined_seeds
+        else:
+            seeds = self.llm.generate_seeds(self.target_tool_name, self.target_tool_desc, self.current_schema)
+        if os.path.exists(self.corpus_dir):
+            shutil.rmtree(self.corpus_dir, ignore_errors=True)
+        os.makedirs(self.corpus_dir, exist_ok=True)
+
+        for idx, seed in enumerate(seeds):
+            with open(os.path.join(self.corpus_dir, f"seed_{idx}.json"), "w") as f:
+                json.dump(seed, f)
+
+    def _resolve_instrumented_modules(self) -> list[str]:
+        """Resolves the set of Python modules to instrument for coverage tracking."""
+        modules_to_instrument = []
+        py_file = None
+        for arg in self.args:
+            if arg.endswith(".py"):
+                py_file = os.path.basename(arg)
+                break
+        if py_file:
+            modules_to_instrument.append(os.path.splitext(py_file)[0])
+        
+        for root, dirs, files in os.walk("."):
+            dirs[:] = [d for d in dirs if not d.startswith(".") and d not in ("node_modules", ".venv", "fuzz_corpus")]
+            for file in files:
+                if file.endswith(".py") and file != "__init__.py":
+                    modules_to_instrument.append(os.path.splitext(file)[0])
+        
+        # Also instrument top-level Python packages in the workspace directory
+        for item in os.listdir("."):
+            if os.path.isdir(item) and not item.startswith(".") and item not in ("node_modules", ".venv", "fuzz_corpus", "src", "tests"):
+                try:
+                    if any(f.endswith(".py") for r, d, fs in os.walk(item) for f in fs):
+                        modules_to_instrument.append(item)
+                except Exception:
+                    pass
+
+        # Exclude external third_party, test, and benchmark modules from Atheris instrumentation
+        filtered_modules = []
+        for mod in modules_to_instrument:
+            if not any(prefix in mod for prefix in ("third_party", "tests", "bench", "test_", "fuzz_")):
+                filtered_modules.append(mod)
+
+        # Explicitly include configured target dependencies (e.g., markitdown, pypdf, etc.)
+        if hasattr(self.config, "dependencies_to_instrument") and self.config.dependencies_to_instrument:
+            for dep in self.config.dependencies_to_instrument:
+                filtered_modules.append(dep)
+        
+        # Ensure mcp_fuzzer framework is instrumented
+        filtered_modules.append("mcp_fuzzer")
+
+        return list(set(filtered_modules))
+
+    def _start_runner(self, tool: str, modules_to_instrument: list[str]) -> bool:
+        """Initializes and launches the execution runner."""
+        self.current_runner = self.runner_factory(tool)
+        logger.info(f"[{tool}] Using runner: {self.current_runner.__class__.__name__}")
+
+        # Re-initialize the parser with the runner in place if already initialized
+        if self.input_parser:
+            self.input_parser.current_runner = self.current_runner
+
+        if hasattr(self.current_runner, "enable_trace"):
+            self.current_runner.enable_trace = False
+
+        try:
+            # Check if JSRunner is being used (or if it's explicitly node/JS)
+            is_js = "JSRunner" in self.current_runner.__class__.__name__ or getattr(self.current_runner, "is_js", False)
+            if not is_js:
+                # Include target module name from runner if available
+                runner_mod = getattr(self.current_runner, "module_name", None)
+                if runner_mod and runner_mod not in modules_to_instrument:
+                    modules_to_instrument.append(runner_mod)
+                # Also include "mcp_target_module"
+                modules_to_instrument.append("mcp_target_module")
+                logger.info(f"[{tool}] Instrumenting local Python modules: {modules_to_instrument}")
+                import atheris
+                with atheris.instrument_imports(include=modules_to_instrument):
+                    self.current_runner.start()
+            else:
+                logger.info(f"[{tool}] Instrumenting JS fake coverage helper module.")
+                import atheris
+                with atheris.instrument_imports(include=["src.runners.fake_coverage"]):
+                    self.current_runner.start()
+            return True
+        except Exception as e:
+            logger.error(f"Failed to start runner: {e}")
+            return False
+
+    def _execute_fuzzing(self, time_per_iteration: int) -> None:
+        """Runs the fuzzer loop via the engine driver."""
+        engine = AtherisFuzzingEngine(
+            self.corpus_dir,
+            time_per_iteration,
+            dict_file=getattr(self, 'dict_file', None),
+            metrics_collector=self.metrics_collector,
+            pulse_interval=getattr(self.config, 'metrics_pulse_interval', 2)
+        )
+        engine.fuzz(self.test_one_input)
+
+    def _cleanup_runner(self) -> None:
+        """Stops the runner and removes temporary crash logs."""
+        if self.current_runner:
+            self.current_runner.stop()
+
+        for file in os.listdir("."):
+            if file.startswith("crash-"):
+                try:
+                    os.remove(file)
+                except Exception:
+                    pass
+
+        elapsed_total = (time.time() - self.start_fuzz_time) if self.start_fuzz_time else 0.0
+        exec_speed = (self.exec_count / elapsed_total) if elapsed_total > 0 else 0.0
+        logger.info(f"[FUZZING METRICS] Total Executions: {self.exec_count} | Duration: {elapsed_total:.2f}s | Speed: {exec_speed:.2f} exec/s")
+
+        self._emit_exec_summary()
+
+        if self.metrics_collector:
+            self.metrics_collector.emit_final_snapshot(self.exec_count)
+
+        if not self.silent_bug_found:
+            logger.info(f"Fuzzing session completed. No silent bugs detected with current coverage.")
+
+        if os.path.exists(self.corpus_dir):
+            shutil.rmtree(self.corpus_dir, ignore_errors=True)
+
+    def run_single(self, input_data: dict) -> None:
+        """Executes a single test run on the tool and displays results."""
+        tools_to_fuzz = self._discover_tools()
+        if not tools_to_fuzz:
+            logger.error("No tools discovered.")
+            return
+            
+        # Target tool name resolution
+        target = self.target_tool or (tools_to_fuzz[0] if tools_to_fuzz else None)
+        if not target:
+            logger.error("No target tool specified.")
+            return
+            
+        if target not in tools_to_fuzz:
+            logger.error(f"Tool '{target}' not found in discovered tools: {tools_to_fuzz}")
+            return
+            
+        initialized = self._initialize_tool_fuzzing(target)
+        if not initialized:
+            logger.error("Failed to initialize tool execution.")
+            return
+            
+        modules = self._resolve_instrumented_modules()
+        started = self._start_runner(target, modules)
+        if not started:
+            logger.error("Failed to start tool execution runner.")
+            return
+            
+        try:
+            logger.info(f"[*] Executing '{target}' with arguments: {input_data}")
+            result = self.current_runner.execute(input_data)
+            
+            print("\n" + "="*20 + " RESULTS " + "="*20)
+            print(f"Status   : {'SUCCESS' if result.success else 'FAILED'}")
+            if result.success:
+                print(f"Output   : {result.result}")
+            else:
+                print(f"Error    : {result.error}")
+            print(f"Coverage : {len(result.coverage)} block(s) hit")
+            if result.coverage:
+                print("Block Hits:")
+                for cov in list(result.coverage)[:10]:
+                    print(f" - {cov}")
+                if len(result.coverage) > 10:
+                    print(f" ... and {len(result.coverage) - 10} more blocks")
+            print("="*49)
+        except Exception as e:
+            logger.error(f"Error during execution: {e}")
+        finally:
+            if self.current_runner:
+                self.current_runner.stop()

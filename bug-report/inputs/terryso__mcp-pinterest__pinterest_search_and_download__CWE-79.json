@@ -1,0 +1,42 @@
+{
+ "repo": "terryso/mcp-pinterest",
+ "tool": "pinterest_search_and_download",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "b2b1b3961910ea454dbb161535d31583fc98b599",
+ "draft": "terryso__mcp-pinterest__pinterest_search_and_download__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'keyword': '\"\\x00{{\"\\x7f\\x7f\\x7f\", \"l\"\\x7f\\x7f\\x7f\"\\x00\\x00 , \"dadless\"', 'limit': 0, 'headless': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '搜索并下载了 0 张与\"\"\\x00{{\"\\x7f\\x7f\\x7f\", \"l\"\\x7f\\x7f\\x7f\"\\x00\\x00 , \"dadless\"\"相关的图片'}, {'type': 'text', 'text': '成功: 0, 失败: 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'keyword': '\\x00{{', 'limit': 0, 'headless': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '搜索并下载了 0 张与\"\\x00{{\"相关的图片'}, {'type': 'text', 'text': '成功: 0, 失败: 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'keyword': '\"keywor\":\\x009fite{{\"', 'limit': 0, 'headless': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '搜索并下载了 0 张与\"\"keywor\":\\x009fite{{\"\"相关的图片'}, {'type': 'text', 'text': '成功: 0, 失败: 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'keyword': '\"keywor\":\\x009fize{{\"', 'limit': 0, 'headless': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '搜索并下载了 0 张与\"\"keywor\":\\x009fize{{\"\"相关的图片'}, {'type': 'text', 'text': '成功: 0, 失败: 0'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

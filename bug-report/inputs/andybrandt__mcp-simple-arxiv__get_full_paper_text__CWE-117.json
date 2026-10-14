@@ -1,0 +1,98 @@
+{
+ "repo": "andybrandt/mcp-simple-arxiv",
+ "tool": "get_full_paper_text",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "fc9262eaa45089d9149db8e81a49081162f3bf8d",
+ "draft": "andybrandt__mcp-simple-arxiv__get_full_paper_text__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 12,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': ''}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.45 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '400 Bad Request' for url 'https://export.arxiv.org/api/query?id_list=&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'null'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.95 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '400 Bad Request' for url 'https://export.arxiv.org/api/query?id_list=null&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': '[object Object]'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 6.07 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '400 Bad Request' for url 'https://export.arxiv.org/api/query?id_list=%5Bobject+Object%5D&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': '/etc/passwd\\x00'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.84 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '406 Not Acceptable' for url 'https://export.arxiv.org/api/query?id_list=%2Fetc%2Fpasswd%00&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/406'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'file:///etc/shadow'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 6.09 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '400 Bad Request' for url 'https://export.arxiv.org/api/query?id_list=file%3A%2F%2F%2Fetc%2Fshadow&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': '{\"fake\":\"json\"}'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_incomplete_cleanup', 'check_introspection_log_injection', 'check_introspection_temp_file_leak']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.86 seconds (Limit: 2.0s). Introspection Incomplete Cleanup Alert (CWE-459): Tool execution finished but left 1 uncleaned temporary resource(s) on disk: ['/tmp/slow-unit-70f8917b02f3fa869e3f0837e7e916a3cbcaea86']! Risk of resource exhaustion / disk leakage.Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=%7B%22fake%22%3A%22json%22%7D&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'.Introspection Temp File Leak Alert (CWE-533): Uncleaned temporary file(s) remaining in temp folder! Leaked files: ['/tmp/slow-unit-70f8917b02f3fa869e3f0837e7e916a3cbcaea86']."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'http://localhost:8080'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.98 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=http%3A%2F%2Flocalhost%3A8080&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'http://127.0.0.1:8500'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.99 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=http%3A%2F%2F127.0.0.1%3A8500&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.97 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=..%2F..%2F..%2F..%2Fetc%2Fpasswd&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 6.03 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=..%5C..%5C..%5C..%5Cwindows%5Cwin.ini&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'http://169.254.169.254/latest/meta-data/'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.93 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=http%3A%2F%2F169.254.169.254%2Flatest%2Fmeta-data%2F&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  },
+  {
+   "campaign": "e2-0922",
+   "input": "{'paper_id': 'data:text/plain;base64,SGVsbG8sIHdvcmxkIQ=='}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_log_injection']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 5.98 seconds (Limit: 2.0s). Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mcp_simple_arxiv.arxiv_client)! Logged content: 'HTTP error while fetching paper: Client error '429 Unknown Error' for url 'https://export.arxiv.org/api/query?id_list=data%3Atext%2Fplain%3Bbase64%2CSGVsbG8sIHdvcmxkIQ%3D%3D&max_results=1'\\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429'."
+  }
+ ],
+ "truncated": false
+}

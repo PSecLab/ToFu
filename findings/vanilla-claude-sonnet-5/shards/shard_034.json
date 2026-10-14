@@ -1,0 +1,1958 @@
+{
+ "shard_id": "034",
+ "n_repos": 3,
+ "n_configs": 96,
+ "surface_loc": 24913,
+ "repos": [
+  {
+   "repo": "blazickjp/arxiv-mcp-server",
+   "slug": "blazickjp__arxiv-mcp-server",
+   "lang": "python",
+   "commit": "42419c18376ef5559a38fa7f1895938ad2b84e38",
+   "path": "eval/targets/blazickjp__arxiv-mcp-server",
+   "surface_loc": 8402,
+   "tools": [
+    {
+     "name": "check_alerts",
+     "description": "Check all saved topic watches for newly published papers since the last check. Omitting the topic parameter runs ALL saved watches and returns new papers for each. Passing a topic string checks only that specific watch. Advances each watch's drain cursor after running: when a page is truncated by max_results, has_more=true and check_start advances so later calls return the next papers in the same window (Atom date bounds alone are day-granular and would otherwise re-hit the boundary); last_checked tracks the newest returned paper. When the page is not full, last_checked becomes now and the drain cursor resets. Use watch_topic to register topics before calling this. Returns a clear not-found error if a topic is provided but no matching watch exists. Returns a summary with new paper counts, has_more, and full paper metadata per topic.",
+     "config": "blazickjp__arxiv-mcp-server__check_alerts.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 42,
+       "text": "handle_check_alerts,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 43,
+       "text": "check_alerts_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 99,
+       "text": "check_alerts_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 152,
+       "text": "elif name == \"check_alerts\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 153,
+       "text": "result = await handle_check_alerts(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "citation_graph",
+     "description": "Return papers citing an arXiv paper and papers that it references using Semantic Scholar's citation graph. Results are bounded (default 50) to stay within the unauthenticated quota. Graphs are cached on disk to reduce repeated API calls. Under load, a free Semantic Scholar API key (https://www.semanticscholar.org/product/api#api-key) makes this reliable; without a key, persistent rate limits return status=rate_limited with an unmistakable warning instead of failing hard.",
+     "config": "blazickjp__arxiv-mcp-server__citation_graph.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 36,
+       "text": "handle_citation_graph,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 37,
+       "text": "citation_graph_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 96,
+       "text": "citation_graph_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 146,
+       "text": "elif name == \"citation_graph\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 147,
+       "text": "result = await handle_citation_graph(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "download_paper",
+     "description": "Download a paper from arXiv and return its text content. Tries the HTML version first for clean extraction; falls back to PDF conversion if HTML is unavailable. Stores the paper locally. Returned text is bounded to roughly 12,000 characters by default so one call cannot return an unbounded paper body. When is_truncated is true, call again with start=next_start (see next_retrieval) to continue, or pass return_full_text=true for the entire remaining paper. Set force=true to re-fetch and overwrite a cached paper (required to replace a newer stored arXiv version with an older one).",
+     "config": "blazickjp__arxiv-mcp-server__download_paper.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 134,
+       "text": "elif name == \"download_paper\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/semantic_search.py",
+       "line": 50,
+       "text": "\"Semantic similarity search over papers you have already downloaded locally via download_paper. \""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/semantic_search.py",
+       "line": 54,
+       "text": "\"have been downloaded yet. Use search_papers to find papers on arXiv, then download_paper to add \""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/list_papers.py",
+       "line": 32,
+       "text": "\"List all papers that have been downloaded and stored locally via download_paper. \""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/list_papers.py",
+       "line": 37,
+       "text": "\"Workflow: search_papers -> download_paper -> list_papers -> read_paper.\""
+      }
+     ]
+    },
+    {
+     "name": "export_citations",
+     "description": "Export BibTeX citations for one or more arXiv papers using authoritative arXiv metadata (title, authors, year, primary category), never model-generated fields. Version suffixes (e.g. '2401.12345v2') are preserved and citation keys are deterministic. Returns the rendered BibTeX plus per-paper status/error. BibTeX only; RIS/CSL-JSON are not yet supported.",
+     "config": "blazickjp__arxiv-mcp-server__export_citations.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 38,
+       "text": "handle_export_citations,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 39,
+       "text": "export_citations_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 97,
+       "text": "export_citations_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 148,
+       "text": "elif name == \"export_citations\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 149,
+       "text": "result = await handle_export_citations(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "get_abstract",
+     "description": "Fetch abstract and metadata by arXiv ID without downloading the paper. Use before download_paper to assess relevance. Returns title, authors, abstract, categories, published date, and PDF URL. After compact search, use for one full abstract; skip if search used abstract_mode=full.",
+     "config": "blazickjp__arxiv-mcp-server__get_abstract.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 28,
+       "text": "handle_get_abstract,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 140,
+       "text": "elif name == \"get_abstract\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 141,
+       "text": "result = await handle_get_abstract(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/export_citations.py",
+       "line": 273,
+       "text": "# Versioned requests must match the Atom entry version (get_abstract"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/download.py",
+       "line": 780,
+       "text": "Uses the same Atom ``id_list`` lookup as ``get_abstract``, so a missing"
+      }
+     ]
+    },
+    {
+     "name": "get_paper_latex",
+     "description": "Download, safely process, cache, and return bounded original LaTeX source. Use section tools for targeted reading.",
+     "config": "blazickjp__arxiv-mcp-server__get_paper_latex.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 48,
+       "text": "get_paper_latex_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 49,
+       "text": "handle_get_paper_latex,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 52,
+       "text": "get_paper_latex_section_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 53,
+       "text": "handle_get_paper_latex_section,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 102,
+       "text": "get_paper_latex_tool,"
+      }
+     ]
+    },
+    {
+     "name": "get_paper_latex_section",
+     "description": "Return one bounded LaTeX section by outline ID or title (whitespace/case normalized; macros expanded).",
+     "config": "blazickjp__arxiv-mcp-server__get_paper_latex_section.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 52,
+       "text": "get_paper_latex_section_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 53,
+       "text": "handle_get_paper_latex_section,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 104,
+       "text": "get_paper_latex_section_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 162,
+       "text": "elif name == \"get_paper_latex_section\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 163,
+       "text": "result = await handle_get_paper_latex_section(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "get_paper_outline",
+     "description": "Return a paginated heading outline for a downloaded paper (markdown). Stable hierarchical section IDs; use read_paper_section to fetch one.",
+     "config": "blazickjp__arxiv-mcp-server__get_paper_outline.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 55,
+       "text": "handle_get_paper_outline,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 164,
+       "text": "elif name == \"get_paper_outline\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 165,
+       "text": "result = await handle_get_paper_outline(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 28,
+       "text": "handle_get_paper_outline,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 77,
+       "text": "\"handle_get_paper_outline\","
+      }
+     ]
+    },
+    {
+     "name": "list_paper_latex_sections",
+     "description": "Return a compact outline of headings from original LaTeX source.",
+     "config": "blazickjp__arxiv-mcp-server__list_paper_latex_sections.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 50,
+       "text": "list_paper_latex_sections_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 51,
+       "text": "handle_list_paper_latex_sections,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 103,
+       "text": "list_paper_latex_sections_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 160,
+       "text": "elif name == \"list_paper_latex_sections\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 161,
+       "text": "result = await handle_list_paper_latex_sections(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "list_papers",
+     "description": "List all papers that have been downloaded and stored locally via download_paper. Returns id, title, authors, published, and arxiv_version/versioned_id from local metadata \u2014 no live re-fetch. Set compact=true to return arXiv IDs only. Returns an empty list if no papers have been downloaded yet. Workflow: search_papers -> download_paper -> list_papers -> read_paper.",
+     "config": "blazickjp__arxiv-mcp-server__list_papers.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 26,
+       "text": "handle_list_papers,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 136,
+       "text": "elif name == \"list_papers\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 137,
+       "text": "result = await handle_list_papers(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/semantic_search.py",
+       "line": 19,
+       "text": "from .list_papers import is_valid_arxiv_id"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/list_papers.py",
+       "line": 29,
+       "text": "name=\"list_papers\","
+      }
+     ]
+    },
+    {
+     "name": "list_watches",
+     "description": "List all saved topic watches without checking for new papers. Returns each watch's topic, categories, last_checked timestamp, and other stored fields. Does not update last_checked \u2014 use this to inspect what is saved. Use unwatch_topic to remove a watch, or check_alerts to poll for new papers.",
+     "config": "blazickjp__arxiv-mcp-server__list_watches.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 44,
+       "text": "handle_list_watches,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 45,
+       "text": "list_watches_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 100,
+       "text": "list_watches_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 154,
+       "text": "elif name == \"list_watches\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 155,
+       "text": "result = await handle_list_watches(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "read_paper",
+     "description": "Read the text content of a paper that was previously downloaded via download_paper. Returns the paper in markdown format, bounded to roughly 12,000 characters by default so one call cannot return an unbounded paper body. When is_truncated is true, call again with start=next_start (see next_retrieval) to continue, or pass return_full_text=true for the entire remaining paper. Will fail with a clear error if the paper has not been downloaded yet \u2014 call download_paper first. Workflow: search_papers -> download_paper -> read_paper.",
+     "config": "blazickjp__arxiv-mcp-server__read_paper.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 27,
+       "text": "handle_read_paper,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 57,
+       "text": "handle_read_paper_section,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 138,
+       "text": "elif name == \"read_paper\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 139,
+       "text": "result = await handle_read_paper(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 166,
+       "text": "elif name == \"read_paper_section\":"
+      }
+     ]
+    },
+    {
+     "name": "read_paper_section",
+     "description": "Return one bounded markdown section by outline ID (or unique title). Does not include sibling or parent sections.",
+     "config": "blazickjp__arxiv-mcp-server__read_paper_section.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 57,
+       "text": "handle_read_paper_section,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 166,
+       "text": "elif name == \"read_paper_section\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 167,
+       "text": "result = await handle_read_paper_section(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 30,
+       "text": "handle_read_paper_section,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 79,
+       "text": "\"handle_read_paper_section\","
+      }
+     ]
+    },
+    {
+     "name": "reindex",
+     "description": "Rebuild the local semantic index for downloaded papers.",
+     "config": "blazickjp__arxiv-mcp-server__reindex.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 33,
+       "text": "handle_reindex,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 35,
+       "text": "reindex_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 95,
+       "text": "reindex_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 144,
+       "text": "elif name == \"reindex\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 145,
+       "text": "result = await handle_reindex(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "search_paper_text",
+     "description": "Search a downloaded paper for bounded matching passages with section/source offsets. Suppresses high-overlap near-duplicates and prefers section-diverse hits. Lightweight substring search; no Torch.",
+     "config": "blazickjp__arxiv-mcp-server__search_paper_text.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 59,
+       "text": "handle_search_paper_text,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 168,
+       "text": "elif name == \"search_paper_text\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 169,
+       "text": "result = await handle_search_paper_text(arguments)"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 32,
+       "text": "handle_search_paper_text,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/__init__.py",
+       "line": 81,
+       "text": "\"handle_search_paper_text\","
+      }
+     ]
+    },
+    {
+     "name": "search_papers",
+     "description": "Search arXiv by query with optional categories, date range, sort, and pagination.\n\nQuery: prefer quoted phrases; ti:/au:/abs:/cat:; AND/OR/ANDNOT. Unprefixed terms match title+abstract (not authors). Use categories (cs.AI, cs.LG, cs.CL, cs.CV, cs.MA, cs.RO, stat.ML, quant-ph). Catalog/examples: README 'search_papers query guide'.\n\nDates YYYY-MM-DD (date_from/date_to). sort_by relevance|date. max_results default 5 (cap 50). abstract_mode none|snippet|full (default snippet). start default 0; response: total_results, returned, has_more, next_start, abstract_mode. Pass next_start with same abstract_mode. Use get_abstract after compact search \u2014 not after abstract_mode=full.\n\narXiv ~3s between requests (server-side). Transient 429/503 are retried with backoff; persistent rate limits return status=rate_limited.",
+     "config": "blazickjp__arxiv-mcp-server__search_papers.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 132,
+       "text": "if name == \"search_papers\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/semantic_search.py",
+       "line": 54,
+       "text": "\"have been downloaded yet. Use search_papers to find papers on arXiv, then download_paper to add \""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/list_papers.py",
+       "line": 37,
+       "text": "\"Workflow: search_papers -> download_paper -> list_papers -> read_paper.\""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/alerts.py",
+       "line": 38,
+       "text": "\"The topic string uses the same query syntax as search_papers (quoted phrases, field specifiers, boolean operators). \""
+      },
+      {
+       "file": "src/arxiv_mcp_server/tools/alerts.py",
+       "line": 420,
+       "text": "# Parity with search_papers (#238): structured rate_limited JSON, not bare Error:"
+      }
+     ]
+    },
+    {
+     "name": "semantic_search",
+     "description": "Semantic similarity search over papers you have already downloaded locally via download_paper. Supports free-text queries (e.g. 'attention mechanisms for long sequences') or finding papers similar to a given paper_id. IMPORTANT: only searches your local downloaded collection \u2014 will return empty results if no papers have been downloaded yet. Use search_papers to find papers on arXiv, then download_paper to add them to the local index before using this tool. Requires pro dependencies: uvx --from 'arxiv-mcp-server[pro]' arxiv-mcp-server (or uv tool install 'arxiv-mcp-server[pro]').",
+     "config": "blazickjp__arxiv-mcp-server__semantic_search.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 32,
+       "text": "handle_semantic_search,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 34,
+       "text": "semantic_search_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 94,
+       "text": "semantic_search_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 142,
+       "text": "elif name == \"semantic_search\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 143,
+       "text": "result = await handle_semantic_search(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "unwatch_topic",
+     "description": "Delete a saved topic watch by exact topic string. The topic must match the stored watch_topic value exactly. Returns a clear not-found error if no matching watch exists. Use list_watches to inspect saved watches before deleting.",
+     "config": "blazickjp__arxiv-mcp-server__unwatch_topic.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 46,
+       "text": "handle_unwatch_topic,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 47,
+       "text": "unwatch_topic_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 101,
+       "text": "unwatch_topic_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 156,
+       "text": "elif name == \"unwatch_topic\":"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 157,
+       "text": "result = await handle_unwatch_topic(arguments)"
+      }
+     ]
+    },
+    {
+     "name": "watch_topic",
+     "description": "Save or update a persistent research topic watch. When checked via check_alerts, returns only papers published since the last check \u2014 acting as a standing alert for new work on a topic. New watches seed last_checked to creation time so the first check does not dump historical matches. The topic string uses the same query syntax as search_papers (quoted phrases, field specifiers, boolean operators). Examples: '\"diffusion models\" AND ti:\"video generation\"', 'au:\"LeCun\" AND cs.LG'. Calling watch_topic with the same topic string updates the existing watch rather than creating a duplicate. On update, omit categories to preserve existing filters; pass categories: [] to clear them. Pair with check_alerts to poll for new papers.",
+     "config": "blazickjp__arxiv-mcp-server__watch_topic.json",
+     "hints": [
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 40,
+       "text": "handle_watch_topic,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 41,
+       "text": "watch_topic_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 46,
+       "text": "handle_unwatch_topic,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 47,
+       "text": "unwatch_topic_tool,"
+      },
+      {
+       "file": "src/arxiv_mcp_server/server.py",
+       "line": 98,
+       "text": "watch_topic_tool,"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "r-huijts/xcode-mcp-server",
+   "slug": "r-huijts__xcode-mcp-server",
+   "lang": "node",
+   "commit": "11f8d6bacadd153beee649f92a78a9dad761f56f",
+   "path": "eval/targets/r-huijts__xcode-mcp-server",
+   "surface_loc": 8355,
+   "tools": [
+    {
+     "name": "add_file_to_project",
+     "description": "Adds a file to the active Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__add_file_to_project.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 805,
+       "text": "// Register \"add_file_to_project\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 807,
+       "text": "\"add_file_to_project\","
+      }
+     ]
+    },
+    {
+     "name": "add_project_to_workspace",
+     "description": "Adds an existing project to the active workspace.",
+     "config": "r-huijts__xcode-mcp-server__add_project_to_workspace.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1102,
+       "text": "// Register \"add_project_to_workspace\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1104,
+       "text": "\"add_project_to_workspace\","
+      }
+     ]
+    },
+    {
+     "name": "add_swift_package",
+     "description": "Adds a Swift Package dependency to the active project. Note: Your project must already be set up for Swift Package Manager (must have a Package.swift file). If you haven't initialized SPM yet, use the init_swift_package tool first.",
+     "config": "r-huijts__xcode-mcp-server__add_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 265,
+       "text": "// Register \"add_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 267,
+       "text": "\"add_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "analyze_file",
+     "description": "Analyzes a source file for potential issues using Xcode's static analyzer.",
+     "config": "r-huijts__xcode-mcp-server__analyze_file.json",
+     "hints": []
+    },
+    {
+     "name": "archive_project",
+     "description": "Archives the active Xcode project for distribution.",
+     "config": "r-huijts__xcode-mcp-server__archive_project.json",
+     "hints": []
+    },
+    {
+     "name": "boot_simulator",
+     "description": "Boot an iOS simulator by UDID or name",
+     "config": "r-huijts__xcode-mcp-server__boot_simulator.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 248,
+       "text": "// Register \"boot_simulator\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 250,
+       "text": "\"boot_simulator\","
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 521,
+       "text": "throw new Error(`Simulator is not booted. Boot the simulator first with the boot_simulator command.`);"
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 790,
+       "text": "throw new Error(`Simulator is not booted. Boot the simulator first with the boot_simulator command.`);"
+      }
+     ]
+    },
+    {
+     "name": "build_project",
+     "description": "Builds the active Xcode project using the specified configuration and scheme.",
+     "config": "r-huijts__xcode-mcp-server__build_project.json",
+     "hints": []
+    },
+    {
+     "name": "build_spm_package",
+     "description": "Builds a Swift Package Manager package directly using 'swift build' instead of Xcode.",
+     "config": "r-huijts__xcode-mcp-server__build_spm_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 564,
+       "text": "// Register \"build_spm_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 566,
+       "text": "\"build_spm_package\","
+      }
+     ]
+    },
+    {
+     "name": "build_swift_package",
+     "description": "Builds a Swift Package using Swift Package Manager.",
+     "config": "r-huijts__xcode-mcp-server__build_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 975,
+       "text": "// Register \"build_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 977,
+       "text": "\"build_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "change_directory",
+     "description": "Changes the active directory for relative path operations.",
+     "config": "r-huijts__xcode-mcp-server__change_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 567,
+       "text": "// Register \"change_directory\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 569,
+       "text": "\"change_directory\","
+      }
+     ]
+    },
+    {
+     "name": "check_cocoapods",
+     "description": "Checks if the active project uses CocoaPods and returns setup information.",
+     "config": "r-huijts__xcode-mcp-server__check_cocoapods.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 754,
+       "text": "// Register \"check_cocoapods\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 756,
+       "text": "\"check_cocoapods\","
+      }
+     ]
+    },
+    {
+     "name": "check_file_exists",
+     "description": "Checks if a file or directory exists at the specified path.",
+     "config": "r-huijts__xcode-mcp-server__check_file_exists.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 916,
+       "text": "// Register \"check_file_exists\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 918,
+       "text": "\"check_file_exists\","
+      }
+     ]
+    },
+    {
+     "name": "clean_project",
+     "description": "Cleans the build directory for the active Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__clean_project.json",
+     "hints": []
+    },
+    {
+     "name": "clean_swift_package",
+     "description": "Cleans the build artifacts of a Swift Package.",
+     "config": "r-huijts__xcode-mcp-server__clean_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1254,
+       "text": "// Register \"clean_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1256,
+       "text": "\"clean_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "compile_asset_catalog",
+     "description": "Compiles an asset catalog (.xcassets) using actool",
+     "config": "r-huijts__xcode-mcp-server__compile_asset_catalog.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 105,
+       "text": "// Register \"compile_asset_catalog\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 107,
+       "text": "\"compile_asset_catalog\","
+      }
+     ]
+    },
+    {
+     "name": "copy_file",
+     "description": "Copies a file or directory to a new location within allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__copy_file.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 270,
+       "text": "// Register \"copy_file\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 272,
+       "text": "\"copy_file\","
+      }
+     ]
+    },
+    {
+     "name": "create_directory",
+     "description": "Creates a new directory within allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__create_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 474,
+       "text": "// Register \"create_directory\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 476,
+       "text": "\"create_directory\","
+      }
+     ]
+    },
+    {
+     "name": "create_workspace",
+     "description": "Creates a new Xcode workspace and optionally adds existing projects to it.",
+     "config": "r-huijts__xcode-mcp-server__create_workspace.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1007,
+       "text": "// Register \"create_workspace\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1009,
+       "text": "\"create_workspace\","
+      }
+     ]
+    },
+    {
+     "name": "create_xcode_project",
+     "description": "Creates a new Xcode project using a template.",
+     "config": "r-huijts__xcode-mcp-server__create_xcode_project.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1199,
+       "text": "// Register \"create_xcode_project\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 1201,
+       "text": "\"create_xcode_project\","
+      }
+     ]
+    },
+    {
+     "name": "delete_file",
+     "description": "Deletes a file or directory within allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__delete_file.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 411,
+       "text": "// Register \"delete_file\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 413,
+       "text": "\"delete_file\","
+      }
+     ]
+    },
+    {
+     "name": "detect_active_project",
+     "description": "Attempts to automatically detect the active Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__detect_active_project.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 758,
+       "text": "// Register \"detect_active_project\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 760,
+       "text": "\"detect_active_project\","
+      }
+     ]
+    },
+    {
+     "name": "dump_swift_package",
+     "description": "Dumps the Package.swift manifest as JSON.",
+     "config": "r-huijts__xcode-mcp-server__dump_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1316,
+       "text": "// Register \"dump_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1318,
+       "text": "\"dump_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "edit_package_swift",
+     "description": "Directly edit the Package.swift file of the active SPM project. This is useful for making changes that aren't supported by the other SPM tools.",
+     "config": "r-huijts__xcode-mcp-server__edit_package_swift.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 480,
+       "text": "// Register \"edit_package_swift\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 482,
+       "text": "\"edit_package_swift\","
+      }
+     ]
+    },
+    {
+     "name": "export_archive",
+     "description": "Export an Xcode archive for distribution (App Store, Ad Hoc, Enterprise, Development)",
+     "config": "r-huijts__xcode-mcp-server__export_archive.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 468,
+       "text": "// Register \"export_archive\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 470,
+       "text": "\"export_archive\","
+      }
+     ]
+    },
+    {
+     "name": "find_files",
+     "description": "Searches for files matching a pattern in a directory.",
+     "config": "r-huijts__xcode-mcp-server__find_files.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 778,
+       "text": "// Register \"find_files\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 780,
+       "text": "\"find_files\","
+      }
+     ]
+    },
+    {
+     "name": "find_projects",
+     "description": "Finds Xcode projects in the specified directory.",
+     "config": "r-huijts__xcode-mcp-server__find_projects.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 461,
+       "text": "// Register \"find_projects\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 463,
+       "text": "\"find_projects\","
+      }
+     ]
+    },
+    {
+     "name": "generate_icon_set",
+     "description": "Generate an app icon set from a source image",
+     "config": "r-huijts__xcode-mcp-server__generate_icon_set.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 740,
+       "text": "// Register \"generate_icon_set\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 742,
+       "text": "\"generate_icon_set\","
+      }
+     ]
+    },
+    {
+     "name": "generate_swift_docs",
+     "description": "Generates documentation for a Swift Package using DocC.",
+     "config": "r-huijts__xcode-mcp-server__generate_swift_docs.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1377,
+       "text": "// Register \"generate_swift_docs\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1379,
+       "text": "\"generate_swift_docs\","
+      }
+     ]
+    },
+    {
+     "name": "get_active_project",
+     "description": "Retrieves detailed information about the currently active Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__get_active_project.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 379,
+       "text": "// Register \"get_active_project\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 381,
+       "text": "\"get_active_project\","
+      }
+     ]
+    },
+    {
+     "name": "get_current_directory",
+     "description": "Returns the current active directory.",
+     "config": "r-huijts__xcode-mcp-server__get_current_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 683,
+       "text": "// Register \"get_current_directory\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 685,
+       "text": "\"get_current_directory\","
+      }
+     ]
+    },
+    {
+     "name": "get_file_info",
+     "description": "Gets detailed information about a file or directory.",
+     "config": "r-huijts__xcode-mcp-server__get_file_info.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 692,
+       "text": "// Register \"get_file_info\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 694,
+       "text": "\"get_file_info\","
+      }
+     ]
+    },
+    {
+     "name": "get_package_info",
+     "description": "Gets detailed information about a Swift Package Manager package.",
+     "config": "r-huijts__xcode-mcp-server__get_package_info.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 702,
+       "text": "// Register \"get_package_info\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 704,
+       "text": "\"get_package_info\","
+      }
+     ]
+    },
+    {
+     "name": "get_project_configuration",
+     "description": "Retrieves configuration details for the active project, including schemes and targets.",
+     "config": "r-huijts__xcode-mcp-server__get_project_configuration.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 704,
+       "text": "// Register \"get_project_configuration\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 706,
+       "text": "\"get_project_configuration\","
+      }
+     ]
+    },
+    {
+     "name": "get_xcode_info",
+     "description": "Get information about Xcode installations on the system",
+     "config": "r-huijts__xcode-mcp-server__get_xcode_info.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 291,
+       "text": "// Register \"get_xcode_info\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 293,
+       "text": "\"get_xcode_info\","
+      }
+     ]
+    },
+    {
+     "name": "init_swift_package",
+     "description": "Initializes a new Swift Package Manager project in the current directory. Use this tool first if your project doesn't have a Package.swift file yet and you want to start using Swift packages.",
+     "config": "r-huijts__xcode-mcp-server__init_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 166,
+       "text": "// Register \"init_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 168,
+       "text": "\"init_swift_package\","
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 268,
+       "text": "\"Adds a Swift Package dependency to the active project. Note: Your project must already be set up for Swift Package Manager (must have a Package.swift file). If you haven't initialized SPM yet, use th"
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 294,
+       "text": "\"To initialize a new Swift Package Manager project, use the init_swift_package tool first.\""
+      }
+     ]
+    },
+    {
+     "name": "install_app",
+     "description": "Install an app on a simulator",
+     "config": "r-huijts__xcode-mcp-server__install_app.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 427,
+       "text": "// Register \"install_app\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 429,
+       "text": "\"install_app\","
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 513,
+       "text": "throw new Error(`App with bundle ID \"${bundleId}\" is not installed on the simulator. Install it first with the install_app command.`);"
+      }
+     ]
+    },
+    {
+     "name": "launch_app",
+     "description": "Launch an installed app on a simulator",
+     "config": "r-huijts__xcode-mcp-server__launch_app.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 478,
+       "text": "// Register \"launch_app\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 480,
+       "text": "\"launch_app\","
+      }
+     ]
+    },
+    {
+     "name": "list_available_destinations",
+     "description": "Lists available build destinations for the active Xcode project or workspace.",
+     "config": "r-huijts__xcode-mcp-server__list_available_destinations.json",
+     "hints": []
+    },
+    {
+     "name": "list_available_schemes",
+     "description": "Lists all available schemes in the active Xcode project or workspace.",
+     "config": "r-huijts__xcode-mcp-server__list_available_schemes.json",
+     "hints": []
+    },
+    {
+     "name": "list_booted_simulators",
+     "description": "List all currently booted iOS simulators",
+     "config": "r-huijts__xcode-mcp-server__list_booted_simulators.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 102,
+       "text": "// Register \"list_booted_simulators\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 104,
+       "text": "\"list_booted_simulators\","
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 152,
+       "text": "'list_booted_simulators',"
+      }
+     ]
+    },
+    {
+     "name": "list_directory",
+     "description": "Lists the contents of a directory, showing both files and subdirectories.",
+     "config": "r-huijts__xcode-mcp-server__list_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 584,
+       "text": "// Register \"list_directory\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 586,
+       "text": "\"list_directory\","
+      }
+     ]
+    },
+    {
+     "name": "list_installed_apps",
+     "description": "List all installed applications on a simulator",
+     "config": "r-huijts__xcode-mcp-server__list_installed_apps.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 716,
+       "text": "// Register \"list_installed_apps\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 718,
+       "text": "\"list_installed_apps\","
+      }
+     ]
+    },
+    {
+     "name": "list_project_files",
+     "description": "Lists all files within an Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__list_project_files.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 511,
+       "text": "// Register \"list_project_files\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 513,
+       "text": "\"list_project_files\","
+      }
+     ]
+    },
+    {
+     "name": "list_simulators",
+     "description": "List all available iOS simulators with filtering options",
+     "config": "r-huijts__xcode-mcp-server__list_simulators.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 12,
+       "text": "throw new Error(`Invalid simulator UDID format: \"${udid}\". Use list_simulators to get a valid UDID.`);"
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 158,
+       "text": "// Register \"list_simulators\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 160,
+       "text": "\"list_simulators\","
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 342,
+       "text": "throw new Error(`Invalid simulator UDID: \"${udid}\". Use the list_simulators command to get a valid UDID.`);"
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 415,
+       "text": "throw new Error(`Invalid simulator UDID: \"${udid}\". Use the list_simulators command to get a valid UDID.`);"
+      }
+     ]
+    },
+    {
+     "name": "move_file",
+     "description": "Moves a file or directory to a new location within allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__move_file.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 349,
+       "text": "// Register \"move_file\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 351,
+       "text": "\"move_file\","
+      }
+     ]
+    },
+    {
+     "name": "open_url",
+     "description": "Open a URL in a simulator",
+     "config": "r-huijts__xcode-mcp-server__open_url.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 584,
+       "text": "// Register \"open_url\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 586,
+       "text": "\"open_url\","
+      }
+     ]
+    },
+    {
+     "name": "pod_deintegrate",
+     "description": "Deintegrate CocoaPods from the active project, removing all traces of CocoaPods.",
+     "config": "r-huijts__xcode-mcp-server__pod_deintegrate.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 700,
+       "text": "// Register \"pod_deintegrate\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 702,
+       "text": "\"pod_deintegrate\","
+      }
+     ]
+    },
+    {
+     "name": "pod_init",
+     "description": "Generate a Podfile for the current project directory.",
+     "config": "r-huijts__xcode-mcp-server__pod_init.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 862,
+       "text": "// Register \"pod_init\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 864,
+       "text": "\"pod_init\","
+      }
+     ]
+    },
+    {
+     "name": "pod_install",
+     "description": "Runs 'pod install' in the active project directory to install CocoaPods dependencies.",
+     "config": "r-huijts__xcode-mcp-server__pod_install.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 297,
+       "text": "// Register \"pod_install\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 299,
+       "text": "\"pod_install\","
+      }
+     ]
+    },
+    {
+     "name": "pod_outdated",
+     "description": "Shows outdated pods in the current project and their available updates.",
+     "config": "r-huijts__xcode-mcp-server__pod_outdated.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 576,
+       "text": "// Register \"pod_outdated\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 578,
+       "text": "\"pod_outdated\","
+      }
+     ]
+    },
+    {
+     "name": "pod_repo_update",
+     "description": "Updates the local clone of the CocoaPods spec repositories.",
+     "config": "r-huijts__xcode-mcp-server__pod_repo_update.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 665,
+       "text": "// Register \"pod_repo_update\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 667,
+       "text": "\"pod_repo_update\","
+      }
+     ]
+    },
+    {
+     "name": "pod_update",
+     "description": "Runs 'pod update' in the active project directory to update CocoaPods dependencies.",
+     "config": "r-huijts__xcode-mcp-server__pod_update.json",
+     "hints": [
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 443,
+       "text": "// Register \"pod_update\""
+      },
+      {
+       "file": "src/tools/cocoapods/index.ts",
+       "line": 445,
+       "text": "\"pod_update\","
+      }
+     ]
+    },
+    {
+     "name": "pop_directory",
+     "description": "Pops a directory from the stack and changes to it.",
+     "config": "r-huijts__xcode-mcp-server__pop_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 653,
+       "text": "// Register \"pop_directory\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 655,
+       "text": "\"pop_directory\","
+      }
+     ]
+    },
+    {
+     "name": "push_directory",
+     "description": "Pushes the current directory onto a stack and changes to a new directory.",
+     "config": "r-huijts__xcode-mcp-server__push_directory.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 610,
+       "text": "// Register \"push_directory\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 612,
+       "text": "\"push_directory\","
+      }
+     ]
+    },
+    {
+     "name": "read_file",
+     "description": "Reads the contents of a file within the active project or allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__read_file.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 93,
+       "text": "// Register \"read_file\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 95,
+       "text": "\"read_file\","
+      }
+     ]
+    },
+    {
+     "name": "remove_swift_package",
+     "description": "Removes a Swift Package dependency from the active project.",
+     "config": "r-huijts__xcode-mcp-server__remove_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 364,
+       "text": "// Register \"remove_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 366,
+       "text": "\"remove_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "reset_simulator",
+     "description": "Reset a simulator by erasing all content and settings",
+     "config": "r-huijts__xcode-mcp-server__reset_simulator.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 669,
+       "text": "// Register \"reset_simulator\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 671,
+       "text": "\"reset_simulator\","
+      }
+     ]
+    },
+    {
+     "name": "resolve_path",
+     "description": "Resolves a path, taking into account the active directory and current project.",
+     "config": "r-huijts__xcode-mcp-server__resolve_path.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 861,
+       "text": "// Register a new \"resolve_path\" tool"
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 863,
+       "text": "\"resolve_path\","
+      }
+     ]
+    },
+    {
+     "name": "run_lldb",
+     "description": "Launches the LLDB debugger with optional arguments",
+     "config": "r-huijts__xcode-mcp-server__run_lldb.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 194,
+       "text": "// Register \"run_lldb\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 196,
+       "text": "\"run_lldb\","
+      }
+     ]
+    },
+    {
+     "name": "run_tests",
+     "description": "Executes tests for the active Xcode project.",
+     "config": "r-huijts__xcode-mcp-server__run_tests.json",
+     "hints": []
+    },
+    {
+     "name": "run_xcrun",
+     "description": "Executes a specified Xcode tool via xcrun",
+     "config": "r-huijts__xcode-mcp-server__run_xcrun.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 65,
+       "text": "// Register \"run_xcrun\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 67,
+       "text": "\"run_xcrun\","
+      }
+     ]
+    },
+    {
+     "name": "search_in_files",
+     "description": "Searches for text content within files in a directory.",
+     "config": "r-huijts__xcode-mcp-server__search_in_files.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 970,
+       "text": "// Register \"search_in_files\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 972,
+       "text": "\"search_in_files\","
+      }
+     ]
+    },
+    {
+     "name": "set_project_path",
+     "description": "Sets the active Xcode project by specifying the path to its .xcodeproj directory.",
+     "config": "r-huijts__xcode-mcp-server__set_project_path.json",
+     "hints": [
+      {
+       "file": "src/server.ts",
+       "line": 108,
+       "text": "console.error(\"No active project detected automatically. Use set_project_path to set one.\");"
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 262,
+       "text": "// Register \"set_project_path\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 264,
+       "text": "\"set_project_path\","
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 786,
+       "text": "text: \"Could not detect an active Xcode project. Please set one manually with set_project_path.\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 997,
+       "text": "throw new Error(\"No active project set. Use set_project_path to set an active project first.\");"
+      }
+     ]
+    },
+    {
+     "name": "set_projects_base_dir",
+     "description": "Sets the base directory where your Xcode projects are stored.",
+     "config": "r-huijts__xcode-mcp-server__set_projects_base_dir.json",
+     "hints": [
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 227,
+       "text": "// Register \"set_projects_base_dir\""
+      },
+      {
+       "file": "src/tools/project/index.ts",
+       "line": 229,
+       "text": "\"set_projects_base_dir\","
+      },
+      {
+       "file": "src/utils/errors.ts",
+       "line": 19,
+       "text": "super(message || `Access denied - path not allowed: ${path}. Please ensure the path is within your projects directory or set the projects base directory using set_projects_base_dir.`);"
+      }
+     ]
+    },
+    {
+     "name": "show_swift_dependencies",
+     "description": "Shows the resolved dependencies of a Swift Package.",
+     "config": "r-huijts__xcode-mcp-server__show_swift_dependencies.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1172,
+       "text": "// Register \"show_swift_dependencies\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1174,
+       "text": "\"show_swift_dependencies\","
+      }
+     ]
+    },
+    {
+     "name": "shutdown_simulator",
+     "description": "Shutdown a simulator by UDID, or shutdown all running simulators",
+     "config": "r-huijts__xcode-mcp-server__shutdown_simulator.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 370,
+       "text": "// Register \"shutdown_simulator\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 372,
+       "text": "\"shutdown_simulator\","
+      }
+     ]
+    },
+    {
+     "name": "swift_package_command",
+     "description": "Executes Swift Package Manager commands in the active project directory.",
+     "config": "r-huijts__xcode-mcp-server__swift_package_command.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 915,
+       "text": "// Register \"swift_package_command\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 917,
+       "text": "\"swift_package_command\","
+      }
+     ]
+    },
+    {
+     "name": "switch_xcode",
+     "description": "Switch the active Xcode version",
+     "config": "r-huijts__xcode-mcp-server__switch_xcode.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 369,
+       "text": "// Register \"switch_xcode\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 371,
+       "text": "\"switch_xcode\","
+      }
+     ]
+    },
+    {
+     "name": "take_screenshot",
+     "description": "Take a screenshot of a simulator",
+     "config": "r-huijts__xcode-mcp-server__take_screenshot.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 624,
+       "text": "// Register \"take_screenshot\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 626,
+       "text": "\"take_screenshot\","
+      }
+     ]
+    },
+    {
+     "name": "terminate_app",
+     "description": "Terminate a running app on a simulator",
+     "config": "r-huijts__xcode-mcp-server__terminate_app.json",
+     "hints": [
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 525,
+       "text": "throw new Error(`Failed to launch app. The app might be in a bad state. Try terminating it first with the terminate_app command.`);"
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 537,
+       "text": "// Register \"terminate_app\""
+      },
+      {
+       "file": "src/tools/simulator/index.ts",
+       "line": 539,
+       "text": "\"terminate_app\","
+      }
+     ]
+    },
+    {
+     "name": "test_spm_package",
+     "description": "Runs tests for a Swift Package Manager package directly using 'swift test' instead of Xcode.",
+     "config": "r-huijts__xcode-mcp-server__test_spm_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 628,
+       "text": "// Register \"test_spm_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 630,
+       "text": "\"test_spm_package\","
+      }
+     ]
+    },
+    {
+     "name": "test_swift_package",
+     "description": "Tests a Swift Package using Swift Package Manager.",
+     "config": "r-huijts__xcode-mcp-server__test_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1049,
+       "text": "// Register \"test_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 1051,
+       "text": "\"test_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "trace_app",
+     "description": "Captures a performance trace of an application using xctrace",
+     "config": "r-huijts__xcode-mcp-server__trace_app.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 227,
+       "text": "// Register \"trace_app\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 229,
+       "text": "\"trace_app\","
+      }
+     ]
+    },
+    {
+     "name": "update_swift_package",
+     "description": "Updates the dependencies of your Swift project using Swift Package Manager.",
+     "config": "r-huijts__xcode-mcp-server__update_swift_package.json",
+     "hints": [
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 345,
+       "text": "throw new Error(\"This package is already added to your project. If you want to update it, use the update_swift_package tool.\");"
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 824,
+       "text": "// Register \"update_swift_package\""
+      },
+      {
+       "file": "src/tools/spm/index.ts",
+       "line": 826,
+       "text": "\"update_swift_package\","
+      }
+     ]
+    },
+    {
+     "name": "validate_app",
+     "description": "Validate an app for App Store submission using altool",
+     "config": "r-huijts__xcode-mcp-server__validate_app.json",
+     "hints": [
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 640,
+       "text": "// Register \"validate_app\""
+      },
+      {
+       "file": "src/tools/xcode/index.ts",
+       "line": 642,
+       "text": "\"validate_app\","
+      }
+     ]
+    },
+    {
+     "name": "write_file",
+     "description": "Writes or updates the content of a file within the active project or allowed directories.",
+     "config": "r-huijts__xcode-mcp-server__write_file.json",
+     "hints": [
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 187,
+       "text": "// Register \"write_file\""
+      },
+      {
+       "file": "src/tools/file/index.ts",
+       "line": 189,
+       "text": "\"write_file\","
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "FradSer/mcp-server-mas-sequential-thinking",
+   "slug": "FradSer__mcp-server-mas-sequential-thinking",
+   "lang": "python",
+   "commit": "f1a20b349e459cc92274b28159363cfbe05f8346",
+   "path": "eval/targets/FradSer__mcp-server-mas-sequential-thinking",
+   "surface_loc": 8156,
+   "tools": [
+    {
+     "name": "sequentialthinking",
+     "description": "Multi-step sequential reasoning contract.\nAlways treat this tool as iterative: after each response, read structuredContent.should_continue and continue calling until it is false.\nActively use reflection: when a step reveals a flaw, explicitly send a revision step with isRevision=true.\nInput contract:\n- thought: one concrete reasoning step in natural language.\n- thoughtNumber: 1-based step index; increment by one for each new step.\n- totalThoughts: target number of steps for the current plan.\n- nextThoughtNeeded: true while the sequence should continue; false on final step.\n- isRevision: true only when revising an earlier conclusion.\n- branchFromThought + branchId: set together to explore an alternative branch.\n- needsMoreThoughts: true only when extending beyond totalThoughts.\nOutput contract:\n- structuredContent.should_continue: canonical continuation signal.\n- structuredContent.next_thought_number: next recommended thoughtNumber.\n- structuredContent.stop_reason: canonical reason code for orchestration.",
+     "config": "FradSer__mcp-server-mas-sequential-thinking__sequentialthinking.json",
+     "hints": [
+      {
+       "file": "src/mcp_server_mas_sequential_thinking/main.py",
+       "line": 283,
+       "text": "\"If true, call sequentialthinking again. The tool is designed for \""
+      },
+      {
+       "file": "src/mcp_server_mas_sequential_thinking/main.py",
+       "line": 474,
+       "text": "async def sequentialthinking("
+      },
+      {
+       "file": "scripts/mcp_python_client_smoke.py",
+       "line": 47,
+       "text": "\"sequentialthinking\","
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

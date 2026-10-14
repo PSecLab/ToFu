@@ -1,0 +1,42 @@
+{
+ "repo": "dragon1086/kospi-kosdaq-stock-server",
+ "tool": "get_stock_trading_volume",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "8455054a043376cfde22e472c3fb3241bcc57f32",
+ "draft": "dragon1086__kospi-kosdaq-stock-server__get_stock_trading_volume__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"fromdat\\x1ce\"OOO: dat\\x1ce\"OOO: {{\"fro3', 'todate': '\\U00102245\\U0006227b', 'ticker': '', 'detail': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"fromdat\\\\u001ce\\\\\"OOO: dat\\\\u001ce\\\\\"OOO: {{\\\\\"fro3\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"fromdat\\x1ce\"OOR: dat\\x1ce\"OOO: {{\"fro3', 'todate': '\\U00102245\\U0006227b', 'ticker': '', 'detail': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"fromdat\\\\u001ce\\\\\"OOR: dat\\\\u001ce\\\\\"OOO: {{\\\\\"fro3\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '\"fromdat\\x1cmdat\\x1ce\"OOR: datO: {{\"fro3', 'todate': '\\U00102245\\U0006227b', 'ticker': '', 'detail': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: \\\\\"fromdat\\\\u001cmdat\\\\u001ce\\\\\"OOR: datO: {{\\\\\"fro3\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'fromdate': '{{-', 'todate': '', 'ticker': '', 'detail': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\\n  \"error\": \"Data retrieval failed: Date must be in YYYYMMDD format. Input value: {{-\"\\n}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

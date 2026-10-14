@@ -1,0 +1,1239 @@
+{
+ "repo": "prathammanocha/wordpress-mcp-server",
+ "tool": "create-user",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "904dbe20dab259fdf65d51dc55c6db024a53dc90",
+ "draft": "prathammanocha__wordpress-mcp-server__create-user__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 175,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://127.0.0.1:8500', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user1', 'email': 'user1@example.com', 'newPassword': 'password1', 'name': 'User One', 'firstName': 'User', 'lastName': 'One', 'url': 'http://localhost:8080', 'description': 'Testing SSRF with loopback', 'locale': '', 'nickname': 'u1', 'slug': 'user1', 'roles': ['subscriber']}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8500'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'QQQQQQQQQQQQQQQQQQQQQQQQQIPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u0', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass9', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternatve IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::2]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password0', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminp=ss', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminp=ss', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'hdtp://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adnp=ss', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'hdtp://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adnp=ss', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'hdtp://[::1]:8080', 'description': 'IPv7 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'useruuuuuuuuuuu8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': '', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'ritsNme\": \"User\", \"lastName\": \"Five\", \"url\": \"http://127.0.0.1:8500\", \"description\": \"SSRF with alternative IP\", \"locale\": \"\", \"nickname\": \"u5\", \"slug\"', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u9', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Fve', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbacik n siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbacik n siteUrl and url', 'locale': 'en_US', 'nickname': 'u7', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user9@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbacik n siteUrl and url', 'locale': 'en_US', 'nickname': 'u7', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://063.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': '', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://063.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admi/', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'RSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'usNr8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'S+SRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternatI vieP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::0]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED :::8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IP,6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8081', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 't:thp//[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': ':8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::0]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8501', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:4250', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User`', 'lastName': 'Five', 'url': 'http://127.0.0.1:4250', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternat@ive IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'passw0rd5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'passw0rd5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u4', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IP)6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'admCinpass', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '\\U00094522𧑨\\U00102220\\U0010226c\\U00106822\\U000f3a70\\U00103a5b\\U00103a5d𣀸\\U00042220\\U00106373\\U00097470\\U0010226e\\U00104922\\U000c2036𧁯正\\U0010206e\\U00106574𒁬\\U00102064\\U000c226c\\U000f6c22\\U00056c61𢀺\\U00105f6eⰢ\\U0003696e\\U000d616e㨢𣡵\\U00102220𦝵\\U00102220\\U00107265𢀬\\U00056c6f', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'a#dminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'admipass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'admipass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv5 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'admipass', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv5 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'admipass', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::2]:8080', 'description': 'IPv5 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'admin?ass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': '敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳ㅵ≧›產敳㡲Ⱒ∠潺敬≳', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': '敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳ㅵ≧›產敳㡲Ⱒ∠潺敬≳', 'password': 'adminpass', 'newUsername': 'user6', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv3 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv3 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://example.com', 'username': 'a:min', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@examplC.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http:ex//ample.com', 'description': 'Emu10', 'locale': '', 'nickname': '', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: WordPress API error: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://example.com', 'username': 'a:min', 'password': 'adminpass', 'newUsername': 'user20', 'email': 'user10@examplC.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http:ex//ample.com', 'description': 'Emu10', 'locale': '', 'nickname': '', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: WordPress API error: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http:/r5', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'useen', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/exzmple.com', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'use0', 'email': 'user10@example.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://example.com', 'description': '', 'locale': '', 'nickname': 'u10', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo ENOTFOUND exzmple.com'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/exzmple.com', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'use0', 'email': 'user10@example.com', 'newPassword': 'passoord10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://example.com', 'description': '', 'locale': '', 'nickname': 'u10', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo ENOTFOUND exzmple.com'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:/exzmple.com', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'use0', 'email': 'user10@example.com', 'newPassword': 'passoord10', 'name': 'User Ten', 'firstName': '', 'lastName': 'Ten', 'url': 'http://example.com', 'description': '', 'locale': '', 'nickname': 'u10', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo ENOTFOUND exzmple.com'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user/8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user/8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbak in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://043.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'ser8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8504', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF withe altrnative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user6', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::0]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::0]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': '', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': '', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'Us]er Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user2@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user2@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user0', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user2@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alretnative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user0', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:?080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user2@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alretnative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user0', 'roles': []}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges', 'check_url_structure_and_parsing']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:80'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges', 'check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:?080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user2@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alretnative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user0', 'roles': []}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges', 'check_url_structure_and_parsing']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:80'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges', 'check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user7', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'htt:/e/pxample.com', 'username': 'a:min', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@example.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://example.com', 'description': 'ser10user10', 'locale': '', 'nickname': '', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: Unsupported protocol htt:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u6', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://example.com', 'username': 'a:min', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@example.com', 'newPassword': 'password1', 'name': '', 'firstName': 'User', 'lastName': '', 'url': 'http://example.com=', 'description': 'Emu10', 'locale': '', 'nickname': '', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: WordPress API error: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopbac kin siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbac kin siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopbac kin siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.ocm', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbac kin siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopbac kin siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@ehample.ocm', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopbac kin siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://063.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'use05@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://063.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhos:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN localhos'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhos:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'IPv6 tive IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN localhos'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httP://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': '∠㕵Ⱒ∠汳杵㨢∠獵牥∵\\u202c爢汯獥', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': '∠㕵Ⱒ∠汳捵㨢∠獵牥∵\\u202c爢汯獥', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': '', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': '', 'email': 'user5@example.com', 'newPassword': '', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': '', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user9', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': '', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in sit!Url and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u9', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password6', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'httq://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: Unsupported protocol httq:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user4@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user4@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv2 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://loYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYcalhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN loyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyycalhost'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': 'tName\": \"Eight\", \"url\": \"http://[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"user8\", \"', 'password': '汯獥', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '∠獕牥Ⱒ∠慬瑳慎敭㨢∠楅桧≴\\u202c產汲㨢∠瑨灴⼺嬯㨺崱㠺㠰∰\\u202c搢獥牣灩楴湯㨢∠偉㙶氠潯扰捡\\u206b湩猠瑩啥汲愠摮甠汲Ⱒ∠潬慣敬㨢∠湥啟≓\\u202c渢捩橫浡≥›產∸\\u202c猢畬≧›產敳㡲Ⱒ∠潲敬≳', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user2', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv2 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'diamn', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '⼯㩛ㄺ㩝〸〸Ⱒ∠敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'usdr5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': '', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'passwyrd5', 'name': '', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"loEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEca', 'password': '\\U00102265\\U000e6522𥍕\\U000e2220\\U000a6b63𦕭\\U00102220Ⱒ\\U00106c73㨢\\U00057375\\U000c2238\\U000f7222', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': 'ht\", \"url\": \"http://[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': 'ht\", \"url\": \"http://[::1]:8080\", \"description\": \"IPv6 loo\\x7f\\x7f\\x7f\\x7fk in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 look in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': 'ht\", \"url\": \"http://[::1]:8080\", \"description\": \"IPv6 loo\\x7f\\x7f\\x7f\\x7fk in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'password': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 look in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'dminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'dminpass', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpas[s', 'newUsername': 'user5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Ei!ht', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'U0er Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user0@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': '', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'a^min', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user6', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u4\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user6', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nick;jame\": \"u4\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user6', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::0]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Gight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://example.com', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@example.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://example).com', 'description': '', 'locale': '', 'nickname': 'u10', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: WordPress API error: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://example.com', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@example.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://example).com', 'description': '', 'locale': '', 'nickname': 'u05', 'slug': 'user10', 'roles': []}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: WordPress API error: Request failed with status code 405'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'zser5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:0384', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'zser5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:384'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:0384', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'zser5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://128.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:384'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:0384', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'zser5', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://128.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u0', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:384'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user9@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': '', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '⼯㩛ㄺ㩝〸〸Ⱒ∠敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': '', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': '/User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '\\U000f2f3a\\U00103a3a\\U0010383a\\U000c2230\\U00056422\\U00097263\\U000f6974㨢\\U00105049\\U000f6c20\\U00016270\\U0009206b\\U00097320\\U00105565\\U000e6120\\U00107520Ⱒ\\U00036f6c𦕬\\U00052220\\U0010555f𢀬\\U000b6369\\U00056d61𢀺\\U000c2238\\U000c7322\\U00102267\\U00107522𣡲\\U00102220\\U0010656c', 'password': '', 'newUsername': '', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': '/User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'ht2tp://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '\\U000f2f3a\\U00103a3a\\U0010383a\\U000c2230\\U00056422\\U00097263\\U000f6974㨢\\U00105049\\U000f6c20\\U00016270\\U0009206b\\U00097320\\U00105565\\U000e6120\\U00107520Ⱒ\\U00036f6c𦕬\\U00052220\\U0010555f𢀬\\U000b6369\\U00056d61𢀺𣠯\\U00102220𦝵\\U00102220\\U00107265𢀬\\U00056c6f', 'password': '', 'newUsername': '', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': '/User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'ht2tp://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u/8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'sthte:p//example.com', 'username': 'a:min', 'password': 'adminpass', 'newUsername': 'user10', 'email': 'user10@example.com', 'newPassword': 'password10', 'name': 'User Ten', 'firstName': 'User', 'lastName': 'Ten', 'url': 'http://exam//example.com', 'description': 'ser37user10', 'locale': '', 'nickname': '', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: Unsupported protocol sthte:'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': 'Userminpass', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and S', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': 'Userminpass', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': '', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admipass', 'password': '', 'newUsername': 'user8', 'email': 'user@example.com', 'newPassword': '', 'name': 'Userminpass', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': '', 'locale': '', 'nickname': 'u8', 'slug': '', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@exacp.lmeom', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7frl\": \"http://[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickn', 'password': 'me\": \"u8\", \"slug\": \"user8\", \"roles', 'newUsername': 'user8', 'email': 'user8@exacp.lmeom', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7frl\": \"http://[::1]:8080\", \"description\": \"IPv6 loopback in siteGUrl and url\", \"locale\": \"en_US\", \"nick', 'password': '浡≥›產∸\\u202c猢畬≧›產敳㡲Ⱒ∠潲敬', 'newUsername': 'user8', 'email': 'user8@exacp.lmeom', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteGUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminp=ass', 'username': '⼯㩛ㄺ㩝〸〸Ⱒ∠敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慪敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo ENOTFOUND dminp=ass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminp=ass', 'username': '⼯㩛ㄺ㩝〸〸Ⱒ∠敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慪敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password4', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo ENOTFOUND dminp=ass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://[::1]:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': '', 'name': '', 'firstName': '', 'lastName': '', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'er8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED ::1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::2]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::2]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': '', 'email': 'user5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': 'User', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'usew5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'admin', 'password': 'adminpass', 'newUsername': 'user2', 'email': 'usew5@example.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': '', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"usir8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'usir8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http://localhost:8080', 'username': 'ritsNme\": \"User\", \"lastName\": \"Five\", \"url\": \"http://127.0.0.1:8500\", \"description\": \"SSRF with alternative IP\", \"locale\": \"\", \"nickname\": \"u5\", \"slug\"', 'password': 'adminpass', 'newUsername': 'user5', 'email': 'user5@examle.com', 'newPassword': 'password5', 'name': 'User Five', 'firstName': '', 'lastName': 'Five', 'url': 'http://127.0.0.1:8500', 'description': 'SSRF with alternative IP', 'locale': '', 'nickname': 'u5', 'slug': 'user5', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: connect ECONNREFUSED 127.0.0.1:8080'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::0]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickjame\": \"u8\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': 'User', 'lastName': 'Eight', 'url': 'http://[::0]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': '', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '浡≥›唢敳\\u2072楅桧≴\\u202c栢物瑳慎敭㨢∠獕牥Ⱒ∠慬瑳慎敭㨢∠楅桧≴\\u202c產汲㨢∠瑨灴⼺嬯㨺崱㠺㠰∰\\u202c搢獥牣灩楴湯㨢∠偉㙶氠潯扰捡\\u206b湩猠瑩啥汲愠摮甠汲Ⱒ∠潬慣敬㨢∠湥啟≓\\u202c渢捩湫浡≥›產∸\\u202c猢畬≧›產敳㡲Ⱒ∠潲敬≳', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '浡≥›唢敳\\u2072楅桧≴\\u202c栢物瑳慎敭㨢∠獕牥Ⱒ∠慬瑳慎敭㨢∠楅桧≴\\u202c產汲㨢∠瑨灴⼺嬯㨺崱㠺㠰∰\\u202c搢獥牣灩楴湯㨢∠偉㙶氠潯扰捡\\u206b湩猠瑩啥汲愠摮甠䑲≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and urDl', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '浡≥›唢敳\\u2072楅桧≴\\u202c栢物瑳慎敭㨢∠獕牥Ⱒ∠慬瑳慎敭㨢∠楅桧≴\\u202c產汲㨢∠瑨灴⼺嬯㨺崱㠺㠰∰\\u202c搢獥牣灩楴湯㨢∠偉㙶氠潯扰捡\\u206b湩猠瑩啥汲愠摮甠䑲≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㡵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獪㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and urDl', 'locale': 'en_US', 'nickname': 'u8', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '/[::1]:8080\", \"description\": \"IPv6 loopback in siteUrl and url\", \"locale\": \"en_US\", \"nickname\": \"u6\", \"slug\": \"user8\", \"roles\":', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u6', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'siteUrl': 'http:dminpass', 'username': '⼯㩛ㄺ㩝〸〸Ⱒ∠敤捳楲瑰潩≮›䤢癐‶潬灯慢正椠\\u206e楳整牕\\u206c湡\\u2064牵≬\\u202c氢捯污≥›攢彮单Ⱒ∠楮正慮敭㨢∠㙵Ⱒ∠汳杵㨢∠獵牥∸\\u202c爢汯獥㨢', 'password': '', 'newUsername': 'user8', 'email': 'user8@example.com', 'newPassword': 'password8', 'name': 'User Eight', 'firstName': '', 'lastName': 'Eight', 'url': 'http://[::1]:8080', 'description': 'IPv6 loopback in siteUrl and url', 'locale': 'en_US', 'nickname': 'u6', 'slug': 'user8', 'roles': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'Error creating user: getaddrinfo EAI_AGAIN dminpass'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

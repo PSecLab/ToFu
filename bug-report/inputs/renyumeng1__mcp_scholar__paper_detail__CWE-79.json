@@ -1,0 +1,42 @@
+{
+ "repo": "renyumeng1/mcp_scholar",
+ "tool": "paper_detail",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "5e12e93c95353754b2700f38d8377ccd66dc5fa1",
+ "draft": "renyumeng1__mcp_scholar__paper_detail__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"p{{\"p\\x00\\x00'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"error\", \"message\": \"\\\\u672a\\\\u627e\\\\u5230ID\\\\u4e3a \\\\\"p{{\\\\\"p\\\\u0000\\\\u0000 \\\\u7684\\\\u8bba\\\\u6587\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '\"p{{\"p\\x00\\x00p'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"error\", \"message\": \"\\\\u672a\\\\u627e\\\\u5230ID\\\\u4e3a \\\\\"p{{\\\\\"p\\\\u0000\\\\u0000p \\\\u7684\\\\u8bba\\\\u6587\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '%`ZZ{{'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"error\", \"message\": \"\\\\u672a\\\\u627e\\\\u5230ID\\\\u4e3a %`ZZ{{ \\\\u7684\\\\u8bba\\\\u6587\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '%%%c%%`ZZ{{\\x00\\x00\\x00\\x00\\x00\\x00'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"status\": \"error\", \"message\": \"\\\\u672a\\\\u627e\\\\u5230ID\\\\u4e3a %%%c%%`ZZ{{\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000 \\\\u7684\\\\u8bba\\\\u6587\"}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

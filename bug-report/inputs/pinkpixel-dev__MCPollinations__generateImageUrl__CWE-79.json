@@ -1,0 +1,28 @@
+{
+ "repo": "pinkpixel-dev/MCPollinations",
+ "tool": "generateImageUrl",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "9fd9bc113a4aae78a50eb4fe06689ee6ed0d476c",
+ "draft": "pinkpixel-dev__MCPollinations__generateImageUrl__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'prompt': '\"prompt{\"pr`ompt\"{{\"prompt\"prompt\": \"prom\": \"prompt\", \"', 'model': '', 'seed': 0.0, 'width': 0.0, 'height': 0.0, 'enhance': False, 'safe': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"imageUrl\": \"https://image.pollinations.ai/prompt/%22prompt%7B%22pr%60ompt%22%7B%7B%22prompt%22prompt%22%3A%20%22prom%22%3A%20%22prompt%22%2C%20%22?model=&seed=0&nologo=true&private=true&safe=false\",\\n  \"prompt\": \"\\\\\"prompt{\\\\\"pr`ompt\\\\\"{{\\\\\"prompt\\\\\"prompt\\\\\": \\\\\"prom\\\\\": \\\\\"prompt\\\\\", \\\\\"\",\\n  \"width\": 0,\\n  \"height\": 0,\\n  \"model\": \"\",\\n  \"seed\": 0,\\n  \"enhance\": false,\\n  \"private\": true,\\n  \"nologo\": true,\\n  \"safe\": false\\n}'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'prompt': '\"pr{{{{{{{{{{{{{{{{{{{{{{{{{{\"prompt\": \"prom', 'model': '', 'seed': 0.0, 'width': 0.0, 'height': 0.0, 'enhance': False, 'safe': False}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"imageUrl\": \"https://image.pollinations.ai/prompt/%22pr%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%7B%22prompt%22%3A%20%22prom?model=&seed=0&nologo=true&private=true&safe=false\",\\n  \"prompt\": \"\\\\\"pr{{{{{{{{{{{{{{{{{{{{{{{{{{\\\\\"prompt\\\\\": \\\\\"prom\",\\n  \"width\": 0,\\n  \"height\": 0,\\n  \"model\": \"\",\\n  \"seed\": 0,\\n  \"enhance\": false,\\n  \"private\": true,\\n  \"nologo\": true,\\n  \"safe\": false\\n}'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

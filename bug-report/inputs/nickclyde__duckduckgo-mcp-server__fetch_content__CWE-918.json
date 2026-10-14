@@ -1,0 +1,1414 @@
+{
+ "repo": "nickclyde/duckduckgo-mcp-server",
+ "tool": "fetch_content",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "8182af3f2295017ca90527a924f48147fbf18d5b",
+ "draft": "nickclyde__duckduckgo-mcp-server__fetch_content__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 247,
+ "note": "247 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '/etc/passwd\\x00', 'start_index': 0, 'max_length': 8000, 'backend': 'curl', 'parse_mode': 'main'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': 0, 'max_length': 8000, 'backend': 'curl', 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': 'httpx', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': -1, 'max_length': 8000, 'backend': 'curl', 'parse_mode': 'main'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 0, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'start_index': 0, 'max_length': 8000, 'backend': 'httpx', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 1000000, 'backend': 'auto', 'parse_mode': 'markdown'}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../)tc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../)tc/passwd\", \"start_index\": 0, \"max_length\": 8000, \"backend\": null, \"parse_mode#: nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../)tc/passwd\", \"start_index\": 0,\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"max_length\": 8000, \"backend\": null, \"parse_mode#: nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../)tc/passwd\", \"start_index\": 0,\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"max_length\": 8000, \"backend8000, \"backend\": null, \"ul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../){\"url', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../){\"url\\x01\\x00', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x00\"../../../../){\"url\\x01\\x00', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x00\"../../..//./){\"url\\x01\\x00', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x00\"../.)./..//./){\"url\\x01\\x00', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"curl\", \"parse_\"edm o:nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_', 'start_index': 1735288172, 'max_length': 975333492, 'backend': '\\U00103038𢀬\\U000b6361𦑮𲈠𦱲\\U00102220', 'parse_mode': '敳≟摥\\u206d㩯'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U00103038𢀬\\U000b6361𦑮𲈠𦱲\\U00102220'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080K\", \"start_index\": 0, \"max', 'start_index': 1852140639, 'max_length': 577270887, 'backend': '㠠〰ⰰ∠慢正湥', 'parse_mode': '㨢\\U00107563Ⱒ\\U00106170𥽥浤'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '㠠〰ⰰ∠慢正湥'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080K\", \"start_index\": ', 'start_index': 572533808, 'max_length': 1601724781, 'backend': '\\U00076e65\\U00102268\\U00103038𢀬', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U00076e65\\U00102268\\U00103038𢀬'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080K\", \"start_index\": ', 'start_index': 572533808, 'max_length': 2019914861, 'backend': 'gln_h\"', 'parse_mode': '㠠〰ⰰ∠慢'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'gln_h\"\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../.././../etc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../X./../etc/passwd\", \"start_i: \"../../X./../etc/passwd\", \"start_index\": 0a, \"max_lenmode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../X./../etc/paaaaaaaaaaaaaaaaaaaaaaasswd\", \"start_i: \"../../X./../etc/passwd\", \"start_index\": 0a, \"max_lenmode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x03\\x00\\x00\\x00/../X./../etc/paaaaaaaaaaaaaaaaaaaaaaasswd\", \"start_i: \"../../X./../etc/passwd\", \"start_index\": 0a, \"max_lenmode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\"l: \"../../../../){\"url', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\"l: \"../../../../){\\x00\\x00rl', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\"\\x14E_]QQPG./../../){\\x00\\x00rl', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"ur\"\\x14E_]QQPG./../../){\\x00\\x00rl', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\" ur\"\\x14E_]QQPG./../../){\\x00\\x00rl', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 1001615, 'backend': 'auto', 'parse_mode': 'markdown'}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\": \"http://169.254.169.254/latest/meta-data/\", \"start_index\": 0, \"max_length\": 100 1001615, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\": \"http://569.254.169.254/latest/meta-data/\", \"start_index\": 0, \"max_length\": 100 1001615, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\": \"http://569.254.169.254/latest/meta-data/\", \"start_index\": 0, \"max_length\": 100 1001615, \"backend\": \"auto\", \"parse_mod\"s', 'start_index': 1953653108, 'max_length': 1684957535, 'backend': 'x', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'x'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\": \"http://569.254.169.254/latest/meta-data/\", \"start_index\": 0m\" ,ax_length\": 100 1001615, \"backend\": \"auto\", \"parse_mod\"s', 'start_index': 1953653108, 'max_length': 1684957535, 'backend': 'x', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'x'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_length\": 80{\"url\": \"/etc/passwd\\\\u0000\", \"start_inde00, \"backx\": 0, end', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"ma666666x_length\": 80{\"url\": \"/etc/passwd\\\\u0000\", \"start_inde00, \"backx\": 0, end', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"ma666666x_length\": 80{\"url\": \"/etc/passwd\\\\u0000\", \"sta\", \"sde00, \"backx\": 0, end', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h 0, \"ma666666x_length\": 80{\"url\": \"/etc/passwd\\\\u0000\", \"sta\", \"sde00, \"backx\": 0, end', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h 0, \"ma666666x_length\": 80{\"url\": \"/etc/passwd\\\\w0000\", \"sta\", \"sde00, \"backx\": 0, end', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_lex\": 0, \"max_length\": ngth\": 8000, \"backend\": \"curl\", \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_lex\": 0, \"max_length\":\"ngth\": 8000, \"backend\": \"curl\", \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": 0, \"max_lex\": 0, \"max_length\":\"ngth\": 800l\", \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http~~~~~~~~~~~~~~~~~~~~~~~://localhost:8080\", \"start_index\": 0, \"max_lex\": 0, \"max_length\":\"ngth\": 800l\", \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http~~~~~~~~~~~~~~~~~~~~~~~://localhost:8080\", \"sta_lex\": 0, \"max_length\":\"ngth\": 800l\", \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../){PPPPP\"url', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'start_index': 1920279147, 'max_length': 540680812, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'start_index': 1920279147, 'max_length': 1920279148, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"start_index\": 0, \"max_length\": 8000, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"start_index\": 0, \"max_lengthndex\":0, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"l\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_len\"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\": \"/etc/passwd\\\\u0000\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"l\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_len\"parse_mode\": \"mainn', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\": \"/etc/passwd\\\\u0000\",\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"l\": \"../../../../etc/passwd\", \"start_x_len\"parse_mode\": \"mainn', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00l', 'start_index': 572537378, 'max_length': 1668572463, 'backend': 'passwd\\\\u0000\", \"start_index\": 0, \"max_length\": 8', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'passwd\\\\u0000\", \"start_index\": 0, \"max_length\": 8\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00l', 'start_index': 572537378, 'max_length': 1668572463, 'backend': 'passwd\\\\u0000\", \"@tart_index\": 0, \"max_length\": 8', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'passwd\\\\u0000\", \"@tart_index\": 0, \"max_length\": 8\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00l', 'start_index': 572537378, 'max_length': 1668572463, 'backend': 'passwd\\\\u0000\", \"@tart_index\": 0, \"max_length`: 8', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'passwd\\\\u0000\", \"@tart_index\": 0, \"max_length`: 8\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00}\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'start_index': 540680812, 'max_length': 1952788258, 'backend': '/passwd\\\\u0000\", \"@tart_index\": 0, \"max_length`: ', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'/passwd\\\\u0000\", \"@tart_index\": 0, \"max_length`: \\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \", \"backend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta4.169/\", \", \"backend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.25: null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.25: null, *parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.25: n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::ull, *parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"start_index\": -1, \"\\x00\\x00\\x00\\x00length\": 8000, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080s\" \",tart_index\": -1, \"\\x00\\x00\\x00\\x00length\": 8000, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"\":lhttp://localhost:8080s\" \",tart_index\": -1, \"\\x00\\x00\\x00\\x00length\": 8000, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur \"\":lhttp://localhost:8080s\" \",tart_index\": -1, \"\\x00\\x00\\x00\\x00length\": 8000, \"backend\": \"curl\", \"parse_mod~e\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.16;.254/latest/meta-data/', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': 0, 'max_length': 0, 'backend': 'curl', 'parse_mode': 'main'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"startgth\": 8000, \"backend\":8000rl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"startgth\": 8000, \"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"backend\":8000rl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"startgth\": 8000, *\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"backend\":8000rl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\", \"startgth\": 8000, *\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"backend\":8000rl\", \"parse_.mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"6 \"http://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"6 \"http\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"6 \"http\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"6 \"http\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"pdrse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/metackend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.508.169.254/latest/metackend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.50t.169.254/latest/metackend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"htt@p://169.50t.169.254/latest/metackend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h/t@:tp/169.50t.169.254/latest/metackend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"start_index\": 0, \"mo\\x00e\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"sta2t_index\": 0, \"mo\\x00e\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/l[test/meta-data/\", \"sta2t_index\": 0, \"mo\\x00e\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254a/\", \"sta2t_index\": 0, \"mo\\x00e\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../)tc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../)tc/passwd&, \"start_index\": 0, \"max_length\": 8000, \"bacjend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u2l\": \"../../../../)tc/passwd&, \"start_index\": 0, \"max_length\": 8000, \"bacjend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u2l\": \"../../../../)tc/passwd&, \"sta\\x00\\x00rt_index\": 0, \"max_length\": 8000, \"bacjend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u4l\": \"../../../../)tc/passwd&, \"sta\\x00\\x00rt_index\": 0, \"max_length\": 8000, \"bacjend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': None, 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_inde \"start_index\": 0, \"m8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_inde \"start_index\": 0, \"m8000, \"backend\": \"httpx\", \"parse_mod\\x15\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://1.270.0.1:8500\", \"start_inde \"start_index\": 0, \"m8000, \"backend\": \"httpx\", \"parse_mod\\x15\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://1.2]70.0.1:8500\", \"start_inde \"start_index\": 0, \"m8000, \"backend\": \"httpx\", \"parse_mod\\x15\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://124.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': 'httpx', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_url_structure_and_parsing']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443)]. Input: 'http://124.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..../../../etc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': None, 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..../../../etc/passwd', 'start_index': 0, 'max_length': 0, 'backend': None, 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..../../.~/etc/passwd', 'start_index': 0, 'max_length': 0, 'backend': None, 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \".././../.~/etc/passwd\", \"start_index\": 0, \"max_\\x1e\\x1angth\": 8000, \"\"backend\": null, \"parse_m80ode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \".././../.~/etc/passwd\", \"start_index\": 0, \"max_\\x1e\\x1angth\": 8\"start_index\": 0, \"max_length\"m80ode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_length\": 8000ecb ,ak\"&nd\": null, \"parse_m80ode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_ildex\": 0, \"max_length\": 8000ecb ,ak\"&nd\": null, \"parse_m80ode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_ildex\": 0, \"max_length\": 8000ecb ,ak\"&nd\": null, \"parse_m80o5de\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_ildex\": 0, \"max_lengt\\x18c: 8000ecb ,ak\"&nd\": null, \"parse_m80o5de\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"htrt_index\": 0, \"max_lengxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0._length\": 8000, \"backend\": \"htrt_index\": 0, \"max_lengxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0._length\"x_lengxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0._length\"x]lengxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '2url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '2url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse\\x7f\\x7fccccccc\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '2url\": \"http://124.0.0.1:8500\", \"start_index\": 0, \"max_length\":  \"parse\\x7f\\x7fccccccc\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\",\\x00\"start_index\": -1, \"max_length\": 8000, \"backend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\",\\x00\"start_index\": -1, \"max_length\": 800url\": \"../../../../)tc/passwd\",de\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\",\\x00\"start_index\": -1, \"max_length\"\"start_index\": -1/../../)tc/passwd\",de\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080\",\\x00\"start_index\":\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 -1, \"max_length\"\"start_index\": -1/../../)tc/passwd\",de\": ', 'start_index': 1767992610, 'max_length': 110, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://localhost:8080f\",\\x00\"start_index\":\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 -1, \"max_length\"\"start_index\": -1/../../)tc/passwd\",de\":', 'start_index': 1634542112, 'max_length': 28265, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0.0.1:8500\"$ \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://124.0.0.1:8500\"$ \"start_index\": 0, \"max_length\": 8000, \"backend\": \"httpx\", \"parse_mode\":\\x00\\x00\\x00\\x00\\x00\\x00 \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"max_length\": 8000, \"backend\": \"curl\", \"parseax_length\": 8000, \"backend\": \"httpx\", \"parse_mode\":\\x00\\x00\\x00\\x00\\x00\\x00 \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"max_length\": 8000, \"backend\": \"curl\", \"parseax_length\": 8000, \"backend\": \"httpx\", \"pars[_mode\":\\x00\\x00\\x00\\x00\\x00\\x00 \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"max_length\": 8000, \"backend\": \"curl\", \"parseax_length\": 8000, \"backend\": \"httpx\", \"pars[_mofe\":\\x00\\x00\\x00\\x00\\x00\\x00 \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'start_index': 0, 'max_length': 8002, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_length\": 8002, \"backend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"._index\": 0, \"max_length\": 8002, \"backend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00ebackend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": l._index\": 0, \"max_length\": 8002, \"backend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00ebackend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": l._index\": 0, \"max_length\": 8002, \"backend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00ebackend\": nul p\",lars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": l._index\": 0, \"max_length\": 8002, \"backend\": null, \"pars\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00ebackend\": nulrse_mode\": \"\\x00\\x00\\x00\\x00e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"start_index\": 0, \"max_length\": -000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"start_indek\": 0, \"max_length\": -000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.255.169.254/latest/meta-data/\", \"start_indek\": 0, \"max_length\": -000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\\trl\": \"http://169.255.169.254/latest/meta-data/\", \"start_indek\": 0, \"max_length\": -000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\\trl\": \"http://169.255.169.254/latest/meta-data/\", \"start_indek#: 0, \"max_length\": -000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'start_index': 0, 'max_length': 0, 'backend': None, 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/lat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00est/meta-data/\", \"start_index\": 0, \"max_length\": 0, \"backend\": null, \"par[e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/lat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00est/meta-data/\", \"start_index\": 0, \"max_length\": 0, &backend\": null, \"par[e_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/lat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00est/meta-data/\", \"start_index\": 0, \"max_length\": 0, &backend\": null, \"pa', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.16U.254/lat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00est/meta-data/\", \"start_index\": 0, \"max_length\": 0, &backend\": null, \"pa', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/ljtest/meta-data/', 'start_index': 0, 'max_length': 1000000, 'backend': 'auto', 'parse_mode': 'markdown'}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u254.169.254//169.254.169.254/ljtest/meta-data/\", \"start_index\": 0, \"max_length\": 1000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u254.169.254//169.254.169.254/ljtest/meta\\x06data/\", \"start_index\": 0, \"max_length\": 1000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u254.169.254//169.254.169.254/ljtest/meta\\x07data/\", \"start_index\": 0, \"max_length\": 1000000, \"backend\": \"auto\", \"parse_mode\": \"ma', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u254.169.254//169.254.169.254/ljtest/meta\\x07data/\", \"start_index\": 0, \"max_length\": 1000000, \"backend\": \"auto\", \"parse_mode\": \"ea', 'start_index': 1868852082, 'max_length': 28279, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"start_index\": 0, \"max_length\": 10{\"url\": \"http://local00000, \"bachost:kend\":', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", \"start_index\": 0, \"m\\\\x_length\": 10{\"url\": \"http://local00000, \"bachost:kend\":', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/l0test/meta-data/\", \"start_index\": 0, \"m\\\\x_length\": 10{\"url\": \"http://local00000, \"bachost:kend\":', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/l0test/meta-data/\", \"start_index\": 0, \"m\\\\x_length\":\"10{\"url\": \"http://local00000, \"bachost:kend\":', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8: 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urN\": \"http://127.0.0.1:8: 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urN\": \"http://127.0.0.1:(: 8000, \"backend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urN\": \"http://127.0.0.1:(: 8000, \"backend\": \"httpx\", \"parseSmode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urN\": \"http://127.0.0.1:(: 8000, \"\"ackend\": \"httpx\", \"parseSmode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://063.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_alternative_ip_representations']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_alternative_ip_representations'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http//063.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': 'text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"httpD//063.0.0.1:8500\"p\\x00\\x00\\x00\\x00\\x00\\x00\\x00_index\": 0, \"max_length\": 8000, \"bacoend\": \"httpx\", \"parse_mode\": \"text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/\\x00{test/meta-data/\", \"start_index\": 0, \"max_length\": 0, \"backend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/\\x00{test/meta-data/\", \"start_index\": 00, \"backend\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/\\x00{test/meta-data/\", \"start_index\": 00, \"backe-data/\", nd\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/\\x00{test/meta-data/\", \"start_index\": 00, \"back%e-data/\", nd\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': ':\"url\": \"http://169.254.169.254/\\x00{test/meta-data/\", \"start_index\": 00, \"back%e-data/\", nd\": null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'start_index': 0, 'max_length': 8000, 'backend': '', 'parse_mode': '<text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'start_index': 0, 'max_length': 6000, 'backend': '', 'parse_mode': '<text'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 6000, \"backe/12nd\":\"xp\"htt , \"parse_mode\": \"<text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 6000, \"backe/12nd\":\"xp\"htt , \"parse_mode\"= \"<text', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://169.254.169.254/latest/meta-data/\", {\"url\": \"../.\"start_indexPPPPPPPPPPPPPP', 'start_index': 807418402, 'max_length': 1830953004, 'backend': 'x_length\": 0., \"/../.', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'x_length\": 0., \"/../.\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\": \"http://169.254.169.254/latest/meta-data/\", {\"url\": \"../.\"start_indexPP', 'start_index': -791621424, 'max_length': -791621424, 'backend': '\\U0010d0d0\\U0010203a\\U000d2220\\U000c5f78\\U0010676e㨢Ⱞ\\U000e2e2f', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U0010d0d0\\U0010203a\\U000d2220\\U000c5f78\\U0010676e㨢Ⱞ\\U000e2e2f'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\": \"http://169.254.169.254/latest/meta-data/\", {\"url\": \"../.\"start_indexPP', 'start_index': -791555888, 'max_length': -791621424, 'backend': '\\U0010d0d0\\U0010203a\\U000d2220\\U000c5f78\\U0010676e㨢Ⱞ\\U000e2e2f', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U0010d0d0\\U0010203a\\U000d2220\\U000c5f78\\U0010676e㨢Ⱞ\\U000e2e2f'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\\x14\": \"http://169.254.169.254/latest/meta-data/\", {\"url\": \"../.\"start_in../..', 'start_index': 791555631, 'max_length': 690957870, 'backend': '\"PP\": 0, \"max_length\": 0., \"/../.', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Unknown fetch backend \\'\"PP\": 0, \"max_length\": 0., \"/../.\\'. Supported: (\\'httpx\\', \\'curl\\', \\'auto\\')'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": ', 'start_index': 791555618, 'max_length': 774843950, 'backend': 'ⸯ⼮笩謢', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'ⸯ⼮笩謢'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": ', 'start_index': -791555620, 'max_length': 774843950, 'backend': 'ⸯ⼮笩謢', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'ⸯ⼮笩謢'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x14]E_', 'start_index': 758001187, 'max_length': 774843950, 'backend': 'ⸯ⼮笩謢', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'ⸯ⼮笩謢'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x14]E_', 'start_index': 758001187, 'max_length': 774843950, 'backend': 'ⸯ⼮⤪≻趋', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend 'ⸯ⼮⤪≻趋'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': -1, 'max_length': 6000, 'backend': 'curl', 'parse_mode': 'main'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': -1, 'max_length': 6000, 'backend': 'curl', 'parse_mode': 'ma,n'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode 'ma,n'. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': -1, 'max_length': 6.0, 'backend': 'curl', 'parse_mode': 'ma,n'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode 'ma,n'. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u`rl\": \"http://loca\\x7f\\x7f\\x7flhost:8080\", \"start_index\": -1, \"max_length\": 6.000, \"backend\": \"curl\", \"parse_mode\": \"ma,n', 'start_index': -1, 'max_length': 6.0, 'backend': 'curl', 'parse_mode': 'ma,n'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode 'ma,n'. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \"start_index\": 0, \"max_length\": 8000,cb \"akend\": \"curl\", \"parse_mode\": \"main', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \"start_index\": 0, \"max_length\": 8000,cb \"akend\": ', 'start_index': 1920295714, 'max_length': 539763308, 'backend': '慰獲彥潭敤㨢∠慭', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '慰獲彥潭敤㨢∠慭'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \"x_length\": 8000,cb \"akendstart_index\": 0, \"max_l', 'start_index': 1952935525, 'max_length': 540680808, 'backend': '\\U00103030扣\\U00056b61\\U00102264\\U00106322\\U000c226c𗀢\\U00106573\\U0005646f𢀺', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U00103030扣\\U00056b61\\U00102264\\U00106322\\U000c226c𗀢\\U00106573\\U0005646f𢀺'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"e\"/:c t/passwd\\\\u0000\", \"x_length\": 8000,cb \"akendstart_index\": 0, \"max_l', 'start_index': 1952935525, 'max_length': 540680808, 'backend': '\\U00103030扣\\U00056b61\\U00102264\\U00106322\\U000c226c𗀢\\U00106573\\U0005646f𢀺', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend '\\U00103030扣\\U00056b61\\U00102264\\U00106322\\U000c226c𗀢\\U00106573\\U0005646f𢀺'. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"e\"/:c t/pindex\": 0, \"max_length\": 8000,cb \"akend\": \"curl\", \"parse_mode\":', 'start_index': 1634542112, 'max_length': 25441, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": 8000, \"backend:8500\", \"start_index\": 0, \"maxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"start_index\": 0, \"max_length\": x000, \"backend:8500\", \"start_index\": 0, \"maxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"index\": 0, \"max_length\": x000, \"backend:8500\", \"start_index\": 0, \"maxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"index\": 0, \"max_length\": x000, \"backend:8500\", \"tnr_satidex\": 0, \"maxt', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/las/tetmeta-data/', 'start_index': 0, 'max_length': 0, 'backend': None, 'parse_mode': None}",
+   "triggered_sanitizers": "['check_url_ssrf_ip_ranges']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_length\": 8002, \"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x12null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_index\": 0, \"max_length\": 8002, \"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fw\\x12null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_indep\": 0, \"max_length\": 8002, \"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fw\\x12null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"../../../../etc/passwd\", \"start_indep\": 0, \"max_le+ngth\": 8002, \"ba\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fw\\x12null, \"parse_mode\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'start_index': 0, 'max_length': 8000, 'backend': 'curl', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown parse_mode ''. Supported: ('text', 'main', 'markdown')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url#: \"http://localhost:8080\", \"start_index\": 0, \"max_length\": 8000, \"backend\": \"curl\", \"parse_mode`\": nul', 'start_index': 0, 'max_length': 0, 'backend': '', 'parse_mode': ''}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Unknown fetch backend ''. Supported: ('httpx', 'curl', 'auto')\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

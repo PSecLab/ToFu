@@ -1,0 +1,21 @@
+{
+ "repo": "designcomputer/mysql_mcp_server",
+ "tool": "get_schema_info",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "d88c510f603413d1abad9c5cce2bd542d705e27c",
+ "draft": "designcomputer__mysql_mcp_server__get_schema_info__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'table_name': '{{{{{{{{{{{'}",
+   "triggered_sanitizers": "['check_reflected_output', 'check_introspection_log_injection']",
+   "tool_output": "\"Error calling tool get_schema_info: Invalid identifier '{{{{{{{{{{{': only alphanumeric, underscore, and $ are allowed\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context).Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:mysql_mcp_server)! Logged content: 'Traceback (most recent call last):\\n  File \"/home/mza6485/toolfuzzer/eval/targets/designcomputer__mysql_mcp_server/src/mysql_mcp_server/server.py\", line 397, in call_tool\\n    db, tbl = parse_table_arg(table_name)\\n              ~~~~~~~~~~~~~~~^^^^^^^^^^^^\\n  File \"/home/mza6485/toolfuzzer/eval/targets/designcomputer__mysql_mcp_server/src/mysql_mcp_server/server.py\", line 51, in parse_table_arg\\n    return None, validate_identifier(name)\\n                 ~~~~~~~~~~~~~~~~~~~^^^^^^\\n  File \"/home/mza6485/toolfuzzer/eval/targets/designcomputer__mysql_mcp_server/src/mysql_mcp_server/server.py\", line 43, in validate_identifier\\n    raise ValueError(f\"Invalid identifier '{name}': only alphanumeric, underscore, and $ are allowed\")\\nValueError: Invalid identifier '{{{{{{{{{{{': only alphanumeric, underscore, and $ are allowed\\n'."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,154 @@
+{
+ "repo": "yzfly/mcp-python-interpreter",
+ "tool": "write_file",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "84ac42d33a6ef80d768c100d033fe9b118c4787c",
+ "draft": "yzfly__mcp-python-interpreter__write_file__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 20,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'content': 'test', 'overwrite': True}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/..\\..\\..\\..\\windows\\win.ini' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '/etc/passwd\\x00', 'content': 'null byte injection', 'overwrite': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only write files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '../../../../etc/passwd', 'content': 'malicious attempt', 'overwrite': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only write files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\\\windows\\\\wioverwrite\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"/tmp/invalid_t\\\\w', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"/tmp/invalid_t\\\\w. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\{\"file_path\": \"/tmp/invalid_t\\w' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\{\"file_path\": \"/tmp/invalid_t\\w' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\":.\" .\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"/tmp/invalid_t\\\\w', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_introspection_insecure_temp_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\":.\" .\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"/tmp/invalid_t\\\\w. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\":.\" .\\\\..\\\\..\\\\..\\{\"file_path\": \"/tmp/invalid_t\\w' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Introspection Insecure Temp File Permissions Alert (CWE-378/379): Temporary file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\":.\" .\\\\..\\\\..\\\\..\\{\"file_path\": \"/tmp/invalid_t\\w' was created with overly permissive file permissions (0o664)! Risk of local data leakage or tampering.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\":.\" .\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"//ipmtnvalid_t\\\\w', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\":.\" .\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\{\"file_path\": \"/ipmtnvalid_t\\\\w. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\":.\" .\\\\..\\\\..\\\\..\\{\"file_path\": \"/ipmtnvalid_t\\w' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_pato\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_pato\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_pato\": \"..\\\\..\\\\..\\\\..\\\\windows\\\\wioverwrite\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"i_felpato\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato\": \"..\\\\..\\\\..\\\\..\\\\windows\\\\wioverwrite\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"i_felpato\": \"..\\\\\\\\..\\\\\\\\.*\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato\": \"..\\\\\\\\..\\\\\\\\.*\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato\": \"..\\\\..\\\\.*\\\\..\\\\windows\\\\wioverwrite\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"i_felpato8: \"..\\\\\\\\..\\\\\\\\.*\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato8: \"..\\\\\\\\..\\\\\\\\.*\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"i_felpato8: \"..\\\\..\\\\.*\\\\..\\\\windows\\\\wioverwrite\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\" r:ut', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwrite\" r:ut. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\\\windows\\\\wioverwrite\" r:ut' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\\\\\\\wioverwrite\" r:ut' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\.\\\\..\\\\\\\\wioverwrite\" r:ut' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_p\\x7f\\x7f\\x7f\\x7f: \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_p\\x7f\\x7f\\x7f\\x7f: \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_p: \"..\\\\..\\.\\\\..\\\\\\\\wioverwrite\" r:ut' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"\\x7f\\x7f\\x7f\\x7f_p\\x7f\\x7f\\x7f\\x7f: \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"\\x7f\\x7f\\x7f\\x7f_p\\x7f\\x7f\\x7f\\x7f: \"..\\\\\\\\..\\\\.\\\\\\\\..\\\\\\\\\\\\\\\\wioverwrite\" r:ut. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"_p: \"..\\\\..\\.\\\\..\\\\\\\\wioverwrite\" r:ut' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwri0e\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_introspection_insecure_file_permissions', 'check_path_traversal']",
+   "tool_output": "'Successfully wrote to /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwri0e\": tru. Size: 0.00 KB'",
+   "analysis": "[Sequence Step 1/1] Introspection Insecure File Permissions Alert (CWE-276/279): Tool created/modified file '/home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file/\"file_path\": \"..\\\\..\\\\..\\\\..\\\\windows\\\\wioverwri0e\": tru' with insecure permissive mode octal '0o664'! Risk of Unauthorized Data Access / Modification.Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwri0e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only write files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwli0e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only write files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\wioverwli0e\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00GGGGGGGGGGGGGG\\x00\\x00\\x00\": tru', 'content': '', 'overwrite': False}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only write files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__write_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

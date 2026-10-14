@@ -1,0 +1,252 @@
+{
+ "repo": "openags/paper-search-mcp",
+ "tool": "download_semantic",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "234678ab231074a7977320978ee0496dcdaddd1f",
+ "draft": "openags__paper-search-mcp__download_semantic__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 34,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': '/etc/passwd\\x00', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper /etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: HTTPConnectionPool(host=\\'sites.clas.ufl.edu\\', port=80): Max retries exceeded with url: /accstr/files/accstr-resources/publications/Bolten_Tech_Man_1999.pdf (Caused by NameResolutionError(\"HTTPConnection(host=\\'sites.clas.ufl.edu\\', port=80): Failed to resolve \\'sites.clas.ufl.edu\\' ([Errno -2] Name or service not known)\"))'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'paper_id': 'DOI:10.18653/v1/N18-3011', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: 418 Client Error: Unknown for url: https://www.aclweb.org/anthology/N18-3011.pdf'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': 'g.\\\\..\\\\..\\\\..\\\\windows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.41 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': 'g.\\\\..\\\\ѣѣwindows\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.41 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: HTTPConnectionPool(host=\\'sites.clas.ufl.edu\\', port=80): Max retries exceeded with url: /accstr/files/accstr-resources/publications/Bolten_Tech_Man_1999.pdf (Caused by NameResolutionError(\"HTTPConnection(host=\\'sites.clas.ufl.edu\\', port=80): Failed to resolve \\'sites.clas.ufl.edu\\' ([Errno -2] Name or service not known)\"))'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '+etc/passwd\\x00', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper +etc/passwd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '/etc/passwdᘕ', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper /etc/passwdᘕ'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '/etc/passwd䕔', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper /etc/passwd䕔'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '/etc/p`sswd\\x00', 'save_path': '../'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper /etc/p`sswd\\x00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.in%'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.45 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MG:112218234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.55 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MG:112821234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MG:112821234'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MG:112821234', 'save_path': 'g.\\\\..\\\\ѣѣwind;w\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MG:112821234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.31 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MG:112821234', 'save_path': 'g.\\\\..\\\\ѣѣwind;w\\\\win.dni'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MG:112821234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.54 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_', 'save_path': 'd\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/t'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper \"paper_'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.48 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_', 'save_path': 'd\"> \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\", \"save_path\": \"/t'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper \"paper_'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.32 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_', 'save_path': 'd\"> \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ani\", \"save_path\": \"/t'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper \"paper_'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.34 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI10.18653/v1/N18-3011', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper DOI10.18653/v1/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': 'g.\\\\..\\\\!ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.43 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'IOD:10.18653/v1/N18-3011', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper IOD:10.18653/v1/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112218234', 'save_path': '\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.56 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:116218234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:116218234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.32 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:10.18653/v1/N18-31', 'save_path': '../../../../etc/passwswd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper DOI:10.18653/v1/N18-31'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:10.18653/v1/N18-3011', 'save_path': '../../../18653/v1/sswd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: 418 Client Error: Unknown for url: https://www.aclweb.org/anthology/N18-3011.pdf'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:10.18653/v1/N18-3011', 'save_path': '../../../1[653/v1/sswd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: 418 Client Error: Unknown for url: https://www.aclweb.org/anthology/N18-3011.pdf'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:05.18653/v1/N18-3011', 'save_path': '../../../1[653/v1/sswd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper DOI:05.18653/v1/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '8653/v1/N18-3011', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper 8653/v1/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '8653/v0/N18-3011', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper 8653/v0/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:10.18653/v1/N18-3011', 'save_path': '../../../../etc/pass;d'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error downloading PDF: 418 Client Error: Unknown for url: https://www.aclweb.org/anthology/N18-3011.pdf'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'DOI:10.1#653/v1/N18-3011', 'save_path': '../../../../etc/pass;d'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper DOI:10.1#653/v1/N18-3011'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.28 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '\"paper_i/\": \"DOI:10.1#653/v1/N18-3011\", \"save_path\": \"../../../../etc/pass;d', 'save_path': '../../../../etc/pass;d'}",
+   "triggered_sanitizers": "['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper \"paper_i/\": \"DOI:10.1#653/v1/N18-3011\", \"save_path\": \"../../../../etc/pass;d'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': '11', 'save_path': '../../../../etc/passwd'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper 11'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.30 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "repo24",
+   "input": "{'paper_id': 'MAG:112r18234', 'save_path': 'g.\\\\..\\\\ѣѣwindow\\\\win.ini'}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_blocking_event_loop_call', 'check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Could not find PDF URL for paper MAG:112r18234'",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 15.53 seconds (Limit: 2.0s). Introspection Blocking Call Alert (CWE-1322): Synchronous blocking operation 'time.sleep' executed inside an active Event Loop context! Details: time.sleep(5) called inside running asyncio loop. This blocks the single-threaded event loop and freezes the MCP server.Silent Bug Alert: Sanitizers ['check_path_traversal', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

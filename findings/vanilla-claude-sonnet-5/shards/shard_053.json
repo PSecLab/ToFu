@@ -1,0 +1,3716 @@
+{
+ "shard_id": "053",
+ "n_repos": 8,
+ "n_configs": 139,
+ "surface_loc": 22141,
+ "repos": [
+  {
+   "repo": "surendranb/google-analytics-mcp",
+   "slug": "surendranb__google-analytics-mcp",
+   "lang": "python",
+   "commit": "4bc810d9f7f4255fdb33c4a833864be4e523bbe2",
+   "path": "eval/targets/surendranb__google-analytics-mcp",
+   "surface_loc": 2868,
+   "tools": [
+    {
+     "name": "get_dimensions_by_category",
+     "description": "\nReturn all dimensions in a specific category with their API names and descriptions.\n\nReturns: {\"dimension_api_name\": \"description\", ...}\n\nThe category name must exactly match a value returned by list_dimension_categories.\nUse search_schema instead if you already have a keyword \u2014 it is faster and more\ntargeted than browsing by category.\n\nArgs:\n    category: Exact category name from list_dimension_categories (case-insensitive).\n",
+     "config": "surendranb__google-analytics-mcp__get_dimensions_by_category.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 144,
+       "text": "then call get_dimensions_by_category with the name that fits your analysis."
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 188,
+       "text": "def get_dimensions_by_category(category: str):"
+      }
+     ]
+    },
+    {
+     "name": "get_ga4_data",
+     "description": "\nRetrieve GA4 data with built-in intelligence for better and safer results.\n\nReturns on success: {\"data\": [...], \"metadata\": {...}, \"_skills_tip\": \"...\"}.\n  For multi-row pulls (a time series like ['date'], or any breakdown) the\n  result also carries \"totals\": {metric: value} \u2014 GA4 server-side aggregates\n  across all rows. Read the period figure from \"totals\"; do NOT sum the rows\n  yourself. (Additive metrics sum; rate metrics are period-computed by GA4.)\nReturns on volume warning: {\"warning\": \"...\", \"estimated_rows\": N, \"suggestions\": [...]}\nReturns on error: {\"error\": \"...\"}\n\nCRITICAL WORKFLOW \u2014 follow this sequence every time:\n\n1. DISCOVER FIELDS: NEVER guess dimension or metric names. Call `search_schema`,\n   `list_dimension_categories`, or `list_metric_categories` FIRST to verify exact\n   API names for this property. Guessing costs you a failed round-trip.\n\n2. DISCOVER PATTERN: For any domain-specific analysis, call `search_skills('<topic>')`\n   BEFORE querying to get the proven methodology \u2014 correct dimensions, metrics,\n   filters, and how to interpret the result. One extra call prevents multiple failures.\n   Use for: traffic diagnosis, attribution, ecommerce, channel acquisition, content\n   performance, geo/device segmentation, AI referrals, bot detection.\n\n3. RETRIEVE: Call get_ga4_data with the verified fields and the skill's pattern.\n\n4. TROUBLESHOOT: On schema error, invalid field, or filter parse error \u2014 do NOT\n   retry by guessing. Your training may predate current GA4 (UA was sunset\n   2023-07-01). Call `search_schema('<keyword>')` to find the current name in\n   THIS property, or `search_skills('ua-to-ga4' | 'common-metric-names' |\n   'filter-structures')` for the mapping.\n\nFIELD NAMES \u2014 GA4 API names vs common wrong guesses:\n- 'screenPageViews'       not 'uniquePageviews' or 'pageViews'\n- 'totalUsers'            not 'users'\n- 'keyEvents'             not 'conversions' or 'goalCompletionsAll'\n- 'sessionKeyEventRate'   not 'sessionConversionRate' or 'conversionRate' (GA4 renamed conversions\u2192key events, 2024)\n- 'userEngagementDuration' not 'timeOnPage' or 'avgTimeOnPage'\n- 'averageSessionDuration' not 'avgSessionDuration'\n- 'itemsViewed'           not 'itemViews'\n- 'ecommercePurchases'    not 'purchases'\n- 'sessionDefaultChannelGroup'  not 'sessionDefaultChannelGrouping'\n- 'sessionSource'/'sessionMedium'  not 'source'/'medium'\n- All names are camelCase \u2014 never snake_case (page_path \u2192 pagePath, event_name \u2192 eventName)\n- 'bounceRate' and 'newUsers' are correct as-is\n\nDATE RANGES:\n- Format: 'YYYY-MM-DD' or relative strings: '7daysAgo', '30daysAgo', 'yesterday', 'today'\n- 'NdaysAgo' counts back from today, excluding today. 'yesterday' = last complete day.\n- Period comparison (YoY, WoW): run two separate queries with different date ranges,\n  then compare the results. The API does not support multi-period in one call.\n\nSCOPE RULES \u2014 incompatible combinations return a 400 error:\n- Session dims (sessionSource, sessionMedium, sessionCampaignName) \u2192 use with\n  sessions, bounceRate, sessionKeyEventRate. NOT with eventCount.\n- Event dims (eventName) \u2192 use with eventCount. NOT with sessions.\n- User dims (firstUserSource, firstUserMedium) \u2192 use with totalUsers, newUsers. NOT sessions.\n- Safe with any metric: date, deviceCategory, country, city, pagePath, pageTitle.\n\nFILTER STRUCTURE:\n- Simple: {\"filter\": {\"fieldName\": \"sessionSource\", \"stringFilter\": {\"value\": \"google\", \"matchType\": \"CONTAINS\"}}}\n- AND:    {\"andGroup\": {\"expressions\": [{\"filter\": {...}}, {\"filter\": {...}}]}}\n- OR:     {\"orGroup\":  {\"expressions\": [{\"filter\": {...}}, {\"filter\": {...}}]}}\n- NOT:    {\"notExpression\": {\"filter\": {...}}}\n- Wrong keys that break filters: and_filter\u2192andGroup, or_filter\u2192orGroup,\n  not_filter\u2192notExpression, filters\u2192expressions, field\u2192fieldName\n\nArgs:\n    dimensions: GA4 dimension names (verified via schema tools, e.g. [\"date\", \"city\"]).\n    metrics: GA4 metric names (verified via schema tools, e.g. [\"totalUsers\", \"sessions\"]).\n    date_range_start: Start date \u2014 'YYYY-MM-DD' or '7daysAgo', '30daysAgo', 'yesterday'.\n    date_range_end: End date \u2014 'YYYY-MM-DD' or 'yesterday', 'today'.\n    dimension_filter: Optional FilterExpression dict. camelCase and snake_case both accepted.\n    limit: Max rows to return. Defaults to 1000.\n    estimate_only: If True, returns only estimated row count without fetching data.\n    proceed_with_large_dataset: Set True to bypass the 2500-row volume warning.\n    enable_aggregation: If True, asks GA4 for server-side metric totals whenever a\n        dimension splits the data across rows (e.g. a 7-day ['date'] pull), returned\n        in a \"totals\" block so the model needn't sum rows. Default True.\n    intent: Short plain-English description of what the user is trying to learn.\n            E.g. \"which channels drive most signups\", \"bot traffic audit for last month\".\n",
+     "config": "surendranb__google-analytics-mcp__get_ga4_data.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 41,
+       "text": "3. Query with get_ga4_data, and ALWAYS pass the `intent` argument (a short plain-"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 72,
+       "text": "1. Probe: call get_ga4_data with the smallest possible query"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 110,
+       "text": "3. Compare periods with TWO separate get_ga4_data calls (the API does not do"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 119,
+       "text": "6. Pass `intent` on every get_ga4_data call (e.g. intent='isolating which"
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 50,
+       "text": "3. get_ga4_data validates every name against the live schema. On an invalid name it tells you why and how to find the correct one \u2014 read that and fix it; do not retry the same guess."
+      }
+     ]
+    },
+    {
+     "name": "get_metrics_by_category",
+     "description": "\nReturn all metrics in a specific category with their API names and descriptions.\n\nReturns: {\"metric_api_name\": \"description\", ...}\n\nThe category name must exactly match a value returned by list_metric_categories.\nUse search_schema instead if you already have a keyword \u2014 it is faster and more\ntargeted than browsing by category.\n\nArgs:\n    category: Exact category name from list_metric_categories (case-insensitive).\n",
+     "config": "surendranb__google-analytics-mcp__get_metrics_by_category.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 170,
+       "text": "then call get_metrics_by_category with the name that fits your analysis."
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 215,
+       "text": "def get_metrics_by_category(category: str):"
+      }
+     ]
+    },
+    {
+     "name": "get_property_schema",
+     "description": "\nReturns the complete schema for the configured GA4 property, including all\navailable dimensions and metrics (standard and custom). Warning: This can be\na very large object (10k+ tokens). Use search_schema for most discovery tasks.\n",
+     "config": "surendranb__google-analytics-mcp__get_property_schema.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 447,
+       "text": "schema = metadata.get_property_schema_uncached(prop)"
+      },
+      {
+       "file": "ga4_mcp/server.py",
+       "line": 126,
+       "text": "PROPERTY_SCHEMA = metadata.get_property_schema_uncached(property_id)"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 37,
+       "text": "def get_property_schema_uncached(property_id: str) -> dict:"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 125,
+       "text": "def get_property_schema():"
+      }
+     ]
+    },
+    {
+     "name": "get_troubleshooting_guide",
+     "description": "\nReturns the troubleshooting/setup guide for a topic, served from inside the\nserver (no network needed). Use whenever you hit a schema error,\ndimension_filter parse error, IAM / 403 authorization error, or a\nboot-time setup error.\n\nArgs:\n    topic: One of \"setup\", \"iam\", or \"schema\".\n",
+     "config": "surendranb__google-analytics-mcp__get_troubleshooting_guide.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 84,
+       "text": "get_troubleshooting_guide(topic='setup') for env/config issues,"
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 137,
+       "text": "_INIT_ERROR_EXEMPT = {\"get_troubleshooting_guide\", \"setup_ga4_access\", \"search_skills\"}"
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 207,
+       "text": "elif func.__name__ == \"get_troubleshooting_guide\":"
+      },
+      {
+       "file": "ga4_mcp/server.py",
+       "line": 71,
+       "text": "f\"in-session; get_troubleshooting_guide(topic='{topic}') or resource docs://fix/{topic} for detail; \""
+      },
+      {
+       "file": "ga4_mcp/resources.py",
+       "line": 57,
+       "text": "# Category-addressed fix guides, same content the get_troubleshooting_guide tool"
+      }
+     ]
+    },
+    {
+     "name": "list_dimension_categories",
+     "description": "\nList all dimension categories for this GA4 property, with a count of\ndimensions in each category.\n\nReturns: {\"dimension_categories\": {\"Category Name\": count, ...}}\n\nUse this as the first step in dimension exploration \u2014 browse categories,\nthen call get_dimensions_by_category with the name that fits your analysis.\nUse search_schema instead if you already have a keyword to search for.\n",
+     "config": "surendranb__google-analytics-mcp__list_dimension_categories.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 75,
+       "text": "Use list_dimension_categories or list_metric_categories instead if you want to"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 136,
+       "text": "def list_dimension_categories(ctx: Context = None):"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 150,
+       "text": "fire_skill_tip(ctx, \"\ud83d\udca1 While you explore dimensions: search_skills() has 15 analytical recipes with proven dimension+metric combinations ready to use. Call search_skills('<topic>') before get_ga4_data"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 194,
+       "text": "The category name must exactly match a value returned by list_dimension_categories."
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 199,
+       "text": "category: Exact category name from list_dimension_categories (case-insensitive)."
+      }
+     ]
+    },
+    {
+     "name": "list_metric_categories",
+     "description": "\nList all metric categories for this GA4 property, with a count of\nmetrics in each category.\n\nReturns: {\"metric_categories\": {\"Category Name\": count, ...}}\n\nUse this as the first step in metric exploration \u2014 browse categories,\nthen call get_metrics_by_category with the name that fits your analysis.\nUse search_schema instead if you already have a keyword to search for.\n",
+     "config": "surendranb__google-analytics-mcp__list_metric_categories.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 75,
+       "text": "Use list_dimension_categories or list_metric_categories instead if you want to"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 162,
+       "text": "def list_metric_categories(ctx: Context = None):"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 176,
+       "text": "fire_skill_tip(ctx, \"\ud83d\udca1 While you explore metrics: search_skills() has 15 analytical recipes with proven dimension+metric combinations ready to use. Call search_skills('<topic>') before get_ga4_data to"
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 221,
+       "text": "The category name must exactly match a value returned by list_metric_categories."
+      },
+      {
+       "file": "ga4_mcp/tools/metadata.py",
+       "line": 226,
+       "text": "category: Exact category name from list_metric_categories (case-insensitive)."
+      }
+     ]
+    },
+    {
+     "name": "search_schema",
+     "description": "\nSearch for a keyword across all dimensions and metrics for this property.\nReturns a ranked list of up to 10 matching fields scored by relevance.\n\nReturns: {\"top_results\": {\"DIMENSION: api_name\": score, \"METRIC: api_name\": score, ...}}\n\nUse this when you have a concept (\"engagement\", \"revenue\", \"channel\") and need\nexact API field names before calling get_ga4_data.\nUse list_dimension_categories or list_metric_categories instead if you want to\nbrowse all available fields without a specific keyword.\n\nArgs:\n    keyword: One or more keywords to search for (e.g., \"user\", \"campaign revenue\").\n",
+     "config": "surendranb__google-analytics-mcp__search_schema.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 6,
+       "text": "sequence \u2014 discover names via search_schema, load the skill first, always pass"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 39,
+       "text": "this property's GA4 schema. Verify every name with search_schema('<keyword>')"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 116,
+       "text": "search_schema before querying \u2014 do not hand-type names from memory."
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 40,
+       "text": "# Generic + stable orientation only; specifics live in search_schema (live truth)"
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 48,
+       "text": "1. DISCOVER names before querying: call search_schema to get the exact valid dimensions and metrics in THIS property (the only source of truth). Never guess."
+      }
+     ]
+    },
+    {
+     "name": "search_skills",
+     "description": "\nFetch analytical recipes and how-to guides from the GA4 skills library.\n\nSkills are domain-specific playbooks for common GA4 analysis patterns \u2014\nexact dimensions, metrics, filters, and interpretation logic for each use case.\nCall this BEFORE querying get_ga4_data for any domain-specific analysis.\n\nAvailable skills: traffic-diagnosis, attribution-scope, channel-acquisition,\ncontent-performance, geo-device-segmentation, ecommerce-analysis,\nai-referral-analysis, bot-traffic-detection, common-metric-names,\nfilter-structures, custom-dimensions, compatible-combinations, ua-to-ga4,\ndate-ranges, ga4-limitations.\n\nUsage:\n- search_skills(\"\")              \u2192 returns full index of all skills\n- search_skills(\"ecommerce\")     \u2192 returns the ecommerce-analysis skill\n- search_skills(\"ua-to-ga4\")     \u2192 returns the UA\u2192GA4 field name mapping\n\nArgs:\n    query: A skill name (exact slug) or empty string to browse the full index.\n",
+     "config": "surendranb__google-analytics-mcp__search_skills.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 35,
+       "text": "1. Load the methodology first: call search_skills('traffic-diagnosis') and"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 36,
+       "text": "search_skills('channel-acquisition'). Skills carry the proven dimension/metric"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 47,
+       "text": "'incompatible' error call search_skills('compatible-combinations')."
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 104,
+       "text": "1. Call search_skills('traffic-diagnosis') FIRST and follow its methodology \u2014 it"
+      },
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 118,
+       "text": "search_skills('bot-traffic-detection')."
+      }
+     ]
+    },
+    {
+     "name": "setup_ga4_access",
+     "description": "\nInteractively fix a broken GA4 MCP setup (missing property ID, missing or\nexpired credentials, or missing GA4 access) by asking the user for the\nneeded input through the client, then re-initializing without a restart.\nCall this whenever a configuration or authentication error is reported.\n",
+     "config": "surendranb__google-analytics-mcp__setup_ga4_access.json",
+     "hints": [
+      {
+       "file": "ga4_mcp/prompts.py",
+       "line": 81,
+       "text": "4. If the client supports interactive prompts, call setup_ga4_access \u2014 it"
+      },
+      {
+       "file": "ga4_mcp/coordinator.py",
+       "line": 137,
+       "text": "_INIT_ERROR_EXEMPT = {\"get_troubleshooting_guide\", \"setup_ga4_access\", \"search_skills\"}"
+      },
+      {
+       "file": "ga4_mcp/setup_flow.py",
+       "line": 82,
+       "text": "async def setup_ga4_access(ctx: Context) -> str:"
+      },
+      {
+       "file": "ga4_mcp/setup_flow.py",
+       "line": 98,
+       "text": "setup_ga4_access wraps this; get_ga4_data calls it at the point of friction so"
+      },
+      {
+       "file": "ga4_mcp/setup_flow.py",
+       "line": 126,
+       "text": "return False, \"Setup paused \u2014 no Property ID provided. Re-run setup_ga4_access when ready.\""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "marcelmarais/spotify-mcp-server",
+   "slug": "marcelmarais__spotify-mcp-server",
+   "lang": "node",
+   "commit": "d7445afec042aa703791b5916cfb48e66a47122d",
+   "path": "eval/targets/marcelmarais__spotify-mcp-server",
+   "surface_loc": 2817,
+   "tools": [
+    {
+     "name": "addToQueue",
+     "description": "Adds a track, album, artist or playlist to the playback queue",
+     "config": "marcelmarais__spotify-mcp-server__addToQueue.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 393,
+       "text": "const addToQueue = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 394,
+       "text": "name: 'addToQueue',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 588,
+       "text": "addToQueue,"
+      }
+     ]
+    },
+    {
+     "name": "addTracksToPlaylist",
+     "description": "Add tracks or podcast episodes to a Spotify playlist. Accepts Spotify track IDs, episode IDs, or full Spotify URIs (e.g. spotify:episode:xxx).",
+     "config": "marcelmarais__spotify-mcp-server__addTracksToPlaylist.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 292,
+       "text": "const addTracksToPlaylist = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 293,
+       "text": "name: 'addTracksToPlaylist',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 586,
+       "text": "addTracksToPlaylist,"
+      }
+     ]
+    },
+    {
+     "name": "adjustVolume",
+     "description": "Adjust the playback volume up or down by a relative amount. Use positive values to increase, negative to decrease. Requires Spotify Premium.",
+     "config": "marcelmarais__spotify-mcp-server__adjustVolume.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 498,
+       "text": "const adjustVolume = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 499,
+       "text": "name: 'adjustVolume',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 590,
+       "text": "adjustVolume,"
+      }
+     ]
+    },
+    {
+     "name": "checkUsersSavedAlbums",
+     "description": "Check if albums are saved in the user's \"Your Music\" library",
+     "config": "marcelmarais__spotify-mcp-server__checkUsersSavedAlbums.json",
+     "hints": [
+      {
+       "file": "src/albums.ts",
+       "line": 249,
+       "text": "const checkUsersSavedAlbums = defineTool({"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 250,
+       "text": "name: 'checkUsersSavedAlbums',"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 311,
+       "text": "checkUsersSavedAlbums,"
+      }
+     ]
+    },
+    {
+     "name": "createPlaylist",
+     "description": "Create a new playlist on Spotify",
+     "config": "marcelmarais__spotify-mcp-server__createPlaylist.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 239,
+       "text": "const createPlaylist = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 240,
+       "text": "name: 'createPlaylist',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 258,
+       "text": "// createPlaylist() uses was retired in the March 2026 API migration for"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 585,
+       "text": "createPlaylist,"
+      }
+     ]
+    },
+    {
+     "name": "getAlbumTracks",
+     "description": "Get tracks from a specific album with pagination support",
+     "config": "marcelmarais__spotify-mcp-server__getAlbumTracks.json",
+     "hints": [
+      {
+       "file": "src/albums.ts",
+       "line": 109,
+       "text": "const getAlbumTracks = defineTool({"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 110,
+       "text": "name: 'getAlbumTracks',"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 309,
+       "text": "getAlbumTracks,"
+      }
+     ]
+    },
+    {
+     "name": "getAlbums",
+     "description": "Get detailed information about one or more albums by their Spotify IDs",
+     "config": "marcelmarais__spotify-mcp-server__getAlbums.json",
+     "hints": [
+      {
+       "file": "src/albums.ts",
+       "line": 7,
+       "text": "const getAlbums = defineTool({"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 8,
+       "text": "name: 'getAlbums',"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 308,
+       "text": "getAlbums,"
+      }
+     ]
+    },
+    {
+     "name": "getAvailableDevices",
+     "description": "Get information about the user's available Spotify Connect devices",
+     "config": "marcelmarais__spotify-mcp-server__getAvailableDevices.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 652,
+       "text": "const getAvailableDevices = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 653,
+       "text": "name: 'getAvailableDevices',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 660,
+       "text": "return await spotifyApi.player.getAvailableDevices();"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 906,
+       "text": "getAvailableDevices,"
+      }
+     ]
+    },
+    {
+     "name": "getMyPlaylists",
+     "description": "Get a list of the current user's playlists on Spotify",
+     "config": "marcelmarais__spotify-mcp-server__getMyPlaylists.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 292,
+       "text": "const getMyPlaylists = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 293,
+       "text": "name: 'getMyPlaylists',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 900,
+       "text": "getMyPlaylists,"
+      }
+     ]
+    },
+    {
+     "name": "getNowPlaying",
+     "description": "Get information about the currently playing track on Spotify, including device and volume info",
+     "config": "marcelmarais__spotify-mcp-server__getNowPlaying.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 208,
+       "text": "const getNowPlaying = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 209,
+       "text": "name: 'getNowPlaying',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 899,
+       "text": "getNowPlaying,"
+      }
+     ]
+    },
+    {
+     "name": "getPlaylist",
+     "description": "Get details of a specific Spotify playlist including tracks count, description and owner",
+     "config": "marcelmarais__spotify-mcp-server__getPlaylist.json",
+     "hints": [
+      {
+       "file": "src/playlist.ts",
+       "line": 6,
+       "text": "const getPlaylist = defineTool({"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 7,
+       "text": "name: 'getPlaylist',"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 18,
+       "text": "return await spotifyApi.playlists.getPlaylist(playlistId);"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 316,
+       "text": "getPlaylist,"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 360,
+       "text": "const getPlaylistTracks = defineTool({"
+      }
+     ]
+    },
+    {
+     "name": "getPlaylistTracks",
+     "description": "Get a list of tracks in a Spotify playlist",
+     "config": "marcelmarais__spotify-mcp-server__getPlaylistTracks.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 360,
+       "text": "const getPlaylistTracks = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 361,
+       "text": "name: 'getPlaylistTracks',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 901,
+       "text": "getPlaylistTracks,"
+      }
+     ]
+    },
+    {
+     "name": "getQueue",
+     "description": "Get a list of the currently playing track and the next items in your Spotify queue",
+     "config": "marcelmarais__spotify-mcp-server__getQueue.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 560,
+       "text": "const getQueue = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 561,
+       "text": "name: 'getQueue',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 905,
+       "text": "getQueue,"
+      }
+     ]
+    },
+    {
+     "name": "getRecentlyPlayed",
+     "description": "Get a list of recently played tracks on Spotify",
+     "config": "marcelmarais__spotify-mcp-server__getRecentlyPlayed.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 435,
+       "text": "const getRecentlyPlayed = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 436,
+       "text": "name: 'getRecentlyPlayed',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 450,
+       "text": "return await spotifyApi.player.getRecentlyPlayedTracks("
+      },
+      {
+       "file": "src/read.ts",
+       "line": 902,
+       "text": "getRecentlyPlayed,"
+      }
+     ]
+    },
+    {
+     "name": "getTopArtists",
+     "description": "Get the current user's top (most-played) artists over a given time range. This is the closest thing Spotify exposes to listening statistics.",
+     "config": "marcelmarais__spotify-mcp-server__getTopArtists.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 838,
+       "text": "const getTopArtists = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 839,
+       "text": "name: 'getTopArtists',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 908,
+       "text": "getTopArtists,"
+      }
+     ]
+    },
+    {
+     "name": "getTopTracks",
+     "description": "Get the current user's top (most-played) tracks over a given time range. This is the closest thing Spotify exposes to listening statistics.",
+     "config": "marcelmarais__spotify-mcp-server__getTopTracks.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 781,
+       "text": "const getTopTracks = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 782,
+       "text": "name: 'getTopTracks',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 907,
+       "text": "getTopTracks,"
+      }
+     ]
+    },
+    {
+     "name": "getUsersSavedTracks",
+     "description": "Get a list of tracks saved in the user's \"Liked Songs\" library",
+     "config": "marcelmarais__spotify-mcp-server__getUsersSavedTracks.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 495,
+       "text": "const getUsersSavedTracks = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 496,
+       "text": "name: 'getUsersSavedTracks',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 903,
+       "text": "getUsersSavedTracks,"
+      }
+     ]
+    },
+    {
+     "name": "pausePlayback",
+     "description": "Pause Spotify playback on the active device",
+     "config": "marcelmarais__spotify-mcp-server__pausePlayback.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 157,
+       "text": "const pausePlayback = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 158,
+       "text": "name: 'pausePlayback',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 170,
+       "text": "await spotifyApi.player.pausePlayback(deviceId || '');"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 582,
+       "text": "pausePlayback,"
+      }
+     ]
+    },
+    {
+     "name": "playMusic",
+     "description": "Start playing a Spotify track, album, artist, or playlist. Pass a Spotify URI (e.g. spotify:track:xxx, spotify:album:xxx) via \"uri\". For albums/playlists you can also use \"context_uri\". Device is selected automatically \u2014 \"deviceId\" or \"device_id\" are optional.",
+     "config": "marcelmarais__spotify-mcp-server__playMusic.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 54,
+       "text": "const playMusic = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 55,
+       "text": "name: 'playMusic',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 581,
+       "text": "playMusic,"
+      }
+     ]
+    },
+    {
+     "name": "removeTracksFromPlaylist",
+     "description": "Remove one or more tracks from a Spotify playlist (max 100 tracks per request)",
+     "config": "marcelmarais__spotify-mcp-server__removeTracksFromPlaylist.json",
+     "hints": [
+      {
+       "file": "src/playlist.ts",
+       "line": 143,
+       "text": "const removeTracksFromPlaylist = defineTool({"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 144,
+       "text": "name: 'removeTracksFromPlaylist',"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 318,
+       "text": "removeTracksFromPlaylist,"
+      }
+     ]
+    },
+    {
+     "name": "removeUsersSavedTracks",
+     "description": "Remove one or more tracks from the user's \"Liked Songs\" library (max 40 per request)",
+     "config": "marcelmarais__spotify-mcp-server__removeUsersSavedTracks.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 709,
+       "text": "const removeUsersSavedTracks = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 710,
+       "text": "name: 'removeUsersSavedTracks',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 904,
+       "text": "removeUsersSavedTracks,"
+      }
+     ]
+    },
+    {
+     "name": "reorderPlaylistItems",
+     "description": "Reorder a range of tracks within a Spotify playlist by moving them to a new position",
+     "config": "marcelmarais__spotify-mcp-server__reorderPlaylistItems.json",
+     "hints": [
+      {
+       "file": "src/playlist.ts",
+       "line": 204,
+       "text": "const reorderPlaylistItems = defineTool({"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 205,
+       "text": "name: 'reorderPlaylistItems',"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 319,
+       "text": "reorderPlaylistItems,"
+      }
+     ]
+    },
+    {
+     "name": "resumePlayback",
+     "description": "Resume Spotify playback on the active device",
+     "config": "marcelmarais__spotify-mcp-server__resumePlayback.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 360,
+       "text": "const resumePlayback = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 361,
+       "text": "name: 'resumePlayback',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 587,
+       "text": "resumePlayback,"
+      }
+     ]
+    },
+    {
+     "name": "saveOrRemoveAlbumForUser",
+     "description": "Save or remove albums from the user's \"Your Music\" library",
+     "config": "marcelmarais__spotify-mcp-server__saveOrRemoveAlbumForUser.json",
+     "hints": [
+      {
+       "file": "src/albums.ts",
+       "line": 190,
+       "text": "const saveOrRemoveAlbumForUser = defineTool({"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 191,
+       "text": "name: 'saveOrRemoveAlbumForUser',"
+      },
+      {
+       "file": "src/albums.ts",
+       "line": 310,
+       "text": "saveOrRemoveAlbumForUser,"
+      }
+     ]
+    },
+    {
+     "name": "searchSpotify",
+     "description": "Search for tracks, albums, artists, playlists, podcast episodes, or shows on Spotify. For episodes and shows, the query matches against title, description, and publisher. Use type \"episode\" to find individual podcast episodes by topic or guest name, and type \"show\" to find podcast series.",
+     "config": "marcelmarais__spotify-mcp-server__searchSpotify.json",
+     "hints": [
+      {
+       "file": "src/read.ts",
+       "line": 52,
+       "text": "const searchSpotify = defineTool({"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 53,
+       "text": "name: 'searchSpotify',"
+      },
+      {
+       "file": "src/read.ts",
+       "line": 898,
+       "text": "searchSpotify,"
+      }
+     ]
+    },
+    {
+     "name": "setVolume",
+     "description": "Set the playback volume to a specific percentage (0-100). Requires Spotify Premium.",
+     "config": "marcelmarais__spotify-mcp-server__setVolume.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 449,
+       "text": "const setVolume = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 450,
+       "text": "name: 'setVolume',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 589,
+       "text": "setVolume,"
+      }
+     ]
+    },
+    {
+     "name": "skipToNext",
+     "description": "Skip to the next track in the current Spotify playback queue",
+     "config": "marcelmarais__spotify-mcp-server__skipToNext.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 184,
+       "text": "const skipToNext = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 185,
+       "text": "name: 'skipToNext',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 197,
+       "text": "await spotifyApi.player.skipToNext(deviceId || '');"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 583,
+       "text": "skipToNext,"
+      }
+     ]
+    },
+    {
+     "name": "skipToPrevious",
+     "description": "Skip to the previous track in the current Spotify playback queue",
+     "config": "marcelmarais__spotify-mcp-server__skipToPrevious.json",
+     "hints": [
+      {
+       "file": "src/play.ts",
+       "line": 211,
+       "text": "const skipToPrevious = defineTool({"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 212,
+       "text": "name: 'skipToPrevious',"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 225,
+       "text": "await spotifyApi.player.skipToPrevious(deviceId || '');"
+      },
+      {
+       "file": "src/play.ts",
+       "line": 584,
+       "text": "skipToPrevious,"
+      }
+     ]
+    },
+    {
+     "name": "unfollowPlaylist",
+     "description": "Remove a playlist from the current user's library (unfollow). Note: Spotify does not allow permanent deletion of playlists via the API.",
+     "config": "marcelmarais__spotify-mcp-server__unfollowPlaylist.json",
+     "hints": [
+      {
+       "file": "src/playlist.ts",
+       "line": 274,
+       "text": "const unfollowPlaylist = defineTool({"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 275,
+       "text": "name: 'unfollowPlaylist',"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 320,
+       "text": "unfollowPlaylist,"
+      }
+     ]
+    },
+    {
+     "name": "updatePlaylist",
+     "description": "Update the details of a Spotify playlist (name, description, public/private, collaborative)",
+     "config": "marcelmarais__spotify-mcp-server__updatePlaylist.json",
+     "hints": [
+      {
+       "file": "src/playlist.ts",
+       "line": 61,
+       "text": "const updatePlaylist = defineTool({"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 62,
+       "text": "name: 'updatePlaylist',"
+      },
+      {
+       "file": "src/playlist.ts",
+       "line": 317,
+       "text": "updatePlaylist,"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "Vortiago/mcp-azure-devops",
+   "slug": "Vortiago__mcp-azure-devops",
+   "lang": "python",
+   "commit": "1ce53765c79587f85c58941ed61c3fa73e65a55e",
+   "path": "eval/targets/Vortiago__mcp-azure-devops",
+   "surface_loc": 2798,
+   "tools": [
+    {
+     "name": "add_parent_child_link",
+     "description": "\nAdds a parent-child relationship between two work items.\n\nUse this tool when you need to:\n- Establish hierarchy between work items\n- Organize epics, features, user stories, and tasks\n- Create a structured breakdown of work\n- Enable rollup of effort and progress tracking\n\nIMPORTANT: The child work item will immediately appear under the parent\nin hierarchical views. This relationship affects how the items are\ndisplayed in backlogs and boards. In Azure DevOps, a work item can have\nonly one parent but multiple children.\n\nArgs:\n    parent_id: ID of the parent work item\n    child_id: ID of the child work item\n    project: Optional project name or ID\n    \nReturns:\n    Formatted string containing the updated child work item details\n    showing the new parent relationship, formatted as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__add_parent_child_link.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 478,
+       "text": "def add_parent_child_link("
+      }
+     ]
+    },
+    {
+     "name": "add_work_item_comment",
+     "description": "\nAdds a new comment to a work item.\n\nUse this tool when you need to:\n- Provide feedback or clarification on a work item\n- Document decisions made about the work\n- Add context without changing the work item's fields\n- Communicate with team members about specific tasks\n\nIMPORTANT: Comments in Azure DevOps become part of the permanent work\nitem history and cannot be edited or deleted after they are added. The\ncomment will be attributed to the user associated with the Personal\nAccess Token used for authentication.\n\nArgs:\n    id: The work item ID\n    text: The text of the comment (supports markdown formatting)\n    project: Optional project name. If not provided, will be \n        determined from the work item.\n    \nReturns:\n    Formatted string containing confirmation and the added comment with\n    author information and timestamp\n",
+     "config": "Vortiago__mcp-azure-devops__add_work_item_comment.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 108,
+       "text": "def _add_work_item_comment_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 186,
+       "text": "def add_work_item_comment("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 217,
+       "text": "return _add_work_item_comment_impl(id, text, wit_client, project)"
+      }
+     ]
+    },
+    {
+     "name": "create_work_item",
+     "description": "\nCreates a new work item in Azure DevOps.\n\nUse this tool when you need to:\n- Add a new task, user story, bug, or other work item to a project\n- Create work items with specific field values and metadata\n- Establish work hierarchies by setting parent relationships\n- Track new requirements, features, or issues in your project\n\nIMPORTANT: The work item will be created immediately and visible to all\nusers with access to the specified project. It will also trigger any\nconfigured notifications or automation rules.\n\nArgs:\n    title: The title of the work item\n    project: The project name or ID where the work item will be created\n    work_item_type: Type of work item (e.g., \"User Story\", \"Bug\", \n        \"Task\")\n    fields: Optional dictionary of additional field name/value pairs \n        to set\n    description: Optional description of the work item\n    state: Optional initial state for the work item\n    assigned_to: Optional user email to assign the work item to\n    parent_id: Optional ID of parent work item for hierarchy\n    iteration_path: Optional iteration path for the work item\n    area_path: Optional area path for the work item\n    story_points: Optional story points value\n    priority: Optional priority value\n    tags: Optional tags as comma-separated string\n    \nReturns:\n    Formatted string containing the created work item details including\n    ID, title, type, state, and all other specified fields, formatted\n    as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__create_work_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 83,
+       "text": "def _create_work_item_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 106,
+       "text": "new_work_item = wit_client.create_work_item("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 315,
+       "text": "def create_work_item("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 383,
+       "text": "return _create_work_item_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_all_teams",
+     "description": "\nRetrieves all teams in the Azure DevOps organization.\n\nUse this tool when you need to:\n- Get an overview of all teams across projects\n- Find team IDs for use in other operations\n- Determine which teams exist in the organization\n- Locate specific teams by name\n\nArgs:\n    user_is_member_of: If true, return only teams where the current \n        user is a member. Otherwise return all teams the user \n        has read access to.\n    top: Maximum number of teams to return\n    skip: Number of teams to skip\n        \nReturns:\n    Formatted string containing team information including names,\n    IDs, descriptions, and associated projects, formatted as\n    markdown with each team clearly separated\n",
+     "config": "Vortiago__mcp-azure-devops__get_all_teams.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 31,
+       "text": "- Identify teams (get_all_teams)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 161,
+       "text": "def _get_all_teams_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 185,
+       "text": "teams = core_client.get_all_teams("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 340,
+       "text": "def get_all_teams("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 368,
+       "text": "return _get_all_teams_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_process_details",
+     "description": "\nGets detailed information about a specific process.\n\nUse this tool when you need to:\n- View process properties and configuration\n- Get a list of work item types defined in a process\n- Check if a process is the default for the organization\n\nArgs:\n    process_id: The ID of the process\n    \nReturns:\n    Detailed information about the process including properties and\n    available work item types\n",
+     "config": "Vortiago__mcp-azure-devops__get_process_details.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 35,
+       "text": "- Process ID and details (get_project_process_id, get_process_details)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 47,
+       "text": "def _get_process_details_impl(process_id: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 154,
+       "text": "def get_process_details(process_id: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 171,
+       "text": "return _get_process_details_impl(process_id)"
+      }
+     ]
+    },
+    {
+     "name": "get_project_process_id",
+     "description": "\nGets the process ID associated with a project.\n\nUse this tool when you need to:\n- Find out which process a project is using\n- Get the process ID for use in other process-related operations\n- Verify process information for a project\n\nArgs:\n    project: Project ID or project name\n    \nReturns:\n    Formatted information about the process including name and ID\n",
+     "config": "Vortiago__mcp-azure-devops__get_project_process_id.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 35,
+       "text": "- Process ID and details (get_project_process_id, get_process_details)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 21,
+       "text": "def _get_project_process_id_impl(project: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 133,
+       "text": "def get_project_process_id(project: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 149,
+       "text": "return _get_project_process_id_impl(project)"
+      }
+     ]
+    },
+    {
+     "name": "get_projects",
+     "description": "\nRetrieves all projects accessible to the authenticated user \nin the Azure DevOps organization.\n\nUse this tool when you need to:\n- Get an overview of all available projects\n- Find project IDs for use in other operations\n- Check project states and visibility settings\n- Locate specific projects by name\n\nArgs:\n    state_filter: Filter on team projects in a specific state \n        (e.g., \"WellFormed\", \"Deleting\")\n    top: Maximum number of projects to return\n        \nReturns:\n    Formatted string containing project information including names,\n    IDs, descriptions, states, and visibility settings, formatted as\n    markdown with each project clearly separated\n",
+     "config": "Vortiago__mcp-azure-devops__get_projects.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 29,
+       "text": "1. Get an overview of ALL projects (get_projects)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/projects/tools.py",
+       "line": 54,
+       "text": "def _get_projects_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/projects/tools.py",
+       "line": 71,
+       "text": "projects = core_client.get_projects(state_filter=state_filter, top=top)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/projects/tools.py",
+       "line": 95,
+       "text": "def get_projects("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/projects/tools.py",
+       "line": 121,
+       "text": "return _get_projects_impl(core_client, state_filter, top)"
+      }
+     ]
+    },
+    {
+     "name": "get_team_area_paths",
+     "description": "\nRetrieves the area paths assigned to a specific team.\n\nUse this tool when you need to:\n- Understand a team's areas of responsibility\n- Check default area path assignments\n- Determine how work is classified and routed to teams\n- Set up board and backlog configurations\n\nIMPORTANT: Area paths in Azure DevOps determine which work items appear\non a team's backlogs and boards. The default area path is used when\ncreating new work items through a team's interface.\n\nArgs:\n    project_name_or_id: The name or ID of the team project\n    team_name_or_id: The name or ID of the team\n        \nReturns:\n    Formatted string containing team area path information including\n    the default area path and all assigned paths, with indicators for\n    paths that include sub-areas\n",
+     "config": "Vortiago__mcp-azure-devops__get_team_area_paths.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 33,
+       "text": "(get_team_area_paths, get_team_iterations)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 247,
+       "text": "def _get_team_area_paths_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 418,
+       "text": "def get_team_area_paths("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 446,
+       "text": "return _get_team_area_paths_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_team_iterations",
+     "description": "\nRetrieves the iterations (sprints) assigned to a specific team.\n\nUse this tool when you need to:\n- View a team's sprint schedule\n- Find date ranges for iterations\n- Determine which iteration is currently active\n- Plan work based on team's iteration calendar\n\nIMPORTANT: Iterations in Azure DevOps define time periods for planning\nand tracking work. They determine sprint dates and are used for\ncapacity planning, burndown charts, and velocity calculations.\n\nArgs:\n    project_name_or_id: The name or ID of the team project\n    team_name_or_id: The name or ID of the team\n    current: If True, return only the current iteration\n        \nReturns:\n    Formatted string containing team iteration information including\n    names, date ranges, and time frames (past/current/future),\n    formatted as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__get_team_iterations.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 33,
+       "text": "(get_team_area_paths, get_team_iterations)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 283,
+       "text": "def _get_team_iterations_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 312,
+       "text": "team_iterations = work_client.get_team_iterations("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 455,
+       "text": "def get_team_iterations("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 485,
+       "text": "return _get_team_iterations_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_team_members",
+     "description": "\nRetrieves the membership roster for a specific team.\n\nUse this tool when you need to:\n- See who belongs to a particular team\n- Find team administrators\n- Check user assignments across teams\n- Determine team size and composition\n\nArgs:\n    project_id: The name or ID (GUID) of the team project the team \n        belongs to\n    team_id: The name or ID (GUID) of the team\n    top: Maximum number of members to return\n    skip: Number of members to skip\n        \nReturns:\n    Formatted string containing team members information including\n    display names, emails, IDs, and administrator status, formatted\n    as markdown with each member clearly separated\n",
+     "config": "Vortiago__mcp-azure-devops__get_team_members.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 204,
+       "text": "def _get_team_members_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 226,
+       "text": "team_members = core_client.get_team_members_with_extended_properties("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 378,
+       "text": "def get_team_members("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/teams/tools.py",
+       "line": 407,
+       "text": "return _get_team_members_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_work_item",
+     "description": "\nRetrieves detailed information about one or multiple work items.\n\nUse this tool when you need to:\n- View the complete details of a specific work item\n- Examine the current state, assigned user, and other properties\n- Get information about multiple work items at once\n- Access the full description and custom fields of work items\n\nArgs:\n    id: The work item ID or a list of work item IDs\n    \nReturns:\n    Formatted string containing comprehensive information for the\n    requested work item(s), including all system and custom fields,\n    formatted as markdown with clear section headings\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 36,
+       "text": "- Work item types (get_work_item_types)"
+      },
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 38,
+       "text": "(get_work_item_type_fields) and clearly identify mandatory fields"
+      },
+      {
+       "file": "src/mcp_azure_devops/utils/azure_client.py",
+       "line": 71,
+       "text": "def get_work_item_tracking_process_client() -> WorkItemTrackingProcessClient:"
+      },
+      {
+       "file": "src/mcp_azure_devops/utils/azure_client.py",
+       "line": 89,
+       "text": "process_client = connection.clients.get_work_item_tracking_process_client()"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/common.py",
+       "line": 16,
+       "text": "def get_work_item_client() -> WorkItemTrackingClient:"
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_comments",
+     "description": "\nRetrieves all comments associated with a specific work item.\n\nUse this tool when you need to:\n- Review discussion history about a work item\n- See feedback or notes left by team members\n- Check if specific questions have been answered\n- Understand the context and evolution of a work item\n\nArgs:\n    id: The work item ID\n    project: Optional project name. If not provided, will be \n        determined from the work item.\n    \nReturns:\n    Formatted string containing all comments on the work item, \n    including author names, timestamps, and content, organized \n    chronologically and formatted as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_comments.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 71,
+       "text": "def _get_work_item_comments_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 155,
+       "text": "def get_work_item_comments("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/comments.py",
+       "line": 180,
+       "text": "return _get_work_item_comments_impl(id, wit_client, project)"
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_template",
+     "description": "\nGets detailed information about a specific work item template.\n\nUse this tool when you need to:\n- View default field values in a template\n- Understand what a template pre-populates in a work item\n- Get complete details about a template\n\nArgs:\n    team_context: Dictionary containing team information with keys:\n        project: Project name (Optional if project_id is provided)\n        project_id: Project ID (Optional if project is provided)\n        team: Team name (Optional if team_id is provided)\n        team_id: Team ID (Optional if team is provided)\n    template_id: The ID of the template\n    \nReturns:\n    Detailed information about the template including default field \n    values\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_template.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 54,
+       "text": "def _get_work_item_templates_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 94,
+       "text": "def _get_work_item_template_impl(team_context: dict, template_id: str,"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 118,
+       "text": "def get_work_item_templates("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 144,
+       "text": "return _get_work_item_templates_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 150,
+       "text": "def get_work_item_template(team_context: dict, template_id: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_templates",
+     "description": "\nGets a list of all work item templates for a team.\n\nUse this tool when you need to:\n- Find available templates for creating work items\n- Get template IDs for use in other operations\n- Filter templates by work item type\n\nArgs:\n    team_context: Dictionary containing team information with keys:\n        project: Project name (Optional if project_id is provided)\n        project_id: Project ID (Optional if project is provided)\n        team: Team name (Optional if team_id is provided)\n        team_id: Team ID (Optional if team is provided)\n    work_item_type: Optional work item type name to filter templates\n    \nReturns:\n    A formatted table of all templates with names, work item types,\n    and descriptions\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_templates.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 54,
+       "text": "def _get_work_item_templates_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 118,
+       "text": "def get_work_item_templates("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/templates.py",
+       "line": 144,
+       "text": "return _get_work_item_templates_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_type",
+     "description": "\nGets detailed information about a specific work item type.\n\nUse this tool when you need to:\n- Get complete details about a work item type\n- Understand the states and transitions for a work item type\n- Learn about the color and icon for a work item type\n\nArgs:\n    project: Project ID or project name\n    type_name: The name of the work item type\n    \nReturns:\n    Detailed information about the work item type including states,\n    color, icon, and reference name\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_type.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 36,
+       "text": "- Work item types (get_work_item_types)"
+      },
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 38,
+       "text": "(get_work_item_type_fields) and clearly identify mandatory fields"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 58,
+       "text": "def _get_work_item_types_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 63,
+       "text": "work_item_types = wit_client.get_work_item_types(project)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 81,
+       "text": "def _get_work_item_type_impl(project: str, type_name: str,"
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_type_field",
+     "description": "\nGets detailed information about a specific field in a work item type.\n\nUse this tool when you need to:\n- Get complete details about a work item field\n- Check allowed values for a field\n- Verify if a field is required or read-only\n\nArgs:\n    project: Project ID or project name\n    type_name: The name of the work item type\n    field_name: The reference name or display name of the field\n    \nReturns:\n    Detailed information about the field including type, allowed \n    values, and constraints\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_type_field.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 38,
+       "text": "(get_work_item_type_fields) and clearly identify mandatory fields"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 92,
+       "text": "def _get_work_item_type_fields_impl(project: str, type_name: str,"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 141,
+       "text": "def _get_work_item_type_field_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 183,
+       "text": "field = process_client.get_work_item_type_field("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 277,
+       "text": "def get_work_item_type_fields(project: str, type_name: str) -> str:"
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_type_fields",
+     "description": "\nGets a list of all fields for a specific work item type.\n\nUse this tool when you need to:\n- See what fields are available for a work item type\n- Find required fields for creating work items of a specific type\n- Get reference names for fields to use in queries or updates\n\nArgs:\n    project: Project ID or project name\n    type_name: The name of the work item type\n    \nReturns:\n    A formatted table of all fields with names, reference names,\n    types, and required/read-only status\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_type_fields.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 38,
+       "text": "(get_work_item_type_fields) and clearly identify mandatory fields"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 92,
+       "text": "def _get_work_item_type_fields_impl(project: str, type_name: str,"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 277,
+       "text": "def get_work_item_type_fields(project: str, type_name: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 296,
+       "text": "return _get_work_item_type_fields_impl("
+      }
+     ]
+    },
+    {
+     "name": "get_work_item_types",
+     "description": "\nGets a list of all work item types in a project.\n\nUse this tool when you need to:\n- See what work item types are available in a project\n- Get reference names for work item types to use in other operations\n- Plan work item creation by understanding available types\n\nArgs:\n    project: Project ID or project name\n    \nReturns:\n    A formatted table of all work item types with names, reference\n    names, and descriptions\n",
+     "config": "Vortiago__mcp-azure-devops__get_work_item_types.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/utils/conventions_promp.py",
+       "line": 36,
+       "text": "- Work item types (get_work_item_types)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 58,
+       "text": "def _get_work_item_types_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 63,
+       "text": "work_item_types = wit_client.get_work_item_types(project)"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 230,
+       "text": "def get_work_item_types(project: str) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/types.py",
+       "line": 248,
+       "text": "return _get_work_item_types_impl(project, wit_client)"
+      }
+     ]
+    },
+    {
+     "name": "list_processes",
+     "description": "\nLists all available processes in the organization.\n\nUse this tool when you need to:\n- See what processes are available in your Azure DevOps organization\n- Find process IDs for project creation or configuration\n- Check which process is set as the default\n\nReturns:\n    A formatted table of all processes with names, IDs, and \n    descriptions\n",
+     "config": "Vortiago__mcp-azure-devops__list_processes.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 95,
+       "text": "def _list_processes_impl() -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 176,
+       "text": "def list_processes() -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/process.py",
+       "line": 190,
+       "text": "return _list_processes_impl()"
+      }
+     ]
+    },
+    {
+     "name": "query_work_items",
+     "description": "\nSearches for work items using Work Item Query Language (WIQL).\n\nUse this tool when you need to:\n- Find work items matching specific criteria\n- Search across projects for related tasks or bugs\n- Create dynamic reports based on work item attributes\n- Identify work items assigned to specific team members\n\nIMPORTANT: WIQL syntax is similar to SQL and allows you to query\nwork items based on their fields. The query must follow Azure DevOps\nWIQL syntax rules, with proper SELECT, FROM, and WHERE clauses.\n\nArgs:\n    query: The WIQL query string (e.g., \"SELECT * FROM workitems \n        WHERE [System.State] = 'Active'\")\n    top: Maximum number of results to return (default: 30)\n        \nReturns:\n    Formatted string containing detailed information for each matching\n    work item, with all fields and values formatted as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__query_work_items.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/query.py",
+       "line": 18,
+       "text": "def _query_work_items_impl(query: str, top: int,"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/query.py",
+       "line": 21,
+       "text": "Implementation of query_work_items that operates with a client."
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/query.py",
+       "line": 64,
+       "text": "def query_work_items(query: str, top: Optional[int] = None) -> str:"
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/query.py",
+       "line": 89,
+       "text": "return _query_work_items_impl(query, top or 30, wit_client)"
+      }
+     ]
+    },
+    {
+     "name": "update_work_item",
+     "description": "\nModifies an existing work item's fields and properties.\n\nUse this tool when you need to:\n- Change the status or state of a work item\n- Reassign work to a different team member\n- Update the description or details of a requirement\n- Modify effort estimates or priority levels\n- Add or change classification (area/iteration)\n- Update any field supported by the work item type\n\nIMPORTANT: This tool updates the work item directly in Azure DevOps.\nChanges will be immediately visible to all users with access to the\nwork item and will trigger any configured notifications or workflows.\nYou must specify at least one field to update.\n\nArgs:\n    id: The ID of the work item to update\n    fields: Optional dictionary of field name/value pairs to update\n    project: Optional project name or ID\n    title: Optional new title for the work item\n    description: Optional new description\n    state: Optional new state\n    assigned_to: Optional user email to assign to\n    iteration_path: Optional new iteration path\n    area_path: Optional new area path\n    story_points: Optional new story points value\n    priority: Optional new priority value\n    tags: Optional new tags as comma-separated string\n    \nReturns:\n    Formatted string containing the updated work item details with\n    all current field values, formatted as markdown\n",
+     "config": "Vortiago__mcp-azure-devops__update_work_item.json",
+     "hints": [
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 126,
+       "text": "new_work_item = wit_client.update_work_item("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 140,
+       "text": "def _update_work_item_impl("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 161,
+       "text": "updated_work_item = wit_client.update_work_item("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 197,
+       "text": "updated_work_item = wit_client.update_work_item("
+      },
+      {
+       "file": "src/mcp_azure_devops/features/work_items/tools/create.py",
+       "line": 398,
+       "text": "def update_work_item("
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "ErickWendel/erickwendel-contributions-mcp",
+   "slug": "ErickWendel__erickwendel-contributions-mcp",
+   "lang": "node",
+   "commit": "3716a45de655dfc8a034e71dc4c4104ea14d4824",
+   "path": "eval/targets/ErickWendel__erickwendel-contributions-mcp",
+   "surface_loc": 2766,
+   "tools": [
+    {
+     "name": "check_status",
+     "description": "Check if the API is alive and responding.",
+     "config": "ErickWendel__erickwendel-contributions-mcp__check_status.json",
+     "hints": [
+      {
+       "file": "src/config/api.ts",
+       "line": 30,
+       "text": "name: 'check_status',"
+      }
+     ]
+    },
+    {
+     "name": "get_posts",
+     "description": "Get a list of posts with optional filtering and pagination.",
+     "config": "ErickWendel__erickwendel-contributions-mcp__get_posts.json",
+     "hints": [
+      {
+       "file": "src/config/api.ts",
+       "line": 18,
+       "text": "name: 'get_posts',"
+      }
+     ]
+    },
+    {
+     "name": "get_talks",
+     "description": "Get a list of talks with optional filtering and pagination.",
+     "config": "ErickWendel__erickwendel-contributions-mcp__get_talks.json",
+     "hints": [
+      {
+       "file": "src/config/api.ts",
+       "line": 14,
+       "text": "name: 'get_talks',"
+      }
+     ]
+    },
+    {
+     "name": "get_videos",
+     "description": "Get a list of videos with optional filtering and pagination.",
+     "config": "ErickWendel__erickwendel-contributions-mcp__get_videos.json",
+     "hints": [
+      {
+       "file": "src/config/api.ts",
+       "line": 22,
+       "text": "name: 'get_videos',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "aliyun/alibabacloud-hologres-mcp-server",
+   "slug": "aliyun__alibabacloud-hologres-mcp-server",
+   "lang": "python",
+   "commit": "a43e6de7af042e0b02f9205f15829fc32208d883",
+   "path": "eval/targets/aliyun__alibabacloud-hologres-mcp-server",
+   "surface_loc": 2733,
+   "tools": [
+    {
+     "name": "analyze_hg_query_by_id",
+     "description": "Analyze a specific query's performance profile by its query_id from hg_query_log. Returns detailed metrics including duration, memory usage, CPU time, read/write stats, and execution plan.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__analyze_hg_query_by_id.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 193,
+       "text": "def analyze_hg_query_by_id("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 310,
+       "text": "@call_tool_app.command(name='analyze_hg_query_by_id')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 311,
+       "text": "async def analyze_hg_query_by_id("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 316,
+       "text": "await _call_tool('analyze_hg_query_by_id', {'query_id': query_id})"
+      }
+     ]
+    },
+    {
+     "name": "call_hg_procedure",
+     "description": "Call a stored procedure in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__call_hg_procedure.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 115,
+       "text": "def call_hg_procedure("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 128,
+       "text": "return handle_call_tool(\"call_hg_procedure\", query, serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 246,
+       "text": "@call_tool_app.command(name='call_hg_procedure')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 247,
+       "text": "async def call_hg_procedure("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 256,
+       "text": "await _call_tool('call_hg_procedure', {'procedure_name': procedure_name, 'procedure_args': procedure_args_parsed})"
+      }
+     ]
+    },
+    {
+     "name": "cancel_hg_query",
+     "description": "Cancel or terminate a running query by its process ID. Use list_hg_active_queries to find the pid first.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__cancel_hg_query.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 266,
+       "text": "def cancel_hg_query("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 392,
+       "text": "@call_tool_app.command(name='cancel_hg_query')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 393,
+       "text": "async def cancel_hg_query("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 399,
+       "text": "await _call_tool('cancel_hg_query', {'pid': pid, 'terminate': terminate})"
+      }
+     ]
+    },
+    {
+     "name": "create_hg_maxcompute_foreign_table",
+     "description": "Create a MaxCompute foreign table in Hologres database to accelerate queries on MaxCompute data.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__create_hg_maxcompute_foreign_table.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 132,
+       "text": "def create_hg_maxcompute_foreign_table("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 146,
+       "text": "return handle_call_tool(\"create_hg_maxcompute_foreign_table\", query, serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 259,
+       "text": "@call_tool_app.command(name='create_hg_maxcompute_foreign_table')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 260,
+       "text": "async def create_hg_maxcompute_foreign_table("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 268,
+       "text": "await _call_tool('create_hg_maxcompute_foreign_table', {'maxcompute_project': maxcompute_project, 'maxcompute_tables': maxcompute_tables, 'maxcompute_schema': maxcompute_schema, 'local_schema': local_"
+      }
+     ]
+    },
+    {
+     "name": "execute_hg_ddl_sql",
+     "description": "Execute (CREATE, ALTER, DROP) SQL statements to CREATE, ALTER, or DROP tables, views, procedures, GUCs etc. in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__execute_hg_ddl_sql.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 84,
+       "text": "def execute_hg_ddl_sql(query: Annotated[str, \"The DDL SQL query to execute in Hologres database\"]) -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 87,
+       "text": "return handle_call_tool(\"execute_hg_ddl_sql\", query, serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 209,
+       "text": "@call_tool_app.command(name='execute_hg_ddl_sql')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 210,
+       "text": "async def execute_hg_ddl_sql("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 215,
+       "text": "await _call_tool('execute_hg_ddl_sql', {'query': query})"
+      }
+     ]
+    },
+    {
+     "name": "execute_hg_dml_sql",
+     "description": "Execute (INSERT, UPDATE, DELETE, REFRESH DYNAMIC TABLE) SQL to insert, update, delete data, and refresh dynamic tables in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__execute_hg_dml_sql.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/utils.py",
+       "line": 162,
+       "text": "elif tool_name == \"execute_hg_dml_sql\":"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 77,
+       "text": "def execute_hg_dml_sql(query: Annotated[str, \"The DML SQL query to execute in Hologres database\"]) -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 80,
+       "text": "return handle_call_tool(\"execute_hg_dml_sql\", query, serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 200,
+       "text": "@call_tool_app.command(name='execute_hg_dml_sql')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 201,
+       "text": "async def execute_hg_dml_sql("
+      }
+     ]
+    },
+    {
+     "name": "execute_hg_select_sql",
+     "description": "Execute SELECT SQL to query data from Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__execute_hg_select_sql.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 61,
+       "text": "def execute_hg_select_sql(query: Annotated[str, \"The (SELECT) SQL query to execute in Hologres database.\"]) -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 64,
+       "text": "return handle_call_tool(\"execute_hg_select_sql\", query, serverless=False)"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 68,
+       "text": "def execute_hg_select_sql_with_serverless("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 71,
+       "text": "\"\"\"Use Serverless Computing resources to execute SELECT SQL to query data in Hologres database. When the error like 'Total memory used by all existing queries exceeded memory limitation' occurs during"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 73,
+       "text": "return handle_call_tool(\"execute_hg_select_sql_with_serverless\", query, serverless=True)"
+      }
+     ]
+    },
+    {
+     "name": "execute_hg_select_sql_with_serverless",
+     "description": "Use Serverless Computing resources to execute SELECT SQL to query data in Hologres database. When the error like 'Total memory used by all existing queries exceeded memory limitation' occurs during execute_hg_select_sql execution, you can re-execute the SQL with this tool.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__execute_hg_select_sql_with_serverless.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 68,
+       "text": "def execute_hg_select_sql_with_serverless("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 73,
+       "text": "return handle_call_tool(\"execute_hg_select_sql_with_serverless\", query, serverless=True)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 191,
+       "text": "@call_tool_app.command(name='execute_hg_select_sql_with_serverless')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 192,
+       "text": "async def execute_hg_select_sql_with_serverless("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 197,
+       "text": "await _call_tool('execute_hg_select_sql_with_serverless', {'query': query})"
+      }
+     ]
+    },
+    {
+     "name": "gather_hg_table_statistics",
+     "description": "Execute the ANALYZE TABLE command to have Hologres collect table statistics, enabling QO to generate better query plans.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__gather_hg_table_statistics.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/utils.py",
+       "line": 154,
+       "text": "if tool_name == \"gather_hg_table_statistics\":"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 91,
+       "text": "def gather_hg_table_statistics("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 97,
+       "text": "return handle_call_tool(\"gather_hg_table_statistics\", query, serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 218,
+       "text": "@call_tool_app.command(name='gather_hg_table_statistics')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 219,
+       "text": "async def gather_hg_table_statistics("
+      }
+     ]
+    },
+    {
+     "name": "get_hg_dynamic_table_refresh_history",
+     "description": "Get refresh history for a specific Dynamic Table, including duration, status, and latency.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_dynamic_table_refresh_history.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 218,
+       "text": "def get_hg_dynamic_table_refresh_history("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 338,
+       "text": "@call_tool_app.command(name='get_hg_dynamic_table_refresh_history')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 339,
+       "text": "async def get_hg_dynamic_table_refresh_history("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 346,
+       "text": "await _call_tool('get_hg_dynamic_table_refresh_history', {'schema_name': schema_name, 'table_name': table_name, 'limit': limit})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_execution_plan",
+     "description": "Get actual execution plan with runtime statistics for a SQL query in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_execution_plan.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 108,
+       "text": "def get_hg_execution_plan(query: Annotated[str, \"The SQL query to analyze in Hologres database\"]) -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 111,
+       "text": "return handle_call_tool(\"get_hg_execution_plan\", explain_query, serverless=False)"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1725,
+       "text": "2. Get the actual execution plan using get_hg_execution_plan tool"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 237,
+       "text": "@call_tool_app.command(name='get_hg_execution_plan')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 238,
+       "text": "async def get_hg_execution_plan("
+      }
+     ]
+    },
+    {
+     "name": "get_hg_guc_config",
+     "description": "Get the current value of a GUC (Grand Unified Configuration) parameter.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_guc_config.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 419,
+       "text": "def get_hg_guc_config("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 551,
+       "text": "@call_tool_app.command(name='get_hg_guc_config')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 552,
+       "text": "async def get_hg_guc_config("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 557,
+       "text": "await _call_tool('get_hg_guc_config', {'guc_name': guc_name})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_lock_diagnostics",
+     "description": "Diagnose lock contention by showing blocking and waiting queries. Useful for identifying lock waits that cause query hangs.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_lock_diagnostics.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 315,
+       "text": "def get_hg_lock_diagnostics() -> str:"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 445,
+       "text": "@call_tool_app.command(name='get_hg_lock_diagnostics')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 446,
+       "text": "async def get_hg_lock_diagnostics("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 449,
+       "text": "await _call_tool('get_hg_lock_diagnostics', {})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_query_plan",
+     "description": "Get query plan for a SQL query in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_query_plan.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 101,
+       "text": "def get_hg_query_plan(query: Annotated[str, \"The SQL query to analyze in Hologres database\"]) -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 104,
+       "text": "return handle_call_tool(\"get_hg_query_plan\", explain_query, serverless=False)"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1724,
+       "text": "1. Get the query plan using get_hg_query_plan tool"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 228,
+       "text": "@call_tool_app.command(name='get_hg_query_plan')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 229,
+       "text": "async def get_hg_query_plan("
+      }
+     ]
+    },
+    {
+     "name": "get_hg_slow_queries",
+     "description": "Get slow queries from hg_query_log ordered by duration. Useful for identifying performance bottlenecks.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_slow_queries.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 201,
+       "text": "def get_hg_slow_queries("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 319,
+       "text": "@call_tool_app.command(name='get_hg_slow_queries')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 320,
+       "text": "async def get_hg_slow_queries("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 326,
+       "text": "await _call_tool('get_hg_slow_queries', {'min_duration_ms': min_duration_ms, 'limit': limit})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_table_info_trend",
+     "description": "Get table storage trend from hg_table_info, showing daily storage size, file count, and row count changes. Data is T+1, retained for 30 days.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_table_info_trend.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 321,
+       "text": "def get_hg_table_info_trend("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 452,
+       "text": "@call_tool_app.command(name='get_hg_table_info_trend')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 453,
+       "text": "async def get_hg_table_info_trend("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 460,
+       "text": "await _call_tool('get_hg_table_info_trend', {'schema_name': schema_name, 'table': table, 'days': days})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_table_properties",
+     "description": "Get table properties including distribution_key, clustering_key, segment_key, bitmap_columns, dictionary_columns, binlog settings, etc.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_table_properties.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 291,
+       "text": "def get_hg_table_properties("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 418,
+       "text": "@call_tool_app.command(name='get_hg_table_properties')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 419,
+       "text": "async def get_hg_table_properties("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 425,
+       "text": "await _call_tool('get_hg_table_properties', {'schema_name': schema_name, 'table': table})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_table_shard_info",
+     "description": "Get table's Table Group and shard count info. Useful for diagnosing data skew and shard configuration.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_table_shard_info.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 300,
+       "text": "def get_hg_table_shard_info("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 428,
+       "text": "@call_tool_app.command(name='get_hg_table_shard_info')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 429,
+       "text": "async def get_hg_table_shard_info("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 435,
+       "text": "await _call_tool('get_hg_table_shard_info', {'schema_name': schema_name, 'table': table})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_table_storage_size",
+     "description": "Get storage size details of a table, including total size, data, index, and metadata breakdown.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_table_storage_size.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 257,
+       "text": "def get_hg_table_storage_size("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 382,
+       "text": "@call_tool_app.command(name='get_hg_table_storage_size')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 383,
+       "text": "async def get_hg_table_storage_size("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 389,
+       "text": "await _call_tool('get_hg_table_storage_size', {'schema_name': schema_name, 'table': table})"
+      }
+     ]
+    },
+    {
+     "name": "get_hg_warehouse_status",
+     "description": "Get detailed running status and scaling progress of a computing group (warehouse).",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__get_hg_warehouse_status.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 380,
+       "text": "def get_hg_warehouse_status("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1408,
+       "text": "return f\"Shard rebalance triggered for warehouse '{warehouse_name}'. Result: {result}\\nUse get_hg_warehouse_status to monitor progress.\""
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 513,
+       "text": "@call_tool_app.command(name='get_hg_warehouse_status')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 514,
+       "text": "async def get_hg_warehouse_status("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 519,
+       "text": "await _call_tool('get_hg_warehouse_status', {'warehouse_name': warehouse_name})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_active_queries",
+     "description": "List currently active queries and connections from pg_stat_activity. Useful for monitoring running queries and finding PIDs to cancel.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_active_queries.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 272,
+       "text": "\"\"\"Cancel or terminate a running query by its process ID. Use list_hg_active_queries to find the pid first.\"\"\""
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 277,
+       "text": "def list_hg_active_queries("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 398,
+       "text": "'''Cancel or terminate a running query by its process ID. Use list_hg_active_queries to find the pid first.'''"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 402,
+       "text": "@call_tool_app.command(name='list_hg_active_queries')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 403,
+       "text": "async def list_hg_active_queries("
+      }
+     ]
+    },
+    {
+     "name": "list_hg_data_masking_rules",
+     "description": "List all data masking rules configured via hg_anon extension, including column-level and user-level masking labels.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_data_masking_rules.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 396,
+       "text": "def list_hg_data_masking_rules() -> str:"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 531,
+       "text": "@call_tool_app.command(name='list_hg_data_masking_rules')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 532,
+       "text": "async def list_hg_data_masking_rules("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 535,
+       "text": "await _call_tool('list_hg_data_masking_rules', {})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_dynamic_tables",
+     "description": "List all Dynamic Tables with their status, freshness settings, and last refresh info.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_dynamic_tables.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 210,
+       "text": "def list_hg_dynamic_tables("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 329,
+       "text": "@call_tool_app.command(name='list_hg_dynamic_tables')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 330,
+       "text": "async def list_hg_dynamic_tables("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 335,
+       "text": "await _call_tool('list_hg_dynamic_tables', {'schema_name': schema_name})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_external_databases",
+     "description": "List all External Databases (federated databases for Lakehouse acceleration). Requires Hologres V3.0+.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_external_databases.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 309,
+       "text": "def list_hg_external_databases() -> str:"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 438,
+       "text": "@call_tool_app.command(name='list_hg_external_databases')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 439,
+       "text": "async def list_hg_external_databases("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 442,
+       "text": "await _call_tool('list_hg_external_databases', {})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_query_queues",
+     "description": "List all Query Queues and their classifiers, showing concurrency limits, queue sizes, and routing rules. Requires Hologres V3.0+.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_query_queues.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 285,
+       "text": "def list_hg_query_queues() -> str:"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 411,
+       "text": "@call_tool_app.command(name='list_hg_query_queues')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 412,
+       "text": "async def list_hg_query_queues("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 415,
+       "text": "await _call_tool('list_hg_query_queues', {})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_recyclebin",
+     "description": "List all tables in the Hologres recycle bin (dropped tables that can be restored).",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_recyclebin.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 228,
+       "text": "def list_hg_recyclebin() -> str:"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 349,
+       "text": "@call_tool_app.command(name='list_hg_recyclebin')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 350,
+       "text": "async def list_hg_recyclebin("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 353,
+       "text": "await _call_tool('list_hg_recyclebin', {})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_schemas",
+     "description": "List all schemas in the current Hologres database, excluding system schemas.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_schemas.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 150,
+       "text": "def list_hg_schemas() -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 152,
+       "text": "return handle_call_tool(\"list_hg_schemas\", get_list_schemas_query(), serverless=False)"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 271,
+       "text": "@call_tool_app.command(name='list_hg_schemas')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 272,
+       "text": "async def list_hg_schemas("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 275,
+       "text": "await _call_tool('list_hg_schemas', {})"
+      }
+     ]
+    },
+    {
+     "name": "list_hg_tables_in_a_schema",
+     "description": "List all tables in a specific schema in the current Hologres database, including their types (table, view, foreign table, partitioned table).",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_tables_in_a_schema.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 156,
+       "text": "def list_hg_tables_in_a_schema("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 160,
+       "text": "return handle_call_tool(\"list_hg_tables_in_a_schema\", get_list_tables_query(schema_name), serverless=False)"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1741,
+       "text": "1. List all tables using list_hg_tables_in_a_schema tool"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 278,
+       "text": "@call_tool_app.command(name='list_hg_tables_in_a_schema')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 279,
+       "text": "async def list_hg_tables_in_a_schema("
+      }
+     ]
+    },
+    {
+     "name": "list_hg_warehouses",
+     "description": "List all computing groups (warehouses) in the Hologres instance, including their CPU, memory, cluster count, and status.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__list_hg_warehouses.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 243,
+       "text": "def list_hg_warehouses() -> str:"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 857,
+       "text": "return f\"Warehouse '{warehouse_name}' not found. Use list_hg_warehouses to see available options.\""
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 366,
+       "text": "@call_tool_app.command(name='list_hg_warehouses')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 367,
+       "text": "async def list_hg_warehouses("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 370,
+       "text": "await _call_tool('list_hg_warehouses', {})"
+      }
+     ]
+    },
+    {
+     "name": "manage_hg_classifier",
+     "description": "Create or drop a classifier for a Query Queue. Use set_hg_query_queue_property to configure classifier rules after creation. Requires Hologres V3.0+.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__manage_hg_classifier.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 342,
+       "text": "def manage_hg_classifier("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 475,
+       "text": "@call_tool_app.command(name='manage_hg_classifier')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 476,
+       "text": "async def manage_hg_classifier("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 484,
+       "text": "await _call_tool('manage_hg_classifier', {'action': action, 'queue_name': queue_name, 'classifier_name': classifier_name, 'priority': priority})"
+      }
+     ]
+    },
+    {
+     "name": "manage_hg_query_queue",
+     "description": "Create, drop, or clear a Query Queue. Requires Hologres V3.0+ and superuser privileges.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__manage_hg_query_queue.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 331,
+       "text": "def manage_hg_query_queue("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 463,
+       "text": "@call_tool_app.command(name='manage_hg_query_queue')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 464,
+       "text": "async def manage_hg_query_queue("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 472,
+       "text": "await _call_tool('manage_hg_query_queue', {'action': action, 'queue_name': queue_name, 'max_concurrency': max_concurrency, 'max_queue_size': max_queue_size})"
+      }
+     ]
+    },
+    {
+     "name": "manage_hg_warehouse",
+     "description": "Manage a computing group (warehouse): suspend, resume, restart, rename, or resize. Requires superuser privileges.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__manage_hg_warehouse.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 369,
+       "text": "def manage_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 501,
+       "text": "@call_tool_app.command(name='manage_hg_warehouse')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 502,
+       "text": "async def manage_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 510,
+       "text": "await _call_tool('manage_hg_warehouse', {'action': action, 'warehouse_name': warehouse_name, 'cu': cu, 'new_name': new_name})"
+      }
+     ]
+    },
+    {
+     "name": "query_and_plotly_chart",
+     "description": "Execute a SELECT SQL query and generate a chart from the results. Returns both the query result data and a base64-encoded PNG image of the chart.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__query_and_plotly_chart.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 180,
+       "text": "def query_and_plotly_chart("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 297,
+       "text": "@call_tool_app.command(name='query_and_plotly_chart')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 298,
+       "text": "async def query_and_plotly_chart("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 307,
+       "text": "await _call_tool('query_and_plotly_chart', {'query': query, 'chart_type': chart_type, 'x_column': x_column, 'y_column': y_column, 'title': title})"
+      }
+     ]
+    },
+    {
+     "name": "query_hg_external_files",
+     "description": "Query files directly from OSS using EXTERNAL_FILES function without creating foreign tables. Requires Hologres V4.1+. Supports CSV, Parquet, ORC formats.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__query_hg_external_files.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 402,
+       "text": "def query_hg_external_files("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 538,
+       "text": "@call_tool_app.command(name='query_hg_external_files')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 539,
+       "text": "async def query_hg_external_files("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 548,
+       "text": "await _call_tool('query_hg_external_files', {'path': path, 'format': format, 'columns': columns, 'oss_endpoint': oss_endpoint, 'role_arn': role_arn})"
+      }
+     ]
+    },
+    {
+     "name": "rebalance_hg_warehouse",
+     "description": "Trigger shard rebalancing for a computing group to eliminate data skew across nodes.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__rebalance_hg_warehouse.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 388,
+       "text": "def rebalance_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 522,
+       "text": "@call_tool_app.command(name='rebalance_hg_warehouse')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 523,
+       "text": "async def rebalance_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 528,
+       "text": "await _call_tool('rebalance_hg_warehouse', {'warehouse_name': warehouse_name})"
+      }
+     ]
+    },
+    {
+     "name": "restore_hg_table_from_recyclebin",
+     "description": "Restore a dropped table from the Hologres recycle bin. Only works if the table is still in the recycle bin.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__restore_hg_table_from_recyclebin.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 234,
+       "text": "def restore_hg_table_from_recyclebin("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 356,
+       "text": "@call_tool_app.command(name='restore_hg_table_from_recyclebin')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 357,
+       "text": "async def restore_hg_table_from_recyclebin("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 363,
+       "text": "await _call_tool('restore_hg_table_from_recyclebin', {'table_name': table_name, 'schema_name': schema_name})"
+      }
+     ]
+    },
+    {
+     "name": "set_hg_query_queue_property",
+     "description": "Set or remove properties on a Query Queue or classifier. For classifier rules, use property_key as condition_name and property_value as condition_value. Requires Hologres V3.0+.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__set_hg_query_queue_property.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 348,
+       "text": "\"\"\"Create or drop a classifier for a Query Queue. Use set_hg_query_queue_property to configure classifier rules after creation. Requires Hologres V3.0+.\"\"\""
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 353,
+       "text": "def set_hg_query_queue_property("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 483,
+       "text": "'''Create or drop a classifier for a Query Queue. Use set_hg_query_queue_property to configure classifier rules after creation. Requires Hologres V3.0+.'''"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 487,
+       "text": "@call_tool_app.command(name='set_hg_query_queue_property')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 488,
+       "text": "async def set_hg_query_queue_property("
+      }
+     ]
+    },
+    {
+     "name": "show_hg_table_ddl",
+     "description": "Show DDL script for a table, view, or foreign table in Hologres database.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__show_hg_table_ddl.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 164,
+       "text": "def show_hg_table_ddl("
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 170,
+       "text": "result = handle_call_tool(\"show_hg_table_ddl\", query, serverless=False)"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1701,
+       "text": "1. First, check the table DDL using show_hg_table_ddl tool"
+      },
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 1744,
+       "text": "- DDL using show_hg_table_ddl tool"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 287,
+       "text": "@call_tool_app.command(name='show_hg_table_ddl')"
+      }
+     ]
+    },
+    {
+     "name": "switch_hg_warehouse",
+     "description": "Switch the current session's computing resource to a specified warehouse (computing group). Use 'local' for the default computing group.",
+     "config": "aliyun__alibabacloud-hologres-mcp-server__switch_hg_warehouse.json",
+     "hints": [
+      {
+       "file": "src/hologres_mcp_server/server.py",
+       "line": 249,
+       "text": "def switch_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 373,
+       "text": "@call_tool_app.command(name='switch_hg_warehouse')"
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 374,
+       "text": "async def switch_hg_warehouse("
+      },
+      {
+       "file": "hologres_mcp_cli/hologres_mcp_cli.py",
+       "line": 379,
+       "text": "await _call_tool('switch_hg_warehouse', {'warehouse_name': warehouse_name})"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "pinkpixel-dev/taskflow-mcp",
+   "slug": "pinkpixel-dev__taskflow-mcp",
+   "lang": "node",
+   "commit": "95b1d5fb0a7c028bae2cff9d2166e8636a5444fd",
+   "path": "eval/targets/pinkpixel-dev__taskflow-mcp",
+   "surface_loc": 2728,
+   "tools": [
+    {
+     "name": "add_dependency",
+     "description": "Add a dependency to a request or task.\n\nDependencies can be libraries, tools, or other requirements needed for the project or specific tasks.\n\nIf 'taskId' is provided, the dependency will be added to that specific task. Otherwise, it will be added to the request.",
+     "config": "pinkpixel-dev__taskflow-mcp__add_dependency.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 401,
+       "text": "name: \"add_dependency\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 640,
+       "text": "async add_dependency(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 236,
+       "text": "add_dependency: {"
+      }
+     ]
+    },
+    {
+     "name": "add_note",
+     "description": "Add a note to a request. Notes can contain important information about the project, such as user preferences or guidelines.\n\nNotes are displayed in the task progress table and can be referenced when working on tasks.",
+     "config": "pinkpixel-dev__taskflow-mcp__add_note.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 353,
+       "text": "name: \"add_note\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 625,
+       "text": "async add_note(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 209,
+       "text": "add_note: {"
+      }
+     ]
+    },
+    {
+     "name": "add_subtasks",
+     "description": "Add subtasks to an existing task. Provide 'requestId', 'taskId', and 'subtasks' array.\n\nSubtasks are smaller units of work that make up a task. All subtasks must be completed before a task can be marked as done.\n\nA progress table will be displayed showing the updated task with its subtasks.",
+     "config": "pinkpixel-dev__taskflow-mcp__add_subtasks.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 237,
+       "text": "name: \"add_subtasks\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 600,
+       "text": "async add_subtasks(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 161,
+       "text": "add_subtasks: {"
+      }
+     ]
+    },
+    {
+     "name": "add_tasks_to_request",
+     "description": "Add new tasks to an existing request. This allows extending a request with additional tasks.\n\nTasks can include subtasks and dependencies. A progress table will be displayed showing all tasks including the newly added ones.",
+     "config": "pinkpixel-dev__taskflow-mcp__add_tasks_to_request.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 25,
+       "text": "\"9. If the user wants more tasks, you can use 'add_tasks_to_request' or 'plan_task' to add new tasks and continue the cycle.\\n\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 105,
+       "text": "\"- If 'get_next_task' returns 'all_tasks_done', it means all tasks have been completed. At this point, confirm with the user that all tasks have been completed, and optionally add more tasks via 'add_"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 156,
+       "text": "name: \"add_tasks_to_request\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 585,
+       "text": "async add_tasks_to_request(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 135,
+       "text": "add_tasks_to_request: {"
+      }
+     ]
+    },
+    {
+     "name": "archive_completed_requests",
+     "description": "Archive completed requests to a separate file to keep the active tasks file clean.\n\nIf 'requestIds' is provided, only those specific completed requests will be archived.\nIf 'requestIds' is not provided, all completed requests will be archived.\n\nThis addresses the need to keep active tasks file uncluttered by moving completed work to archive storage.",
+     "config": "pinkpixel-dev__taskflow-mcp__archive_completed_requests.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 491,
+       "text": "name: \"archive_completed_requests\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 664,
+       "text": "async archive_completed_requests(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "delete_note",
+     "description": "Delete a note from a request.\n\nProvide the 'requestId' and 'noteId' of the note to delete.",
+     "config": "pinkpixel-dev__taskflow-mcp__delete_note.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 386,
+       "text": "name: \"delete_note\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 635,
+       "text": "async delete_note(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 228,
+       "text": "delete_note: {"
+      }
+     ]
+    },
+    {
+     "name": "delete_subtask",
+     "description": "Delete a subtask from a task. Provide 'requestId', 'taskId', and 'subtaskId'.\n\nOnly uncompleted subtasks can be deleted.\n\nA progress table will be displayed showing the updated task with its remaining subtasks.",
+     "config": "pinkpixel-dev__taskflow-mcp__delete_subtask.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 300,
+       "text": "name: \"delete_subtask\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 615,
+       "text": "async delete_subtask(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 190,
+       "text": "delete_subtask: {"
+      }
+     ]
+    },
+    {
+     "name": "delete_task",
+     "description": "Delete a specific task from a request. Only uncompleted tasks can be deleted.\n\nA progress table will be displayed showing the remaining tasks after deletion.",
+     "config": "pinkpixel-dev__taskflow-mcp__delete_task.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 222,
+       "text": "name: \"delete_task\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 595,
+       "text": "async delete_task(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 153,
+       "text": "delete_task: {"
+      }
+     ]
+    },
+    {
+     "name": "export_task_status",
+     "description": "Export the current status of all tasks in a request to a file.\n\nThis tool saves the current state of tasks, subtasks, dependencies, and notes to a file for reference.\n\nYou can specify:\n- 'format': 'markdown', 'json', or 'html'\n- 'outputPath': Full path to save the file, or just a directory path\n- 'filename': Optional custom filename (auto-generated if not provided)\n\nPath handling:\n- If outputPath is a directory, filename will be auto-generated as '{project-name}_tasks.{ext}'\n- If outputPath includes filename, it will be used as-is\n- Relative paths are resolved from current working directory\n- If no path specified, saves to current working directory",
+     "config": "pinkpixel-dev__taskflow-mcp__export_task_status.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 317,
+       "text": "name: \"export_task_status\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 620,
+       "text": "async export_task_status(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 199,
+       "text": "export_task_status: {"
+      }
+     ]
+    },
+    {
+     "name": "get_next_task",
+     "description": "Given a 'requestId', return the next pending task (not done yet). If all tasks are completed, it will indicate that no more tasks are left and that you must ask the user what to do next.\n\nA progress table showing the current status of all tasks will be displayed with each response.\n\nIf the same task is returned again or if no new task is provided after a task was marked as done, you MUST NOT proceed. In such a scenario, you must prompt the user for approval before calling 'get_next_task' again. Do not skip the user's approval step.\nIn other words:\n- After calling 'mark_task_done', do not call 'get_next_task' again until the user has given approval for the completed task.\n- If 'get_next_task' returns 'all_tasks_done', it means all tasks have been completed. At this point, confirm with the user that all tasks have been completed, and optionally add more tasks via 'add_tasks_to_request' or 'plan_task'.",
+     "config": "pinkpixel-dev__taskflow-mcp__get_next_task.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 18,
+       "text": "\"2. After adding tasks, you MUST use 'get_next_task' to retrieve the first task. A progress table will be displayed.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 19,
+       "text": "\"3. Use 'get_next_task' to retrieve the next uncompleted task.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 22,
+       "text": "\"6. Once the user approves the completed task, you can proceed to 'get_next_task' again to fetch the next pending task.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 24,
+       "text": "\"8. After all tasks are completed, 'get_next_task' will indicate that all tasks are done. At this point, ask the user for confirmation that the entire request has been completed satisfactorily.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 98,
+       "text": "name: \"get_next_task\","
+      }
+     ]
+    },
+    {
+     "name": "get_prompts",
+     "description": "Get the current prompts configuration including instructions, taskPrefix, and taskSuffix settings.\n\nThis tool helps you view the current global prompts settings that are applied to all tasks.",
+     "config": "pinkpixel-dev__taskflow-mcp__get_prompts.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 427,
+       "text": "name: \"get_prompts\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 645,
+       "text": "async get_prompts() {"
+      }
+     ]
+    },
+    {
+     "name": "list_archived_requests",
+     "description": "List archived requests with optional search and filtering capabilities.\n\nProvides an overview of all archived requests with their metadata and completion information.",
+     "config": "pinkpixel-dev__taskflow-mcp__list_archived_requests.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 510,
+       "text": "name: \"list_archived_requests\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 669,
+       "text": "async list_archived_requests(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "list_requests",
+     "description": "List all requests with their basic information and summary of tasks. This provides a quick overview of all requests in the system.",
+     "config": "pinkpixel-dev__taskflow-mcp__list_requests.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 146,
+       "text": "name: \"list_requests\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 581,
+       "text": "async list_requests() {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 130,
+       "text": "list_requests: {"
+      }
+     ]
+    },
+    {
+     "name": "mark_subtask_done",
+     "description": "Mark a subtask as done. Provide 'requestId', 'taskId', and 'subtaskId'.\n\nA progress table will be displayed showing the updated status of all tasks and subtasks.\n\nAll subtasks must be completed before a task can be marked as done.",
+     "config": "pinkpixel-dev__taskflow-mcp__mark_subtask_done.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 20,
+       "text": "\"4. If the task has subtasks, complete each subtask using 'mark_subtask_done' before marking the task as done.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 264,
+       "text": "name: \"mark_subtask_done\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 605,
+       "text": "async mark_subtask_done(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 170,
+       "text": "mark_subtask_done: {"
+      }
+     ]
+    },
+    {
+     "name": "mark_task_done",
+     "description": "Mark a given task as done after you've completed it. Provide 'requestId' and 'taskId', and optionally 'completedDetails'.\n\nAfter marking a task as done, a progress table will be displayed showing the updated status of all tasks.\n\nAfter this, DO NOT proceed to 'get_next_task' again until the user has explicitly approved the completed task. Ask the user for approval before continuing.",
+     "config": "pinkpixel-dev__taskflow-mcp__mark_task_done.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 104,
+       "text": "\"- After calling 'mark_task_done', do not call 'get_next_task' again until the user has given approval for the completed task.\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 116,
+       "text": "name: \"mark_task_done\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 572,
+       "text": "async mark_task_done(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 116,
+       "text": "mark_task_done: {"
+      }
+     ]
+    },
+    {
+     "name": "open_task_details",
+     "description": "Get details of a specific task by 'taskId'. This is for inspecting task information at any point.",
+     "config": "pinkpixel-dev__taskflow-mcp__open_task_details.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 133,
+       "text": "name: \"open_task_details\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 577,
+       "text": "async open_task_details(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 125,
+       "text": "open_task_details: {"
+      }
+     ]
+    },
+    {
+     "name": "plan_task",
+     "description": "Register a new user request and plan its associated tasks. You must provide 'originalRequest' and 'tasks', and optionally 'splitDetails'.\n\nTasks can now include subtasks, which are smaller units of work that make up a task. All subtasks must be completed before a task can be marked as done.\n\nYou can also include:\n- 'dependencies': List of project or task-specific dependencies (libraries, tools, etc.)\n- 'notes': General notes about the project (preferences, guidelines, etc.)\n- 'outputPath': Path to save a Markdown file with the task plan for reference. It's recommended to use absolute paths (e.g., 'C:/Users/username/Documents/task-plan.md') rather than relative paths for more reliable file creation.\n\nThis tool initiates a new workflow for handling a user's request. The workflow is as follows:\n1. Use 'plan_task' to register a request and its tasks (with optional subtasks, dependencies, and notes).\n2. After adding tasks, you MUST use 'get_next_task' to retrieve the first task. A progress table will be displayed.\n3. Use 'get_next_task' to retrieve the next uncompleted task.\n4. If the task has subtasks, complete each subtask using 'mark_subtask_done' before marking the task as done.\n5. **IMPORTANT:** After marking a task as done, a progress table will be displayed showing the updated status of all tasks. The assistant MUST NOT proceed to another task without the user's approval. Ask the user for approval before proceeding.\n6. Once the user approves the completed task, you can proceed to 'get_next_task' again to fetch the next pending task.\n7. Repeat this cycle until all tasks are done.\n8. After all tasks are completed, 'get_next_task' will indicate that all tasks are done. At this point, ask the user for confirmation that the entire request has been completed satisfactorily.\n9. If the user wants more tasks, you can use 'add_tasks_to_request' or 'plan_task' to add new tasks and continue the cycle.\n\nThe critical point is to always wait for user approval after completing each task and after all tasks are done. Do not proceed automatically, UNLESS the user has explicitly told you to continue with all tasks and that you do not need approval.",
+     "config": "pinkpixel-dev__taskflow-mcp__plan_task.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 8,
+       "text": "name: \"plan_task\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 17,
+       "text": "\"1. Use 'plan_task' to register a request and its tasks (with optional subtasks, dependencies, and notes).\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 25,
+       "text": "\"9. If the user wants more tasks, you can use 'add_tasks_to_request' or 'plan_task' to add new tasks and continue the cycle.\\n\\n\" +"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 105,
+       "text": "\"- If 'get_next_task' returns 'all_tasks_done', it means all tasks have been completed. At this point, confirm with the user that all tasks have been completed, and optionally add more tasks via 'add_"
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 549,
+       "text": "async plan_task(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "remove_prompts",
+     "description": "Remove the entire prompts configuration or specific fields from it.\n\nIf 'fields' is provided, only those specific fields will be removed.\nIf 'fields' is not provided, the entire prompts configuration will be removed.",
+     "config": "pinkpixel-dev__taskflow-mcp__remove_prompts.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 471,
+       "text": "name: \"remove_prompts\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 659,
+       "text": "async remove_prompts(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "restore_archived_request",
+     "description": "Restore a specific archived request back to the active tasks file.\n\nThis moves the request from the archive back to active status, allowing you to continue working on it.",
+     "config": "pinkpixel-dev__taskflow-mcp__restore_archived_request.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 530,
+       "text": "name: \"restore_archived_request\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 674,
+       "text": "async restore_archived_request(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "set_prompts",
+     "description": "Set the global prompts configuration with instructions, taskPrefix, and/or taskSuffix.\n\nThis replaces any existing prompts settings with the new values provided.\n\n- 'instructions': General instructions or context shown at the top of each task\n- 'taskPrefix': Text to prepend before each task description\n- 'taskSuffix': Text to append after each task description",
+     "config": "pinkpixel-dev__taskflow-mcp__set_prompts.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 438,
+       "text": "name: \"set_prompts\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 649,
+       "text": "async set_prompts(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "update_note",
+     "description": "Update an existing note's title or content.\n\nProvide the 'requestId' and 'noteId', and optionally 'title' and/or 'content' to update.",
+     "config": "pinkpixel-dev__taskflow-mcp__update_note.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 369,
+       "text": "name: \"update_note\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 630,
+       "text": "async update_note(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 218,
+       "text": "update_note: {"
+      }
+     ]
+    },
+    {
+     "name": "update_prompts",
+     "description": "Update specific parts of the prompts configuration without replacing the entire object.\n\nUse this to modify individual fields (instructions, taskPrefix, or taskSuffix) while keeping other settings unchanged.",
+     "config": "pinkpixel-dev__taskflow-mcp__update_prompts.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 456,
+       "text": "name: \"update_prompts\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 654,
+       "text": "async update_prompts(args: any) {"
+      }
+     ]
+    },
+    {
+     "name": "update_subtask",
+     "description": "Update a subtask's title or description. Provide 'requestId', 'taskId', 'subtaskId', and optionally 'title' and/or 'description'.\n\nOnly uncompleted subtasks can be updated.\n\nA progress table will be displayed showing the updated task with its subtasks.",
+     "config": "pinkpixel-dev__taskflow-mcp__update_subtask.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 281,
+       "text": "name: \"update_subtask\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 610,
+       "text": "async update_subtask(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 179,
+       "text": "update_subtask: {"
+      }
+     ]
+    },
+    {
+     "name": "update_task",
+     "description": "Update an existing task's title and/or description. Only uncompleted tasks can be updated.\n\nA progress table will be displayed showing the updated task information.",
+     "config": "pinkpixel-dev__taskflow-mcp__update_task.json",
+     "hints": [
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 205,
+       "text": "name: \"update_task\","
+      },
+      {
+       "file": "src/tools/TaskFlowTools.ts",
+       "line": 590,
+       "text": "async update_task(args: any) {"
+      },
+      {
+       "file": "src/schemas/TaskFlowSchemas.ts",
+       "line": 143,
+       "text": "update_task: {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "makafeli/n8n-workflow-builder",
+   "slug": "makafeli__n8n-workflow-builder",
+   "lang": "node",
+   "commit": "411c0a75f512898572c3de80f86d5b5c3939f041",
+   "path": "eval/targets/makafeli__n8n-workflow-builder",
+   "surface_loc": 2723,
+   "tools": [
+    {
+     "name": "create_workflow",
+     "description": "Create and configure n8n workflows programmatically",
+     "config": "makafeli__n8n-workflow-builder__create_workflow.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 54,
+       "text": "\"create_workflow\","
+      },
+      {
+       "file": "src/index.cjs",
+       "line": 191,
+       "text": "name: 'create_workflow',"
+      },
+      {
+       "file": "src/index.cjs",
+       "line": 226,
+       "text": "name: 'create_workflow_and_activate',"
+      },
+      {
+       "file": "src/index.cjs",
+       "line": 360,
+       "text": "case 'create_workflow': {"
+      },
+      {
+       "file": "src/index.cjs",
+       "line": 378,
+       "text": "case 'create_workflow_and_activate': {"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "spences10/mcp-n8n-builder",
+   "slug": "spences10__mcp-n8n-builder",
+   "lang": "node",
+   "commit": "d77555be45280e57575bc651e905f0d5d5a9b3c1",
+   "path": "eval/targets/spences10__mcp-n8n-builder",
+   "surface_loc": 2708,
+   "tools": [
+    {
+     "name": "activate_workflow",
+     "description": "Activates a workflow by its ID, enabling it to run automatically based on its trigger (schedule, webhook, etc.). Note that only workflows with automatic trigger nodes can be activated - workflows with only manual triggers cannot be activated.",
+     "config": "spences10__mcp-n8n-builder__activate_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 129,
+       "text": "await this.activate_workflow(response.id);"
+      },
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 160,
+       "text": "async activate_workflow(id: string): Promise<any> {"
+      },
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 167,
+       "text": "async deactivate_workflow(id: string): Promise<any> {"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 12,
+       "text": "handle_activate_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 14,
+       "text": "handle_deactivate_workflow,"
+      }
+     ]
+    },
+    {
+     "name": "create_workflow",
+     "description": "Creates a new workflow in n8n with specified nodes and connections. Note that only workflows with automatic trigger nodes (schedule, webhook, etc.) can be activated - workflows with only manual triggers cannot be activated. Returns the created workflow with its assigned ID.",
+     "config": "spences10__mcp-n8n-builder__create_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 118,
+       "text": "async create_workflow("
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 13,
+       "text": "handle_create_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 88,
+       "text": "name: 'create_workflow',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 322,
+       "text": "case 'create_workflow':"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 323,
+       "text": "return await handle_create_workflow(api_client, args);"
+      }
+     ]
+    },
+    {
+     "name": "deactivate_workflow",
+     "description": "Deactivates a workflow by its ID, preventing it from running automatically. The workflow will still exist and can be manually executed or reactivated later. Use this instead of deleting workflows that you might need again.",
+     "config": "spences10__mcp-n8n-builder__deactivate_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 167,
+       "text": "async deactivate_workflow(id: string): Promise<any> {"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 14,
+       "text": "handle_deactivate_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 235,
+       "text": "name: 'deactivate_workflow',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 332,
+       "text": "case 'deactivate_workflow':"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 333,
+       "text": "return await handle_deactivate_workflow(api_client, args);"
+      }
+     ]
+    },
+    {
+     "name": "delete_workflow",
+     "description": "Permanently deletes a workflow by its ID. This action cannot be undone, so use with caution. Consider deactivating workflows instead if you might need them again later.",
+     "config": "spences10__mcp-n8n-builder__delete_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 153,
+       "text": "async delete_workflow(id: string): Promise<any> {"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 15,
+       "text": "handle_delete_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 203,
+       "text": "name: 'delete_workflow',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 328,
+       "text": "case 'delete_workflow':"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 329,
+       "text": "return await handle_delete_workflow(api_client, args);"
+      }
+     ]
+    },
+    {
+     "name": "get_execution",
+     "description": "Retrieves detailed information about a specific workflow execution, including execution time, status, and optionally the full data processed at each step. Particularly useful for debugging failed workflows or understanding data transformations between nodes.",
+     "config": "spences10__mcp-n8n-builder__get_execution.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 207,
+       "text": "async get_execution("
+      },
+      {
+       "file": "src/resource-handlers.ts",
+       "line": 175,
+       "text": "const execution = await api_client.get_execution("
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 22,
+       "text": "handle_get_execution,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 283,
+       "text": "name: 'get_execution',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 336,
+       "text": "case 'get_execution':"
+      }
+     ]
+    },
+    {
+     "name": "get_workflow",
+     "description": "Retrieves complete details of a specific workflow by its ID, including all nodes, connections, settings, and metadata. Use this tool when you need to examine a workflow's structure before updating it or to understand how it works.",
+     "config": "spences10__mcp-n8n-builder__get_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 139,
+       "text": "async get_workflow(id: string): Promise<any> {"
+      },
+      {
+       "file": "src/resource-handlers.ts",
+       "line": 150,
+       "text": "const workflow = await api_client.get_workflow(workflow_id);"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 16,
+       "text": "handle_get_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 135,
+       "text": "name: 'get_workflow',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 159,
+       "text": "'Updates an existing workflow with new configuration. Typically used after retrieving a workflow with get_workflow, modifying its structure, and then saving the changes. The entire workflow structure "
+      }
+     ]
+    },
+    {
+     "name": "list_available_nodes",
+     "description": "Lists all available nodes in the n8n instance. Use this tool BEFORE creating or updating workflows to ensure you only use valid node types. This helps prevent errors caused by using node types that do not exist in the current n8n instance.",
+     "config": "spences10__mcp-n8n-builder__list_available_nodes.json",
+     "hints": [
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 26,
+       "text": "import { handle_list_available_nodes } from './node-tools.js';"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 39,
+       "text": "name: 'list_available_nodes',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 318,
+       "text": "case 'list_available_nodes':"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 319,
+       "text": "return await handle_list_available_nodes(args);"
+      },
+      {
+       "file": "src/tool-handlers/node-tools.ts",
+       "line": 10,
+       "text": "* Handles the list_available_nodes tool"
+      }
+     ]
+    },
+    {
+     "name": "list_executions",
+     "description": "Lists workflow execution history with details on success/failure status, duration, and timestamps. Use this tool to monitor workflow performance, troubleshoot issues, or verify that workflows are running as expected. Results can be filtered by workflow ID, status, and limited to a specific number.",
+     "config": "spences10__mcp-n8n-builder__list_executions.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 174,
+       "text": "async list_executions("
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 23,
+       "text": "handle_list_executions,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 251,
+       "text": "name: 'list_executions',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 292,
+       "text": "'ID of the execution to retrieve - can be obtained from list_executions',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 334,
+       "text": "case 'list_executions':"
+      }
+     ]
+    },
+    {
+     "name": "list_workflows",
+     "description": "Lists all workflows from n8n with their basic information including ID, name, status, creation date, and tags. Use this tool to get an overview of available workflows before performing operations on specific workflows. Results can be filtered by active status, tags, or name.",
+     "config": "spences10__mcp-n8n-builder__list_workflows.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 87,
+       "text": "async list_workflows(options?: ListWorkflowsOptions): Promise<any> {"
+      },
+      {
+       "file": "src/resource-handlers.ts",
+       "line": 125,
+       "text": "const workflows = await api_client.list_workflows();"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 17,
+       "text": "handle_list_workflows,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 60,
+       "text": "name: 'list_workflows',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 144,
+       "text": "'ID of the workflow to retrieve - can be obtained from list_workflows',"
+      }
+     ]
+    },
+    {
+     "name": "update_workflow",
+     "description": "Updates an existing workflow with new configuration. Typically used after retrieving a workflow with get_workflow, modifying its structure, and then saving the changes. The entire workflow structure must be provided, not just the parts being changed.",
+     "config": "spences10__mcp-n8n-builder__update_workflow.json",
+     "hints": [
+      {
+       "file": "src/n8n-api-client.ts",
+       "line": 146,
+       "text": "async update_workflow(id: string, workflow: any): Promise<any> {"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 18,
+       "text": "handle_update_workflow,"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 157,
+       "text": "name: 'update_workflow',"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 326,
+       "text": "case 'update_workflow':"
+      },
+      {
+       "file": "src/tool-handlers/index.ts",
+       "line": 327,
+       "text": "return await handle_update_workflow(api_client, args);"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

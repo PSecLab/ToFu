@@ -1,0 +1,1414 @@
+{
+ "repo": "blazickjp/web-browser-mcp-server",
+ "tool": "browse_webpage",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "97f66a9df0b1d6281a3e939732fb99aac8accd88",
+ "draft": "blazickjp__web-browser-mcp-server__browse_webpage__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 296,
+ "note": "296 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: '",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '/etc/passwd\\x00', 'selectors': {'etc': '#file'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: /etc/passwd%00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'file:///etc/passwd', 'selectors': {'file': 'body'}}",
+   "triggered_sanitizers": "['check_strict_markitdown_security_contract', 'check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: file:///etc/passwd'",
+   "analysis": "[Sequence Step 1/1] Markdown Output Alert: Sensitive file content or path disclosed in Markdown outputSilent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'selectors': {'title': 'h1'}}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_strict_url_security_contract', 'check_strict_markitdown_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Cannot connect to host 127.0.0.1:8500 ssl:default [Connect call failed ('127.0.0.1', 8500)]\"",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 8500).Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'MarkItDown Security Bypass Alert! Malicious/Invalid URI input was ACCEPTED or executed side-effects by MarkItDown. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. URI: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '../../../../etc/passwd', 'selectors': {'passwd': 'pre'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: ../../../../etc/passwd'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://[::ffff:127.0.0.1]', 'selectors': {'ipv6': 'body'}}",
+   "triggered_sanitizers": "['check_strict_url_security_contract', 'check_strict_markitdown_security_contract', 'check_url_hostname_canonicalization', 'check_url_alternative_ip_representations', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Cannot connect to host ::ffff:127.0.0.1:80 ssl:default [Connect call failed ('::ffff:127.0.0.1', 80, 0, 0)]\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Canonicalization Error: Invalid characters in DNS label '::ffff:127' | IP Representation Error: IPv4-mapped IPv6 address detected pointing to '127.0.0.1' | SSRF Protection Alert: Loopback IP address detected: ::ffff:127.0.0.1]. Input: 'http://[::ffff:127.0.0.1]'MarkItDown Security Bypass Alert! Malicious/Invalid URI input was ACCEPTED or executed side-effects by MarkItDown. Violations: [SSRF Protection Alert: Loopback IP address detected: ::ffff:127.0.0.1]. URI: 'http://[::ffff:127.0.0.1]'Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization', 'check_url_alternative_ip_representations', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://localhost:8080', 'selectors': {'main': 'div.main-content'}}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_strict_url_security_contract', 'check_strict_markitdown_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Cannot connect to host localhost:8080 ssl:default [Connect call failed ('127.0.0.1', 8080)]\"",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 8080).Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'MarkItDown Security Bypass Alert! Malicious/Invalid URI input was ACCEPTED or executed side-effects by MarkItDown. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. URI: 'http://localhost:8080'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'selectors': {'winini': 'body'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: ..%5C..%5C..%5C..%5Cwindows%5Cwin.ini'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://169.254.169.254/latest/meta-data/', 'selectors': {'meta': '#meta-data'}}",
+   "triggered_sanitizers": "['check_resource_exhaustion', 'check_introspection_ssrf', 'check_strict_url_security_contract', 'check_strict_markitdown_security_contract', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Cannot connect to host 169.254.169.254:80 ssl:default [Connect call failed ('169.254.169.254', 80)]\"",
+   "analysis": "[Sequence Step 1/1] Resource exhaustion/Timeout detected: Execution took 3.10 seconds (Limit: 2.0s). Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '169.254.169.254' (port: 80).Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [SSRF Protection Alert: Cloud Metadata target detected: '169.254.169.254']. Input: 'http://169.254.169.254/latest/meta-data/'MarkItDown Security Bypass Alert! Malicious/Invalid URI input was ACCEPTED or executed side-effects by MarkItDown. Violations: [SSRF Protection Alert: Cloud Metadata target detected: '169.254.169.254']. URI: 'http://169.254.169.254/latest/meta-data/'Silent Bug Alert: Sanitizers ['check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'data:text/html;base64,PGh0bWw+SGFja2VkPC9odG1sPg==', 'selectors': {'data': 'html'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: data:text/html;base64,PGh0bWw+SGFja2VkPC9odG1sPg=='",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 123\\r\\r\\r\\r\\r\\r\\r\\r: \"di\\r\\r\\r45, \"selectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20123:%20%22di45,%20%22selectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 123\\r\\r\\r\\r\\r\\r\\r\\r: \"di\\r\\r<45, \"selectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20123:%20%22di%3C45,%20%22selectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 123\\r\\r\\r\\r\\r\\r\\r\\r: \"di\\r\\r<45, \"elsectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20123:%20%22di%3C45,%20%22elsectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 123\\r\\r\\r\\r\\r\\r\\r\\r: \"di\\r\\r<46, \"elsectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20123:%20%22di%3C46,%20%22elsectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": {\"num\": \"div\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%7B%22num%22:%20%22div%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": {\"num\": \"div\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00T\\x00\\x00\\x00\\x00\\x00\\x00\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%7B%22num%22:%20%22div%00%00%00%00%00%00%00%00%00T%00%00%00%00%00%00%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 1234%, \"selectors\": {\"num\": \"div\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00T\\x00\\x00\\x00\\x00\\x00\\x00\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%201234%25,%20%22selectors%22:%20%7B%22num%22:%20%22div%00%00%00%00%00%00%00%00%00T%00%00%00%00%00%00%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":! 1234%, \"selectors\": {\"num\": \"div\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00T\\x00\\x00\\x00\\x00\\x00\\x00\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:!%201234%25,%20%22selectors%22:%20%7B%22num%22:%20%22div%00%00%00%00%00%00%00%00%00T%00%00%00%00%00%00%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":! 1234%, \"selectors\": {\"num\": \"div\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:!%201234%25,%20%22selectors%22:%20%7B%22num%22:%20%22div%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://etlxample.com\", \"selc[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://etlxample.com%22,%20%22selc%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://etlxample.co[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://etlxample.co%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": passwd\\\\u0000\", \"selectors\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": passwd\\\\u0000\", \"selectors\": {\"etc^E_X#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%5EE_X#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": passwd\\\\u0000\", \"se=lectors\": {\"etc^E_X#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20passwd%5Cu0000%22,%20%22se=lectors%22:%20%7B%22etc%5EE_X#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": passwd\\\\u0000\", \"s\\x14B\\x13\\x1actors\": {\"etc^E_X#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20passwd%5Cu0000%22,%20%22s%14B%13%1Actors%22:%20%7B%22etc%5EE_X#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": passwd\\\\u0000 \"\",s\\x14B\\x13\\x1actors\": {\"etc^E_X#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20passwd%5Cu0000%20%22%22,s%14B%13%1Actors%22:%20%7B%22etc%5EE_X#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22h'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"`h', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22%60h'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u{\"url\": \"/etrl\": \"`c/passwd\\\\u0', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%7B%22url%22:%20%22/etrl%22:%20%22%60c/passwd%5Cu0'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u{\"u:rl\": \"/etrl\": \"`c/passwd\\\\u0', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%7B%22u:rl%22:%20%22/etrl%22:%20%22%60c/passwd%5Cu0'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u{\"u:rl\": \"/etrl\":0\"`c/passwd\\\\u0', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%7B%22u:rl%22:%20%22/etrl%22:0%22%60c/passwd%5Cu0'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'htt:/.example.com', 'selectors': 'no~,an-o'}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: htt:/.example.com'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '/etc/passd\\x00', 'selectors': {'etc': '#file'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: /etc/passd%00'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"zurl\": \"/etc/passwd\\\\u0000\", \"selec rt\":so{\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22zurl%22:%20%22/etc/passwd%5Cu0000%22,%20%22selec%20rt%22:so%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"zurl\": \"/etc/passswwd\\\\u0000\", \"selec rt\":so{\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22zurl%22:%20%22/etc/passswwd%5Cu0000%22,%20%22selec%20rt%22:so%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"zurl\": \"/etc/passswwssswwd\\\\u0000\", \"selec o{\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22zurl%22:%20%22/etc/passswwssswwd%5Cu0000%22,%20%22selec%20o%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x13\\x1b\\x13\\x13selectors\": {\"num\":`\"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%13%1B%13%13selectors%22:%20%7B%22num%22:%60%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x13\\x1b\\x13\\x13selectors\": {\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\\x05\"num\":`\"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%13%1B%13%13selectors%22:%20%7B%05%05%05%05%05%05%05%05%05%05%05%05%22num%22:%60%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x13\\x1b\\x13\\x13selectors\": {\\x05\\x05\\x05\\x05E\\x05\\x05\\x05\\x05\\x05\\x05\\x05\"num\":`\"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%13%1B%13%13selectors%22:%20%7B%05%05%05%05E%05%05%05%05%05%05%05%22num%22:%60%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Murl\": \"hitp://example.com\", \"selectors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Murl%22:%20%22hitp://example.com%22,%20%22selectors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Murl\": \"hitp://example.com\", \"selectors\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Murl%22:%20%22hitp://example.com%22,%20%22selectors%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Murl$: \"hitp://example.com\", \"selectors\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Murl$:%20%22hitp://example.com%22,%20%22selectors%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Murl$: \"hitp://exa2mple.com\", \"selectors\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Murl$:%20%22hitp://exa2mple.com%22,%20%22selectors%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\"500\",, \"selerrrrrrrrrrrctors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22500%22,,%20%22selerrrrrrrrrrrctors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\"400\",, \"selerrrrrrrrrrrctors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22400%22,,%20%22selerrrrrrrrrrrctors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http9//example.com\"400\",, \"selerrrrrrrrrrrctors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http9//example.com%22400%22,,%20%22selerrrrrrrrrrrctors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http9//exam\"url\": \"http9//example.com\"400\",tors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http9//exam%22url%22:%20%22http9//example.com%22400%22,tors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://ex\\x0f\\x0f\\x0f\\x0f\\x0f\\x0f\\x0fample.com\", \"selectors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://ex%0F%0F%0F%0F%0F%0F%0Fample.com%22,%20%22selectors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://ex\\x0f\\x0f\\x0f\\x0f\\x0f\\x0f\\x0fample.coctors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://ex%0F%0F%0F%0F%0F%0F%0Fample.coctors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://ex\\x0f\\x0f\\x0f\\x0f\\x0f\\x0f\\x0fample.coctnrs\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://ex%0F%0F%0F%0F%0F%0F%0Fample.coctnrs%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://ex[\\x0f\\x0f\\x0f\\x0f\\x0f\\x0f\\x0fample.coctnrs\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://ex%5B%0F%0F%0F%0F%0F%0F%0Fample.coctnrs%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"htt\\x0f\\x0fample.coctnrs\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22htt%0F%0Fample.coctnrs%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://127.0.0.1:8500', 'selectors': {'title': 'h0'}}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_strict_url_security_contract', 'check_strict_markitdown_security_contract', 'check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: Cannot connect to host 127.0.0.1:8500 ssl:default [Connect call failed ('127.0.0.1', 8500)]\"",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 8500).Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'MarkItDown Security Bypass Alert! Malicious/Invalid URI input was ACCEPTED or executed side-effects by MarkItDown. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. URI: 'http://127.0.0.1:8500'Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http:>/127.0.0.1:8500', 'selectors': {'title': 'h0'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: http:///%3E/127.0.0.1:8500'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:>/127.0.0.1:8500\", \"sele\": \"h0\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:%3E/127.0.0.1:8500%22,%20%22sele%22:%20%22h0%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:>\\x00/27.0.0.1:8500\", \"sele\": \"h0\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:%3E%00/27.0.0.1:8500%22,%20%22sele%22:%20%22h0%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:>\\x00/27.0.0.1:8500\", \"sele\": \"h\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f0\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:%3E%00/27.0.0.1:8500%22,%20%22sele%22:%20%22h%7F%7F%7F%7F%7F%7F%7F%7F%7F%7F0%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http:/2example.com', 'selectors': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: http:///2example.com'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/2example.com\", ectors\": []: [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:/2example.com%22,%20ectors%22:%20%5B%5D:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/2example.com\", ectors [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:/2example.com%22,%20ectors%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/2e\\x04xample.com\", ectors [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:/2e%04xample.com%22,%20ectors%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:{\"url\": 12345', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:%7B%22url%22:%2012345'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"selectors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22selectors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"selectors\": {\"title\": com\", \"selectors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22selectors%22:%20%7B%22title%22:%20com%22,%20%22selectors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '筳汥捥潴獲㨢笠琢瑩敬㨢挠浯Ⱒ∠敳敬瑣牯≳›', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %E7%AD%B3%E6%B1%A5%E6%8D%A5%E6%BD%B4%E7%8D%B2%E3%A8%A2%E7%AC%A0%E7%90%A2%E7%91%A9%E6%95%AC%E3%A8%A2%E6%8C%A0%E6%B5%AF%E2%B0%A2%E2%88%A0%E6%95%B3%E6%95%AC%E7%91%A3%E7%89%AF%E2%89%B3%E2%80%BA'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '筳汥捥潴獲㨢笠琢瑩敬㨢挠敯敬瑣牯≳›', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %E7%AD%B3%E6%B1%A5%E6%8D%A5%E6%BD%B4%E7%8D%B2%E3%A8%A2%E7%AC%A0%E7%90%A2%E7%91%A9%E6%95%AC%E3%A8%A2%E6%8C%A0%E6%95%AF%E6%95%AC%E7%91%A3%E7%89%AF%E2%89%B3%E2%80%BA'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '筳汥捥潴獲㨢笠琢瑩敬㨢挠肀肀肀肀肀肀肀肀肀敯敬瑣牯≳›', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %E7%AD%B3%E6%B1%A5%E6%8D%A5%E6%BD%B4%E7%8D%B2%E3%A8%A2%E7%AC%A0%E7%90%A2%E7%91%A9%E6%95%AC%E3%A8%A2%E6%8C%A0%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E8%82%80%E6%95%AF%E6%95%AC%E7%91%A3%E7%89%AF%E2%89%B3%E2%80%BA'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\"url\"l\": \"http:/:/12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%7B%22url%22l%22:%20%22http:/:/12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\"url\"l\":\"http:/:/12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%7B%22url%22l%22:%22http:/:/12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\"url\"l\":&http:/:/12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%7B%22url%22l%22:&http:/:/12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x1a&http:/:/12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%7B%00%00%00%00%00%00%00%1A&http:/:/12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x16\": \"/etc/passwd\\\\u0000\", \"selectors\": {\"etc\": \"#file\"', 'selectors': {'etc': '#file'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%16%22:%20%22/etc/passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x16\": \"/etc/passwd\\\\u0000\", \"selectors\": {\"etc\" :\"#file\"', 'selectors': {'etc': '#file'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%16%22:%20%22/etc/passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22%20:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x16\": \"/etc/passwd\\\\u0000\", \"selectors\": {\"etc\" :\"#filelec\"', 'selectors': {'etc': '#filelec'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%16%22:%20%22/etc/passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22%20:%22#filelec%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x1f\\x16\": \"/etc/passwd\\\\u0000\", \"selectors\": {\"etc\" :\"#filelec\"', 'selectors': {'etc': '#filelec'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%1F%16%22:%20%22/etc/passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22%20:%22#filelec%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\\x1f\\x16\": \"/edc/passwd\\\\u0000\", \"selectors\": {\"etc\" :\"#filelec\"', 'selectors': {'etc': '#filelec'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%1F%16%22:%20%22/edc/passwd%5Cu0000%22,%20%22selectors%22:%20%7B%22etc%22%20:%22#filelec%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"sel\"url\":\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22sel%22url%22:%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"sel\"url\":B: \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22sel%22url%22:B:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"sel url\":B: \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22sel%20url%22:B:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"sel u\\x0e\\x13]LB: \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22sel%20u%0E%13%5DLB:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00selectors\": {\"ntor(sum\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%01%00%00%00%00%00%00%00selectors%22:%20%7B%22ntor(sum%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00selectors\": {\"sum\": \"div\"\"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%01%00%00%00%00%00%00%00selectors%22:%20%7B%22sum%22:%20%22div%22%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00selecto r\"\"s{:sum\": \"div\"\"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22%01%00%00%00%00%00%00%00selecto%20r%22%22s%7B:sum%22:%20%22div%22%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://example,com', 'selectors': []}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "'Error: Cannot connect to host example,com:80 ssl:default [Name or service not known]'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://example,com', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "'Error: Cannot connect to host example,com:80 ssl:default [Name or service not known]'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'h*ttp://example,com', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: h*ttp://example,com'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h*ttp://example,com\", \"selecto[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22h*ttp://example,com%22,%20%22selecto%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"h*ttp://example,com\"\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04\\x04, \"selecto[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22h*ttp://example,com%22%04%04%04%04%04%04%04%04%04%04%04%04%04%04%04%04%04,%20%22selecto%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \\x1cselectorFs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/passwd%5Cu0000%22,%20%1CselectorFs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0/pas, \\x1cselectorFs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/passwd%5Cu0/pas,%20%1CselectorFs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/pa3swd\\\\u0/pas, \\x1cselectorFs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/pa3swd%5Cu0/pas,%20%1CselectorFs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/pa3swd\\\\cu0/pas, \\x1cselectorFs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/pa3swd%5Ccu0/pas,%20%1CselectorFs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://e000\", \"selectors\": {\"es\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://e000%22,%20%22selectors%22:%20%7B%22es%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\"url\": \"hturl\": \"http://e000\", \"selectors\": {\"es\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22%22url%22:%20%22hturl%22:%20%22http://e000%22,%20%22selectors%22:%20%7B%22es%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\"url\": \"hturl\":d]http://e000\", \"selectors\": {\"es\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22%22url%22:%20%22hturl%22:d%5Dhttp://e000%22,%20%22selectors%22:%20%7B%22es%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\"url\": \"hturl\":d]http://e000\", \"select8\\x00\\x00\\x00\\x00\\x00\\x00\\x00es\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22%22url%22:%20%22hturl%22:d%5Dhttp://e000%22,%20%22select8%00%00%00%00%00%00%00es%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"\"url\": \"hturl\":d]http://e00\\'\", \"select8\\x00\\x00\\x00\\x00\\x00\\x00\\x00es\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: %22%22url%22:%20%22hturl%22:d%5Dhttp://e00'%22,%20%22select8%00%00%00%00%00%00%00es%22:%20%5B\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example\\x00\\x00\\x00\\x00.com\", \"selectors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example%00%00%00%00.com%22,%20%22selectors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://gxample\\x00\\x00\\x00\\x00.com\", \"selectors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://gxample%00%00%00%00.com%22,%20%22selectors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://gxample\\x00\\x00\\x00\\x00.com\",& \"selectors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://gxample%00%00%00%00.com%22,&%20%22selectors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://gxample\\x00\\x00\\x00\\x00.com\",& \"selectors\": \"no\\x16~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://gxample%00%00%00%00.com%22,&%20%22selectors%22:%20%22no%16~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://gxample\\x00\\x00\\x00\\x00.com\",& \"selectors\": ,no\\x16~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://gxample%00%00%00%00.com%22,&%20%22selectors%22:%20,no%16~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"th:\" tp://127.0.0.1:8500\", \"selectors\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22th:%22%20tp://127.0.0.1:8500%22,%20%22selectors%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x02url\"th:\" tp://127.0.0.1:8500\", \"selectors\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: url%22th:%22%20tp://127.0.0.1:8500%22,%20%22selectors%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x02url\"th:\" tp://127.0.07.0.0.1:8500\", \"selectors\": {\"\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: url%22th:%22%20tp://127.0.07.0.0.1:8500%22,%20%22selectors%22:%20%7B%22%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x02url\"th:\" tp://127.0.>7.0.0.1:8500\", \"selectors\": {\"\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: url%22th:%22%20tp://127.0.%3E7.0.0.1:8500%22,%20%22selectors%22:%20%7B%22%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x02url\"th:\" tp://127.0.>7.0.0h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: url%22th:%22%20tp://127.0.%3E7.0.0h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": {\"num\": \"d!\\t]', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%7B%22num%22:%20%22d!%5D'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"select\"osr: {\"num\": \"d!\\t]', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22select%22osr:%20%7B%22num%22:%20%22d!%5D'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, (select\"osr: {\"num\": \"d!\\t]', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20(select%22osr:%20%7B%22num%22:%20%22d!%5D'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, (select\"osr: {\"num\":\\t]', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20(select%22osr:%20%7B%22num%22:%5D'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"se \"htors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22se%20%22htors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/]example.com\", \"se \"htors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:/%5Dexample.com%22,%20%22se%20%22htors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:/]example.com\", \"se \"htors\"e.[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:/%5Dexample.com%22,%20%22se%20%22htors%22e.%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '.url\": \"http:/]example.com\", \"se \"htors\"e.[', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: .url%22:%20%22http:/%5Dexample.com%22,%20%22se%20%22htors%22e.%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": {\"num\"\\x01\\x00: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%7B%22num%22%01%00:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'l\": 12345, \"selectors\": {\"num\"\\x01\\x00: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: l%22:%2012345,%20%22selectors%22:%20%7B%22num%22%01%00:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'l\": 12345, \"selectors\": {\"num#\\x01\\x00: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: l%22:%2012345,%20%22selectors%22:%20%7B%22num#%01%00:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'l\": 12345, X\"selectors\": {\"num#\\x01\\x00: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: l%22:%2012345,%20X%22selectors%22:%20%7B%22num#%01%00:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'l\": 12345, X\"sele+\\x00\\x00\\x00s\": {\"num#\\x01\\x00: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: l%22:%2012345,%20X%22sele+%00%00%00s%22:%20%7B%22num#%01%00:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"selectors\": \\'no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: %22url%22:%20%22http://example.com%22,%20%22selectors%22:%20'no~-an-o\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exam\\x00\\x00\\x00\\x00\\x00ple.com\", \"selectors\": \\'no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: %22url%22:%20%22http://exam%00%00%00%00%00ple.com%22,%20%22selectors%22:%20'no~-an-o\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exam\\x00\\x00\\x00\\x01\\x00\\x00\\x00ple.com\", \"selectors\": \\'no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "\"Error: %22url%22:%20%22http://exam%00%00%00%01%00%00%00ple.com%22,%20%22selectors%22:%20'no~-an-o\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":{\"ur', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%7B%22ur'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"u\"{lr:\"ur', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22u%22%7Blr:%22ur'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \\x0b\\x00\\x00\\x00\\x00\\x00\\x00\\x00rs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/passwd%5Cu0000%22,%20%0B%00%00%00%00%00%00%00rs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \\x02/etc/passwd\\\\u0000\", \\x0b\\x00\\x00\\x00\\x00\\x00\\x00\\x00rs\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%02/etc/passwd%5Cu0000%22,%20%0B%00%00%00%00%00%00%00rs%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \\x02/etc/passwd\\\\u0000\", \\x0b\\x00\\x00\\x00\\x00\\x00\\x00\\x00rs\": {\"itc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%02/etc/passwd%5Cu0000%22,%20%0B%00%00%00%00%00%00%00rs%22:%20%7B%22itc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \\x02/etc/passwd\\\\u000\"0\", \\x0b\\x00\\x00\\x00\\x00\\x00\\x00\\x00rs\": {\"itc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%02/etc/passwd%5Cu000%220%22,%20%0B%00%00%00%00%00%00%00rs%22:%20%7B%22itc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"uzl\": \\x02/etc/passwd\\\\u000\"0\", \\x0b\\x00\\x00\\x00\\x00\\x00\\x00\\x00rs\": {\"itc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22uzl%22:%20%02/etc/passwd%5Cu000%220%22,%20%0B%00%00%00%00%00%00%00rs%22:%20%7B%22itc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"selectors\": \\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://127.0.0.1:8500%22,%20%22selectors%22:%20%01%00%00%00%00%00%00%00:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"selectors\": \\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"h2\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://127.0.0.1:8500%22,%20%22selectors%22:%20%01%00%00%00%00%00%00%00:%20%22h2%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"httv://127.0.0.1:8500\", \"selectors\": \\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"h2\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22httv://127.0.0.1:8500%22,%20%22selectors%22:%20%01%00%00%00%00%00%00%00:%20%22h2%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '.url\": \"httv://127.0.0.1:8500\", \"selectors\": \\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00: \"h2\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: .url%22:%20%22httv://127.0.0.1:8500%22,%20%22selectors%22:%20%01%00%00%00%00%00%00%00:%20%22h2%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://12107...0:8500', 'selectors': {'title': 'h1'}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization']",
+   "tool_output": "\"Error: 'idna' codec can't encode character '\\\\x2e' in position 6: label empty\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:...0:8500\", \"selectors\": {\"title\": \"h1\"}} \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:...0:8500%22,%20%22selectors%22:%20%7B%22title%22:%20%22h1%22%7D%7D%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http: \"http:...0:8500\", \"selectors\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:%20%22http:...0:8500%22,%20%22selectors%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"helectors\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22helectors%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"helectors\": {\"title\": \"h2\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22helectors%22:%20%7B%22title%22:%20%22h2%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://xleae<<<<<emp.com', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "'Error: Cannot connect to host xleae<<<<<emp.com:80 ssl:default [Name or service not known]'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '9\\x00\\x00\\x00\\x00\\x00\\x00\\x00http://xleae<<<<<emp.com\", \"sele<<<<<ctors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: 9%00%00%00%00%00%00%00http://xleae%3C%3C%3C%3C%3Cemp.com%22,%20%22sele%3C%3C%3C%3C%3Cctors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\", \"sel000\", \"selectors\"-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22,%20%22sel000%22,%20%22selectors%22-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urp\": \"http://example.com\", \"sel000\", \"selectors\"-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22urp%22:%20%22http://example.com%22,%20%22sel000%22,%20%22selectors%22-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urp\": p\"t:ht//example.com\", \"sel000\", \"selectors\"-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22urp%22:%20p%22t:ht//example.com%22,%20%22sel000%22,%20%22selectors%22-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12ample.345, \"selectors\": {\"nuTm\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012ample.345,%20%22selectors%22:%20%7B%22nuTm%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12ample.345, \"selectorrs\": \"nos\": {\"nuTm\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012ample.345,%20%22selectorrs%22:%20%22nos%22:%20%7B%22nuTm%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12ample.345, \"selectorrs\": \"nos\": {\"nuTm\": \"d]iv\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012ample.345,%20%22selectorrs%22:%20%22nos%22:%20%7B%22nuTm%22:%20%22d%5Div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12ample.345, \"selectorrs\": \"nos\": {\"nuTm\": \" \"d]iv\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012ample.345,%20%22selectorrs%22:%20%22nos%22:%20%7B%22nuTm%22:%20%22%20%22d%5Div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\"3 \"selectors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%223%20%22selectors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://example.com\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00.tors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://example.com%22%00%00%00%00%00%00%00.tors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http:tp://example.com\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00.tors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http:tp://example.com%22%00%00%00%00%00%00%00.tors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \\x7f\\x7f\\x7f\\x7fp:tp://example.com\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00.tors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%7F%7F%7F%7Fp:tp://example.com%22%00%00%00%00%00%00%00.tors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \\x7f{\\x7f\\x7fp:tp://example.com\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00.tors\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%7F%7B%7F%7Fp:tp://example.com%22%00%00%00%00%00%00%00.tors%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": {\"num\": \"divY}YY\"}YYYYYYYYY', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%7B%22num%22:%20%22divY%7DYY%22%7DYYYYYYYYY'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur9\\x00\\x00\\x0012345, \"selectors\": {\"num\": \"divY}YY\"}YYYYYYYYY', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur9%00%00%0012345,%20%22selectors%22:%20%7B%22num%22:%20%22divY%7DYY%22%7DYYYYYYYYY'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur9\\x00\\x00\\x001234u, \"selectors\": {\"num\": \"divY}YY\"}YYYYYYYYY', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur9%00%00%001234u,%20%22selectors%22:%20%7B%22num%22:%20%22divY%7DYY%22%7DYYYYYYYYY'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur9\\x00\\x00\\x001234u, \"selectors\": {\"num\"a \"divY}YY\"}YYYYYYYYY', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur9%00%00%001234u,%20%22selectors%22:%20%7B%22num%22a%20%22divY%7DYY%22%7DYYYYYYYYY'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\", \"sel{\"ectors\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/passwd%5Cu0000%22,%20%22sel%7B%22ectors%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"/etc/passwd\\\\u0000\"\\x00\\x00\\x00\\x00el{\"ectors\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22/etc/passwd%5Cu0000%22%00%00%00%00el%7B%22ectors%22:%20%7B%22etc%22:%20%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": ?/etc/passwd\\\\u0000\"\\x00\\x00\\x00\\x00el{\"ectors\": {\"etc\": \"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20?/etc/passwd%5Cu0000%22%00%00%00%00el%7B%22ectors%22:+%7B%22etc%22:+%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": ?/etc/passwd\\\\u0000\"\\x00\\x00\\x00\\x00el{\"ectors\": {\"\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20?/etc/passwd%5Cu0000%22%00%00%00%00el%7B%22ectors%22:+%7B%22%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": ?/etc/passwd\\\\u0\": {\"\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20?/etc/passwd%5Cu0%22:+%7B%22%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://127.0.0.1:8500\", \"rs\": {\"rs\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://127.0.0.1:8500%22,%20%22rs%22:%20%7B%22rs%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\\x02\\x00\\x00\\x00\\x00\\x00\\x00\\x00://127.0.0.1:8500\", \"rs\": {\"rs\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%02%00%00%00%00%00%00%00://127.0.0.1:8500%22,%20%22rs%22:%20%7B%22rs%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\\x02\\x00\\x0b\\x00\\x00\\x00\\x00\\x00://127.0.0.1:8500\", \"rs\": {\"rs\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%02%00%0B%00%00%00%00%00://127.0.0.1:8500%22,%20%22rs%22:%20%7B%22rs%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00://127.0.0.1:8500\", \"rs\": {\"rs\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%00%00%00%00%00%00%00%00://127.0.0.1:8500%22,%20%22rs%22:%20%7B%22rs%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00://12.70.0.1:8500\", \"rs\": {\"rs\": {\"title\": \"h1\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%00%00%00%00%00%00%00%00://12.70.0.1:8500%22,%20%22rs%22:%20%7B%22rs%22:%20%7B%22title%22:%20%22h1%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\\x00\\x00\\x00l\": ?/etc/passwd\\\\u0\": {\"\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%00%00%00l%22:%20?/etc/passwd%5Cu0%22:+%7B%22%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\"div\"}}?/etc/passwd\\\\u0\": {\"\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%22div%22%7D%7D?/etc/passwd%5Cu0%22:+%7B%22%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\"div\"}}?/etc/passwd\\\\u0\": {\"\"eti\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%22div%22%7D%7D?/etc/passwd%5Cu0%22:+%7B%22%22eti%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\"div\"}}?/etc/passwd\\\\u0\": {\"\"eti\":\"#file\"\\x12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%22div%22%7D%7D?/etc/passwd%5Cu0%22:+%7B%22%22eti%22:%22#file%22%12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur\\x00\"div\"}}?/etc/passwd\\\\u0\": {\"\"eti\":\"#gile\"\\x12', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%00%22div%22%7D%7D?/etc/passwd%5Cu0%22:+%7B%22%22eti%22:%22#gile%22%12'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x02asswd\\\\u0\": {\"\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%7F%7F%7F%7F%7F%7F%7F%02asswd%5Cu0%22:%20%7B%22%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x02asswd\\\\u0\": {(\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%7F%7F%7F%7F%7F%7F%7F%02asswd%5Cu0%22:%20%7B(%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x02asswd\\\\u,\": {(\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%7F%7F%7F%7F%7F%7F%7F%02asswd%5Cu,%22:%20%7B(%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"urlb:\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x02asswd\\\\u,\": {(\"etc\":\"#file\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22urlb:%7F%7F%7F%7F%7F%7F%7F%02asswd%5Cu,%22:%20%7B(%22etc%22:%22#file%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://exa\\x13\\x0f\\x13\".com\", \"selecthhhhors\": \"no~-an-\\x00\\x00\\x00\\x00o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://exa%13%0F%13%22.com%22,%20%22selecthhhhors%22:%20%22no~-an-%00%00%00%00o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"\\x13\\x0f\\x13\".com\", \"selecthhhhors\": \"no~-an-\\x00\\x00\\x00\\x00o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22%13%0F%13%22.com%22,%20%22selecthhhhors%22:%20%22no~-an-%00%00%00%00o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"\\x13\\x0f\\x13\".com\", \"selecthhhhors\": \"no~-gn-\\x00\\x00\\x00\\x00o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22%13%0F%13%22.com%22,%20%22selecthhhhors%22:%20%22no~-gn-%00%00%00%00o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"\\x13\\x0f\\x13\".com\", \"s\\r\\r\\r\\r\\r\\r\\r\\r\\r\\relecthhhhors\": \"no~-gn-\\x00\\x00\\x00\\x00o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22%13%0F%13%22.com%22,%20%22selecthhhhors%22:%20%22no~-gn-%00%00%00%00o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\"\\x13\\x0f\\x13\".com\", \"s\\r\\r\\r\\r\\r\\r\\r\\r\\r\\relecthhhhors\": \"no~-!gn-\\x00\\x00\\x00\\x00o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22%13%0F%13%22.com%22,%20%22selecthhhhors%22:%20%22no~-!gn-%00%00%00%00o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://examp|e.com', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "'Error: Cannot connect to host examp|e.com:80 ssl:default [Name or service not known]'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'http://examzp|e.com', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_hostname_canonicalization']",
+   "tool_output": "'Error: Cannot connect to host examzp|e.com:80 ssl:default [Name or service not known]'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_hostname_canonicalization'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": \"http://examzp|e.com\", \"s\\x00\\x00\\x00\\x00ele[torc\": [', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20%22http://examzp%7Ce.com%22,%20%22s%00%00%00%00ele%5Btorc%22:%20%5B'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\": \\x00\\x00\\x00\\x00m\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%22:%20%00%00%00%00m%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 12345, \"selectors\\\\E_\\x7f\\x00\\x00\\x00m\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%2012345,%20%22selectors%5CE_%7F%00%00%00m%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 1234\\x15, \"selectors\\\\E_\\x7f\\x00\\x00\\x00m\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%201234%15,%20%22selectors%5CE_%7F%00%00%00m%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 123\\x00+, \"selectors\\\\E_\\x7f\\x00\\x00\\x00m\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20123%00+,%20%22selectors%5CE_%7F%00%00%00m%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"ur{\"url\": \"http://exa\\x13\\x0f\\x13\".com\", ', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22ur%7B%22url%22:%20%22http://exa%13%0F%13%22.com%22,%20'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'ht(tp://example.com', 'selectors': []}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: ht(tp://example.com'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x7f\\x7f\"url{\"u\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %7F%7F%22url%7B%22u%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x7f\\x7f\"u2l{\"u\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %7F%7F%22u2l%7B%22u%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\\x7fu2l{\"u\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %7Fu2l%7B%22u%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": 1{\"url\": ', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%201%7B%22url%22:%20'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Zurl\": 12345, \"selectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Zurl%22:%2012345,%20%22selectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Zurl\": 12,354 \"selectors\": {\"num\": \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Zurl%22:%2012,354%20%22selectors%22:%20%7B%22num%22:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Zurl\": 12,35: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Zurl%22:%2012,35:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Zurl\": 12,\\x00\\x00\\x00\\x0035: \"div\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Zurl%22:%2012,%00%00%00%0035:%20%22div%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': 'Zurl\": 12,\\x00\\x00\\x00\\x0035: \"di#\"', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: Zurl%22:%2012,%00%00%00%0035:%20%22di#%22'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'url': '\"url\": th\"http://example.com\", \"selectors\": \"no~-an-o', 'selectors': {}}",
+   "triggered_sanitizers": "['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges']",
+   "tool_output": "'Error: %22url%22:%20th%22http://example.com%22,%20%22selectors%22:%20%22no~-an-o'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_url_structure_and_parsing', 'check_url_hostname_canonicalization', 'check_url_ssrf_ip_ranges'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": true
+}

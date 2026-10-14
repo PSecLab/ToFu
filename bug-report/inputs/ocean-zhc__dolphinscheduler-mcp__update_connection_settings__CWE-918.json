@@ -1,0 +1,1414 @@
+{
+ "repo": "ocean-zhc/dolphinscheduler-mcp",
+ "tool": "update_connection_settings",
+ "class": "ssrf",
+ "cwe": "CWE-918",
+ "commit": "d44f0bd0b3a2f75bca1ecf94264d357e640f083b",
+ "draft": "ocean-zhc__dolphinscheduler-mcp__update_connection_settings__CWE-918.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1272,
+ "note": "1272 distinct inputs in the logs; the first 200 by order of appearance are kept here. The complete set is in ToFu_bug_inputs_full_20261002.tar.gz (outside the repo).",
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '4', 'api_url': '../../../../etc/passwd', 'api_key': 'key5'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '../../../../etc/passwd', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../../etc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '2', 'api_url': 'http://localhost:8080', 'api_key': 'testkey2'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': 'http://localhost:8080', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8080 not in whitelist (80, 443) | SSRF Protection Alert: Internal service hostname detected: 'localhost']. Input: 'http://localhost:8080'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '1', 'api_url': 'http://127.0.0.1:8500', 'api_key': 'testkey1'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': 'http://127.0.0.1:8500', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Non-standard port 8500 not in whitelist (80, 443) | SSRF Protection Alert: Loopback IP address detected: 127.0.0.1]. Input: 'http://127.0.0.1:8500'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '7', 'api_url': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'api_key': 'key7'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Backslash '\\' character detected | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '..\\..\\..\\..\\windows\\win.ini'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '3', 'api_url': 'http://169.254.169.254/latest/meta-data/', 'api_key': 'testkey3'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': 'http://169.254.169.254/latest/meta-data/', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [SSRF Protection Alert: Cloud Metadata target detected: '169.254.169.254']. Input: 'http://169.254.169.254/latest/meta-data/'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"a\"_pi ,url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"a\"_pi ,4rl\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"a\"_pi ,4 \"api_url\": \"../../.rl\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"a\"_pi ,4 \"api_url\": \"..?../.rl\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"a\"_pi ,4 \"api_url\": \"..?../.rl\": {}, \"api_key\":\"i \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\"./../../../etc/passwd\", \"api_key\": \"ke', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\"./../../../etc/passwd\", \"api_key\":$\"ke', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"@d\"./../../../etc/passwd\", \"api_key\":$\"ke', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"@d\"./../../..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/etc/passwd\", \"api_key\":$\"ke', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"@d\"./../../..\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00/etl/passwd\", \"api_key\":$\"ke', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\": \"9\", \"api_url\": {},api_url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\": \"9\", \"api_url\": {},api_url\": {}, \"api_key\": \"k y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\" {},api_url\": {}, \"api_key\": \"k yapi_url\": {}, \"api_key\": \"k y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\" {},api_url\": {}, \"api_`ey\": \"k yapi_url\": {}, \"api_key\": \"k y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\" {},api_url\": {}, \"i_url\": \"../../../../etc/passwd\", \"y\": \"k y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\":\\x00{}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id_: \"9\", \"api_url\": {}, \"api_eyk\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id_: \"9\",_: \"9\", l\": {}, \"api_eyk\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id_: \"9\",_: \"9\", l\": {}ey9*}i_eyk\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '4', 'api_url': '../../../..e/tc/passwd', 'api_key': 'key5'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '../../../..e/tc/passwd', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '../../../..e/tc/passwd'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_url\": \"../../../..e/tc/passwd\"\"api_key\"y\": \"key5', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_url\": \"../../../../../..e/tc/passwd\"\"y\"y\": \"key5', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_url\": \"..wd\"\"y\"y\": \"key5', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_url\": \"..wd\"\"y\"y\\x01\\x00\\x00\\x00key5', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '', 'api_url': '\"', 'api_key': 'd\": \"4\", \"api_url\": \"..wd\"\"y\"y{'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'success\\': True, \\'api_url\\': \\'\"\\', \\'has_api_key\\': True}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '\"'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"api_url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"api_url\":\": \"4\", \"api_u: \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"api_u\\x00\\x00\\x00\\x00rl\":\": \"4\", \"api_u: \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"api_u\\x00\\x00\\x00\\x00rl\":\": \"0\", \"api_u: \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00 \"api_u\\x00\\x00\\x00\\x00rl\":\": \"5\", \"api_u: \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_url{\"id\": \"4\", \": \"..wd\"\"y', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_u`rl{\"id\": \"4\", \": \"..wd\"\"y', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"api_u`rl{\"id\": \"4\", \": \"..wd\"\":\"y', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"\", api_url\": {\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"\", api_u, \"api_\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"\", api_u, \"api_\\x7f\\x7f\\x01\\x00\\x00\\x00\\x7f\\x7f\\x7f\\x7f}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"\", api_u, \"api_\\x7f\\x7f\\x01\\x00\\x00\\x00\\x7f\\x7f\\x7f\\x7f}, \"a', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a{\"id\": \"pi_\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4lllllllllll\", \"a{\"id\": \"pi_\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4lllllllllll\", \\x17\"a{\"id\": \"pi_\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\"# \"4lllllllllll\", \\x17\"a{\"id\": \"pi_\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\"# \"4llLlllllllll\", \\x17\"a{\"id\": \"pi_\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"ap\\x00-url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"ap\\x00-url\": {}, \"api_key\": \"mey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"rl\": {-url\": {}, \"api_key\": \"mey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"rl\": {-url\": {}, \"api_key\\x00\\x00\\x00\\x00\": \"mey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\"rl\": {-url\": {}, \"api_key\\x00\\x00\\x00\\x00\": \"mey9\"}rl\": {-url\": ', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a{\"iU\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a{\"iU\\x01\\x00\\x00\\x00pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",\\x1a\\x00\\x00\\x00\"iU\\x01\\x00\\x00\\x00pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"0\",\\x1a\\x00\\x00\\x00\"iU\\x01\\x00\\x00\\x00pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"0\\x02,\\x1a\\x00\\x00\\x00\"iU\\x01\\x00\\x00\\x00pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"#9], \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"api_url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"#9], \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"a, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': ' id\": \"#9], \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\"a, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {},: {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api2\\x00rl\": {},: {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api2\\x00rl\": {},: {}, \"api_key\": \"\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api2\\x00rl\": {},: \\x01\\x00\\x00\\x00{}, \"api_key\": \"\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api2\\x00rl\": {},: \\x01\\x00\\x00\\x00{}, \"a`i_key\": \"\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\"\", a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\"4 \"\", a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\"4  \"\",a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00d\":\"4  \"\",a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x01\\x00\\x00\\x00d\":\"4  \"{\"\",a{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '9', 'api_url': '', 'api_key': 'key9'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '9', 'api_url': '', 'api_key': 'key4'}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': True}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_{\"idurl\": \": \"9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_{\"idurl\":$\": \"9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9 \"9\", \"api_url\": {}\", \"api_{\"idurl\":$\": \"9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\", \"api_url\": {},api_url\": {}, \"a`pi_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\", \"api_url\": {},api_url\": {}, \"a`pi_key\": W\"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\", \"api_url\": {},api_url\": {}1, \"a`pi_key\": W\"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\", \"api_url\": {},api_url\": i_key\": W\"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",d\": \"4\"\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",d\":Z]K]\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"0\",d\":Z]K]\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"1\",d\":Z]K]\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"1\"(,d\":Z]K]\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a\\x01\\x00\\x00\\x00{\"id\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a\\x01\\x00\\x00\\x01\\x00\\x00\\x00d\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a\\x01\\x00\\x00\\x01\\x00\\x00x\\x00d\": \"pi', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\": \"k', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\": \"\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07k', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\x01\\x00d\": \"9\", \"api_url\": {}, \"api_key\": \"\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07k', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\x01\\x00d\": \"9\"\", \"api_url, \"api_url\": {}, \"api_key\": \"\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07k', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\x01\\x00d\": \"9\"\", \"api_url, \"api_url\": {}, \"api_key\": \"\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07\\x07#\\x07k', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",\\\\\"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",L\"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",L\"a,Li', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\",L\"a,!Li', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", \"a_', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x17\\x1c\": \"4\", \"a_', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x17\\x1c\": \"4\", \"a{\"id\": \"4\", \"ai_u_', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x17\\x1c\": \"\"a{\"id\": \"\": \"4\", \"ai_u_', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x17\\x1c\": \"\"a{\"id\": \"\": \"4\", \"ai_u_tttttttttttttttttttttttttt', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': ':\"\"di \"9\", \"api_url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': ':\"\"di \"9\", \"api_url\": {}, \"api_ke\\x01\\x00\\x00\\x00y\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': ':\"\"di \"9\", \"api_url\": {}, \"api_ke\\x01\\x00\\x00\\x00y\": \"ke&&&&&&&y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': ':\"\"ke\\x01\\x00\\x00\\x00y\": \"ke&&&&&&&y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": z}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": z}, ey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"ap', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":R \"9\", \"ap', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":R \"9\\x01\\x00\\x00\\x00ap', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\\x7f4 \\x7f:\"\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'J\"id\\x7f4 \\x7f:\"\"\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f, \"ai', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4\", _', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"4=, _', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i=, _\\x1e\\x16', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\": \"ke\\x009', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\": \"ke\\x008', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\\x01\\x00\\x00\\x00\", \"api_url\": {}, \"api_key\": \"ke\\x008', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"9\\x01\\x00\\x00\\x00\", \"api_url\": {}, \"api_key\": \"ke\\x008', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00id\": \"9\\x01\\x00\\x00\\x00\", \"apizurl\": {}, \"api_key\": \"ke\\x008', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\"\\x01\\x00\\x00\\x00: \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": {\"id\": \"9\", \"api_\"9\", \"api_ururl\":l', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": {\"id\": \"9\", \"api_\"9\", \"api_urur\\x7f\":l', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\\x01\\x00\\x00\\x00d\": \"9\", \"api_\"9\", \"api_urur\\x7f\":l', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\\x01\\x00\\x00\\x00d\": \"9\", \"api_\"9\", \"api_urur\\x7f::l', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i=,\\x7f\\x7f\\x1e\\x16', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i&=,\\x7f\\x7f\\x1e\\x16', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i&=,\\x7f\\x7f\\x1ej', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i&\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=,\\x7f\\x7f\\x1ej', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i&\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=,\\x7f\\x7f\\x1ej', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '============', 'api_url': '={\"i=, _', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "'{\\'success\\': True, \\'api_url\\': \\'={\"i=, _\\', \\'has_api_key\\': False}'",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Space character detected at index 6 | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: '={\"i=, _'"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '============', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '==============\\x16', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i=, _\\x1e\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_url': '\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f\\\\x7f', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_url': '\\x7f\\x7f\\x7f', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '\\\\x7f\\\\x7f\\\\x7f', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_url': '\\x7f\\x7f', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '\\\\x7f\\\\x7f', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '%\"i\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_url': '\\x7f\\x7f\\x7f', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '\\\\x7f\\\\x7f\\\\x7f', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Control character detected at index 0 (code 0x7f) | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '%\"i\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i=,\"i=,', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i=,\"i=,\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"i-,\"i=,\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'Hi-,\"i=,\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}\\x0c \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}\\x0c \"api_key\":\"yk 9e', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}\\x0c \"api_\"api_urkey\":\"yk 9e', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}\\x0c \"api\"api_url\":_\"api_urkey\":\"yk 9e', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}\\x0c \"api\"api_url\":_\"api_urkey\"*\"yk 9e', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x00\\x00\\x02', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x01\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x01\\x00\\x00\\x00LLLLLLLLLLLLLLLLLLLLLLL', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x01\\x00\\x00\\x00LLLLLLLLLLLLLLLLHLLLLLL', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\t\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\t\\x00\\x00:\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=$\\t\\x00\\x00:\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=$\\t\\x00\\x00\\x19:\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x7f\\x7f\\x7f\\x7fo\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x7f\\x7f\\x7f\\x7fo\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=,\\x01\\x7f\\x7f\\x7f\\x7fo\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fi=,\\x01\\x00\\x00\\x7f\\x7f\\x7f', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=\\x01\\x00,\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=w\\x00,\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=w\\x00,\\x00\\x00 i=w\\x00,\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=w{\"id\": \"9\", \"api_url\": {}, \"ap\\x00,', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '=w{\"id\": \"9\", \"api_ur[l\": {}, \"ap\\x00,', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_u\\x01\\x00\\x00\\x00 {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \"9\", \"api_u\\x01\\x00\\x00\\x00 {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\\x7f{\"id\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \": \"', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'd\"{\":\\x7f{\"id\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \": \"', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'd\"{\\x01\\x00\\x00\\x00\":\\x7f{\"id\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f \": \"', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_u\\x0e\\x13]G {}, \"qpi_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_u\\x0e\\x13]G u\\x0e\\x13]G {}, \"qpi_key\":', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'i=,\\x01\\x00\\x00\\x00 u, \"api_u\\x0e\\x13]G u\\x0e\\x13]G {}, \"qpi_key\":', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': 'i=,\\x01\\x00\\x00\\x00 ', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"5\\x00, \"api_url\": {}, \"api_key\": \"RRRRRRRRkey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"5\\x00, \"api_url\": {}, \"api_key\": \"R\\x01\\x00\\x00\\x00RRRkey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"6\\x00, \"api_url\": {}, \"api_key\": \"R\\x01\\x00\\x00\\x00RRRkey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"6\\x00, \"api_url\": \\x01\\x00\\x00\\x00{}, \"api_key\": \"R\\x01\\x00\\x00\\x00RRRkey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"cpi_key\"> \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_urg\": {}, \"cpi_key\"> \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"\"api_urg\": {}, \"api_urg\": {}, \"cpi_key\"> \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\U000c3d69', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\U000c3d69\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\U000c3d69\\x00\\U000acaca\\U000acaca\\U000acaca\\U000acaca\\U000acaca\\U000acaca\\U000acaca', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_url\": {}, \"api_key\"\\x1a \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"a\\x01\\x00\\x00\\x00rl\": {}, \"api_key\"\\x1a \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"a\\x01\\x00\\x00\\x00rl\": {}, \"api_key\"\\x1a \"kuy9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"a\\x01\\x00\\x00\\x00rl\": {}, \"api_key\"\\x1a \"kuy0', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\":\": {}, \"api_key\"\\x1a \"kuy0\"i_key\"\\x1a \"kuy0', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\x00\\x00\\x00i=,\\x01\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\\x00\\x00\\x00\\x00', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_\\x07\\x07\\x07url\": {}, \"api_key\": \"key9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"api_\\x07\\x07\\x07url\": {}, \"api_key\": \"Xey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"ai\\x07ur_p\\x07\\x07l\": {}, \"api_key\": \"Xey9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'id': '\"id\": \"9\", \"ai\\x07ur_p\\x07\\x07l\": {}, \"api_key\": \"Xe\\x01\\x00\\x00\\x00y9', 'api_url': '', 'api_key': ''}",
+   "triggered_sanitizers": "['check_strict_url_security_contract']",
+   "tool_output": "\"{'success': True, 'api_url': '', 'has_api_key': False}\"",
+   "analysis": "[Sequence Step 1/1] Validation Bypass Alert! Malicious/Invalid URL input was ACCEPTED or executed side-effects by target tool. Violations: [Raw Input Error: Empty or whitespace-only URL | Structure Error: Missing scheme (relative URL or missing http/https) | Canonicalization Error: Hostname is empty | SSRF Check Error: Empty hostname]. Input: ''"
+  }
+ ],
+ "truncated": true
+}

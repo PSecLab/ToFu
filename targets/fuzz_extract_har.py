@@ -61,7 +61,7 @@ def main():
         args=[server_script],
         target_tool="extract_har",
         corpus_dir=tool_corpus_dir,
-        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "f3ddcac48ab94ad692154fbb0ba3d283.mvFXxYWZ4pQnmeSA27BnBp8z"),
+        api_key=os.environ.get("OLLAMA_CLOUD_API_KEY", "ollama"),
         file_backed_params={
             "harzip": {
                 "extension": ".zip",

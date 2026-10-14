@@ -1,3 +1,4 @@
+import json
 """
 Introspection Sanitizers / Behavior Monitors for MCP targets.
 Rather than analyzing input strings before/after execution, these sanitizers inspect
@@ -552,16 +553,32 @@ class CodeExecutionTracer:
             builtins.exec = self._orig_exec
 
 
-def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str]:
+def check_introspection_ssrf(network_connections: List[dict], tool_input=None) -> Tuple[bool, str]:
     """
     Introspection Sanitizer for Server-Side Request Forgery / SSRF (CWE-918).
     Monitors execution for outgoing network socket connections to private, internal, or loopback IP ranges
     (127.0.0.1, localhost, 169.254.169.254 metadata API, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16).
-    
-    :param network_connections: List of network connection records captured during tool execution.
+
+    SSRF requires an ATTACKER-CONTROLLED destination. When ``tool_input`` is given, the
+    connection only counts if the contacted host actually appears in the fuzzed input;
+    otherwise it is the server dialling its OWN default backend (e.g. a client whose base
+    URL is 127.0.0.1:7700, or boto3's 169.254.169.254 IMDS credential lookup) and is NOT
+    SSRF. This removes the backend-dial false positives (2026-09-26: 140 of them rested
+    only on this tracer). Passing tool_input=None keeps the old unconditional behaviour.
+
+    :param network_connections: connection records captured during tool execution.
+    :param tool_input: the fuzzed arguments for this execution (dict/str), or None.
     """
     if not network_connections:
         return False, ""
+
+    input_s = ""
+    if tool_input is not None:
+        try:
+            input_s = json.dumps(tool_input, default=str)
+        except Exception:
+            input_s = str(tool_input)
+        input_s = input_s.lower()
 
     internal_host_patterns = [
         "127.0.0.1", "localhost", "0.0.0.0", "::1", "169.254.169.254", "metadata.google.internal",
@@ -578,11 +595,88 @@ def check_introspection_ssrf(network_connections: List[dict]) -> Tuple[bool, str
         
         for pattern in internal_host_patterns:
             if host == pattern or host.startswith(pattern):
+                # attacker-controlled destination check: the host must have come from the
+                # fuzzed input, else it is the tool's own hardcoded/default backend (not SSRF)
+                if tool_input is not None and host.lower() not in input_s:
+                    continue
                 return True, (
                     f"Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! "
                     f"Target host: '{host}' (port: {port})."
                 )
 
+    return False, ""
+
+
+def check_introspection_exfil(accessed_files: List[str], network_connections: List[dict]) -> Tuple[bool, str]:
+    """
+    Introspection Sanitizer for data EXFILTRATION (CWE-201 / CWE-200): correlates a
+    sensitive/traversal FILE READ with an OUTBOUND network SEND in the SAME tool call.
+    ToFu already traces file opens and socket connects separately; the blind spot was
+    that no oracle correlated "read secret -> send it out" (CodeQL flags this as
+    js/file-access-to-http). This is a heuristic correlation, not full taint: the
+    necessary conditions (sensitive read AND external egress in one execution) firing
+    together is the exfiltration signal.
+
+    :param accessed_files: files opened during the call.
+    :param network_connections: outbound connection records captured during the call.
+    """
+    if not accessed_files or not network_connections:
+        return False, ""
+    SENSITIVE = ("/etc/passwd", "/etc/shadow", "/proc/self/environ", "/proc/self/cmdline",
+                 ".env", ".ssh", "id_rsa", "id_ed25519", "credentials", ".aws", ".git/config",
+                 ".netrc", "shadow", "secrets")
+    read_sensitive = [str(f) for f in accessed_files
+                      if any(s in str(f).lower() for s in SENSITIVE) or ".." in str(f)]
+    outbound = []
+    for conn in network_connections:
+        host = str(conn.get("host", "")) if isinstance(conn, dict) else str(conn)
+        if host and host not in ("127.0.0.1", "localhost", "::1", "0.0.0.0"):
+            outbound.append(host)
+    if read_sensitive and outbound:
+        return True, (
+            f"Introspection Data Exfiltration Alert (CWE-201): tool READ sensitive/traversal "
+            f"file(s) {read_sensitive[:3]} AND made outbound network connection(s) to "
+            f"{outbound[:3]} in the same call -- a read->send exfiltration path."
+        )
+    return False, ""
+
+
+def check_reflected_output(tool_input, tool_output) -> Tuple[bool, str]:
+    """
+    Reflected-output / XSS Sanitizer (CWE-79 / CWE-116): a dangerous HTML/script/template
+    payload supplied in the INPUT is echoed UNESCAPED in the tool OUTPUT. ToFu has no
+    browser render sink, so this is the necessary-condition oracle for reflected XSS /
+    missing output encoding: the payload surviving verbatim into output is what a browser
+    would then execute. Confirm in the rendering context before calling it exploitable.
+
+    :param tool_input: the generated arguments dict/list/str sent to the tool.
+    :param tool_output: the tool's stringified result.
+    """
+    out = str(tool_output or "")
+    if not out:
+        return False, ""
+
+    def _vals(x):
+        if isinstance(x, dict):
+            for v in x.values():
+                yield from _vals(v)
+        elif isinstance(x, (list, tuple)):
+            for v in x:
+                yield from _vals(v)
+        elif x is not None:
+            yield str(x)
+
+    inp = " ".join(_vals(tool_input)).lower()
+    out_l = out.lower()
+    PAYLOADS = ["<script", "</script>", "javascript:", "onerror=", "onload=",
+                "<img", "<svg", "<iframe", "{{", "${"]
+    hit = [p for p in PAYLOADS if p in inp and p in out_l]
+    if hit:
+        return True, (
+            f"Reflected Output Alert (CWE-79/CWE-116): input payload token(s) {hit} echoed "
+            f"UNESCAPED in the tool output -- reflected-XSS / missing output-encoding "
+            f"(necessary condition; verify in the rendering context)."
+        )
     return False, ""
 
 

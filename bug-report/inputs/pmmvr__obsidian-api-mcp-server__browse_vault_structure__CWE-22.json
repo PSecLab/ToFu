@@ -1,0 +1,35 @@
+{
+ "repo": "pmmvr/obsidian-api-mcp-server",
+ "tool": "browse_vault_structure",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "9a93913eb8f771b59930d7bbdc3377eacfe51cac",
+ "draft": "pmmvr__obsidian-api-mcp-server__browse_vault_structure__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '/etc/passwd\\x00', 'include_files': True, 'recursive': True}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": true,\\n  \"path\": \"/etc/passwd\\\\u0000\",\\n  \"include_files\": true,\\n  \"recursive\": true,\\n  \"directories\": [],\\n  \"files\": [],\\n  \"total_directories\": 0,\\n  \"total_files\": 0,\\n  \"total_items\": 0\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '../../../../etc/passwd', 'include_files': True, 'recursive': False}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": false,\\n  \"error\": \"Failed to browse vault structure for path \\'../../../../etc/passwd\\': All connection attempts failed\",\\n  \"path\": \"../../../../etc/passwd\",\\n  \"include_files\": true,\\n  \"recursive\": false,\\n  \"directories\": [],\\n  \"files\": [],\\n  \"total_directories\": 0,\\n  \"total_files\": 0,\\n  \"total_items\": 0\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'include_files': False, 'recursive': True}",
+   "triggered_sanitizers": "['check_introspection_ssrf', 'check_path_traversal']",
+   "tool_output": "'{\\n  \"success\": true,\\n  \"path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\",\\n  \"include_files\": false,\\n  \"recursive\": true,\\n  \"directories\": [],\\n  \"files\": [],\\n  \"total_directories\": 0,\\n  \"total_files\": 0,\\n  \"total_items\": 0\\n}'",
+   "analysis": "[Sequence Step 1/1] Introspection SSRF Alert (CWE-918): Outgoing connection to internal/private network target detected! Target host: '127.0.0.1' (port: 27124).Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

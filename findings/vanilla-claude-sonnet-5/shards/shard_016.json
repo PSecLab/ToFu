@@ -1,0 +1,394 @@
+{
+ "shard_id": "016",
+ "n_repos": 1,
+ "n_configs": 13,
+ "surface_loc": 17733,
+ "repos": [
+  {
+   "repo": "aaronsb/google-workspace-mcp",
+   "slug": "aaronsb__google-workspace-mcp",
+   "lang": "node",
+   "commit": "ccdf50784aaf76b3a3337f6e78564d124c6ff6fc",
+   "path": "eval/targets/aaronsb__google-workspace-mcp",
+   "surface_loc": 17733,
+   "tools": [
+    {
+     "name": "bulk_operations",
+     "description": "Do many things in one call, two ways. mode:'queue' (default) runs different operations in sequence, chaining results with $N.field \u2014 works for every tool. mode:'batch' does ONE operation across many resources in a single Google request \u2014 far fewer round trips, but only where Google publishes a batch method.",
+     "config": "aaronsb__google-workspace-mcp__bulk_operations.json",
+     "hints": [
+      {
+       "file": "src/factory/defaults.ts",
+       "line": 107,
+       "text": "// bulk_operations references keep resolving."
+      },
+      {
+       "file": "src/services/docs/patch.ts",
+       "line": 123,
+       "text": "* model \u2014 `refs` is internal, read by bulk_operations for chaining \u2014 so a tab id that"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 116,
+       "text": "name: 'bulk_operations',"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 190,
+       "text": "* it. The schema is shared by reference with `bulk_operations`, so the two cannot drift"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 196,
+       "text": "queue_operations: 'bulk_operations',"
+      }
+     ]
+    },
+    {
+     "name": "manage_accounts",
+     "description": "Manage Google Workspace account lifecycle: list, authenticate, check status, refresh credentials, update scopes, or remove accounts.",
+     "config": "aaronsb__google-workspace-mcp__manage_accounts.json",
+     "hints": [
+      {
+       "file": "src/factory/safety.ts",
+       "line": 30,
+       "text": "* `manage_accounts` and `manage_workspace` are also hand-registered and need no check:"
+      },
+      {
+       "file": "src/factory/safety.ts",
+       "line": 237,
+       "text": "`manage_accounts {operation:'scopes', email:'${ctx.account}', ` +"
+      },
+      {
+       "file": "src/accounts/token-service.ts",
+       "line": 74,
+       "text": "`Refresh token revoked or expired for ${email}. Re-authenticate with manage_accounts \u2192 authenticate.`,"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 5,
+       "text": "* manage_accounts (account lifecycle) and queue_operations (meta-tool)."
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 19,
+       "text": "name: 'manage_accounts',"
+      }
+     ]
+    },
+    {
+     "name": "manage_calendar",
+     "description": "List events, view agenda, check availability, or manage calendar events.",
+     "config": "aaronsb__google-workspace-mcp__manage_calendar.json",
+     "hints": [
+      {
+       "file": "src/factory/generator.ts",
+       "line": 185,
+       "text": "manage_calendar: 'calendar',"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 19,
+       "text": "{ description: 'View today\\'s schedule', tool: 'manage_calendar', example: { operation: 'agenda', email: '<account email>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 68,
+       "text": "{ description: 'Get event details', tool: 'manage_calendar', example: { operation: 'get', email: '<email>', eventId: '<id from results>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 69,
+       "text": "{ description: 'Create a new event', tool: 'manage_calendar', example: { operation: 'create', email: '<email>', summary: '<title>', start: '<ISO>', end: '<ISO>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 72,
+       "text": "{ description: 'Get event details', tool: 'manage_calendar', example: { operation: 'get', email: '<email>', eventId: '<id>' } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_contacts",
+     "description": "Search, read, create, update and delete Google Contacts: your saved contacts, the addresses you have corresponded with but never saved, and your organization's directory.",
+     "config": "aaronsb__google-workspace-mcp__manage_contacts.json",
+     "hints": [
+      {
+       "file": "src/accounts/oauth.ts",
+       "line": 26,
+       "text": "// manage_contacts reads three separate collections and Google gates each behind its"
+      },
+      {
+       "file": "src/accounts/oauth.ts",
+       "line": 64,
+       "text": "*   every read manage_contacts has and is refused `create` by Google, which is the"
+      },
+      {
+       "file": "src/services/contacts/patch.ts",
+       "line": 335,
+       "text": "* manage_contacts exists to hide, and Google rejects the flat form with a 400."
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 128,
+       "text": "description: \"batch only \u2014 the tool to call, e.g. 'manage_contacts'.\","
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 153,
+       "text": "// say why. manage_contacts was the one that surfaced it."
+      }
+     ]
+    },
+    {
+     "name": "manage_docs",
+     "description": "Read, write, insert, and find-replace text in Google Docs documents.",
+     "config": "aaronsb__google-workspace-mcp__manage_docs.json",
+     "hints": [
+      {
+       "file": "src/server/scratchpad/handler.ts",
+       "line": 26,
+       "text": "* read-only account refused `manage_docs write` could write the same content through"
+      }
+     ]
+    },
+    {
+     "name": "manage_drive",
+     "description": "Search, upload, download, share, comment on, or manage files in Google Drive.",
+     "config": "aaronsb__google-workspace-mcp__manage_drive.json",
+     "hints": [
+      {
+       "file": "src/factory/generator.ts",
+       "line": 186,
+       "text": "manage_drive: 'drive',"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 20,
+       "text": "{ description: 'Search files', tool: 'manage_drive', example: { operation: 'search', email: '<account email>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 117,
+       "text": "{ description: 'Get file details', tool: 'manage_drive', example: { operation: 'get', email: '<email>', fileId: '<id from results>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 118,
+       "text": "{ description: 'Download a file', tool: 'manage_drive', example: { operation: 'download', email: '<email>', fileId: '<id>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 121,
+       "text": "{ description: 'Download this file', tool: 'manage_drive', example: { operation: 'download', email: '<email>', fileId: '<fileId>' } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_email",
+     "description": "Search, read, send, forward, or manage emails in a Google Workspace account. Supports Gmail search syntax.",
+     "config": "aaronsb__google-workspace-mcp__manage_email.json",
+     "hints": [
+      {
+       "file": "src/factory/generator.ts",
+       "line": 184,
+       "text": "manage_email: 'email',"
+      },
+      {
+       "file": "src/server/batch.ts",
+       "line": 52,
+       "text": "/** `manage_email modify, manage_contacts create, \u2026` \u2014 for telling a caller what does batch. */"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 18,
+       "text": "{ description: 'Check inbox', tool: 'manage_email', example: { operation: 'triage', email: '<account email>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 47,
+       "text": "{ description: 'Read a specific email', tool: 'manage_email', example: { operation: 'read', email: '<email>', messageId: '<id from results>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 48,
+       "text": "{ description: 'Narrow search', tool: 'manage_email', example: { operation: 'search', email: '<email>', query: '<refined query>' } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_meet",
+     "description": "Browse past Google Meet conferences, participants, transcripts, recordings, and AI-generated smart notes. Requires Workspace Business Standard+ for transcripts/recordings.",
+     "config": "aaronsb__google-workspace-mcp__manage_meet.json",
+     "hints": [
+      {
+       "file": "src/accounts/oauth.ts",
+       "line": 52,
+       "text": "* - meet \u2014 `meetings.space.readonly` authorizes every READ manage_meet exposes: all the"
+      },
+      {
+       "file": "src/services/meet/patch.ts",
+       "line": 407,
+       "text": "footer.push(`\\n\\n**More entries available.** Continue with: \\`manage_meet\\` \u2014 \\`{\"operation\":\"getFullTranscript\",\"email\":\"${account}\",\"conferenceId\":\"${confId}\",\"pageToken\":\"${nextPageToken}\"}\\``);"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 87,
+       "text": "{ description: 'Get conference details', tool: 'manage_meet', example: { operation: 'getConference', email: '<email>', conferenceId: '<conferenceId>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 88,
+       "text": "{ description: 'See who attended', tool: 'manage_meet', example: { operation: 'listParticipants', email: '<email>', conferenceId: '<conferenceId>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 89,
+       "text": "{ description: 'Get full transcript', tool: 'manage_meet', example: { operation: 'getFullTranscript', email: '<email>', conferenceId: '<conferenceId>' } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_scratchpad",
+     "description": "Compose, edit, and deliver text content. Use for any multi-line content: emails, documents, descriptions. Compose in the scratchpad, edit by line or JSON path, attach files, then send to any target. For short one-liners, use the service tool directly instead.",
+     "config": "aaronsb__google-workspace-mcp__manage_scratchpad.json",
+     "hints": [
+      {
+       "file": "src/factory/safety.ts",
+       "line": 25,
+       "text": "* `manage_scratchpad` calls it explicitly for its send and sync writes (#171) because it"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 69,
+       "text": "name: 'manage_scratchpad',"
+      },
+      {
+       "file": "src/server/batch.ts",
+       "line": 270,
+       "text": "// check for free \u2014 the same way manage_scratchpad did not (#171). Doing many writes at"
+      },
+      {
+       "file": "src/server/handler.ts",
+       "line": 35,
+       "text": "manage_scratchpad: handleScratchpad,"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 52,
+       "text": "{ description: 'Import into scratchpad for editing', tool: 'manage_scratchpad', example: { operation: 'import', source: 'email', sourceParams: { email: '<email>', messageId: '<messageId>' } } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_sheets",
+     "description": "Read, write, and manage Google Sheets spreadsheets.",
+     "config": "aaronsb__google-workspace-mcp__manage_sheets.json",
+     "hints": [
+      {
+       "file": "src/services/sheets/patch.ts",
+       "line": 314,
+       "text": "throw new Error(`${field} is required (integer, from manage_sheets get)`);"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 149,
+       "text": "{ description: 'Write values', tool: 'manage_sheets', example: { operation: 'updateValues', email: '<email>', spreadsheetId: '<spreadsheetId>', range: 'Sheet1!A1', jsonValues: '[[\"header1\",\"header2\"]]"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 150,
+       "text": "{ description: 'Append rows', tool: 'manage_sheets', example: { operation: 'append', email: '<email>', spreadsheetId: '<spreadsheetId>', jsonValues: '[[\"a\",\"b\"]]' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 153,
+       "text": "{ description: 'Read a range', tool: 'manage_sheets', example: { operation: 'read', email: '<email>', spreadsheetId: '<spreadsheetId>', range: '<Sheet1!A1:Z>' } },"
+      },
+      {
+       "file": "src/server/formatting/next-steps.ts",
+       "line": 154,
+       "text": "{ description: 'Append rows', tool: 'manage_sheets', example: { operation: 'append', email: '<email>', spreadsheetId: '<spreadsheetId>', jsonValues: '[[\"a\",\"b\"]]' } },"
+      }
+     ]
+    },
+    {
+     "name": "manage_tasks",
+     "description": "Manage task lists and tasks in Google Tasks.",
+     "config": "aaronsb__google-workspace-mcp__manage_tasks.json",
+     "hints": [
+      {
+       "file": "scripts/check-write-ops.mjs",
+       "line": 69,
+       "text": "// `defaults:` injects fixed body content (manage_tasks.complete sends status=completed)."
+      }
+     ]
+    },
+    {
+     "name": "manage_workspace",
+     "description": "Manage files and directories in the workspace sandbox. Supports nested paths (e.g. \"reports/q1/summary.csv\"). The workspace is the exchange point for file operations (attachments, downloads, exports).",
+     "config": "aaronsb__google-workspace-mcp__manage_workspace.json",
+     "hints": [
+      {
+       "file": "src/factory/safety.ts",
+       "line": 30,
+       "text": "* `manage_accounts` and `manage_workspace` are also hand-registered and need no check:"
+      },
+      {
+       "file": "src/services/drive/patch.ts",
+       "line": 118,
+       "text": "// `/`), so a file just written by manage_workspace or a scratchpad `send` could"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 48,
+       "text": "name: 'manage_workspace',"
+      },
+      {
+       "file": "src/server/handler.ts",
+       "line": 34,
+       "text": "manage_workspace: handleWorkspace,"
+      },
+      {
+       "file": "scripts/verify-mcpb.cjs",
+       "line": 66,
+       "text": "// and manage_workspace from everyone who read the manifest to find out what they had"
+      }
+     ]
+    },
+    {
+     "name": "queue_operations",
+     "description": "RENAMED to `bulk_operations`, which does the same thing. This name still works and will be removed in a future release. Do many things in one call, two ways. mode:'queue' (default) runs different operations in sequence, chaining results with $N.field \u2014 works for every tool. mode:'batch' does ONE operation across many resources in a single Google request \u2014 far fewer round trips, but only where Google publishes a batch method.",
+     "config": "aaronsb__google-workspace-mcp__queue_operations.json",
+     "hints": [
+      {
+       "file": "src/server/tools.ts",
+       "line": 5,
+       "text": "* manage_accounts (account lifecycle) and queue_operations (meta-tool)."
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 196,
+       "text": "queue_operations: 'bulk_operations',"
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 218,
+       "text": "* Point queue_operations at every tool this server advertises \u2014 itself included."
+      },
+      {
+       "file": "src/server/tools.ts",
+       "line": 221,
+       "text": "* until `generatedTools` has run, and queue_operations is declared alongside the"
+      },
+      {
+       "file": "src/server/handler.ts",
+       "line": 44,
+       "text": "* The names that reach the bulk handler. `queue_operations` is the former name, kept"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

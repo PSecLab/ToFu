@@ -1,0 +1,126 @@
+{
+ "repo": "yzfly/mcp-python-interpreter",
+ "tool": "read_file",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "84ac42d33a6ef80d768c100d033fe9b118c4787c",
+ "draft": "yzfly__mcp-python-interpreter__read_file__CWE-22.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 16,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '/etc/passwd\\x00', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only read files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__read_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '../../../../etc/passwd', 'max_size_kb': 1024}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only read files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__read_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'max_size_kb': 2048}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "\"Error: File '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini' not found\"",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwd\\\\u00size_kb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwd\\\\u00size_kb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwd\\\\u0etc/passwd ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwd\\\\u0etc/passwd \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwd\\\\u0etc/pswd ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwd\\\\u0etc/pswd \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwd\\\\uwd ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwd\\\\uwd \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"fileOpath\": \"/etc/passwd\\\\uwd ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"fileOpath\": \"/etc/passwd\\\\uwd \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwdfil \"http://localhokb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwdfil \"http://localhokb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\\x12\\x12\\x12\\x12\"file_path\": \"/etc/passwdfil \"http://localhokb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\\x12\\x12\\x12\\x12\"file_path\": \"/etc/passwdfil \"http://localhokb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\\x12\\x12\\x12\\x12\"file_path\": \"/etc/passwdfil \"httpFPP\\x13\\x10\\x1c\\x1e\\x15hokb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\\x12\\x12\\x12\\x12\"file_path\": \"/etc/passwdfil \"httpFPP\\x13\\x10\\x1c\\x1e\\x15hokb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": 2/etc/passwd\\\\u0000\", \"max_size_kb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": 2/etc/passwd\\\\u0000\", \"max_size_kb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": 2/etc/passwd\\\\u00[00\", \"max_size_kb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": 2/etc/passwd\\\\u00[00\", \"max_size_kb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': 'fi/etc/passwd\\x00', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Access denied: Can only read files in working directory: /home/mza6485/.tofu_scratch/yzfly__mcp-python-interpreter__read_file'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"fi/etc/passwd\\\\u0000\", \\x16max_si\\'e_kb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"fi/etc/passwd\\\\u0000\", \\x16max_si\\'e_kb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'file_path': '\"file_path\": \"/etc/passwd\\\\u0000\", \"max_size_kb\": ', 'max_size_kb': 0}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "'Error: File \\'\"file_path\": \"/etc/passwd\\\\u0000\", \"max_size_kb\": \\' not found'",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

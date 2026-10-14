@@ -1,0 +1,235 @@
+{
+ "n_items": 960,
+ "n_labelled": 960,
+ "missing": [],
+ "extra": [],
+ "allsan_all": {
+  "n": 960,
+  "TP": 47,
+  "TP_low": 141,
+  "FP": 772,
+  "UNCLEAR": 0,
+  "strict_prec": 0.049,
+  "lenient_prec": 0.196,
+  "strict_alert_grounded": 17
+ },
+ "by_class": {
+  "data-exfiltration": {
+   "n": 4,
+   "TP": 0,
+   "TP_low": 0,
+   "FP": 4,
+   "UNCLEAR": 0,
+   "strict_prec": 0.0,
+   "lenient_prec": 0.0,
+   "strict_alert_grounded": 0
+  },
+  "hardcoded-creds": {
+   "n": 1,
+   "TP": 0,
+   "TP_low": 0,
+   "FP": 1,
+   "UNCLEAR": 0,
+   "strict_prec": 0.0,
+   "lenient_prec": 0.0,
+   "strict_alert_grounded": 0
+  },
+  "insecure-temp-file": {
+   "n": 1,
+   "TP": 0,
+   "TP_low": 1,
+   "FP": 0,
+   "UNCLEAR": 0,
+   "strict_prec": 0.0,
+   "lenient_prec": 1.0,
+   "strict_alert_grounded": 0
+  },
+  "log-injection": {
+   "n": 496,
+   "TP": 18,
+   "TP_low": 51,
+   "FP": 427,
+   "UNCLEAR": 0,
+   "strict_prec": 0.036,
+   "lenient_prec": 0.139,
+   "strict_alert_grounded": 4
+  },
+  "os-command-injection": {
+   "n": 38,
+   "TP": 1,
+   "TP_low": 4,
+   "FP": 33,
+   "UNCLEAR": 0,
+   "strict_prec": 0.026,
+   "lenient_prec": 0.132,
+   "strict_alert_grounded": 0
+  },
+  "path-traversal": {
+   "n": 169,
+   "TP": 11,
+   "TP_low": 69,
+   "FP": 89,
+   "UNCLEAR": 0,
+   "strict_prec": 0.065,
+   "lenient_prec": 0.473,
+   "strict_alert_grounded": 5
+  },
+  "reflected-xss": {
+   "n": 193,
+   "TP": 10,
+   "TP_low": 16,
+   "FP": 167,
+   "UNCLEAR": 0,
+   "strict_prec": 0.052,
+   "lenient_prec": 0.135,
+   "strict_alert_grounded": 2
+  },
+  "ssrf": {
+   "n": 58,
+   "TP": 7,
+   "TP_low": 0,
+   "FP": 51,
+   "UNCLEAR": 0,
+   "strict_prec": 0.121,
+   "lenient_prec": 0.121,
+   "strict_alert_grounded": 6
+  }
+ },
+ "allsan_on_tools_full_also_flagged": {
+  "n": 421,
+  "TP": 34,
+  "TP_low": 101,
+  "FP": 286,
+  "UNCLEAR": 0,
+  "strict_prec": 0.081,
+  "lenient_prec": 0.321,
+  "strict_alert_grounded": 11
+ },
+ "allsan_on_tools_full_missed": {
+  "n": 539,
+  "TP": 13,
+  "TP_low": 40,
+  "FP": 486,
+  "UNCLEAR": 0,
+  "strict_prec": 0.024,
+  "lenient_prec": 0.098,
+  "strict_alert_grounded": 6
+ },
+ "tofu_false_negatives": {
+  "tool_level_strict": 13,
+  "tool_level_lenient": 53,
+  "class_level_extra_lenient": 9,
+  "strict_by_class": {
+   "reflected-xss": 1,
+   "log-injection": 7,
+   "ssrf": 5
+  },
+  "lenient_by_class": {
+   "reflected-xss": 2,
+   "log-injection": 41,
+   "os-command-injection": 1,
+   "path-traversal": 4,
+   "ssrf": 5
+  },
+  "strict_repos": [
+   "CheMiguel23/MemoryMesh",
+   "dragon1086/kospi-kosdaq-stock-server",
+   "movibe/memory-bank-mcp",
+   "prathammanocha/wordpress-mcp-server",
+   "sunriseapps/imagesorcery-mcp"
+  ],
+  "strict_items": [
+   {
+    "repo": "CheMiguel23/MemoryMesh",
+    "tool": "add_skills",
+    "cls": "reflected-xss",
+    "basis": "code-only",
+    "reason": "Alert brace-only, but field values stored unescaped in metadata, rendered via innerHTML in bundled MemoryViewer.html (stored XSS)."
+   },
+   {
+    "repo": "dragon1086/kospi-kosdaq-stock-server",
+    "tool": "get_sector_info",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Evidence never reached client (no creds), but code logs caller market string unneutralized to persistent ~/.kospi_kosdaq_mcp.log."
+   },
+   {
+    "repo": "movibe/memory-bank-mcp",
+    "tool": "log_decision",
+    "cls": "log-injection",
+    "basis": "alert",
+    "reason": "Title with CR written unneutralized into timestamped entries of persistent progress.md/decision-log.md, allowing forged entries."
+   },
+   {
+    "repo": "prathammanocha/wordpress-mcp-server",
+    "tool": "delete-user",
+    "cls": "ssrf",
+    "basis": "alert",
+    "reason": "Caller siteUrl goes unrestricted into the axios request; the error shows connections to loopback 127.0.0.1."
+   },
+   {
+    "repo": "prathammanocha/wordpress-mcp-server",
+    "tool": "get-clicks",
+    "cls": "ssrf",
+    "basis": "alert",
+    "reason": "Caller siteUrl is dialed via axios; the error shows loopback IPv4 and IPv6 connection attempts, with no restriction."
+   },
+   {
+    "repo": "prathammanocha/wordpress-mcp-server",
+    "tool": "get-user",
+    "cls": "ssrf",
+    "basis": "alert",
+    "reason": "Caller siteUrl is dialed via axios with no restriction on internal destinations; the server attempted loopback connections."
+   },
+   {
+    "repo": "prathammanocha/wordpress-mcp-server",
+    "tool": "remove-referrer-spam",
+    "cls": "ssrf",
+    "basis": "alert",
+    "reason": "siteUrl, including an octal loopback form, is dialed via axios; the server connected to 127.0.0.1."
+   },
+   {
+    "repo": "prathammanocha/wordpress-mcp-server",
+    "tool": "update-user",
+    "cls": "ssrf",
+    "basis": "alert",
+    "reason": "Caller siteUrl is dialed via axios with no internal-address restriction; the server attempted a loopback connection."
+   },
+   {
+    "repo": "sunriseapps/imagesorcery-mcp",
+    "tool": "draw_lines",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Alert CR/LF came from tool tracebacks, but code logs raw caller input_path to persistent rotating log file without neutralization."
+   },
+   {
+    "repo": "sunriseapps/imagesorcery-mcp",
+    "tool": "draw_rectangles",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Alert CR/LF came from tool tracebacks, but code logs raw caller input_path to persistent rotating log file without neutralization."
+   },
+   {
+    "repo": "sunriseapps/imagesorcery-mcp",
+    "tool": "find",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Alert CR/LF came from tool tracebacks, but code logs raw caller input_path to persistent rotating log file without neutralization."
+   },
+   {
+    "repo": "sunriseapps/imagesorcery-mcp",
+    "tool": "overlay",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Alert CR/LF from tracebacks, but code logs raw caller base/overlay image paths to persistent log file unneutralized."
+   },
+   {
+    "repo": "sunriseapps/imagesorcery-mcp",
+    "tool": "rotate",
+    "cls": "log-injection",
+    "basis": "code-only",
+    "reason": "Alert CR/LF came from tool tracebacks, but code logs raw caller input_path to persistent rotating log file without neutralization."
+   }
+  ]
+ }
+}

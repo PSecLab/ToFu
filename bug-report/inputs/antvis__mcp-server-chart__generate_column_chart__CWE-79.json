@@ -1,0 +1,21 @@
+{
+ "repo": "antvis/mcp-server-chart",
+ "tool": "generate_column_chart",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "e2a8fb7c185e17c75c067817ff1a2acfddf49aa1",
+ "draft": "antvis__mcp-server-chart__generate_column_chart__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 1,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'data': [{'category': 'K', 'value': 1}], 'group': False, 'stack': False, 'style': {'backgroundColor': '<script>alert(1)</script>'}, 'theme': 'default', 'width': 600, 'height': 400, 'title': 'XSS Test', 'axisXTitle': 'X', 'axisYTitle': 'Y'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'_meta': {'description': \"The content returned by MCP is the remote image URL of the visualization chart, which can be rendered using Markdown or HTML image tags. The _meta.spec content corresponds to the chart's configuration and spec, which can be rendered using AntV GPT-Vis chart components.\", 'spec': {'type': 'column', 'data': [{'category': 'K', 'value': 1}], 'group': False, 'stack': False, 'style': {'backgroundColor': '<script>alert(1)</script>'}, 'theme': 'default', 'width': 600, 'height': 400, 'title': 'XSS Test', 'axisXTitle': 'X', 'axisYTitle': 'Y'}}, 'content': [{'type': 'text', 'text': 'https://mdn.alipayobjects.com/one_clip/afts/img/HGAtQ7ha_XgAAAAAQcAAAAgAoEACAQFr/original'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['<script', '</script>'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

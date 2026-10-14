@@ -1,0 +1,35 @@
+{
+ "repo": "MushroomFleet/TranscriptionTools-MCP",
+ "tool": "format_transcript",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "a51881ac1a41131705f55e631109c79d002a0710",
+ "draft": "MushroomFleet__TranscriptionTools-MCP__format_transcript__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 3,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_text': '\"in{{\"\"1i', 'is_file_path': False, 'paragraph_gap': 0.0, 'line_gap': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '\"in{{\"\"1i'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_text': 'u\\n{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\x07', 'is_file_path': False, 'paragraph_gap': 0.0, 'line_gap': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'u {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\x07'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'input_text': 'u\\n{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\x07{\\x01\\x00\\x00\\x00u\\n\\x00\\x07r', 'is_file_path': False, 'paragraph_gap': 0.0, 'line_gap': 0.0}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "{'content': [{'type': 'text', 'text': 'u {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{\\x07{\\x01\\x00\\x00\\x00u \\x00\\x07r'}]}",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

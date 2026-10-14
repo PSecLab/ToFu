@@ -1,0 +1,28 @@
+{
+ "repo": "StarRocks/mcp-server-starrocks",
+ "tool": "query_and_plotly_chart",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "88e782b0f3ff660c871f47cf8477773ac02d9e92",
+ "draft": "StarRocks__mcp-server-starrocks__query_and_plotly_chart__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '\"qu${b\\x0eu\\x00\\x00\\x01\\x00 \\x00\\x00{\"qu;{\\x00\\x00\\x00\\x00\\x00', 'plotly_expr': '', 'format': '', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'Error: Error executing statement \\'\"qu${b\\x0eu\\x00\\x00\\x01\\x00 \\x00\\x00{\"qu;{\\x00\\x00\\x00\\x00\\x00\\': 2003 (HY000): Can\\'t connect to MySQL server on \\'localhost:9030\\' (111)'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'query': '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{', 'plotly_expr': '', 'format': '', 'db': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "\"Error: Error executing statement '{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{': 2003 (HY000): Can't connect to MySQL server on 'localhost:9030' (111)\"",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

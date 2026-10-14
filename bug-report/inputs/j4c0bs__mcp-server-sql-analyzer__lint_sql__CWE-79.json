@@ -1,0 +1,42 @@
+{
+ "repo": "j4c0bs/mcp-server-sql-analyzer",
+ "tool": "lint_sql",
+ "class": "reflected-xss",
+ "cwe": "CWE-79",
+ "commit": "d6d69c0c55826d6baa5033820078d1c72453ee33",
+ "draft": "j4c0bs__mcp-server-sql-analyzer__lint_sql__CWE-79.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 4,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': '{{\\x13P\\x1e\\x0c]\\x7f\\x7f\\x7f\\x00', 'dialect': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Expected }. Line 1, Col: 7.\\\\n  {{\\\\u0013P\\\\u001e\\\\f\\\\u001b[4m]\\\\u001b[0m\\\\u007f\\\\u007f\\\\u007f\\\\u0000\", \"position\": {\"line\": 1, \"column\": 7}}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': '{{\\x13P\\x1e\\x0c]\\x7f\\x7f\\x7f\\x00s\\x00', 'dialect': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Expected }. Line 1, Col: 7.\\\\n  {{\\\\u0013P\\\\u001e\\\\f\\\\u001b[4m]\\\\u001b[0m\\\\u007f\\\\u007f\\\\u007f\\\\u0000s\\\\u0000\", \"position\": {\"line\": 1, \"column\": 7}}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': '\"s\"\\x7f\"\\r\\x04\\x7f\\x7fe\\r\\x04\\x7f\\x7f', 'dialect': 't${\"s\"\\x7f\"\\r'}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Unsupported dialect: t${\\\\\"s\\\\\"\\\\u007f\\\\\"\\\\r\", \"position\": null}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['${'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'sql': 's\\x7f\\x7f{{\"\"etc;', 'dialect': ''}",
+   "triggered_sanitizers": "['check_reflected_output']",
+   "tool_output": "'{\"is_valid\": false, \"message\": \"Expected }. Line 1, Col: 10.\\\\n  s\\\\u007f\\\\u007f{{\\\\\"\\\\\"\\\\u001b[4metc\\\\u001b[0m;\", \"position\": {\"line\": 1, \"column\": 10}}'",
+   "analysis": "[Sequence Step 1/1] Reflected Output Alert (CWE-79/CWE-116): input payload token(s) ['{{'] echoed UNESCAPED in the tool output -- reflected-XSS / missing output-encoding (necessary condition; verify in the rendering context)."
+  }
+ ],
+ "truncated": false
+}

@@ -1,0 +1,2386 @@
+{
+ "shard_id": "045",
+ "n_repos": 3,
+ "n_configs": 129,
+ "surface_loc": 15094,
+ "repos": [
+  {
+   "repo": "playcanvas/mcp-editor",
+   "slug": "playcanvas__mcp-editor",
+   "lang": "node",
+   "commit": "f064331f1a7793e7b6e6946105cd987f522d558e",
+   "path": "eval/targets/playcanvas__mcp-editor",
+   "surface_loc": 5102,
+   "tools": [
+    {
+     "name": "add_components",
+     "description": "Add one or more components to an existing entity (camera, light, render, collision, rigidbody, element, screen, script, sound, etc.). Pass each component's initial data under its name. Returns the updated entity summary. Physics note: rigidbody/collision components only simulate when the project has the Ammo physics module enabled (Editor: IMPORT AMMO / enable physics in project settings). If it is not enabled, add the components then enable Ammo \u2014 do not stall on the decision. When NOT to use: to create a new entity (use create_entities), to tweak an existing component property (use modify_entities), or to attach a script to a script component (use attach_script).",
+     "config": "playcanvas__mcp-editor__add_components.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 179,
+       "text": "'When NOT to use: to add an existing asset to an entity (use add_components/modify_entities) or to change a material\\'s look after creation (use set_material_properties).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 33,
+       "text": "'When NOT to use: to change an existing entity (use modify_entities), to add a component to an existing entity (use add_components), or to instantiate a template asset (use instantiate_template_assets"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 60,
+       "text": "'Component properties use \"components.<type>.<prop>\", e.g. \"components.light.intensity\", \"components.camera.fov\", \"components.render.castShadows\", \"components.script.scripts.<name>.attributes.<attr>\" "
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 63,
+       "text": "'When NOT to use: to create entities (use create_entities), to add/remove components (use add_components/remove_components), or to change scene-wide settings (use modify_scene_settings).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 228,
+       "text": "'add_components',"
+      }
+     ]
+    },
+    {
+     "name": "add_entity_scripts",
+     "description": "Attach a parsed script to one or more entities, creating script components when needed.",
+     "config": "playcanvas__mcp-editor__add_entity_scripts.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 335,
+       "text": "'add_entity_scripts',"
+      }
+     ]
+    },
+    {
+     "name": "add_script_component_script",
+     "description": "Add a named script to an entity that ALREADY has a script component. Returns the updated entity summary. When NOT to use: if the entity has no script component yet, prefer attach_script, which creates the component and attaches the script in one call.",
+     "config": "playcanvas__mcp-editor__add_script_component_script.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 278,
+       "text": "'add_script_component_script',"
+      }
+     ]
+    },
+    {
+     "name": "apply_merge",
+     "description": "Apply a merge whose conflicts are all resolved. Call twice: first with finalize:false to prepare and review, then finalize:true to commit. finalize:true writes the merge checkpoint onto the current branch and RELOADS the editor (the tool waits for reconnect and returns vcs_status); finalize:false does not reload. When NOT to use: to abort a merge (use cancel_merge).",
+     "config": "playcanvas__mcp-editor__apply_merge.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 229,
+       "text": "'Waits for the auto-merge to finish and returns the merge ({ id, mergeProgressStatus, conflicts, numConflicts }). If conflicts is non-empty, resolve them with resolve_conflicts, then apply_merge.',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 246,
+       "text": "'Use to re-check which conflicts are still unresolved before apply_merge. When NOT to use: to start a merge (use start_merge).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 262,
+       "text": "'Repeat until get_merge shows no unresolved conflicts, then apply_merge. When NOT to use: to inspect a conflict\\'s content first (use get_conflict_file).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 293,
+       "text": "'apply_merge',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 316,
+       "text": "'When NOT to use: to commit a merge (use apply_merge).'"
+      }
+     ]
+    },
+    {
+     "name": "apply_template_overrides",
+     "description": "Apply all overrides from a template instance, or only the supplied override records.",
+     "config": "playcanvas__mcp-editor__apply_template_overrides.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 579,
+       "text": "'apply_template_overrides',"
+      }
+     ]
+    },
+    {
+     "name": "attach_script",
+     "description": "Attach a script to an entity in one step: creates the script component if missing, then adds the named script. This consolidates the common \"add script component\" + \"add script\" flow. Returns the updated entity summary. Note: the script must already exist as a parsed script asset (create one with create_assets type=\"script\", set its code with set_script_text, then script_parse). When NOT to use: to write the script's source code (use set_script_text) or to set script attribute values (use modify_entities on components.script.scripts.<name>.attributes).",
+     "config": "playcanvas__mcp-editor__attach_script.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 234,
+       "text": "'When NOT to use: to create a new entity (use create_entities), to tweak an existing component property (use modify_entities), or to attach a script to a script component (use attach_script).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 282,
+       "text": "'When NOT to use: if the entity has no script component yet, prefer attach_script, which creates the component and attaches the script in one call.'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 302,
+       "text": "'attach_script',"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 53,
+       "text": "'When NOT to use: to attach a script to an entity (use attach_script) or to create the script asset itself (use create_assets type=\"script\").'"
+      }
+     ]
+    },
+    {
+     "name": "bake_lightmaps",
+     "description": "Bake scene lightmaps, optionally limited to the given entities. Returns only after baking finishes and reports model assets missing UV1.",
+     "config": "playcanvas__mcp-editor__bake_lightmaps.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 27,
+       "text": "'bake_lightmaps',"
+      }
+     ]
+    },
+    {
+     "name": "cancel_merge",
+     "description": "Force-stop an in-progress merge, discarding the merge and its conflicts. Project data is untouched. Does not reload the editor. When NOT to use: to commit a merge (use apply_merge).",
+     "config": "playcanvas__mcp-editor__cancel_merge.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 298,
+       "text": "'When NOT to use: to abort a merge (use cancel_merge).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 312,
+       "text": "'cancel_merge',"
+      }
+     ]
+    },
+    {
+     "name": "cancel_model_unwrap",
+     "description": "Cancel an in-progress UV1 unwrap for a model asset.",
+     "config": "playcanvas__mcp-editor__cancel_model_unwrap.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 76,
+       "text": "'cancel_model_unwrap',"
+      }
+     ]
+    },
+    {
+     "name": "capture_runtime",
+     "description": "Screenshot the RUNNING Launch instance (not the editor preview) as a downscaled WebP image \u2014 the agent's \"eye\" for visually verifying play-mode behavior. Requires launch_start first. Captures the live frame buffer, so what you see reflects scripts/physics/animation actually running. When NOT to use: before launch_start (use capture_viewport for edit-time visuals).",
+     "config": "playcanvas__mcp-editor__capture_runtime.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 100,
+       "text": "'Note: this renders the editor preview only (scripts/physics/animation are NOT running). When NOT to use: to verify play-mode/runtime behavior (use capture_runtime after launch_start).'"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 16,
+       "text": "'Returns { url, sceneId, ready, adopted } where ready=true means the runtime is usable by capture_runtime / read_runtime_logs, and adopted=true means it attached to an app that was already running ins"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 78,
+       "text": "'capture_runtime',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 181,
+       "text": "'Requires launch_start first. Events run in order; coordinates are CSS pixels from the canvas top-left (match capture_runtime\\'s framing). Returns { dispatched }.',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 183,
+       "text": "'After injecting, use capture_runtime / read_runtime_logs / query the scene to observe the effect.',"
+      }
+     ]
+    },
+    {
+     "name": "capture_viewport",
+     "description": "Capture a screenshot of the editor viewport (the current editing camera view) as a downscaled WebP image, for visual verification of edit-time state. Tip: call focus_viewport first to frame the entities you care about. Note: this renders the editor preview only (scripts/physics/animation are NOT running). When NOT to use: to verify play-mode/runtime behavior (use capture_runtime after launch_start).",
+     "config": "playcanvas__mcp-editor__capture_viewport.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 95,
+       "text": "'capture_viewport',"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 117,
+       "text": "'Frame the editor camera on the given entities, optionally from a preset view (top/front/etc.) or a custom yaw/pitch. Useful before capture_viewport.',"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 143,
+       "text": "'Aim the current editor camera to look at a world-space point from a given distance. Useful for framing an exact location before capture_viewport.',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 18,
+       "text": "'When NOT to use: to screenshot the editor (use capture_viewport); to change the scene (edit-time tools).'"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 83,
+       "text": "'When NOT to use: before launch_start (use capture_viewport for edit-time visuals).'"
+      }
+     ]
+    },
+    {
+     "name": "clear_cubemap_prefilter",
+     "description": "Remove generated runtime lighting data from a cubemap.",
+     "config": "playcanvas__mcp-editor__clear_cubemap_prefilter.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 224,
+       "text": "'clear_cubemap_prefilter',"
+      }
+     ]
+    },
+    {
+     "name": "clear_selection",
+     "description": "Clear the editor's current selection.",
+     "config": "playcanvas__mcp-editor__clear_selection.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 93,
+       "text": "'clear_selection',"
+      }
+     ]
+    },
+    {
+     "name": "close_branch",
+     "description": "Close a branch (a soft, reversible archive \u2014 reopen it later with open_branch). Cannot close the current branch or a permanent branch. Does not reload the editor. When NOT to use: to permanently remove a branch (use delete_branch).",
+     "config": "playcanvas__mcp-editor__close_branch.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 178,
+       "text": "'close_branch',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 214,
+       "text": "'When NOT to use: to archive a branch reversibly (use close_branch).'"
+      }
+     ]
+    },
+    {
+     "name": "convert_texture_asset",
+     "description": "Convert a texture source to a new AVIF, JPEG, PNG, or WebP texture asset.",
+     "config": "playcanvas__mcp-editor__convert_texture_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 92,
+       "text": "'convert_texture_asset',"
+      }
+     ]
+    },
+    {
+     "name": "create_assets",
+     "description": "Create one or more native data/text assets. Imported binary assets use upload_assets. Each asset is { type, options }; options vary by type (e.g. material takes data, script takes filename/text, template takes an entity id). Successful batches return the existing asset-summary array. Failed batches retain error status and expose succeeded and failed entries in response metadata. When NOT to use: to add an existing asset to an entity (use add_components/modify_entities) or to change a material's look after creation (use set_material_properties).",
+     "config": "playcanvas__mcp-editor__create_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 173,
+       "text": "'create_assets',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 307,
+       "text": "'Note: the script must already exist as a parsed script asset (create one with create_assets type=\"script\", set its code with set_script_text, then script_parse).',"
+      },
+      {
+       "file": "src/tools/assets/material.ts",
+       "line": 38,
+       "text": "'When NOT to use: to change only the diffuse color (set_material_diffuse is a shorthand) or to create a new material (use create_assets type=\"material\").'"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 53,
+       "text": "'When NOT to use: to attach a script to an entity (use attach_script) or to create the script asset itself (use create_assets type=\"script\").'"
+      }
+     ]
+    },
+    {
+     "name": "create_branch",
+     "description": "Create a new branch (scope a feature on its own branch) and switch the editor to it. Branches from the current branch by default. This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status on the new branch. Name must be unique in the project and at most 1000 characters. When NOT to use: to switch to an existing branch (use switch_branch).",
+     "config": "playcanvas__mcp-editor__create_branch.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 32,
+       "text": "'Use this to confirm which branch you are on, especially after create_branch/switch_branch/restore_checkpoint/hard_reset_checkpoint (which reload the editor).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 60,
+       "text": "'create_branch',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 83,
+       "text": "'When NOT to use: to create a new branch (use create_branch).'"
+      }
+     ]
+    },
+    {
+     "name": "create_build",
+     "description": "Create a published PlayCanvas build for scenes in the designated project. Returns the created durable build job.",
+     "config": "playcanvas__mcp-editor__create_build.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 93,
+       "text": "'create_build',"
+      }
+     ]
+    },
+    {
+     "name": "create_checkpoint",
+     "description": "Create a checkpoint (an immutable snapshot of the current branch's scenes/assets/settings) with a description. Returns the created checkpoint ({ id, createdAt, description }). Does not reload the editor. Snapshotting is asynchronous; for very large projects it may exceed the request timeout, in which case the checkpoint usually still completes \u2014 confirm with list_checkpoints. When NOT to use: to roll back to a checkpoint (use restore_checkpoint).",
+     "config": "playcanvas__mcp-editor__create_checkpoint.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 112,
+       "text": "'create_checkpoint',"
+      }
+     ]
+    },
+    {
+     "name": "create_cubemap_from_texture",
+     "description": "Convert an equirectangular texture to six face textures and a cubemap asset.",
+     "config": "playcanvas__mcp-editor__create_cubemap_from_texture.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 129,
+       "text": "'create_cubemap_from_texture',"
+      }
+     ]
+    },
+    {
+     "name": "create_entities",
+     "description": "Create one or more entities (optionally nested hierarchies) in the current scene. Use this to add new objects: cameras, lights, models, UI, empty groups, etc. Coordinates are local to the parent; rotation is euler degrees; scale is a multiplier. Returns the created entity summaries inline (resource_id, name, path, components) so you do NOT need a follow-up list_entities call to recover the new ids. Physics note: rigidbody/collision components only simulate if the project has the Ammo physics module enabled (Editor: click IMPORT AMMO / enable physics in project settings). Without it, rigidbodies are created but stay frozen at launch \u2014 enable Ammo before relying on physics rather than pausing to ask. When NOT to use: to change an existing entity (use modify_entities), to add a component to an existing entity (use add_components), or to instantiate a template asset (use instantiate_template_assets).",
+     "config": "playcanvas__mcp-editor__create_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 293,
+       "text": "'When NOT to use: for non-template assets (only type=\"template\" assets can be instantiated) or to build an entity from scratch (use create_entities).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 25,
+       "text": "'create_entities',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 63,
+       "text": "'When NOT to use: to create entities (use create_entities), to add/remove components (use add_components/remove_components), or to change scene-wide settings (use modify_scene_settings).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 87,
+       "text": "'When NOT to use: to create a reusable prefab across scenes (create a template asset instead) or to build a brand-new entity (use create_entities).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 234,
+       "text": "'When NOT to use: to create a new entity (use create_entities), to tweak an existing component property (use modify_entities), or to attach a script to a script component (use attach_script).'"
+      }
+     ]
+    },
+    {
+     "name": "create_scene",
+     "description": "Create a new empty scene in the current project/branch. Returns the created scene record. This does not switch to the new scene; call load_scene with its uniqueId to open it. When NOT to use: to copy an existing scene (use duplicate_scene).",
+     "config": "playcanvas__mcp-editor__create_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 115,
+       "text": "'When NOT to use: to read a scene without switching (use get_scene) or to create a new scene (use create_scene).'"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 134,
+       "text": "'create_scene',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 162,
+       "text": "'When NOT to use: to create an empty scene (use create_scene).'"
+      }
+     ]
+    },
+    {
+     "name": "create_texture_atlas",
+     "description": "Duplicate a texture asset as an editable texture atlas and return the new asset.",
+     "config": "playcanvas__mcp-editor__create_texture_atlas.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 112,
+       "text": "'create_texture_atlas',"
+      }
+     ]
+    },
+    {
+     "name": "delete_assets",
+     "description": "Permanently delete assets by id. This is destructive; entities referencing the deleted assets will lose those references. Returns { deleted: <count> }. When NOT to use: to remove an asset reference from an entity without deleting the asset itself (use modify_entities).",
+     "config": "playcanvas__mcp-editor__delete_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 264,
+       "text": "'delete_assets',"
+      }
+     ]
+    },
+    {
+     "name": "delete_branch",
+     "description": "DESTRUCTIVE: permanently delete a branch and its checkpoints. Cannot be undone. Cannot delete the current branch or a permanent branch. Does not reload the editor. When NOT to use: to archive a branch reversibly (use close_branch).",
+     "config": "playcanvas__mcp-editor__delete_branch.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 183,
+       "text": "'When NOT to use: to permanently remove a branch (use delete_branch).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 209,
+       "text": "'delete_branch',"
+      }
+     ]
+    },
+    {
+     "name": "delete_build",
+     "description": "Permanently delete a build job and its linked artifact from the designated project.",
+     "config": "playcanvas__mcp-editor__delete_build.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 251,
+       "text": "'delete_build',"
+      }
+     ]
+    },
+    {
+     "name": "delete_entities",
+     "description": "Permanently delete entities and all of their descendants. This is destructive and not undoable via this tool. The scene root cannot be deleted. Returns { deleted: <count> }. When NOT to use: to temporarily hide an entity (set enabled=false via modify_entities instead) or to remove a single component (use remove_components).",
+     "config": "playcanvas__mcp-editor__delete_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 135,
+       "text": "'delete_entities',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 258,
+       "text": "'When NOT to use: to delete the whole entity (use delete_entities) or to just disable a component (set components.<name>.enabled=false via modify_entities).'"
+      }
+     ]
+    },
+    {
+     "name": "delete_scene",
+     "description": "Permanently delete a scene by its id. This is destructive and cannot be undone. When NOT to use: to switch away from a scene without deleting it (use load_scene).",
+     "config": "playcanvas__mcp-editor__delete_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 74,
+       "text": "'Use uniqueId with load_scene to switch scenes, and id with get_scene / duplicate_scene / delete_scene.',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 182,
+       "text": "'delete_scene',"
+      }
+     ]
+    },
+    {
+     "name": "diff_checkpoints",
+     "description": "Compute the diff between two checkpoints and return the change data. Branch ids default to the current branch. Read-only; does not reload the editor. Use to inspect what changed before merging or restoring. When NOT to use: to roll back to a checkpoint (use restore_checkpoint).",
+     "config": "playcanvas__mcp-editor__diff_checkpoints.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 327,
+       "text": "'diff_checkpoints',"
+      }
+     ]
+    },
+    {
+     "name": "download_asset",
+     "description": "Download an asset to a local file. Downloads are limited to 512 MiB and never overwrite unless overwrite=true.",
+     "config": "playcanvas__mcp-editor__download_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 444,
+       "text": "'download_asset',"
+      }
+     ]
+    },
+    {
+     "name": "download_build",
+     "description": "Create a static or NPM download build, wait for its artifact, and save the archive to an explicit local path. Existing files are not overwritten unless overwrite=true.",
+     "config": "playcanvas__mcp-editor__download_build.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 116,
+       "text": "'download_build',"
+      }
+     ]
+    },
+    {
+     "name": "duplicate_assets",
+     "description": "Duplicate assets in their current folders and return the created asset summaries.",
+     "config": "playcanvas__mcp-editor__duplicate_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 411,
+       "text": "'duplicate_assets',"
+      }
+     ]
+    },
+    {
+     "name": "duplicate_entities",
+     "description": "Duplicate existing entities (including their children) in place under the same parent. Returns the new entity summaries. Set rename=true to auto-suffix names to avoid duplicates. When NOT to use: to create a reusable prefab across scenes (create a template asset instead) or to build a brand-new entity (use create_entities).",
+     "config": "playcanvas__mcp-editor__duplicate_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 82,
+       "text": "'duplicate_entities',"
+      }
+     ]
+    },
+    {
+     "name": "duplicate_scene",
+     "description": "Duplicate an existing scene by its id, giving the copy a new name. Returns the created scene record. When NOT to use: to create an empty scene (use create_scene).",
+     "config": "playcanvas__mcp-editor__duplicate_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 74,
+       "text": "'Use uniqueId with load_scene to switch scenes, and id with get_scene / duplicate_scene / delete_scene.',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 139,
+       "text": "'When NOT to use: to copy an existing scene (use duplicate_scene).'"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 158,
+       "text": "'duplicate_scene',"
+      }
+     ]
+    },
+    {
+     "name": "find_entities_by_script",
+     "description": "List the entities whose script component uses a given (registered) script name. Returns compact entity summaries. When NOT to use: to search entities by name (use search_entities) or to read a script's source (use get_asset_text).",
+     "config": "playcanvas__mcp-editor__find_entities_by_script.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 399,
+       "text": "'Use this to find an entity when you only know part of its name. When NOT to use: to filter by component or tag (use list_entities) or to find entities using a script (use find_entities_by_script).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 417,
+       "text": "'find_entities_by_script',"
+      }
+     ]
+    },
+    {
+     "name": "focus_camera",
+     "description": "Aim the current editor camera to look at a world-space point from a given distance. Useful for framing an exact location before capture_viewport. When NOT to use: to frame specific entities (use focus_viewport) or to move an in-scene camera entity (use modify_entities on its transform).",
+     "config": "playcanvas__mcp-editor__focus_camera.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 140,
+       "text": "'focus_camera',"
+      }
+     ]
+    },
+    {
+     "name": "focus_viewport",
+     "description": "Frame the editor camera on the given entities, optionally from a preset view (top/front/etc.) or a custom yaw/pitch. Useful before capture_viewport. Returns { focused: <count> }. When NOT to use: to move an in-scene camera entity (use modify_entities on its transform).",
+     "config": "playcanvas__mcp-editor__focus_viewport.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 99,
+       "text": "'Tip: call focus_viewport first to frame the entities you care about.',"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 114,
+       "text": "'focus_viewport',"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 144,
+       "text": "'When NOT to use: to frame specific entities (use focus_viewport) or to move an in-scene camera entity (use modify_entities on its transform).'"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 73,
+       "text": "'When NOT to use: to modify the selected items (use modify_entities) or to frame them in the viewport (use focus_viewport).'"
+      }
+     ]
+    },
+    {
+     "name": "generate_texture_metadata",
+     "description": "Generate missing pipeline metadata for a texture asset.",
+     "config": "playcanvas__mcp-editor__generate_texture_metadata.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 168,
+       "text": "'generate_texture_metadata',"
+      }
+     ]
+    },
+    {
+     "name": "get_anim_state_graph",
+     "description": "Get the complete structural data for an anim state graph asset, including layers, states, transitions, conditions, and parameters.",
+     "config": "playcanvas__mcp-editor__get_anim_state_graph.json",
+     "hints": [
+      {
+       "file": "src/tools/animstategraph.ts",
+       "line": 206,
+       "text": "'get_anim_state_graph',"
+      }
+     ]
+    },
+    {
+     "name": "get_animation_events",
+     "description": "Get the stable-id event map for a GLB animation asset, including time and optional number/string payloads.",
+     "config": "playcanvas__mcp-editor__get_animation_events.json",
+     "hints": [
+      {
+       "file": "src/tools/animation.ts",
+       "line": 45,
+       "text": "'get_animation_events',"
+      }
+     ]
+    },
+    {
+     "name": "get_asset",
+     "description": "Get the complete JSON for one project asset by id.",
+     "config": "playcanvas__mcp-editor__get_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 244,
+       "text": "'get_asset',"
+      },
+      {
+       "file": "src/tools/asset.ts",
+       "line": 254,
+       "text": "'get_asset_references',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 421,
+       "text": "'When NOT to use: to search entities by name (use search_entities) or to read a script\\'s source (use get_asset_text).'"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 8,
+       "text": "'get_asset_text',"
+      }
+     ]
+    },
+    {
+     "name": "get_asset_references",
+     "description": "List the project assets, entities, or settings that reference an asset.",
+     "config": "playcanvas__mcp-editor__get_asset_references.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 254,
+       "text": "'get_asset_references',"
+      }
+     ]
+    },
+    {
+     "name": "get_asset_text",
+     "description": "Read the full text contents of a text-based asset (script, text, json, css, html, or shader), returned as text. When NOT to use: to read a script's declared name or attribute definitions (use script_parse), to read binary assets like textures or models, or to list assets (use list_assets).",
+     "config": "playcanvas__mcp-editor__get_asset_text.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 421,
+       "text": "'When NOT to use: to search entities by name (use search_entities) or to read a script\\'s source (use get_asset_text).'"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 8,
+       "text": "'get_asset_text',"
+      }
+     ]
+    },
+    {
+     "name": "get_build",
+     "description": "Get a publish or download build job by id from the designated project.",
+     "config": "playcanvas__mcp-editor__get_build.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 78,
+       "text": "'get_build',"
+      },
+      {
+       "file": "src/tools/build.ts",
+       "line": 179,
+       "text": "`Build ${id} is still running after 10 minutes. Use get_build to inspect it.`"
+      }
+     ]
+    },
+    {
+     "name": "get_checkpoint",
+     "description": "Get a single checkpoint by its id. Returns the checkpoint record ({ id, createdAt, description, user }). When NOT to use: to list a branch's checkpoints (use list_checkpoints).",
+     "config": "playcanvas__mcp-editor__get_checkpoint.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 163,
+       "text": "'get_checkpoint',"
+      }
+     ]
+    },
+    {
+     "name": "get_conflict_file",
+     "description": "Read the content of one side of a conflicting file so you can decide how to resolve it. Read-only; does not resolve anything. When NOT to use: to choose a resolution (use resolve_conflicts).",
+     "config": "playcanvas__mcp-editor__get_conflict_file.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 262,
+       "text": "'Repeat until get_merge shows no unresolved conflicts, then apply_merge. When NOT to use: to inspect a conflict\\'s content first (use get_conflict_file).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 275,
+       "text": "'get_conflict_file',"
+      }
+     ]
+    },
+    {
+     "name": "get_entity",
+     "description": "Get the complete edit-time JSON for one entity by resource_id.",
+     "config": "playcanvas__mcp-editor__get_entity.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 159,
+       "text": "'get_entity',"
+      }
+     ]
+    },
+    {
+     "name": "get_merge",
+     "description": "Get the current state of a merge, including its status and full conflict list ({ id, mergeProgressStatus, conflicts, numConflicts }). Use to re-check which conflicts are still unresolved before apply_merge. When NOT to use: to start a merge (use start_merge).",
+     "config": "playcanvas__mcp-editor__get_merge.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 230,
+       "text": "'Does not reload the editor. When NOT to use: to inspect an in-progress merge (use get_merge).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 242,
+       "text": "'get_merge',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 262,
+       "text": "'Repeat until get_merge shows no unresolved conflicts, then apply_merge. When NOT to use: to inspect a conflict\\'s content first (use get_conflict_file).'"
+      }
+     ]
+    },
+    {
+     "name": "get_scene",
+     "description": "Get a single scene by its id (not uniqueId). Returns the full scene record. When NOT to use: to load/switch to a scene in the editor (use load_scene) or to list scenes (use list_scenes).",
+     "config": "playcanvas__mcp-editor__get_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 74,
+       "text": "'Use uniqueId with load_scene to switch scenes, and id with get_scene / duplicate_scene / delete_scene.',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 89,
+       "text": "'get_scene',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 115,
+       "text": "'When NOT to use: to read a scene without switching (use get_scene) or to create a new scene (use create_scene).'"
+      }
+     ]
+    },
+    {
+     "name": "get_selection",
+     "description": "Read the editor's current selection. Returns { type: \"entity\" | \"asset\" | null, ids: [...] }. Entity ids are resource_ids (strings); asset ids are numbers. When NOT to use: to list all entities/assets (use list_entities/list_assets).",
+     "config": "playcanvas__mcp-editor__get_selection.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 50,
+       "text": "'get_selection',"
+      }
+     ]
+    },
+    {
+     "name": "get_template_overrides",
+     "description": "Read the current apply/revert override records for a template instance.",
+     "config": "playcanvas__mcp-editor__get_template_overrides.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 569,
+       "text": "'get_template_overrides',"
+      }
+     ]
+    },
+    {
+     "name": "hard_reset_checkpoint",
+     "description": "DESTRUCTIVE: reset the branch head back to a checkpoint and PERMANENTLY ERASE every checkpoint created after it. Cannot be undone. This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status. When NOT to use: to roll back working state while keeping history (use restore_checkpoint).",
+     "config": "playcanvas__mcp-editor__hard_reset_checkpoint.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 32,
+       "text": "'Use this to confirm which branch you are on, especially after create_branch/switch_branch/restore_checkpoint/hard_reset_checkpoint (which reload the editor).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 98,
+       "text": "'Paginates via limit + cursor (meta.nextCursor); backend default limit 25, max 50. Use a checkpoint id with restore_checkpoint / hard_reset_checkpoint.',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 134,
+       "text": "'When NOT to use: to permanently erase later checkpoints (use hard_reset_checkpoint).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 146,
+       "text": "'hard_reset_checkpoint',"
+      }
+     ]
+    },
+    {
+     "name": "inject_input",
+     "description": "Dispatch keyboard / mouse / touch input to the RUNNING Launch instance so you can drive end-to-end interactions (\"press W to move\", \"click a button\", \"tap the screen\"). Requires launch_start first. Events run in order; coordinates are CSS pixels from the canvas top-left (match capture_runtime's framing). Returns { dispatched }. Patterns: key press with holdMs to move for a duration; mouse click at (x,y); a down\u2192move\u2026\u2192up sequence for dragging; touch tap for mobile UI. After injecting, use capture_runtime / read_runtime_logs / query the scene to observe the effect. When NOT to use: to change entity data directly (use modify_entities) or before launch_start.",
+     "config": "playcanvas__mcp-editor__inject_input.json",
+     "hints": [
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 135,
+       "text": "'When NOT to use: for edit-time scene data (use list_entities); before launch_start; to change state (use modify_entities / inject_input).'"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 177,
+       "text": "'inject_input',"
+      }
+     ]
+    },
+    {
+     "name": "instantiate_template_assets",
+     "description": "Instantiate template assets into the scene, creating entity hierarchies from them. Returns the created entity summaries. When NOT to use: for non-template assets (only type=\"template\" assets can be instantiated) or to build an entity from scratch (use create_entities).",
+     "config": "playcanvas__mcp-editor__instantiate_template_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 289,
+       "text": "'instantiate_template_assets',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 33,
+       "text": "'When NOT to use: to change an existing entity (use modify_entities), to add a component to an existing entity (use add_components), or to instantiate a template asset (use instantiate_template_assets"
+      }
+     ]
+    },
+    {
+     "name": "launch_start",
+     "description": "Start a real Launch runtime instance of the current scene (the editor's Launch button) so scripts, physics, animation and input actually run. Opens the launch page in a new browser window with debug logging on; the editor bridges it automatically. Returns { url, sceneId, ready, adopted } where ready=true means the runtime is usable by capture_runtime / read_runtime_logs, and adopted=true means it attached to an app that was already running instead of starting a new one (which happens only when no options are passed, so pass an option to force a fresh launch). This is the prerequisite for all runtime tools. If ready=false, the page may still be loading or popups were blocked; poll read_runtime_logs or retry. When NOT to use: to screenshot the editor (use capture_viewport); to change the scene (edit-time tools).",
+     "config": "playcanvas__mcp-editor__launch_start.json",
+     "hints": [
+      {
+       "file": "src/wss.ts",
+       "line": 361,
+       "text": "reject(new Error(`No running instance connected. Call launch_start first; the editor relays to the launched page automatically. ${LAUNCH_HINT}`));"
+      },
+      {
+       "file": "src/wss.ts",
+       "line": 373,
+       "text": "reject(new Error('Editor socket not open. Reconnect (or re-run launch_start) and retry.'));"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 100,
+       "text": "'Note: this renders the editor preview only (scripts/physics/animation are NOT running). When NOT to use: to verify play-mode/runtime behavior (use capture_runtime after launch_start).'"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 11,
+       "text": "'launch_start',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 61,
+       "text": "'Stop the running Launch instance started by launch_start (closes the launch window). Returns { stopped }.',"
+      }
+     ]
+    },
+    {
+     "name": "launch_stop",
+     "description": "Stop the running Launch instance started by launch_start (closes the launch window). Returns { stopped }. When NOT to use: there is no need to call this between captures \u2014 keep the instance running and re-capture.",
+     "config": "playcanvas__mcp-editor__launch_stop.json",
+     "hints": [
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 58,
+       "text": "'launch_stop',"
+      }
+     ]
+    },
+    {
+     "name": "list_assets",
+     "description": "List project assets, returning compact summaries by default (id, name, type, folder, tags). Results are paginated: use limit (default 50) and offset; the response meta includes total, count, hasMore and nextCursor. Filter with type, name (case-insensitive contains) and/or tag. Use full=true only when you need the complete asset JSON (large). An empty result is a successful, empty list (not an error). When NOT to use: to search the public asset store (use store_search).",
+     "config": "playcanvas__mcp-editor__list_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 75,
+       "text": "'When NOT to use: to list assets (use list_assets).'"
+      },
+      {
+       "file": "src/tools/asset.ts",
+       "line": 215,
+       "text": "'list_assets',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 54,
+       "text": "'Entity ids are resource_ids (strings); asset ids are numbers. When NOT to use: to list all entities/assets (use list_entities/list_assets).'"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 20,
+       "text": "'When NOT to use: to search assets already in this project (use list_assets).'"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 49,
+       "text": "'Reaches an external service over the network. When NOT to use: to fetch a project-local asset (use list_assets).'"
+      }
+     ]
+    },
+    {
+     "name": "list_branches",
+     "description": "List the project's branches. Returns branch records ({ id, name, createdAt, closed, permanent, latestCheckpointId, user }). Paginates via limit + cursor (meta.nextCursor); set closed:true to include closed branches, favorite:true for your favourites. When NOT to use: to read the current branch (use vcs_status).",
+     "config": "playcanvas__mcp-editor__list_branches.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 33,
+       "text": "'When NOT to use: to list branches (use list_branches) or checkpoints (use list_checkpoints).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 41,
+       "text": "'list_branches',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 81,
+       "text": "'Switch (checkout) the editor to an existing branch by its id (from list_branches).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 87,
+       "text": "branchId: z.string().describe('Id of the branch to switch to (the \"id\" field from list_branches)')"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 99,
+       "text": "'When NOT to use: to list branches (use list_branches).'"
+      }
+     ]
+    },
+    {
+     "name": "list_builds",
+     "description": "List publish and download builds for the designated project, including durable job status and artifacts.",
+     "config": "playcanvas__mcp-editor__list_builds.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 54,
+       "text": "'list_builds',"
+      },
+      {
+       "file": "src/tools/build.ts",
+       "line": 154,
+       "text": "'The build started but its durable build job was not found. Use list_builds to inspect its status.'"
+      }
+     ]
+    },
+    {
+     "name": "list_checkpoints",
+     "description": "List checkpoints on a branch (the current branch by default), newest first. Returns records ({ id, createdAt, description, user }). Paginates via limit + cursor (meta.nextCursor); backend default limit 25, max 50. Use a checkpoint id with restore_checkpoint / hard_reset_checkpoint. When NOT to use: to list branches (use list_branches).",
+     "config": "playcanvas__mcp-editor__list_checkpoints.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 33,
+       "text": "'When NOT to use: to list branches (use list_branches) or checkpoints (use list_checkpoints).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 94,
+       "text": "'list_checkpoints',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 116,
+       "text": "'Does not reload the editor. Snapshotting is asynchronous; for very large projects it may exceed the request timeout, in which case the checkpoint usually still completes \u2014 confirm with list_checkpoin"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 138,
+       "text": "checkpointId: z.string().describe('Id of the checkpoint to restore (from list_checkpoints)'),"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 155,
+       "text": "checkpointId: z.string().describe('Id of the checkpoint to hard reset to (from list_checkpoints); all later checkpoints are erased'),"
+      }
+     ]
+    },
+    {
+     "name": "list_entities",
+     "description": "List entities in the current scene, returning compact summaries by default (resource_id, name, hierarchy path, parent, enabled, tags, component names). Results are paginated: use limit (default 50) and offset to page through large scenes; the response meta includes total, count, hasMore and nextCursor. Filter with name (case-insensitive contains), component (only entities with that component) and/or tag. Use full=true only when you need the complete entity JSON (large; prefer summaries). An empty result is a successful, empty list (not an error). When NOT to use: when you already know an entity id and just need to act on it; for runtime/play-mode state (this returns edit-time data only).",
+     "config": "playcanvas__mcp-editor__list_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 54,
+       "text": "'Entity ids are resource_ids (strings); asset ids are numbers. When NOT to use: to list all entities/assets (use list_entities/list_assets).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 31,
+       "text": "'Returns the created entity summaries inline (resource_id, name, path, components) so you do NOT need a follow-up list_entities call to recover the new ids.',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 175,
+       "text": "'list_entities',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 210,
+       "text": "'When NOT to use: when you need filtering by component/tag or pagination (use list_entities).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 399,
+       "text": "'Use this to find an entity when you only know part of its name. When NOT to use: to filter by component or tag (use list_entities) or to find entities using a script (use find_entities_by_script).'"
+      }
+     ]
+    },
+    {
+     "name": "list_scenes",
+     "description": "List the scenes in the current project/branch. Returns scene records including id, uniqueId and name. Use uniqueId with load_scene to switch scenes, and id with get_scene / duplicate_scene / delete_scene. When NOT to use: to list assets (use list_assets).",
+     "config": "playcanvas__mcp-editor__list_scenes.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 70,
+       "text": "'list_scenes',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 93,
+       "text": "'When NOT to use: to load/switch to a scene in the editor (use load_scene) or to list scenes (use list_scenes).'"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 101,
+       "text": "id: z.union([z.number(), z.string()]).describe('Scene id (the \"id\" field from list_scenes, not uniqueId)')"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 125,
+       "text": "uniqueId: z.union([z.number(), z.string()]).describe('Scene uniqueId (the \"uniqueId\" field from list_scenes, not id)'),"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 172,
+       "text": "id: z.union([z.number(), z.string()]).describe('Scene id to duplicate (the \"id\" field from list_scenes)'),"
+      }
+     ]
+    },
+    {
+     "name": "list_store_licenses",
+     "description": "List valid Store licenses for project imports.",
+     "config": "playcanvas__mcp-editor__list_store_licenses.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 96,
+       "text": "'list_store_licenses',"
+      }
+     ]
+    },
+    {
+     "name": "load_scene",
+     "description": "Load (switch the editor to) a scene by its uniqueId. This unloads the current scene and opens the target one. By default the tool returns after queuing the load. Set wait=true to return only after the requested scene is active. When NOT to use: to read a scene without switching (use get_scene) or to create a new scene (use create_scene).",
+     "config": "playcanvas__mcp-editor__load_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 74,
+       "text": "'Use uniqueId with load_scene to switch scenes, and id with get_scene / duplicate_scene / delete_scene.',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 93,
+       "text": "'When NOT to use: to load/switch to a scene in the editor (use load_scene) or to list scenes (use list_scenes).'"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 110,
+       "text": "'load_scene',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 138,
+       "text": "'This does not switch to the new scene; call load_scene with its uniqueId to open it.',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 186,
+       "text": "'When NOT to use: to switch away from a scene without deleting it (use load_scene).'"
+      }
+     ]
+    },
+    {
+     "name": "modify_anim_state_graph",
+     "description": "Apply a validated batch of structural operations to an anim state graph as one undoable transaction. Add operations may omit id to allocate one; generated ids and the resulting graph are returned. State deletion also deletes attached transitions. Parameter deletion is rejected while conditions use it. Use layer.update defaultStateId to change a layer default before removing its old default state.",
+     "config": "playcanvas__mcp-editor__modify_anim_state_graph.json",
+     "hints": [
+      {
+       "file": "src/tools/animstategraph.ts",
+       "line": 223,
+       "text": "'modify_anim_state_graph',"
+      }
+     ]
+    },
+    {
+     "name": "modify_animation_events",
+     "description": "Add, update, or remove GLB animation events as one undoable transaction. Times are normalized from 0 to 1. Event ids remain stable and generated ids are returned.",
+     "config": "playcanvas__mcp-editor__modify_animation_events.json",
+     "hints": [
+      {
+       "file": "src/tools/animation.ts",
+       "line": 62,
+       "text": "'modify_animation_events',"
+      }
+     ]
+    },
+    {
+     "name": "modify_assets",
+     "description": "Edit asset name, tags, preload, or data paths. Array operations are supported under data.*. Anim state graph structure and animation events require their dedicated mutation tools.",
+     "config": "playcanvas__mcp-editor__modify_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 380,
+       "text": "'modify_assets',"
+      }
+     ]
+    },
+    {
+     "name": "modify_bundle_asset",
+     "description": "Add or remove project assets from a bundle. Returns accepted and rejected ids; invalid asset types and duplicates are rejected.",
+     "config": "playcanvas__mcp-editor__modify_bundle_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 260,
+       "text": "'modify_bundle_asset',"
+      }
+     ]
+    },
+    {
+     "name": "modify_entities",
+     "description": "Set or unset properties on existing entities by dot-notation path. Valid top-level paths: \"name\", \"enabled\", \"position\" ([x,y,z] local), \"rotation\" ([x,y,z] euler degrees), \"scale\" ([x,y,z]), \"tags\". Component properties use \"components.<type>.<prop>\", e.g. \"components.light.intensity\", \"components.camera.fov\", \"components.render.castShadows\", \"components.script.scripts.<name>.attributes.<attr>\" (the entity must already have that component; add it with add_components first). Each edit targets one entity id + one path. Returns the post-edit summaries of the affected entities. Edits are validated on write: an unknown top-level path, or a component path for a component the entity does not have, fails immediately with a message listing the entity's valid paths/components \u2014 so you can fix it in one shot instead of retrying blind. When NOT to use: to create entities (use create_entities), to add/remove components (use add_components/remove_components), or to change scene-wide settings (use modify_scene_settings).",
+     "config": "playcanvas__mcp-editor__modify_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 15,
+       "text": "'When NOT to use: to change a single entity (use modify_entities) or to read settings without changing them (use query_scene_settings).'"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 118,
+       "text": "'Returns { focused: <count> }. When NOT to use: to move an in-scene camera entity (use modify_entities on its transform).'"
+      },
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 144,
+       "text": "'When NOT to use: to frame specific entities (use focus_viewport) or to move an in-scene camera entity (use modify_entities on its transform).'"
+      },
+      {
+       "file": "src/tools/project.ts",
+       "line": 26,
+       "text": "'When NOT to use: to change per-scene settings like fog or gravity (use modify_scene_settings) or a single entity (use modify_entities).'"
+      },
+      {
+       "file": "src/tools/asset.ts",
+       "line": 179,
+       "text": "'When NOT to use: to add an existing asset to an entity (use add_components/modify_entities) or to change a material\\'s look after creation (use set_material_properties).'"
+      }
+     ]
+    },
+    {
+     "name": "modify_project_settings",
+     "description": "Modify project-wide settings such as physics engine, rendering device (WebGL2/WebGPU), layers, loading screen, script loading order, input, and resolution. Pass a partial object of setting path/value pairs (nested objects or dot-paths, e.g. { enableWebGpu: true, \"layers.0.name\": \"World\" }); only the provided fields change. Returns the full resulting project settings snapshot. When NOT to use: to change per-scene settings like fog or gravity (use modify_scene_settings) or a single entity (use modify_entities).",
+     "config": "playcanvas__mcp-editor__modify_project_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/project.ts",
+       "line": 21,
+       "text": "'modify_project_settings',"
+      },
+      {
+       "file": "src/tools/project.ts",
+       "line": 49,
+       "text": "'When NOT to use: to change settings (use modify_project_settings) or to read per-scene settings (use query_scene_settings).'"
+      }
+     ]
+    },
+    {
+     "name": "modify_scene_settings",
+     "description": "Modify scene-wide settings such as physics gravity and rendering (fog, ambient light, skybox, tonemapping, exposure, lightmapping). Only the provided fields are changed. Returns the full resulting scene settings snapshot. When NOT to use: to change a single entity (use modify_entities) or to read settings without changing them (use query_scene_settings).",
+     "config": "playcanvas__mcp-editor__modify_scene_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 10,
+       "text": "'modify_scene_settings',"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 38,
+       "text": "'When NOT to use: to change settings (use modify_scene_settings).'"
+      },
+      {
+       "file": "src/tools/project.ts",
+       "line": 26,
+       "text": "'When NOT to use: to change per-scene settings like fog or gravity (use modify_scene_settings) or a single entity (use modify_entities).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 63,
+       "text": "'When NOT to use: to create entities (use create_entities), to add/remove components (use add_components/remove_components), or to change scene-wide settings (use modify_scene_settings).'"
+      }
+     ]
+    },
+    {
+     "name": "modify_settings",
+     "description": "Set or unset arbitrary Editor settings by dot path in project, scene, projectUser, user, session, or projectPrivate scope. Asset import defaults are in projectUser under editor.pipeline.*. Project, scene, and private settings require project write access. Query the scope first to discover current paths and values.",
+     "config": "playcanvas__mcp-editor__modify_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/project.ts",
+       "line": 83,
+       "text": "'modify_settings',"
+      }
+     ]
+    },
+    {
+     "name": "modify_sprite_asset",
+     "description": "Modify sprite data (atlas, frame order, pixels per unit, render mode) or replace a texture atlas frame map in one undoable edit.",
+     "config": "playcanvas__mcp-editor__modify_sprite_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 240,
+       "text": "'modify_sprite_asset',"
+      }
+     ]
+    },
+    {
+     "name": "move_assets",
+     "description": "Move assets to a folder in the designated project and wait until their paths update. Omit folderId to move them to the root.",
+     "config": "playcanvas__mcp-editor__move_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 398,
+       "text": "'move_assets',"
+      }
+     ]
+    },
+    {
+     "name": "move_entity_script",
+     "description": "Move a script to a new execution-order index on an entity.",
+     "config": "playcanvas__mcp-editor__move_entity_script.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 356,
+       "text": "'remove_entity_scripts',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 375,
+       "text": "'move_entity_script',"
+      }
+     ]
+    },
+    {
+     "name": "my_assets_import",
+     "description": "Import an asset owned by the current user into the current project.",
+     "config": "playcanvas__mcp-editor__my_assets_import.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 170,
+       "text": "'my_assets_import',"
+      }
+     ]
+    },
+    {
+     "name": "my_assets_search",
+     "description": "Search assets owned by the current user.",
+     "config": "playcanvas__mcp-editor__my_assets_search.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 156,
+       "text": "'my_assets_search',"
+      }
+     ]
+    },
+    {
+     "name": "open_branch",
+     "description": "Re-open a previously closed branch. Find closed branches with list_branches({ closed: true }). Does not reload the editor. When NOT to use: to switch the editor onto the branch (use switch_branch).",
+     "config": "playcanvas__mcp-editor__open_branch.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 181,
+       "text": "'Close a branch (a soft, reversible archive \u2014 reopen it later with open_branch).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 194,
+       "text": "'open_branch',"
+      }
+     ]
+    },
+    {
+     "name": "prefilter_cubemap",
+     "description": "Generate runtime lighting data for a cubemap.",
+     "config": "playcanvas__mcp-editor__prefilter_cubemap.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 205,
+       "text": "'prefilter_cubemap',"
+      }
+     ]
+    },
+    {
+     "name": "process_font_asset",
+     "description": "Rebuild a font asset for an explicit character set and optional inversion setting.",
+     "config": "playcanvas__mcp-editor__process_font_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 148,
+       "text": "'process_font_asset',"
+      }
+     ]
+    },
+    {
+     "name": "process_texture_variants",
+     "description": "Compress or remove explicit texture variants and wait for processing to settle.",
+     "config": "playcanvas__mcp-editor__process_texture_variants.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 184,
+       "text": "'process_texture_variants',"
+      }
+     ]
+    },
+    {
+     "name": "query_project_settings",
+     "description": "Read the current project-wide settings (physics, rendering device, layers, loading screen, script loading order, input, resolution). Returns the full settings object. When NOT to use: to change settings (use modify_project_settings) or to read per-scene settings (use query_scene_settings).",
+     "config": "playcanvas__mcp-editor__query_project_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/project.ts",
+       "line": 45,
+       "text": "'query_project_settings',"
+      }
+     ]
+    },
+    {
+     "name": "query_runtime_state",
+     "description": "Read the LIVE runtime state of entities in the RUNNING Launch instance \u2014 the non-visual ground-truth read-back for verifying play-mode behaviour without guessing screenshot timing. Requires launch_start first. For each matched entity returns world position, local position, euler rotation, scale, enabled, component names, plus rigidbody (type/mass/linearVelocity/angularVelocity) and element (type/text, e.g. a HUD score label) when present. Filter with ids (editor resource_ids \u2014 the runtime uses the same GUIDs) or name (case-insensitive substring); omit both to page through every entity. Paginated via limit (default 50) + offset (meta has total/count/hasMore/nextCursor). Use this to answer questions the camera cannot: \"did the ball actually move / fall through the floor?\", \"is the rigidbody simulating (velocity != 0)?\", \"what does the score HUD say?\". An empty result is success, not an error. When NOT to use: for edit-time scene data (use list_entities); before launch_start; to change state (use modify_entities / inject_input).",
+     "config": "playcanvas__mcp-editor__query_runtime_state.json",
+     "hints": [
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 128,
+       "text": "'query_runtime_state',"
+      }
+     ]
+    },
+    {
+     "name": "query_scene_settings",
+     "description": "Read the current scene-wide settings (physics + rendering). Returns the full settings object. When NOT to use: to change settings (use modify_scene_settings).",
+     "config": "playcanvas__mcp-editor__query_scene_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 15,
+       "text": "'When NOT to use: to change a single entity (use modify_entities) or to read settings without changing them (use query_scene_settings).'"
+      },
+      {
+       "file": "src/tools/scene.ts",
+       "line": 34,
+       "text": "'query_scene_settings',"
+      },
+      {
+       "file": "src/tools/project.ts",
+       "line": 49,
+       "text": "'When NOT to use: to change settings (use modify_project_settings) or to read per-scene settings (use query_scene_settings).'"
+      }
+     ]
+    },
+    {
+     "name": "query_settings",
+     "description": "Read any Editor settings scope: project, current scene, per-project user preferences (including editor.pipeline asset import defaults), global user preferences, session settings, or private project settings. Omit path for the complete scope or provide a dot path for one value.",
+     "config": "playcanvas__mcp-editor__query_settings.json",
+     "hints": [
+      {
+       "file": "src/tools/project.ts",
+       "line": 63,
+       "text": "'query_settings',"
+      }
+     ]
+    },
+    {
+     "name": "query_viewport_state",
+     "description": "Read the exact editor viewport camera and overlay state so it can be restored after visual inspection.",
+     "config": "playcanvas__mcp-editor__query_viewport_state.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 10,
+       "text": "'query_viewport_state',"
+      }
+     ]
+    },
+    {
+     "name": "query_viewport_visibility",
+     "description": "List entities hidden only in the editor viewport. This does not read or change persisted entity enabled values.",
+     "config": "playcanvas__mcp-editor__query_viewport_visibility.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 61,
+       "text": "'query_viewport_visibility',"
+      }
+     ]
+    },
+    {
+     "name": "read_editor_logs",
+     "description": "Read recent edit-time Editor console logs with filters and pagination.",
+     "config": "playcanvas__mcp-editor__read_editor_logs.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 110,
+       "text": "'read_editor_logs',"
+      }
+     ]
+    },
+    {
+     "name": "read_runtime_logs",
+     "description": "Read console output (log/info/warn/error), uncaught exceptions and unhandled rejections from the RUNNING Launch instance \u2014 the first-line signal for runtime bugs. Requires launch_start first. Returns the most recent entries first, paginated (meta has total/count/hasMore/nextCursor). Defaults to warnings + errors; set level=\"all\" (or debug/info/warn/error as a minimum severity) to widen, and keyword to filter. An empty result is success, not an error. When NOT to use: to read edit-time editor logs (this is the launched app only).",
+     "config": "playcanvas__mcp-editor__read_runtime_logs.json",
+     "hints": [
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 16,
+       "text": "'Returns { url, sceneId, ready, adopted } where ready=true means the runtime is usable by capture_runtime / read_runtime_logs, and adopted=true means it attached to an app that was already running ins"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 17,
+       "text": "'This is the prerequisite for all runtime tools. If ready=false, the page may still be loading or popups were blocked; poll read_runtime_logs or retry.',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 49,
+       "text": "ready ? undefined : { hint: `Runtime did not connect in time. The launch page may still be loading (poll read_runtime_logs). ${LAUNCH_HINT}` }"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 97,
+       "text": "'read_runtime_logs',"
+      },
+      {
+       "file": "src/tools/runtime.ts",
+       "line": 183,
+       "text": "'After injecting, use capture_runtime / read_runtime_logs / query the scene to observe the effect.',"
+      }
+     ]
+    },
+    {
+     "name": "redo",
+     "description": "Redo the last undone edit in the editor. Returns whether anything was redone plus the resulting { canUndo, canRedo } state. When NOT to use: to repeat an arbitrary action (redo only re-applies an edit that was just undone).",
+     "config": "playcanvas__mcp-editor__redo.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 30,
+       "text": "'redo',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 33,
+       "text": "'Redo the last undone edit in the editor. Returns whether anything was redone plus the resulting { canUndo, canRedo } state.',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 34,
+       "text": "'When NOT to use: to repeat an arbitrary action (redo only re-applies an edit that was just undone).'"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 45,
+       "text": "return wss.call('history:redo');"
+      }
+     ]
+    },
+    {
+     "name": "reimport_assets",
+     "description": "Re-run the import pipeline for existing source assets and return succeeded and failed entries.",
+     "config": "playcanvas__mcp-editor__reimport_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 431,
+       "text": "'reimport_assets',"
+      }
+     ]
+    },
+    {
+     "name": "remove_components",
+     "description": "Remove one or more components from an entity by component name. Returns the updated entity summary. When NOT to use: to delete the whole entity (use delete_entities) or to just disable a component (set components.<name>.enabled=false via modify_entities).",
+     "config": "playcanvas__mcp-editor__remove_components.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 63,
+       "text": "'When NOT to use: to create entities (use create_entities), to add/remove components (use add_components/remove_components), or to change scene-wide settings (use modify_scene_settings).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 140,
+       "text": "'When NOT to use: to temporarily hide an entity (set enabled=false via modify_entities instead) or to remove a single component (use remove_components).'"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 254,
+       "text": "'remove_components',"
+      },
+      {
+       "file": "src/tools/schema/entity.ts",
+       "line": 265,
+       "text": "// remove_components (issue #4) without blocking valid data. Prefer the"
+      }
+     ]
+    },
+    {
+     "name": "remove_entity_scripts",
+     "description": "Remove a script from one or more entities.",
+     "config": "playcanvas__mcp-editor__remove_entity_scripts.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 356,
+       "text": "'remove_entity_scripts',"
+      }
+     ]
+    },
+    {
+     "name": "rename_scene",
+     "description": "Rename the currently loaded scene. Load another scene first to rename it.",
+     "config": "playcanvas__mcp-editor__rename_scene.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 52,
+       "text": "'rename_scene',"
+      }
+     ]
+    },
+    {
+     "name": "reparent_entity",
+     "description": "Move an entity to a new parent in the hierarchy, optionally at a specific child index. Set preserveTransform=true to keep the entity at the same world position after moving. Returns the moved entity summary (including its new hierarchy path). When NOT to use: to change position/rotation values directly (use modify_entities).",
+     "config": "playcanvas__mcp-editor__reparent_entity.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 107,
+       "text": "'reparent_entity',"
+      }
+     ]
+    },
+    {
+     "name": "replace_asset",
+     "description": "Replace references to one asset with another asset.",
+     "config": "playcanvas__mcp-editor__replace_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 421,
+       "text": "'replace_asset',"
+      }
+     ]
+    },
+    {
+     "name": "resolve_conflicts",
+     "description": "Resolve one or more merge conflicts by picking a side, or revert them to unresolved. resolution \"source\" keeps the merged-in branch's version, \"dest\" keeps the current branch's version, \"revert\" un-resolves. Returns the updated conflict records. Repeat until get_merge shows no unresolved conflicts, then apply_merge. When NOT to use: to inspect a conflict's content first (use get_conflict_file).",
+     "config": "playcanvas__mcp-editor__resolve_conflicts.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 229,
+       "text": "'Waits for the auto-merge to finish and returns the merge ({ id, mergeProgressStatus, conflicts, numConflicts }). If conflicts is non-empty, resolve them with resolve_conflicts, then apply_merge.',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 257,
+       "text": "'resolve_conflicts',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 279,
+       "text": "'When NOT to use: to choose a resolution (use resolve_conflicts).'"
+      }
+     ]
+    },
+    {
+     "name": "resolve_entities",
+     "description": "Resolve entities by name into their resource_ids and hierarchy paths, so you can drive follow-up calls without shuttling UUIDs. By default matches case-insensitive substrings; set exact=true to match the full name. Returns summaries (resource_id, name, path, components). An empty result is a successful, empty list (not an error). When NOT to use: when you need filtering by component/tag or pagination (use list_entities).",
+     "config": "playcanvas__mcp-editor__resolve_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 204,
+       "text": "'resolve_entities',"
+      }
+     ]
+    },
+    {
+     "name": "restore_checkpoint",
+     "description": "Restore (soft revert) the current branch's working state to a checkpoint. History is preserved \u2014 later checkpoints remain. This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status. When NOT to use: to permanently erase later checkpoints (use hard_reset_checkpoint).",
+     "config": "playcanvas__mcp-editor__restore_checkpoint.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 32,
+       "text": "'Use this to confirm which branch you are on, especially after create_branch/switch_branch/restore_checkpoint/hard_reset_checkpoint (which reload the editor).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 98,
+       "text": "'Paginates via limit + cursor (meta.nextCursor); backend default limit 25, max 50. Use a checkpoint id with restore_checkpoint / hard_reset_checkpoint.',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 117,
+       "text": "'When NOT to use: to roll back to a checkpoint (use restore_checkpoint).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 129,
+       "text": "'restore_checkpoint',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 151,
+       "text": "'When NOT to use: to roll back working state while keeping history (use restore_checkpoint).'"
+      }
+     ]
+    },
+    {
+     "name": "revert_template_overrides",
+     "description": "Revert all overrides on a template instance, or only the supplied override records.",
+     "config": "playcanvas__mcp-editor__revert_template_overrides.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 589,
+       "text": "'revert_template_overrides',"
+      }
+     ]
+    },
+    {
+     "name": "script_parse",
+     "description": "Parse a script asset to extract its declared script name(s) and attribute definitions. Run this after set_script_text. Returns the parsed script metadata. When NOT to use: to read entity-level script attribute values (use list_entities/modify_entities).",
+     "config": "playcanvas__mcp-editor__script_parse.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 307,
+       "text": "'Note: the script must already exist as a parsed script asset (create one with create_assets type=\"script\", set its code with set_script_text, then script_parse).',"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 12,
+       "text": "'When NOT to use: to read a script\\'s declared name or attribute definitions (use script_parse), to read binary assets like textures or models, or to list assets (use list_assets).'"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 52,
+       "text": "'After changing the code, call script_parse so the editor re-reads the script\\'s name and attributes.',"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 73,
+       "text": "'script_parse',"
+      }
+     ]
+    },
+    {
+     "name": "search_entities",
+     "description": "Fuzzy-search entities by name and return the best matches ranked by relevance (each as a compact summary). Use this to find an entity when you only know part of its name. When NOT to use: to filter by component or tag (use list_entities) or to find entities using a script (use find_entities_by_script).",
+     "config": "playcanvas__mcp-editor__search_entities.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 395,
+       "text": "'search_entities',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 421,
+       "text": "'When NOT to use: to search entities by name (use search_entities) or to read a script\\'s source (use get_asset_text).'"
+      }
+     ]
+    },
+    {
+     "name": "set_asset_text",
+     "description": "Overwrite the full contents of a CSS, HTML, JSON, script, shader, or text asset.",
+     "config": "playcanvas__mcp-editor__set_asset_text.json",
+     "hints": [
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 29,
+       "text": "'set_asset_text',"
+      }
+     ]
+    },
+    {
+     "name": "set_material_diffuse",
+     "description": "Set only the diffuse (base) color of a material. Color is [r,g,b] in 0-1. When NOT to use: to change any other material property, or to set several properties at once (use set_material_properties).",
+     "config": "playcanvas__mcp-editor__set_material_diffuse.json",
+     "hints": [
+      {
+       "file": "src/tools/assets/material.ts",
+       "line": 9,
+       "text": "'set_material_diffuse',"
+      },
+      {
+       "file": "src/tools/assets/material.ts",
+       "line": 38,
+       "text": "'When NOT to use: to change only the diffuse color (set_material_diffuse is a shorthand) or to create a new material (use create_assets type=\"material\").'"
+      }
+     ]
+    },
+    {
+     "name": "set_material_properties",
+     "description": "Set any combination of properties on a material asset in one call (diffuse, emissive, metalness, gloss/shininess, opacity, maps, etc.). Only the provided fields are changed; all fields are optional. Colors are [r,g,b] 0-1; map fields take asset ids. Returns the updated asset summary. When NOT to use: to change only the diffuse color (set_material_diffuse is a shorthand) or to create a new material (use create_assets type=\"material\").",
+     "config": "playcanvas__mcp-editor__set_material_properties.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 179,
+       "text": "'When NOT to use: to add an existing asset to an entity (use add_components/modify_entities) or to change a material\\'s look after creation (use set_material_properties).'"
+      },
+      {
+       "file": "src/tools/assets/material.ts",
+       "line": 13,
+       "text": "'When NOT to use: to change any other material property, or to set several properties at once (use set_material_properties).'"
+      },
+      {
+       "file": "src/tools/assets/material.ts",
+       "line": 33,
+       "text": "'set_material_properties',"
+      }
+     ]
+    },
+    {
+     "name": "set_primary_build",
+     "description": "Set a completed publish build as the project primary build.",
+     "config": "playcanvas__mcp-editor__set_primary_build.json",
+     "hints": [
+      {
+       "file": "src/tools/build.ts",
+       "line": 235,
+       "text": "'set_primary_build',"
+      }
+     ]
+    },
+    {
+     "name": "set_script_text",
+     "description": "Overwrite the source code of an existing script asset. Provide the full file contents in text. After changing the code, call script_parse so the editor re-reads the script's name and attributes. When NOT to use: to attach a script to an entity (use attach_script) or to create the script asset itself (use create_assets type=\"script\").",
+     "config": "playcanvas__mcp-editor__set_script_text.json",
+     "hints": [
+      {
+       "file": "src/tools/entity.ts",
+       "line": 307,
+       "text": "'Note: the script must already exist as a parsed script asset (create one with create_assets type=\"script\", set its code with set_script_text, then script_parse).',"
+      },
+      {
+       "file": "src/tools/entity.ts",
+       "line": 308,
+       "text": "'When NOT to use: to write the script\\'s source code (use set_script_text) or to set script attribute values (use modify_entities on components.script.scripts.<name>.attributes).'"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 48,
+       "text": "'set_script_text',"
+      },
+      {
+       "file": "src/tools/assets/script.ts",
+       "line": 76,
+       "text": "'Parse a script asset to extract its declared script name(s) and attribute definitions. Run this after set_script_text.',"
+      }
+     ]
+    },
+    {
+     "name": "set_selection",
+     "description": "Replace the editor's selection with the given entities or assets. Selecting shows them in the inspector and highlights them in the viewport/tree. Pass type \"entity\" (ids are resource_ids) or \"asset\" (ids are numbers). An empty ids array clears the selection. When NOT to use: to modify the selected items (use modify_entities) or to frame them in the viewport (use focus_viewport).",
+     "config": "playcanvas__mcp-editor__set_selection.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 68,
+       "text": "'set_selection',"
+      }
+     ]
+    },
+    {
+     "name": "set_transform_gizmo",
+     "description": "Set the viewport transform gizmo: mode (translate/rotate/scale/resize), coordinate space (world/local), and/or snapping. Only the provided fields change. Returns the resulting { mode, space }. When NOT to use: to actually move/rotate/scale an entity (use modify_entities on its transform).",
+     "config": "playcanvas__mcp-editor__set_transform_gizmo.json",
+     "hints": [
+      {
+       "file": "src/tools/editor.ts",
+       "line": 130,
+       "text": "'set_transform_gizmo',"
+      }
+     ]
+    },
+    {
+     "name": "set_viewport_state",
+     "description": "Set the editor viewport camera transform, projection, grid, bones, icon size, and expanded state. This controls the editor view, not an entity's persisted enabled state.",
+     "config": "playcanvas__mcp-editor__set_viewport_state.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 24,
+       "text": "'set_viewport_state',"
+      }
+     ]
+    },
+    {
+     "name": "set_viewport_visibility",
+     "description": "Hide or show entities only in the editor viewport without changing their persisted enabled values.",
+     "config": "playcanvas__mcp-editor__set_viewport_visibility.json",
+     "hints": [
+      {
+       "file": "src/tools/viewport.ts",
+       "line": 75,
+       "text": "'set_viewport_visibility',"
+      }
+     ]
+    },
+    {
+     "name": "sketchfab_get",
+     "description": "Get a Sketchfab model by uid.",
+     "config": "playcanvas__mcp-editor__sketchfab_get.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 121,
+       "text": "'sketchfab_get',"
+      }
+     ]
+    },
+    {
+     "name": "sketchfab_import",
+     "description": "Import a downloadable Sketchfab model into the current project.",
+     "config": "playcanvas__mcp-editor__sketchfab_import.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 131,
+       "text": "'sketchfab_import',"
+      }
+     ]
+    },
+    {
+     "name": "sketchfab_search",
+     "description": "Search downloadable Sketchfab models.",
+     "config": "playcanvas__mcp-editor__sketchfab_search.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 105,
+       "text": "'sketchfab_search',"
+      }
+     ]
+    },
+    {
+     "name": "start_merge",
+     "description": "Start merging a source branch into the CURRENT branch (the destination is always the branch the editor is on). Waits for the auto-merge to finish and returns the merge ({ id, mergeProgressStatus, conflicts, numConflicts }). If conflicts is non-empty, resolve them with resolve_conflicts, then apply_merge. Does not reload the editor. When NOT to use: to inspect an in-progress merge (use get_merge).",
+     "config": "playcanvas__mcp-editor__start_merge.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 225,
+       "text": "'start_merge',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 246,
+       "text": "'Use to re-check which conflicts are still unresolved before apply_merge. When NOT to use: to start a merge (use start_merge).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 250,
+       "text": "mergeId: z.string().describe('Id of the merge (from start_merge)')"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 266,
+       "text": "mergeId: z.string().describe('Id of the merge (from start_merge)'),"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 283,
+       "text": "mergeId: z.string().describe('Id of the merge (from start_merge)'),"
+      }
+     ]
+    },
+    {
+     "name": "store_download",
+     "description": "Clone/import a public store asset into the current project. Requires the license fields returned by store_get. Reaches an external service over the network and adds new assets to the project. When NOT to use: for assets already in the project.",
+     "config": "playcanvas__mcp-editor__store_download.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 19,
+       "text": "'Reaches an external service over the network. Use store_get for full details of a result, then store_download to import it.',"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 66,
+       "text": "'store_download',"
+      }
+     ]
+    },
+    {
+     "name": "store_get",
+     "description": "Get full details (including license info needed to download) for a single public store asset by id. Reaches an external service over the network. When NOT to use: to fetch a project-local asset (use list_assets).",
+     "config": "playcanvas__mcp-editor__store_get.json",
+     "hints": [
+      {
+       "file": "src/tools/store.ts",
+       "line": 19,
+       "text": "'Reaches an external service over the network. Use store_get for full details of a result, then store_download to import it.',"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 45,
+       "text": "'store_get',"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 69,
+       "text": "'Clone/import a public store asset into the current project. Requires the license fields returned by store_get.',"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 86,
+       "text": "}).describe('License info from store_get'),"
+      }
+     ]
+    },
+    {
+     "name": "store_search",
+     "description": "Search the public PlayCanvas asset store by keyword. Results are paginated via skip + limit. Reaches an external service over the network. Use store_get for full details of a result, then store_download to import it. When NOT to use: to search assets already in this project (use list_assets).",
+     "config": "playcanvas__mcp-editor__store_search.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 222,
+       "text": "'When NOT to use: to search the public asset store (use store_search).'"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 15,
+       "text": "'store_search',"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 57,
+       "text": "id: z.string().describe('Store asset id (from store_search)')"
+      },
+      {
+       "file": "src/tools/store.ts",
+       "line": 80,
+       "text": "id: z.string().describe('Store asset id (from store_search)'),"
+      }
+     ]
+    },
+    {
+     "name": "switch_branch",
+     "description": "Switch (checkout) the editor to an existing branch by its id (from list_branches). This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status on the target branch. When NOT to use: to create a new branch (use create_branch).",
+     "config": "playcanvas__mcp-editor__switch_branch.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 32,
+       "text": "'Use this to confirm which branch you are on, especially after create_branch/switch_branch/restore_checkpoint/hard_reset_checkpoint (which reload the editor).',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 65,
+       "text": "'Name must be unique in the project and at most 1000 characters. When NOT to use: to switch to an existing branch (use switch_branch).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 78,
+       "text": "'switch_branch',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 198,
+       "text": "'When NOT to use: to switch the editor onto the branch (use switch_branch).'"
+      }
+     ]
+    },
+    {
+     "name": "undo",
+     "description": "Undo the last edit in the editor. Returns whether anything was undone plus the resulting { canUndo, canRedo } state. Use this to roll back a change you just made. When NOT to use: to switch scenes (use load_scene).",
+     "config": "playcanvas__mcp-editor__undo.json",
+     "hints": [
+      {
+       "file": "src/tools/scene.ts",
+       "line": 185,
+       "text": "'Permanently delete a scene by its id. This is destructive and cannot be undone.',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 10,
+       "text": "'undo',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 13,
+       "text": "'Undo the last edit in the editor. Returns whether anything was undone plus the resulting { canUndo, canRedo } state.',"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 25,
+       "text": "return wss.call('history:undo');"
+      },
+      {
+       "file": "src/tools/editor.ts",
+       "line": 33,
+       "text": "'Redo the last undone edit in the editor. Returns whether anything was redone plus the resulting { canUndo, canRedo } state.',"
+      }
+     ]
+    },
+    {
+     "name": "unlink_template_instances",
+     "description": "Unlink template instances while keeping their current entity data.",
+     "config": "playcanvas__mcp-editor__unlink_template_instances.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 599,
+       "text": "'unlink_template_instances',"
+      }
+     ]
+    },
+    {
+     "name": "unwrap_model_asset",
+     "description": "Generate UV1 data for a model asset using the editor's unwrap worker and update its source file.",
+     "config": "playcanvas__mcp-editor__unwrap_model_asset.json",
+     "hints": [
+      {
+       "file": "src/tools/processing.ts",
+       "line": 52,
+       "text": "'unwrap_model_asset',"
+      }
+     ]
+    },
+    {
+     "name": "upload_assets",
+     "description": "Upload local files into the designated project, or replace an existing asset source by providing its id. Files are limited to 512 MiB each; the result separates succeeded and failed entries.",
+     "config": "playcanvas__mcp-editor__upload_assets.json",
+     "hints": [
+      {
+       "file": "src/tools/asset.ts",
+       "line": 176,
+       "text": "'Create one or more native data/text assets. Imported binary assets use upload_assets.',"
+      },
+      {
+       "file": "src/tools/asset.ts",
+       "line": 314,
+       "text": "'upload_assets',"
+      }
+     ]
+    },
+    {
+     "name": "vcs_status",
+     "description": "Read the current version-control state: the active branch ({ id, name, latestCheckpointId }), the projectId, and whether a merge is in progress. Use this to confirm which branch you are on, especially after create_branch/switch_branch/restore_checkpoint/hard_reset_checkpoint (which reload the editor). When NOT to use: to list branches (use list_branches) or checkpoints (use list_checkpoints).",
+     "config": "playcanvas__mcp-editor__vcs_status.json",
+     "hints": [
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 21,
+       "text": "return wss.fail(method, 'Operation issued but the editor did not reconnect in time. Check the editor is open and connected, then call vcs_status.');"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 28,
+       "text": "'vcs_status',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 46,
+       "text": "'When NOT to use: to read the current branch (use vcs_status).'"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 64,
+       "text": "'This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status on the new branch.',"
+      },
+      {
+       "file": "src/tools/vcs.ts",
+       "line": 82,
+       "text": "'This RELOADS the editor; the tool waits for it to reconnect and returns the resulting vcs_status on the target branch.',"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "aashari/boilerplate-mcp-server",
+   "slug": "aashari__boilerplate-mcp-server",
+   "lang": "node",
+   "commit": "1c25c85c9e9b7b0a09d6cc94db010920bfaa25ca",
+   "path": "eval/targets/aashari__boilerplate-mcp-server",
+   "surface_loc": 5042,
+   "tools": [
+    {
+     "name": "ip_get_details",
+     "description": "Retrieve geolocation and network information for a public IP address. Returns TOON format by default (30-60% fewer tokens than JSON).\n\n**IMPORTANT - Cost Optimization:**\n- Use `jq` param to extract only needed fields. Unfiltered responses are expensive!\n- Example: `jq: \"{ip: query, country: country, city: city}\"` - extract specific fields\n- If unsure about available fields, first call WITHOUT jq filter to see all fields, then use jq in subsequent calls\n\n**Schema Discovery Pattern:**\n1. First call: `ipAddress: \"8.8.8.8\"` (no jq) - explore available fields\n2. Then use: `jq: \"{ip: query, location: {city: city, country: country}}\"` - extract only what you need\n\n**Output format:** TOON (default, token-efficient) or JSON (`outputFormat: \"json\"`)\n\n**Parameters:**\n- `ipAddress` - IP to lookup (omit for current device's public IP)\n- `includeExtendedData` - Include ASN, host, proxy detection (requires API token)\n- `useHttps` - Use HTTPS (default: true)\n- `jq` - JMESPath expression to filter response\n- `outputFormat` - \"toon\" (default) or \"json\"\n\n**JQ examples:** `query` (IP only), `{ip: query, country: country}`, `{location: {lat: lat, lon: lon}}`\n\n**Note:** Cannot lookup private IPs (192.168.x.x, 10.x.x.x). Powered by ip-api.com.",
+     "config": "aashari__boilerplate-mcp-server__ip_get_details.json",
+     "hints": [
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 13,
+       "text": "* Keep argument shape aligned with ip_get_details for consistency."
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 24,
+       "text": "* Tool description for ip_get_details_link"
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 28,
+       "text": "**Consistency with ip_get_details:**"
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 33,
+       "text": "- A normal text response (same rendered output as \\`ip_get_details\\`)"
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 95,
+       "text": "'ip_get_details_link',"
+      }
+     ]
+    },
+    {
+     "name": "ip_get_details_link",
+     "description": "Retrieve IP address details and return both direct content and a resource link.\n\n**Consistency with ip_get_details:**\n- Uses the same arguments: `ipAddress`, `includeExtendedData`, `useHttps`, `jq`, `outputFormat`\n- Uses the same output rendering pipeline (TOON by default, JSON when `outputFormat: \"json\"`)\n\n**What this returns:**\n- A normal text response (same rendered output as `ip_get_details`)\n- A `resource_link` entry pointing to `ip://<resolved-ip>` for resource-style clients\n\n**Note:** Cannot lookup private IPs (192.168.x.x, 10.x.x.x). Powered by ip-api.com.",
+     "config": "aashari__boilerplate-mcp-server__ip_get_details_link.json",
+     "hints": [
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 24,
+       "text": "* Tool description for ip_get_details_link"
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 95,
+       "text": "'ip_get_details_link',"
+      },
+      {
+       "file": "src/tools/ipaddress-link.tool.ts",
+       "line": 110,
+       "text": "methodLogger.debug('Successfully registered ip_get_details_link tool.');"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "repo": "qpd-v/mcp-DEEPwebresearch",
+   "slug": "qpd-v__mcp-DEEPwebresearch",
+   "lang": "node",
+   "commit": "bdbbec656c0c2ad2a4d580c71ba804b367924fd7",
+   "path": "eval/targets/qpd-v__mcp-DEEPwebresearch",
+   "surface_loc": 4950,
+   "tools": [
+    {
+     "name": "deep_research",
+     "description": "Perform deep research on a topic with content extraction and analysis",
+     "config": "qpd-v__mcp-DEEPwebresearch__deep_research.json",
+     "hints": [
+      {
+       "file": "src/index.ts",
+       "line": 88,
+       "text": "name: 'deep_research',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 293,
+       "text": "case 'deep_research': {"
+      }
+     ]
+    },
+    {
+     "name": "parallel_search",
+     "description": "Perform multiple Google searches in parallel",
+     "config": "qpd-v__mcp-DEEPwebresearch__parallel_search.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 150,
+       "text": "name: \"parallel_search\","
+      },
+      {
+       "file": "index.ts",
+       "line": 1150,
+       "text": "case \"parallel_search\": {"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 126,
+       "text": "name: 'parallel_search',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 317,
+       "text": "case 'parallel_search': {"
+      }
+     ]
+    },
+    {
+     "name": "visit_page",
+     "description": "Visit a webpage and extract its content",
+     "config": "qpd-v__mcp-DEEPwebresearch__visit_page.json",
+     "hints": [
+      {
+       "file": "index.ts",
+       "line": 179,
+       "text": "name: \"visit_page\","
+      },
+      {
+       "file": "index.ts",
+       "line": 993,
+       "text": "case \"visit_page\": {"
+      },
+      {
+       "file": "index.ts",
+       "line": 1307,
+       "text": "- visit_page: Visit and extract content from web pages"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 149,
+       "text": "name: 'visit_page',"
+      },
+      {
+       "file": "src/index.ts",
+       "line": 337,
+       "text": "case 'visit_page': {"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

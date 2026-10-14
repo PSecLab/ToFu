@@ -8,8 +8,14 @@ class FuzzFileManager:
     def __init__(self, file_backed_params: dict, seed_dir: str = None):
         self.file_backed_params = file_backed_params
         if seed_dir is None:
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            self.seed_dir = os.path.join(base_dir, "predefined_seeds")
+            # Must agree with seed_generators.SEED_DIR, or a run writes a
+            # predefined seed to one directory and resolves it from another.
+            env_dir = os.environ.get("TOFU_SEED_DIR")
+            if env_dir:
+                self.seed_dir = env_dir
+            else:
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                self.seed_dir = os.path.join(base_dir, "predefined_seeds")
         else:
             self.seed_dir = seed_dir
 

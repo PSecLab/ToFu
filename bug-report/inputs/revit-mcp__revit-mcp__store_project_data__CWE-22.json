@@ -1,0 +1,28 @@
+{
+ "repo": "revit-mcp/revit-mcp",
+ "tool": "store_project_data",
+ "class": "path-traversal",
+ "cwe": "CWE-22",
+ "commit": "c9ef49e4c397298d291304f822b89ba3a102e6bf",
+ "draft": "revit-mcp__revit-mcp__store_project_data__CWE-22.md",
+ "logs_read": 2,
+ "n_distinct_inputs": 2,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project_name': \"'; DROP TABLE users; --\", 'project_path': '../../../../etc/passwd', 'project_number': \"1' OR '1'='1\", 'project_address': '123 Main St', 'client_name': 'EvilClient', 'project_status': 'Active', 'author': 'attacker', 'metadata': {'note': 'sql_injection_test'}}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"success\": true,\\n  \"message\": \"Project data stored successfully\",\\n  \"project_id\": 6,\\n  \"project\": {\\n    \"id\": 6,\\n    \"project_name\": \"\\'; DROP TABLE users; --\",\\n    \"project_path\": \"../../../../etc/passwd\",\\n    \"project_number\": \"1\\' OR \\'1\\'=\\'1\",\\n    \"project_address\": \"123 Main St\",\\n    \"client_name\": \"EvilClient\",\\n    \"project_status\": \"Active\",\\n    \"author\": \"attacker\",\\n    \"timestamp\": \"2026-09-18T22:05:11.047Z\",\\n    \"last_updated\": \"2026-09-26T22:47:18.461Z\",\\n    \"metadata\": {\\n      \"note\": \"sql_injection_test\"\\n    }\\n  }\\n}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'project_name': 'NormalProject', 'project_path': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'project_number': 'UNION SELECT null, username, password FROM users', 'project_address': '456 Elm St', 'client_name': 'SafeClient', 'project_status': 'Completed', 'author': 'user1', 'metadata': {'payload': '/etc/passwd\\x00'}}",
+   "triggered_sanitizers": "['check_path_traversal']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\\n  \"success\": true,\\n  \"message\": \"Project data stored successfully\",\\n  \"project_id\": 10,\\n  \"project\": {\\n    \"id\": 10,\\n    \"project_name\": \"NormalProject\",\\n    \"project_path\": \"..\\\\\\\\..\\\\\\\\..\\\\\\\\..\\\\\\\\windows\\\\\\\\win.ini\",\\n    \"project_number\": \"UNION SELECT null, username, password FROM users\",\\n    \"project_address\": \"456 Elm St\",\\n    \"client_name\": \"SafeClient\",\\n    \"project_status\": \"Completed\",\\n    \"author\": \"user1\",\\n    \"timestamp\": \"2026-09-18T22:05:11.281Z\",\\n    \"last_updated\": \"2026-09-26T22:47:18.578Z\",\\n    \"metadata\": {\\n      \"payload\": \"/etc/passwd\\\\u0000\"\\n    }\\n  }\\n}'}]}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_path_traversal'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}

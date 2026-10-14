@@ -1,0 +1,159 @@
+%%-----------------------------------------------------------------------------
+%% ToFu -- FSE 2027 Research Papers submission
+%%
+%% Format mandated by the FSE 2027 CFP:
+%%   \documentclass[acmsmall,screen,review,anonymous]{acmart}
+%%   (single column; 18 pages of text+figures + 4 pages of references)
+%%
+%% Build:  make            (latexmk -pdf main)
+%% Class:  acmart.cls v2.x  (ACM "acmart-primary" distribution)
+%%-----------------------------------------------------------------------------
+
+%% Commands for TeXCount / page budgeting
+%TC:macro \cite [option:text,text]
+%TC:macro \citep [option:text,text]
+%TC:macro \citet [option:text,text]
+%TC:envir table 0 1
+%TC:envir table* 0 1
+%TC:envir tabular [ignore] word
+%TC:envir displaymath 0 word
+%TC:envir math 0 word
+%TC:envir comment 0 0
+
+\documentclass[acmsmall,screen,review,anonymous]{acmart}
+
+%% For the camera-ready, drop "review" and "anonymous" and add the real
+%% author block:  \documentclass[acmsmall,screen]{acmart}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{Bib\TeX}}}
+
+%%-----------------------------------------------------------------------------
+%% Rights / venue metadata.  Placeholders until the rights form arrives.
+%%-----------------------------------------------------------------------------
+\setcopyright{acmlicensed}
+\copyrightyear{2027}
+\acmYear{2027}
+\acmDOI{XXXXXXX.XXXXXXX}
+\acmConference[FSE '27]{The 35th ACM International Conference on the
+  Foundations of Software Engineering}{July 12--16, 2027}{Shenzhen, China}
+\acmISBN{978-1-4503-XXXX-X/2027/07}
+%% Fill in once the submission system assigns one:
+%\acmSubmissionID{}
+
+%% acmsmall uses numeric citations by default (ACM-Reference-Format).
+%% Uncomment for author-year:
+%\citestyle{acmauthoryear}
+
+%%-----------------------------------------------------------------------------
+%% Local packages and macros
+%%-----------------------------------------------------------------------------
+\input{mydefs}
+
+%%-----------------------------------------------------------------------------
+%% Paper-specific macros (must be defined before \title / \maketitle)
+%%-----------------------------------------------------------------------------
+\newcommand{\project}{\textsc{ToFu}\xspace}
+
+\newcommand{\ver}{xx}
+
+\newcommand{\tpnum}{xx}
+\newcommand{\fpnum}{xx}
+\newcommand{\tprate}{xx}
+\newcommand{\fprate}{xx}
+
+\newcommand{\reportnum}{xx}
+\newcommand{\confirmnum}{xx}
+\newcommand{\patchnum}{xx}
+\newcommand{\cvenum}{xx}
+
+\newcommand{\analysistime}{xx}
+
+%%=============================================================================
+\begin{document}
+%%=============================================================================
+
+\title{\project: Exploiting and Fuzzing the LLM--Orchestrator--Tool Trust
+  Boundary}
+
+%% The "anonymous" class option suppresses this block in the review PDF.
+%% Replace with the real author list for the camera-ready.
+\author{Anonymous Author(s)}
+\affiliation{%
+  \institution{Submission \#XXX}
+  \country{}
+}
+
+\input{sec0_abstract}
+
+%%-----------------------------------------------------------------------------
+%% CCS concepts -- generate at https://dl.acm.org/ccs and paste the
+%% \ccsdesc lines the tool produces.  ACM requires at least one.
+%%-----------------------------------------------------------------------------
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10002978.10003022.10003023</concept_id>
+       <concept_desc>Security and privacy~Software security engineering</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+       <concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10010147.10010178</concept_id>
+       <concept_desc>Computing methodologies~Artificial intelligence</concept_desc>
+       <concept_significance>300</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Security and privacy~Software security engineering}
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[300]{Computing methodologies~Artificial intelligence}
+
+\keywords{LLM agents, tool use, Model Context Protocol, fuzzing, semantic
+  oracles, software security}
+
+\maketitle
+
+%%-----------------------------------------------------------------------------
+%% Body
+%%-----------------------------------------------------------------------------
+\input{sec1_intro}
+\input{sec2_background}
+\input{agent}
+\input{sec3_moti}
+\input{overview}
+\input{sec4_design}
+\input{sec5_implementation}
+\input{sec6_eval}
+\input{casestudy}
+\input{sec7_discussion}
+\input{sec8_related}
+\input{sec9_conclusion}
+\input{sec10_ethical}
+
+%% Acknowledgments are excluded from a double-anonymous submission.
+%% Re-enable for the camera-ready:
+%\begin{acks}
+%  \input{ack}
+%\end{acks}
+
+%%-----------------------------------------------------------------------------
+%% References -- ACM-Reference-Format, does not count against the 18-page
+%% text limit (4 pages allowed).
+%%-----------------------------------------------------------------------------
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{paper}
+
+%%-----------------------------------------------------------------------------
+%% Appendix -- counts against the 18-page text limit at FSE.
+%%-----------------------------------------------------------------------------
+\clearpage
+\appendix
+\input{appendix}
+
+\end{document}

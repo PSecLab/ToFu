@@ -1,0 +1,133 @@
+{
+ "repo": "taylorwilsdon/google_workspace_mcp",
+ "tool": "start_google_auth",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "54b1c56f7f9912ce32681460d7ca38f9c2a37564",
+ "draft": "taylorwilsdon__google_workspace_mcp__start_google_auth__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 17,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': 'drive', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': 'gmail', 'user_google_email': 12345}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=12345, input_type=int]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '/etc/passwd\\x00', 'user_google_email': True}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=True, input_type=bool]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ['gmail', 'drive'], 'user_google_email': 'user@example.com'}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nservice_name\\n  Input should be a valid string [type=string_type, input_value=['gmail', 'drive'], input_type=list]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '..\\\\..\\\\..\\\\..\\\\windows\\\\win.ini', 'user_google_email': False}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=False, input_type=bool]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '../../../../etc/passwd', 'user_google_email': ['malicious@example.com']}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=['malicious@example.com'], input_type=list]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '\"esrvice_name\": \"drive\", \"user_google_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '\"service_anem\": \"drive\", \"user_google_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': 'Adrive', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': 'driwe', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '\"servi#e_name\": \"drive\", \"user_google_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': '\"serVice_name\": \"drive\", \"user_google_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ' \"user_google_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ' \"user_google_email\": \\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fnul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ' \"user_\\x7f\\x7f\\x7fgoogle_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ' \"user_\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fgoogle_email\": nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  },
+  {
+   "campaign": "recover-pc",
+   "input": "{'service_name': ' \"user_google_email\":\\x10 nul', 'user_google_email': None}",
+   "triggered_sanitizers": "['check_introspection_log_injection', 'check_introspection_sensitive_data_logging']",
+   "tool_output": "None",
+   "analysis": "[Sequence Step 1/1] Introspection Log Injection Alert (CWE-117): Unneutralized CRLF newline character detected in log output (logger:auth.auth_info_middleware)! Logged content: 'Error in on_call_tool middleware: 1 validation error for call[start_google_auth]\\nuser_google_email\\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\\n    For further information visit https://errors.pydantic.dev/2.13/v/string_type'.Introspection Sensitive Data Logging Alert (CWE-779): Unredacted sensitive token/credential detected in log output (logger:auth.auth_info_middleware)! Matched pattern: 'bearer ' in log message."
+  }
+ ],
+ "truncated": false
+}

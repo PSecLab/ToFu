@@ -1,0 +1,812 @@
+{
+ "repo": "aurda012/cursor10x-mcp",
+ "tool": "storeMilestone",
+ "class": "log-injection",
+ "cwe": "CWE-117",
+ "commit": "0fc2ad74fa31b15e82acdfdc70f3765a96fa84d5",
+ "draft": "aurda012__cursor10x-mcp__storeMilestone__CWE-117.md",
+ "logs_read": 1,
+ "n_distinct_inputs": 114,
+ "note": null,
+ "inputs": [
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453193809}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin loggeTitn', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453194677}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": \"Error: password\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\", \"im\\x10\\x10\\r\\x08ance\": \"high\",$\"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Error: password\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\\\\\", \\\\\"im\\\\u0010\\\\u0010\\\\r\\\\bance\\\\\": \\\\\"high\\\\\",$\\\\\"metadata\\\\\": {\",\"timestamp\":1790453195447}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": \"Error: password\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\", \"im\\x10\\x10\\r\\x08ance\": \"high\",$\"metadata\": {\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Error: password\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\\\\\", \\\\\"im\\\\u0010\\\\u0010\\\\r\\\\bance\\\\\": \\\\\"high\\\\\",$\\\\\"metadata\\\\\": {\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\",\"timestamp\":1790453195480}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": \"Error: \\x0bassword\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\", \"im\\x10\\x10\\r\\x08ance\": \"high\",$\"metadata\": {\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Error: \\\\u000bassword\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f=secret1234\\\\\", \\\\\"im\\\\u0010\\\\u0010\\\\r\\\\bance\\\\\": \\\\\"high\\\\\",$\\\\\"metadata\\\\\": {\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\",\"timestamp\":1790453195514}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection@\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453195760}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Process Leak\", \"descreak\", \"description\": \"Error: passworc=drsete123\\x10\\r\\x10\\x1c\\x1a\\x0c\\x0cU', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Process Leak\\\\\", \\\\\"descreak\\\\\", \\\\\"description\\\\\": \\\\\"Error: passworc=drsete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\f\\\\fU\",\"timestamp\":1790453195910}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Process Luak\", \"descreak\", \"description\": \"Error: passworc=drsete123\\x10\\r\\x10\\x1c\\x1a\\x0c\\x0cU', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Process Luak\\\\\", \\\\\"descreak\\\\\", \\\\\"description\\\\\": \\\\\"Error: passworc=drsete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\f\\\\fU\",\"timestamp\":1790453195934}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"on\": \"Error: passworc=drsete123\\x10\\r\\x10\\x1c\\x1a\\x0cdescription\": \"Error: passworc=drsete123\\x10\\r\\x10\\x1c\\x1a\\x0c\\x0cU', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"on\\\\\": \\\\\"Error: passworc=drsete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\fdescription\\\\\": \\\\\"Error: passworc=drsete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\f\\\\fU\",\"timestamp\":1790453195958}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"on\": \"Error: pas\\r\\x08\\x10\\r\\x1cB\\x1b\\x17sete123\\x10\\r\\x10\\x1c\\x1a\\x0cdescription\": \"Error: passworc=drsete123\\x10\\r\\x10\\x1c\\x1a\\x0c\\x0cU', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"on\\\\\": \\\\\"Error: pas\\\\r\\\\b\\\\u0010\\\\r\\\\u001cB\\\\u001b\\\\u0017sete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\fdescription\\\\\": \\\\\"Error: passworc=drsete123\\\\u0010\\\\r\\\\u0010\\\\u001c\\\\u001a\\\\f\\\\fU\",\"timestamp\":1790453195981}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFu: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453197011}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Normal Title\"R_]\\x1b\\x1a\\x0c\\x1c\\rip,tion\": \"Testing >log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Normal Title\\\\\"R_]\\\\u001b\\\\u001a\\\\f\\\\u001c\\\\rip,tion\\\\\": \\\\\"Testing >log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453197690}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Norma\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fl Title\"R_]\\x1b\\x1a\\x0c\\x1c\\rip,tion\": \"Testing >log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Norma\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fl Title\\\\\"R_]\\\\u001b\\\\u001a\\\\f\\\\u001c\\\\rip,tion\\\\\": \\\\\"Testing >log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453197715}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"\\x00\\x00rma\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fl Title\"R_]\\x1b\\x1a\\x0c\\x1c\\rip,tion\": \"Testing >log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"\\\\u0000\\\\u0000rma\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7f\\x7fl Title\\\\\"R_]\\\\u001b\\\\u001a\\\\f\\\\u001c\\\\rip,tion\\\\\": \\\\\"Testing >log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453197739}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453200126}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testg nloig injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453200210}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Norm tiTalle', 'description': 'Testg nloig injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Norm tiTalle\",\"timestamp\":1790453200240}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"descriptionfE_]:\\r\\r\\x10r: password=secre\\x00\\x00\\x00\\x00\\x00\\x00\\x00Zt1234\", \", \"importance\"high\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"descriptionfE_]:\\\\r\\\\r\\\\u0010r: password=secre\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000Zt1234\\\\\", \\\\\", \\\\\"importance\\\\\"high\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453200863}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Se,nsitive Data Leak\", \"descriptionfE_]:\\r\\r\\x10r: password=secre\\x00\\x00\\x00\\x00\\x00\\x00\\x00Zt1234\", \", \"importance\"high\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Se,nsitive Data Leak\\\\\", \\\\\"descriptionfE_]:\\\\r\\\\r\\\\u0010r: password=secre\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000Zt1234\\\\\", \\\\\", \\\\\"importance\\\\\"high\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453200892}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\"M_]1\\x10\\r\\x12\\x1el Title\", \"description\": \"Testing log injection\\\\nINFO: User admin logged in\", \"importance\": 2low\", \"mitle\": \"Sen', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\"M_]1\\\\u0010\\\\r\\\\u0012\\\\u001el Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": 2low\\\\\", \\\\\"mitle\\\\\": \\\\\"Sen\",\"timestamp\":1790453201853}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\"M_]1\\x10\\r\\x12\\x1el Title\", \"description\": \"Testing log injection\\\\nINFO: User aensitive Data Leak\", \"description\": , \"mitle\": \"Sen', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\"M_]1\\\\u0010\\\\r\\\\u0012\\\\u001el Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User aensitive Data Leak\\\\\", \\\\\"description\\\\\": , \\\\\"mitle\\\\\": \\\\\"Sen\",\"timestamp\":1790453201877}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: Usmr admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453203249}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: Usmr;admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453203282}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": \"Err\\n\\r: password=secret1234\", \"iiportance\": \"htitle\": \"Sensitive ', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Err\\\\n\\\\r: password=secret1234\\\\\", \\\\\"iiportance\\\\\": \\\\\"htitle\\\\\": \\\\\"Sensitive \",\"timestamp\":1790453203723}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leakrrrrrrrrrrrr\", \"description\": \"Err\\n\\r: password=secret1234\", \"iiportance\": \"htitle\": \"Sensitive ', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leakrrrrrrrrrrrr\\\\\", \\\\\"description\\\\\": \\\\\"Err\\\\n\\\\r: password=secret1234\\\\\", \\\\\"iiportance\\\\\": \\\\\"htitle\\\\\": \\\\\"Sensitive \",\"timestamp\":1790453203749}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leakrrrrr\\n\\r: password=secret1234\", \"iiportance\": \"htitle\": \"Sensitive ', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leakrrrrr\\\\n\\\\r: password=secret1234\\\\\", \\\\\"iiportance\\\\\": \\\\\"htitle\\\\\": \\\\\"Sensitive \",\"timestamp\":1790453203777}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'esting log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453204688}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'esting log injection\\nINFO: User admin lo`ged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453204719}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'dsting log injection\\nINFO: User admin lo`ged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453204751}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"tit\\'le\": \"Normal Title\", \"description\": \"Testing log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"tit\\'le\\\\\": \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453205628}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"tit\\'le\": \"Normal Title\", \"description\": \"Testing log injection\\\\nINFO: User admin loHgged in\", \"importance\": \"low\", \"metadata\": {', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"tit\\'le\\\\\": \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin loHgged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453205667}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"tit\\'le\": \"Normal Title\", \"description\": \"Testing log injecnINF\\\\nINFO: User admin loHgged in\", \"importance\": \"low\", \"metadata\": {', 'description': 'Testing log injecnINF\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"tit\\'le\\\\\": \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injecnINF\\\\\\\\nINFO: User admin loHgged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453205691}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin lo_ged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453205999}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\\x1f\"title\": \"Normal\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00 Title\", \"description\": \"Testing log injection\\\\nINFO: User admin lo_ged in\", \"importa\\n\\n\\n\\n\\nnce\": \"low\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\u001f\\\\\"title\\\\\": \\\\\"Normal\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000 Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin lo_ged in\\\\\", \\\\\"importa\\\\n\\\\n\\\\n\\\\n\\\\nnce\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453206081}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"tit\\x01\\x00\\x00\\x00 \"Normal Title\", \"description\": \"Testing log injection\\\\nINFO: \\'\\x0c\\x1a\\r_\\x1e\\x1b\\x12in log\"Teged in\", \"ioportanc(\": \"low\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"tit\\\\u0001\\\\u0000\\\\u0000\\\\u0000 \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: \\'\\\\f\\\\u001a\\\\r_\\\\u001e\\\\u001b\\\\u0012in log\\\\\"Teged in\\\\\", \\\\\"ioportanc(\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453206743}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: Use admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453206767}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'No', 'description': 'Testing log injection\\nINFO: Use admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"No\",\"timestamp\":1790453206792}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'No', 'description': 'Testing log injection\\nINFO: Use admin logged i-n', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"No\",\"timestamp\":1790453206838}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"No\", \"description\": \"Testing log\\x19 injection\\\\nINFO: Use\\r admin logged i-n\", \"importance\": \"lo, \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"No\\\\\", \\\\\"description\\\\\": \\\\\"Testing log\\\\u0019 injection\\\\\\\\nINFO: Use\\\\r admin logged i-n\\\\\", \\\\\"importance\\\\\": \\\\\"lo, \\\\\"metadata\\\\\": {\",\"timestamp\":1790453206862}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log ijoctenin\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453208753}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"word=title\": \"Normal Title\", \"description\": \"Testing log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"word=title\\\\\": \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453209446}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin g gdeloin', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453209716}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Vitle', 'description': 'Testing log injection\\nINFO: User admin g gdeloin', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Vitle\",\"timestamp\":1790453209734}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Vitle', 'description': 'Testing log injection\\nINFO; User admin g gdeloin', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Vitle\",\"timestamp\":1790453209751}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Sensitive Data Leak', 'description': 'Error: passion\\nINFO: User admin logged word=secret1234', 'importance': 'high', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Sensitive Data Leak\",\"timestamp\":1790453210112}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Sensitive DatLeak', 'description': 'Error: passion\\nINFO: User admin logged word=secret1234', 'importance': 'high', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Sensitive DatLeak\",\"timestamp\":1790453210133}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normaln\\nINFO: User admin logged in', 'description': '', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normaln\\\\nINFO: User admin logged in\",\"timestamp\":1790453210880}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Tftle', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Tftle\",\"timestamp\":1790453211194}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Tftle', 'description': 'Testing log injection\\nIN:FU sOer admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Tftle\",\"timestamp\":1790453211212}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User~ admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453212757}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: Usev admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453213311}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'l Title', 'description': 'Testing log injection\\nINFO: Usev admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"l Title\",\"timestamp\":1790453213329}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'i\"title\": \"l Title\", \"descr\\ription\": \"Testing log injection\\\\nINFO: Usev admin logged in\", \"importance\": \"low\", \"metadmetadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"i\\\\\"title\\\\\": \\\\\"l Title\\\\\", \\\\\"descr\\\\ription\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: Usev admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadmetadata\\\\\": {\",\"timestamp\":1790453213362}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\", \"mee\": \"l Title\", \"descr\\ription\": \"Testing log injection\\\\nINFO: Usev admin logged in\", \"importance\": \"low\", \"metadmetadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\", \\\\\"mee\\\\\": \\\\\"l Title\\\\\", \\\\\"descr\\\\ription\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: Usev admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadmetadata\\\\\": {\",\"timestamp\":1790453213380}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO:dres U amin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453213801}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive{ Data Leak\", \"description\": \"Error: password=secret1234\", \"importance\": \"hig\\r\\r\\r\\rh\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive{ Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Error: password=secret1234\\\\\", \\\\\"importance\\\\\": \\\\\"hig\\\\r\\\\r\\\\r\\\\rh\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453213996}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive{ Data Leak\", \"description\": \"Error: ~~~~~~~~~~~~~~~~~~~~~~~~password=secret1234\", \"importance\": \"hig\\r\\r\\r\\rh\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive{ Data Leak\\\\\", \\\\\"description\\\\\": \\\\\"Error: ~~~~~~~~~~~~~~~~~~~~~~~~password=secret1234\\\\\", \\\\\"importance\\\\\": \\\\\"hig\\\\r\\\\r\\\\r\\\\rh\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453214032}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log(injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453214221}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log(injecrtion\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453214239}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"pitle\": 12345, \"description\": \"Type confusion: injection\\\\nINFO: User admteger as title\", \"importance\": \"medium\", \"metadata\": {', 'description': 'Type confusion: injection\\nINFO: User admteger as title', 'importance': 'medium', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"pitle\\\\\": 12345, \\\\\"description\\\\\": \\\\\"Type confusion: injection\\\\\\\\nINFO: User admteger as title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453217230}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin log,ed in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453218179}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin log,ed in', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453218197}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin log,ed ix', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453218231}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nIin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453218517}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titl\"1:e2 345, \"descr\\rpuion\": \"Type confusion: integer as title\", \"importance\": \"medium\", \"me\\x7fadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"titl\\\\\"1:e2 345, \\\\\"descr\\\\rpuion\\\\\": \\\\\"Type confusion: integer as title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"me\\x7fadata\\\\\": {\",\"timestamp\":1790453220454}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titl\"1:e2 345ium\", \"me\\x7fadata\", \"descr\\rpuion\": \"Type confusion: integer as title\", \"importance\": \"medium\", \"me\\x7fadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"titl\\\\\"1:e2 345ium\\\\\", \\\\\"me\\x7fadata\\\\\", \\\\\"descr\\\\rpuion\\\\\": \\\\\"Type confusion: integer as title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"me\\x7fadata\\\\\": {\",\"timestamp\":1790453220471}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'teger as title\", \"\\x17\\x12\\x0f\\x10\\r\\x0b\\x1e\\x0bce\": \"medium\",\\x7f\\x02metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"teger as title\\\\\", \\\\\"\\\\u0017\\\\u0012\\\\u000f\\\\u0010\\\\r\\\\u000b\\\\u001e\\\\u000bce\\\\\": \\\\\"medium\\\\\",\\x7f\\\\u0002metadata\\\\\": {\",\"timestamp\":1790453220721}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Tiing log injection\\nINFO: User admin logged in', 'description': '', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Tiing log injection\\\\nINFO: User admin logged in\",\"timestamp\":1790453223122}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing lnjection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453223208}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Tsting lnjection\\nINFO: User admin logged in', 'description': '', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Tsting lnjection\\\\nINFO: User admin logged in\",\"timestamp\":1790453223226}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': ',ow', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453223878}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin0logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453224674}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 12345, 'description': 'Tg injection\\nINFO:ype confusion: integer as title', 'importance': 'medium', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":12345,\"timestamp\":1790453226673}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 12345, 'description': 'Tg injection\\nINFO:ype confusion: integer as title', 'importance': 'med`um', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":12345,\"timestamp\":1790453226761}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injectbon\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453229922}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": Z:\\r\\r\\x10\\rE_password=secret1234\", \"importance\": \"high\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": Z:\\\\r\\\\r\\\\u0010\\\\rE_password=secret1234\\\\\", \\\\\"importance\\\\\": \\\\\"high\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453232307}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": R:\\r\\r\\x10\\rE_password=secret1234\", \"importance\": \"high\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": R:\\\\r\\\\r\\\\u0010\\\\rE_password=secret1234\\\\\", \\\\\"importance\\\\\": \\\\\"high\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453232325}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"description\": R:\\r\\r\\x10\\rE_password=secret1234, \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": R:\\\\r\\\\r\\\\u0010\\\\rE_password=secret1234, \\\\\"metadata\\\\\": {\",\"timestamp\":1790453232343}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titl\\x0ce\": \"Sensitive Data Leak\", \"description\": R:\\r\\r\\x10\\rE_password=secret1234, \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"titl\\\\fe\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": R:\\\\r\\\\r\\\\u0010\\\\rE_password=secret1234, \\\\\"metadata\\\\\": {\",\"timestamp\":1790453232362}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titl\\x0ce\": \"Sensitive Data Leak\", \"description\": R:\\r\\r\\x10\\rE_password=secret1234, \"\\x1c\\x1atadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"titl\\\\fe\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"description\\\\\": R:\\\\r\\\\r\\\\u0010\\\\rE_password=secret1234, \\\\\"\\\\u001c\\\\u001atadata\\\\\": {\",\"timestamp\":1790453232379}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"titTle\": \"Normal Title\", \"description\": \"Testing log injection\\\\nINFO: User admin logged in\", \"importance\": \"low\", \"metadata\": {', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"titTle\\\\\": \\\\\"Normal Title\\\\\", \\\\\"description\\\\\": \\\\\"Testing log injection\\\\\\\\nINFO: User admin logged in\\\\\", \\\\\"importance\\\\\": \\\\\"low\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453232818}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: _ser admin logged in', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453233549}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\"ip\\x00\\x00 as title\", \"impor{\"title\"ip\\x00\\x00 as title\", \"importance\": \"medium\", \"metadata\\ntance\": \"medium\", \"morta', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\"ip\\\\u0000\\\\u0000 as title\\\\\", \\\\\"impor{\\\\\"title\\\\\"ip\\\\u0000\\\\u0000 as title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\ntance\\\\\": \\\\\"medium\\\\\", \\\\\"morta\",\"timestamp\":1790453234875}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\"ip\\x00\\x00 as title\", \"impor{\"title\"ip\\x00\\x00 as title\", \"importance\": \"medium\", \"metadat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00a\\ntance\": \"medium\", \"morta', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\"ip\\\\u0000\\\\u0000 as title\\\\\", \\\\\"impor{\\\\\"title\\\\\"ip\\\\u0000\\\\u0000 as title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadat\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000a\\\\ntance\\\\\": \\\\\"medium\\\\\", \\\\\"morta\",\"timestamp\":1790453234894}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\"ip\\x00\\x00 as title\", \"impor{\", \"importance\": \"medium\", \"metadat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00tadat\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00a\\ntance\": \"medium\", \"morta', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\"ip\\\\u0000\\\\u0000 as title\\\\\", \\\\\"impor{\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadat\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000tadat\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000a\\\\ntance\\\\\": \\\\\"medium\\\\\", \\\\\"morta\",\"timestamp\":1790453234912}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": 12345, \"des\\x15\\r\\x16\\x0f\\x0b\\x16\\x10\\x11\": \"Type confusion: integer a\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17s title\", \"importance\": \"medium\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": 12345, \\\\\"des\\\\u0015\\\\r\\\\u0016\\\\u000f\\\\u000b\\\\u0016\\\\u0010\\\\u0011\\\\\": \\\\\"Type confusion: integer a\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453235147}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": 12345, \"des\\x15\\r\\x16\\x0f\\x0b\\x16\\x10\\x11\": \"Type confusiof: integer a\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17s title\", \"importance\": \"medium\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": 12345, \\\\\"des\\\\u0015\\\\r\\\\u0016\\\\u000f\\\\u000b\\\\u0016\\\\u0010\\\\u0011\\\\\": \\\\\"Type confusiof: integer a\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453235171}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": 12345, \"des\\x15\\r\\x16\\x0f\\x0b\\x16\\x10\\x11\": \"Type confu\\r\\x16\\x10\\x19: integer a\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17s title\", \"importance\": \"medium\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": 12345, \\\\\"des\\\\u0015\\\\r\\\\u0016\\\\u000f\\\\u000b\\\\u0016\\\\u0010\\\\u0011\\\\\": \\\\\"Type confu\\\\r\\\\u0016\\\\u0010\\\\u0019: integer a\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453235190}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": 12345, \"des\\x15\\r\\x16\\x0f\\x0b\\x16\\x10\\x11\": \"Type confu\\r\\x16\\x10\\x19: integer a\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17\\x17s title\", \"immportance\": \"medium\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": 12345, \\\\\"des\\\\u0015\\\\r\\\\u0016\\\\u000f\\\\u000b\\\\u0016\\\\u0010\\\\u0011\\\\\": \\\\\"Type confu\\\\r\\\\u0016\\\\u0010\\\\u0019: integer a\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017\\\\u0017s title\\\\\", \\\\\"immportance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453235209}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Norml Title', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Norml Title\",\"timestamp\":1790453235534}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'og injection\\nINFO: User admin loggedg log injection\\nINFO: User admin logged in', 'description': '', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"og injection\\\\nINFO: User admin loggedg log injection\\\\nINFO: User admin logged in\",\"timestamp\":1790453235554}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'MMMMMMMMMMMMMMMMMMMMMMMM\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\rMMMMMMMMMMMMMMMMMMm\", \"metadataMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM(MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMLMM', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"MMMMMMMMMMMMMMMMMMMMMMMM\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\rMMMMMMMMMMMMMMMMMMm\\\\\", \\\\\"metadataMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM(MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMLMM\",\"timestamp\":1790453237537}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin lo-gged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453238515}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Teste Dataing log injection\\nINFO: User admin lo-gged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453238537}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Oeste Dataing log injection\\nINFO: User admin lo-gged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453238554}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Noreste Dataing log injection\\nINFO: User admin lo-gged in', 'description': '', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Noreste Dataing log injection\\\\nINFO: User admin lo-gged in\",\"timestamp\":1790453238590}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Tetle', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Tetle\",\"timestamp\":1790453238941}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\":`NML\\x1a\\r_(s title\", \"importance\": \"medium\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\":`NML\\\\u001a\\\\r_(s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453239127}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\":`NML\\x1a\\r_(s title\", \"importance\": \"medium\", \"metabata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\":`NML\\\\u001a\\\\r_(s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metabata\\\\\": {\",\"timestamp\":1790453239144}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\":`NML\\x1a\\r_(s title\", \"importance\": \"medium\", \"metab\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\":`NML\\\\u001a\\\\r_(s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metab\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\",\"timestamp\":1790453239161}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjtitle\":`NML\\x1a\\r_(s title\", \"importance\": \"medium\", \"metab\\x00\\x00\\x00\\x00\\x00\\x00\\x00', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjtitle\\\\\":`NML\\\\u001a\\\\r_(s title\\\\\", \\\\\"importance\\\\\": \\\\\"medium\\\\\", \\\\\"metab\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\\\\u0000\",\"timestamp\":1790453239178}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User adminlg oged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453239441}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Ti>>>>>>>tle', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Ti>>>>>>>tle\",\"timestamp\":1790453240978}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Ti>>>>>>>tle', 'description': 'Testing log injection\\nINFO: U>>>>>>>tle', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Ti>>>>>>>tle\",\"timestamp\":1790453240995}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sen@sitive Data  \"E\\x0e\\rorce\": \"high\", \"metadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sen@sitive Data  \\\\\"E\\\\u000e\\\\rorce\\\\\": \\\\\"high\\\\\", \\\\\"metadata\\\\\": {\",\"timestamp\":1790453241357}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sen@sitive Data  \"E\\x0e\\rorce\": \"high\", \"meiadata\": {', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sen@sitive Data  \\\\\"E\\\\u000e\\\\rorce\\\\\": \\\\\"high\\\\\", \\\\\"meiadata\\\\\": {\",\"timestamp\":1790453241375}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing io lgnjection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453244674}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': '\"title\": \"Sensitive Data Leak\", \"descrip\\n\\x16on\":{\"title\": \"Normal Title\", \"descript ', 'description': '', 'importance': '', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"\\\\\"title\\\\\": \\\\\"Sensitive Data Leak\\\\\", \\\\\"descrip\\\\n\\\\u0016on\\\\\":{\\\\\"title\\\\\": \\\\\"Normal Title\\\\\", \\\\\"descript \",\"timestamp\":1790453246648}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Nornmal Title', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Nornmal Title\",\"timestamp\":1790453247654}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Nornmal Title', 'description': 'Testing log injection\\nINFO: User admin logtinged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Nornmal Title\",\"timestamp\":1790453247673}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Nornmal Title', 'description': 'Testing lserinjection\\nINFO: User admin logtinged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Nornmal Title\",\"timestamp\":1790453247692}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normatle', 'description': 'Testing log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normatle\",\"timestamp\":1790453248195}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Tbsting log injection\\nINFO: User admin logged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453249831}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  },
+  {
+   "campaign": "corpus-sbx",
+   "input": "{'title': 'Normal Title', 'description': 'Testing log injection\\nINFO: User admin ,ogged in', 'importance': 'low', 'metadata': {}}",
+   "triggered_sanitizers": "['check_log_injection']",
+   "tool_output": "{'content': [{'type': 'text', 'text': '{\"status\":\"ok\",\"title\":\"Normal Title\",\"timestamp\":1790453250479}'}], 'isError': False}",
+   "analysis": "[Sequence Step 1/1] Silent Bug Alert: Sanitizers ['check_log_injection'] flagged this input as malicious, but the target tool executed successfully without raising any exception."
+  }
+ ],
+ "truncated": false
+}
